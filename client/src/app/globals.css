@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-mafia-sans, "Arial Narrow"), Arial, sans-serif;
+  --font-display: var(--font-mafia-display, Impact), "Arial Narrow", sans-serif;
+  --color-ink: #f7f2e8;
+  --color-title: #d8d1c4;
+  --color-muted: #b9b4aa;
+  --color-faint: #747067;
+  --color-page: #030303;
+  --color-surface: #070706;
+  --color-surface-raised: #0d0c0a;
+  --color-line: #31302d;
+  --color-danger: #9f342f;
+  --color-danger-strong: #d3443b;
+  --color-profit: #6fb072;
+  --color-brass: #b68a2d;
+  --color-brass-bright: #edc553;
+  --color-teal: #6f928a;
+  --radius-control: 0.125rem;
+  --radius-panel: 0.125rem;
+  --shadow-panel: 0 1.5rem 4rem rgb(0 0 0 / 0.55);
+  --shadow-command: inset 0 0 0 1px rgb(237 197 83 / 0.12);
+}
+
+@layer base {
+  html {
+    min-width: 320px;
+    background: var(--color-page);
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    color: var(--color-ink);
+    background: var(--color-page);
+    font-family: var(--font-sans);
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  a {
+    color: inherit;
+  }
+}

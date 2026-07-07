@@ -1,0 +1,10 @@
+{
+  "name": "project-mafia-root",
+  "private": true,
+  "scripts": {
+    "dev": "node -e \"console.log('\\nProject Mafia dev servers\\n  Next.js:   http://localhost:3000\\n  Storybook: http://localhost:6006\\n')\" && concurrently --kill-others-on-fail --pad-prefix --names \"Next.js,Storybook\" --prefix-colors \"cyan,magenta\" \"yarn --cwd client next dev -p 3000\" \"yarn --cwd client storybook --exact-port\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
