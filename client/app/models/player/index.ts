@@ -9,3 +9,4 @@ export type { PlayerReputation } from "./playerReputation";
 export type { PlayerResources } from "./playerResources";
 export type { PlayerStatus } from "./playerStatus";
 export type { Player } from "./player";
+export type { StoryThread } from "./storyThread";
