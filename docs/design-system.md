@@ -99,9 +99,9 @@ Use to frame focused story text or other concise content inside a larger interac
 - Use it when narrative context is more important than surrounding controls.
 - Do not use it for repeated event feeds; use `NarrativeCard` for those.
 
-### DecisionModal
+### Modal
 
-File: `client/src/components/DecisionModal/DecisionModal.tsx`
+File: `client/src/components/Modal/Modal.tsx`
 
 Use for player-facing narrative choices with exactly two options.
 

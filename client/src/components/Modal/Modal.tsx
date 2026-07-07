@@ -8,18 +8,18 @@ import {
 } from "react";
 import { Frame } from "../Frame/Frame";
 
-type DecisionTone = "primary" | "secondary" | "danger";
+type ModalTone = "primary" | "secondary" | "danger";
 
-type DecisionOption = {
+type ModalOption = {
   description: string;
   disabled?: boolean;
   id: string;
   label: string;
   onSelect?: () => void;
-  tone?: DecisionTone;
+  tone?: ModalTone;
 };
 
-type DecisionModalProps = Omit<
+type ModalProps = Omit<
   DialogHTMLAttributes<HTMLDialogElement>,
   "children" | "open"
 > & {
@@ -27,11 +27,11 @@ type DecisionModalProps = Omit<
   intro: string;
   onDismiss?: () => void;
   open: boolean;
-  options: readonly [DecisionOption, DecisionOption];
+  options: readonly [ModalOption, ModalOption];
   title: string;
 };
 
-const optionToneClasses: Record<DecisionTone, string> = {
+const optionToneClasses: Record<ModalTone, string> = {
   danger:
     "border-danger-strong text-ink enabled:hover:bg-danger/20 enabled:hover:text-ink",
   primary:
@@ -40,7 +40,7 @@ const optionToneClasses: Record<DecisionTone, string> = {
     "border-line text-muted enabled:hover:border-brass enabled:hover:text-ink"
 };
 
-export function DecisionModal({
+export function Modal({
   className,
   eyebrow = "Decision required",
   intro,
@@ -50,7 +50,7 @@ export function DecisionModal({
   options,
   title,
   ...props
-}: DecisionModalProps) {
+}: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {

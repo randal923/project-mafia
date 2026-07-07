@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { DecisionModal } from "./DecisionModal";
+import { Modal } from "./Modal";
 
 const meta = {
-  title: "Components/DecisionModal",
-  component: DecisionModal,
+  title: "Components/Modal",
+  component: Modal,
   args: {
     intro:
       "A clerk at city hall says the permit ledger is unattended for one hour. Taking it could expose the alderman, but the police have been leaning on the same office all week.",
@@ -27,7 +27,7 @@ const meta = {
   parameters: {
     layout: "centered"
   }
-} satisfies Meta<typeof DecisionModal>;
+} satisfies Meta<typeof Modal>;
 
 export default meta;
 
