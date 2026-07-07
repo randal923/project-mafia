@@ -15,10 +15,12 @@ The Next.js app lives in `client/`. Styling uses Tailwind utilities. Tokens live
 ### Typography
 
 - Font definitions live in `client/src/app/mafiaFonts.ts` so the app and Storybook share the same font variables.
+- Storybook includes `Foundations/Typography`, backed by `client/src/design-system/typographyStyles.ts`, for the approved semantic type styles.
 - `--font-mafia-sans`: Oswald through `next/font/google`, weights `400`, `500`, `600`, and `700`.
 - `--font-mafia-display`: Bebas Neue through `next/font/google`.
 - Use Oswald for operational UI: body text, forms, ledgers, descriptions, repeated interface text, and secondary labels.
 - Use Bebas Neue for screen titles, chapter states, stat values, buttons, major labels, and high-impact story moments.
+- Pick typography by content intent, such as screen title, panel heading, command label, narrative body, or metadata. Do not choose sizes ad hoc when a documented semantic style fits.
 - Do not use viewport-scaled font sizes. Use fixed `rem` sizes and media queries.
 - Letter spacing is `0` unless a future design pass explicitly changes it.
 

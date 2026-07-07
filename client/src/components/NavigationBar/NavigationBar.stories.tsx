@@ -1,18 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { Button } from "../Button/Button";
 import { NavigationBar } from "./NavigationBar";
 
 const meta = {
   title: "Components/NavigationBar",
   component: NavigationBar,
   args: {
-    activeItemId: "operations",
+    activeItemId: "news",
     brand: "Project Mafia",
     items: [
-      { href: "#operations", id: "operations", label: "Operations" },
-      { badge: "3", href: "#crew", id: "crew", label: "Crew" },
-      { href: "#city", id: "city", label: "City" },
-      { href: "#ledger", id: "ledger", label: "Ledger" }
+      { href: "#news", id: "news", label: "News" },
+      { href: "#jobs", id: "jobs", label: "Jobs" },
+      { href: "#night-life", id: "night-life", label: "Night Life" },
+      { href: "#bank", id: "bank", label: "Bank" },
+      { href: "#gym", id: "gym", label: "Gym" },
+      { href: "#underworld", id: "underworld", label: "Underworld" },
+      { href: "#docks", id: "docks", label: "Docks" },
+      { href: "#stocks", id: "stocks", label: "Stocks" }
     ]
   },
   parameters: {
@@ -25,9 +28,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {
-  args: {
-    actions: <Button size="small">Next turn</Button>
-  },
   decorators: [
     (Story) => (
       <div className="min-h-screen bg-page px-6 text-ink">
@@ -36,5 +36,3 @@ export const Standard: Story = {
     )
   ]
 };
-
-export const WithoutActions: Story = {};

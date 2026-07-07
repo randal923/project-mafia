@@ -48,3 +48,28 @@
     color: inherit;
   }
 }
+
+@layer components {
+  .mafia-select option {
+    background: var(--color-page);
+    color: var(--color-ink);
+  }
+
+  .mafia-select option:checked {
+    background: var(--color-page);
+    box-shadow: none;
+    color: var(--color-ink);
+  }
+
+  .mafia-select option:active,
+  .mafia-select option:focus,
+  .mafia-select option:hover {
+    background: var(--color-brass) !important;
+    box-shadow: inset 0 0 0 9999px var(--color-brass) !important;
+    color: var(--color-page) !important;
+  }
+
+  .mafia-select option:disabled {
+    color: var(--color-faint);
+  }
+}

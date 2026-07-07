@@ -25,7 +25,7 @@ export function DropdownMenu({
   ...props
 }: DropdownMenuProps) {
   const classNames = [
-    "w-full appearance-none rounded-control border border-line bg-black px-4 py-3 pr-10 font-display text-xl uppercase leading-none tracking-normal text-ink shadow-command focus:border-brass focus:outline-[3px] focus:outline-offset-[3px] focus:outline-brass-bright disabled:cursor-not-allowed disabled:opacity-50",
+    "mafia-select w-full appearance-none rounded-control border border-line bg-black px-4 py-3 pr-10 font-display text-xl uppercase leading-none tracking-normal text-ink shadow-command focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
     className
   ]
     .filter(Boolean)
@@ -39,7 +39,7 @@ export function DropdownMenu({
       <span className="relative block">
         <select className={classNames} {...props}>
           {placeholder ? (
-            <option disabled value="">
+            <option disabled hidden value="">
               {placeholder}
             </option>
           ) : null}

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 
 type NavigationItem = {
   badge?: string;
@@ -9,7 +8,6 @@ type NavigationItem = {
 };
 
 type NavigationBarProps = {
-  actions?: ReactNode;
   activeItemId?: string;
   ariaLabel?: string;
   brand: string;
@@ -17,7 +15,6 @@ type NavigationBarProps = {
 };
 
 export function NavigationBar({
-  actions,
   activeItemId,
   ariaLabel = "Primary",
   brand,
@@ -62,7 +59,6 @@ export function NavigationBar({
             </Link>
           );
         })}
-        {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
       </div>
     </nav>
   );
