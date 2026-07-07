@@ -5,12 +5,29 @@ import { signOut } from "firebase/auth";
 import { useState } from "react";
 import { Button } from "../components/Button";
 import { getFirebaseClientAuth } from "../firebase/getFirebaseClientAuth";
+import { useProfile } from "../hooks/useProfile";
 import { useAuth } from "./useAuth";
 
 export function AuthStatus() {
   const { isLoading, user } = useAuth();
+  const { profile } = useProfile();
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setSignOutError(null);
+    setIsSigningOut(true);
+
+    try {
+      await signOut(getFirebaseClientAuth());
+    } catch (error) {
+      setSignOutError(
+        error instanceof Error ? error.message : "Sign out failed.",
+      );
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -34,25 +51,12 @@ export function AuthStatus() {
   return (
     <div className="ml-auto flex flex-wrap items-center justify-end gap-3 text-xs uppercase tracking-widest">
       <span className="max-w-48 truncate text-ash">
-        {user.email ?? "Signed in"}
+        {profile?.nickname || "Signed in"}
       </span>
       <Button
         className="py-0 text-xs tracking-widest"
         disabled={isSigningOut}
-        onClick={async () => {
-          setSignOutError(null);
-          setIsSigningOut(true);
-
-          try {
-            await signOut(getFirebaseClientAuth());
-          } catch (error) {
-            setSignOutError(
-              error instanceof Error ? error.message : "Sign out failed.",
-            );
-          } finally {
-            setIsSigningOut(false);
-          }
-        }}
+        onClick={handleSignOut}
         type="button"
         variant="ghost"
       >
