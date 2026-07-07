@@ -14,10 +14,13 @@ export function Navigation() {
           aria-label="Main menu"
           className="flex flex-1 flex-wrap items-center gap-x-8 gap-y-3 tracking-[0.14em]"
         >
-          <Link className="text-ivory transition hover:text-sulfur" href="/profile">
+          <Link
+            className="text-ivory transition hover:text-sulfur"
+            href="/profile"
+          >
             Profile
           </Link>
-          <Link className="transition hover:text-sulfur" href="/robberies">
+          <Link className="transition hover:text-sulfur" href="/jobs">
             Jobs
           </Link>
         </nav>
