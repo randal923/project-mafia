@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Tag } from "../Tag/Tag";
 
 type NarrativePriority = "standard" | "urgent";
 
@@ -44,9 +45,7 @@ export function NarrativeCard({
         <span className="h-3 w-3 rotate-45 border border-line" />
         <span className="h-px flex-1 bg-line" />
       </div>
-      <p className="m-0 w-fit rounded-control border border-line px-3 py-1 font-display text-xl uppercase leading-none tracking-normal text-ink">
-        {district}
-      </p>
+      <Tag label={district} />
       <div className="mt-6 max-w-3xl text-xl leading-relaxed text-muted">
         {children}
       </div>

@@ -1,9 +1,11 @@
-type StoryPanelProps = {
+import type { ReactNode } from "react";
+
+type FrameProps = {
+  children: ReactNode;
   className?: string;
-  story: string;
 };
 
-export function StoryPanel({ className, story }: StoryPanelProps) {
+export function Frame({ children, className }: FrameProps) {
   const classNames = [
     "rounded-panel border border-line bg-black/25 p-5 md:p-6",
     className
@@ -13,9 +15,7 @@ export function StoryPanel({ className, story }: StoryPanelProps) {
 
   return (
     <div className={classNames}>
-      <p className="m-0 text-xl leading-relaxed text-title md:text-2xl">
-        {story}
-      </p>
+      {children}
     </div>
   );
 }

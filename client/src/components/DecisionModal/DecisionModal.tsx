@@ -6,7 +6,7 @@ import {
   type DialogHTMLAttributes,
   type SyntheticEvent
 } from "react";
-import { StoryPanel } from "../StoryPanel/StoryPanel";
+import { Frame } from "../Frame/Frame";
 
 type DecisionTone = "primary" | "secondary" | "danger";
 
@@ -99,7 +99,11 @@ export function DecisionModal({
         </h2>
       </div>
       <div className="px-6 py-8 md:py-10">
-        <StoryPanel story={intro} />
+        <Frame>
+          <p className="m-0 text-xl leading-relaxed text-title md:text-2xl">
+            {intro}
+          </p>
+        </Frame>
       </div>
       <div className="px-6 pb-6">
         <div className="mb-5 flex items-center gap-3" aria-hidden="true">

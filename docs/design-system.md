@@ -79,11 +79,21 @@ Use for LLM-authored world events, rumors, consequences, and story hooks.
 - Use `urgent` when the player should treat the event as risky or time-sensitive.
 - Include an action when there is a clear next player decision.
 
-### StoryPanel
+### Tag
 
-File: `client/src/components/StoryPanel/StoryPanel.tsx`
+File: `client/src/components/Tag/Tag.tsx`
 
-Use for focused story text that should sit inside a larger interaction surface, such as a modal or decision flow.
+Use for compact labels inside cards, ledgers, and decision surfaces.
+
+- Keep labels short.
+- Use tags to identify place, category, or metadata, not primary status or risk.
+- Pair tags with surrounding copy when the label affects player decisions.
+
+### Frame
+
+File: `client/src/components/Frame/Frame.tsx`
+
+Use to frame focused story text or other concise content inside a larger interaction surface, such as a modal or decision flow.
 
 - Keep the story concise enough to read before choosing.
 - Use it when narrative context is more important than surrounding controls.
