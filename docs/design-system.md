@@ -122,6 +122,20 @@ Use for short feedback after game actions resolve.
 - `warning`: elevated risk or pending consequence.
 - Toast text should be actionable or explanatory, not decorative flavor copy.
 
+### Table
+
+File: `client/src/components/Table/Table.tsx`
+
+Use for dense ledgers, crew lists, resource logs, district reports, and other structured game data.
+
+- Always provide a concise caption so the table has an accessible name.
+- Use descriptions when a table affects player decisions or turn resolution.
+- Keep column headers short and noun-based.
+- Mark the identifying first column as a row header when rows have names.
+- Use right alignment for numeric values.
+- Use `profit` only for positive economic movement and `danger` for risk, heat, or scarcity.
+- Provide an empty message for tables that can legitimately have no rows.
+
 ## Layout
 
 - First screens should be usable product surfaces, not landing pages.
