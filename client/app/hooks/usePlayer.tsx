@@ -8,61 +8,61 @@ import {
   useState,
 } from "react";
 import { useAuth } from "../auth/useAuth";
-import type { Profile } from "../models/player";
-import { ProfileService } from "../services/profile";
+import type { Player } from "../models/player";
+import { PlayerService } from "../services/player";
 
-type ProfileRecord = {
-  profile: Profile;
+type PlayerRecord = {
+  player: Player;
   userId: string;
 };
 
-type ProfileError = {
+type PlayerError = {
   message: string;
   userId: string;
 };
 
-type UseProfileResult = {
+type UsePlayerResult = {
   currentFormError: string | null;
   currentLoadError: string | null;
   isSaving: boolean;
   isSignedIn: boolean;
   nickname: string;
-  profile: Profile | null;
+  player: Player | null;
   saveNickname: () => Promise<void>;
   setNickname: (nickname: string) => void;
 };
 
-const ProfileContext = createContext<UseProfileResult | null>(null);
+const PlayerContext = createContext<UsePlayerResult | null>(null);
 
-export function ProfileProvider({ children }: PropsWithChildren) {
-  const profileState = useProfileState();
+export function PlayerProvider({ children }: PropsWithChildren) {
+  const playerState = usePlayerState();
 
   return (
-    <ProfileContext.Provider value={profileState}>
+    <PlayerContext.Provider value={playerState}>
       {children}
-    </ProfileContext.Provider>
+    </PlayerContext.Provider>
   );
 }
 
-export function useProfile(): UseProfileResult {
-  const profileState = useContext(ProfileContext);
+export function usePlayer(): UsePlayerResult {
+  const playerState = useContext(PlayerContext);
 
-  if (!profileState) {
-    throw new Error("useProfile must be used within ProfileProvider.");
+  if (!playerState) {
+    throw new Error("usePlayer must be used within PlayerProvider.");
   }
 
-  return profileState;
+  return playerState;
 }
 
-function useProfileState(): UseProfileResult {
+function usePlayerState(): UsePlayerResult {
   const { user } = useAuth();
-  const [profileRecord, setProfileRecord] = useState<ProfileRecord | null>(
+  const [playerRecord, setPlayerRecord] = useState<PlayerRecord | null>(
     null,
   );
   const [nickname, setNickname] = useState("");
-  const [formError, setFormError] = useState<ProfileError | null>(null);
+  const [formError, setFormError] = useState<PlayerError | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [loadError, setLoadError] = useState<ProfileError | null>(null);
+  const [loadError, setLoadError] = useState<PlayerError | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -71,16 +71,16 @@ function useProfileState(): UseProfileResult {
 
     let isCancelled = false;
 
-    const loadProfile = async () => {
-      const profileResult = await ProfileService.getProfile(user);
+    const loadPlayer = async () => {
+      const playerResult = await PlayerService.getPlayer(user);
 
       if (isCancelled) {
         return;
       }
 
-      if (!profileResult.ok) {
+      if (!playerResult.ok) {
         setLoadError({
-          message: profileResult.error.message,
+          message: playerResult.error.message,
           userId: user.uid,
         });
         return;
@@ -88,14 +88,14 @@ function useProfileState(): UseProfileResult {
 
       setFormError(null);
       setLoadError(null);
-      setNickname(profileResult.profile.nickname);
-      setProfileRecord({
-        profile: profileResult.profile,
+      setNickname(playerResult.player.nickname);
+      setPlayerRecord({
+        player: playerResult.player,
         userId: user.uid,
       });
     };
 
-    void loadProfile();
+    void loadPlayer();
 
     return () => {
       isCancelled = true;
@@ -106,9 +106,9 @@ function useProfileState(): UseProfileResult {
     formError && formError.userId === user?.uid ? formError.message : null;
   const currentLoadError =
     loadError && loadError.userId === user?.uid ? loadError.message : null;
-  const profile =
-    profileRecord && profileRecord.userId === user?.uid
-      ? profileRecord.profile
+  const player =
+    playerRecord && playerRecord.userId === user?.uid
+      ? playerRecord.player
       : null;
 
   const saveNickname = async () => {
@@ -129,25 +129,25 @@ function useProfileState(): UseProfileResult {
     setFormError(null);
     setIsSaving(true);
 
-    const profileResult = await ProfileService.saveNickname(
+    const playerResult = await PlayerService.saveNickname(
       user,
       trimmedNickname,
     );
 
-    if (!profileResult.ok) {
+    if (!playerResult.ok) {
       setFormError({
-        message: profileResult.error.message,
+        message: playerResult.error.message,
         userId: user.uid,
       });
       setIsSaving(false);
       return;
     }
 
-    setProfileRecord({
-      profile: profileResult.profile,
+    setPlayerRecord({
+      player: playerResult.player,
       userId: user.uid,
     });
-    setNickname(profileResult.profile.nickname);
+    setNickname(playerResult.player.nickname);
     setIsSaving(false);
   };
 
@@ -157,7 +157,7 @@ function useProfileState(): UseProfileResult {
     isSaving,
     isSignedIn: Boolean(user),
     nickname,
-    profile,
+    player,
     saveNickname,
     setNickname,
   };

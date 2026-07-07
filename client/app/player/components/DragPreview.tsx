@@ -1,8 +1,8 @@
-import type { ProfileItem } from "../lib/profileTypes";
+import type { PlayerItem } from "../lib/playerTypes";
 import { ItemTile } from "./ItemTile";
 
 type DragPreviewProps = {
-  item: ProfileItem | null;
+  item: PlayerItem | null;
   position: {
     x: number;
     y: number;

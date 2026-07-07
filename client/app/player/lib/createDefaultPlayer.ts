@@ -1,13 +1,13 @@
-import type { Profile } from "../../models/player";
-import { createDefaultLoadout } from "./profileLoadoutDefaults";
+import type { Player } from "../../models/player";
+import { createDefaultLoadout } from "./playerLoadoutDefaults";
 
-type CreateDefaultProfileInput = {
+type CreateDefaultPlayerInput = {
   name: string;
 };
 
-export function createDefaultProfile({
+export function createDefaultPlayer({
   name,
-}: CreateDefaultProfileInput): Profile {
+}: CreateDefaultPlayerInput): Player {
   return {
     name,
     nickname: "",

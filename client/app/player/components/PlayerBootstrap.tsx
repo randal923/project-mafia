@@ -1,25 +1,25 @@
 "use client";
 
 import { Button } from "../../components/Button";
-import { useProfile } from "../../hooks/useProfile";
+import { usePlayer } from "../../hooks/usePlayer";
 
-export function ProfileBootstrap() {
+export function PlayerBootstrap() {
   const {
     currentFormError,
     currentLoadError,
     isSaving,
     isSignedIn,
     nickname,
-    profile,
+    player,
     saveNickname,
     setNickname,
-  } = useProfile();
+  } = usePlayer();
 
   if (!isSignedIn) {
     return null;
   }
 
-  if (profile?.nickname || (!profile && !currentLoadError)) {
+  if (player?.nickname || (!player && !currentLoadError)) {
     return null;
   }
 

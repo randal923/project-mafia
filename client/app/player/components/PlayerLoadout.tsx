@@ -6,14 +6,14 @@ import { DragPreview } from "./DragPreview";
 import { EquipmentBoard } from "./EquipmentBoard";
 import { StashGrid } from "./StashGrid";
 import { StatusPanel } from "./StatusPanel";
-import { useProfile } from "../../hooks/useProfile";
-import { useProfileLoadout } from "../../hooks/useProfileLoadout";
-import type { Profile } from "../../models/player";
+import { usePlayer } from "../../hooks/usePlayer";
+import { usePlayerLoadout } from "../../hooks/usePlayerLoadout";
+import type { Player } from "../../models/player";
 import type {
   DragPayload,
   EquipmentSlot,
   EquipmentSlotId,
-} from "../lib/profileTypes";
+} from "../lib/playerTypes";
 
 const dragMimeType = "application/x-project-mafia-item";
 
@@ -24,8 +24,8 @@ function isEquipmentSlotId(
   return equipmentSlots.some((slot) => slot.id === value);
 }
 
-export function ProfileLoadout() {
-  const { currentLoadError, isSignedIn, profile } = useProfile();
+export function PlayerLoadout() {
+  const { currentLoadError, isSignedIn, player } = usePlayer();
 
   if (!isSignedIn) {
     return null;
@@ -41,20 +41,20 @@ export function ProfileLoadout() {
     );
   }
 
-  if (!profile) {
+  if (!player) {
     return (
       <section className="flex h-full items-center justify-center">
         <p className="text-sm uppercase tracking-widest text-ash">
-          Loading profile
+          Loading player
         </p>
       </section>
     );
   }
 
-  return <ProfileLoadoutContent profile={profile} />;
+  return <PlayerLoadoutContent player={player} />;
 }
 
-function ProfileLoadoutContent({ profile }: { profile: Profile }) {
+function PlayerLoadoutContent({ player }: { player: Player }) {
   const {
     dispatchLoadoutAction,
     equipmentSlots,
@@ -62,7 +62,7 @@ function ProfileLoadoutContent({ profile }: { profile: Profile }) {
     loadoutState,
     power,
     status,
-  } = useProfileLoadout(profile);
+  } = usePlayerLoadout(player);
   const {
     activeTargetId: activeSlotId,
     clearDragState,
@@ -160,7 +160,7 @@ function ProfileLoadoutContent({ profile }: { profile: Profile }) {
 
   return (
     <section
-      className="mx-auto grid h-full min-h-0 max-w-profile-loadout gap-3 xl:grid-profile-loadout"
+      className="mx-auto grid h-full min-h-0 max-w-player-loadout gap-3 xl:grid-player-loadout"
       onDragOver={updateDragPosition}
     >
       <div className="flex min-h-0 flex-col gap-3">

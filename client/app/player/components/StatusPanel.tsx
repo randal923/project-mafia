@@ -1,10 +1,10 @@
-import type { ProfileStatus } from "../lib/profileTypes";
+import type { PlayerStatus } from "../lib/playerTypes";
 import { Card } from "./Card";
 import { StatusPanelRow } from "./StatusPanelRow";
 
 type StatusPanelProps = {
   power: number;
-  status: ProfileStatus;
+  status: PlayerStatus;
 };
 
 export function StatusPanel({ power, status }: StatusPanelProps) {

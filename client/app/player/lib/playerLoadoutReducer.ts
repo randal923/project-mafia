@@ -1,13 +1,13 @@
 import type {
   LoadoutAction,
   LoadoutState,
-  ProfileItemsById,
-} from "./profileTypes";
+  PlayerItemsById,
+} from "./playerTypes";
 
-export function profileLoadoutReducer(
+export function playerLoadoutReducer(
   state: LoadoutState,
   action: LoadoutAction,
-  itemsById: ProfileItemsById,
+  itemsById: PlayerItemsById,
 ): LoadoutState {
   if (action.type === "reset") {
     return action.loadoutState;

@@ -1,13 +1,13 @@
 import type {
   DragPayload,
   LoadoutState,
-  ProfileItemsById,
-} from "../lib/profileTypes";
+  PlayerItemsById,
+} from "../lib/playerTypes";
 import { Card } from "./Card";
 import { ItemTile } from "./ItemTile";
 
 type StashGridProps = {
-  itemsById: ProfileItemsById;
+  itemsById: PlayerItemsById;
   loadoutState: LoadoutState;
   onDragEnd: () => void;
   onDragMove: (event: React.DragEvent<HTMLElement>) => void;

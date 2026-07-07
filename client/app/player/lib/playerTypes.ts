@@ -7,16 +7,16 @@ import type {
 
 export type { EquipmentSlotId } from "../../models/player";
 
-export type ProfileItem = LoadoutWeapon;
+export type PlayerItem = LoadoutWeapon;
 
-export type ProfileItemsById = Record<string, ProfileItem>;
+export type PlayerItemsById = Record<string, PlayerItem>;
 
 export type EquipmentSlot = {
   id: EquipmentSlotId;
   label: string;
 };
 
-export type ProfileStatus = {
+export type PlayerStatus = {
   name: string;
   resources: Pick<PlayerResources, "cleanMoney" | "dirtyMoney" | "power">;
 };

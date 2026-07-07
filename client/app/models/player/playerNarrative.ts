@@ -2,7 +2,7 @@ import type { NarrativeEvent } from "./narrativeEvent";
 import type { PlayerOrigin } from "./playerOrigin";
 import type { StoryThread } from "./storyThread";
 
-export interface PlayerNarrativeProfile {
+export interface PlayerNarrative {
   origin: PlayerOrigin;
   storySummary: string;
   majorEvents: NarrativeEvent[];

@@ -6,12 +6,12 @@ export function CharacterDisplay() {
       <div className="absolute inset-x-10 bottom-8 h-px bg-line" />
       <div className="absolute bottom-6 h-24 w-72 rounded-full bg-black/45 blur-2xl" />
       <Image
-        src="/assets/profile/character.png"
-        alt="Profile character"
+        src="/assets/player/character.png"
+        alt="Player character"
         width={887}
         height={1774}
         priority
-        className="relative z-10 h-profile-character max-h-full w-auto object-contain drop-shadow-profile-character"
+        className="relative z-10 h-player-character max-h-full w-auto object-contain drop-shadow-player-character"
       />
     </section>
   );

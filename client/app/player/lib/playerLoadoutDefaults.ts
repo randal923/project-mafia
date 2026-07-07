@@ -1,5 +1,5 @@
 import type { EquipmentSlotId, PlayerLoadout } from "../../models/player";
-import type { EquipmentSlot, ProfileItem } from "./profileTypes";
+import type { EquipmentSlot, PlayerItem } from "./playerTypes";
 
 export const equipmentSlots: EquipmentSlot[] = [
   { id: "hand", label: "Hand" },
@@ -11,14 +11,14 @@ export const equipmentSlots: EquipmentSlot[] = [
 
 const equipmentSlotIds = equipmentSlots.map((slot) => slot.id);
 
-export const defaultKnifeWeapon: ProfileItem = {
+export const defaultKnifeWeapon: PlayerItem = {
   id: "stiletto-knife",
   label: "Stiletto Knife",
   slot: "hand",
   detail: "Close weapon",
   power: 5,
   icon: "KN",
-  imageSrc: "/assets/profile/knife.png",
+  imageSrc: "/assets/player/knife.png",
 };
 
 function createDefaultEquipment(): PlayerLoadout["equipment"] {
@@ -47,7 +47,7 @@ function isEquipmentSlotId(value: unknown): value is EquipmentSlotId {
   return equipmentSlotIds.some((slotId) => slotId === value);
 }
 
-function isLoadoutWeapon(value: unknown): value is ProfileItem {
+function isLoadoutWeapon(value: unknown): value is PlayerItem {
   if (!isRecord(value)) {
     return false;
   }

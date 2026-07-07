@@ -2,15 +2,15 @@ import { getAuth, type DecodedIdToken } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { NextResponse } from "next/server";
 import { getFirebaseAdminApp } from "../../firebase/getFirebaseAdminApp";
-import { createDefaultProfile } from "../../profile/lib/createDefaultProfile";
+import { createDefaultPlayer } from "../../player/lib/createDefaultPlayer";
 import {
   normalizeLoadout,
   shouldBackfillLoadout,
-} from "../../profile/lib/profileLoadoutDefaults";
-import type { Profile } from "../../models/player";
+} from "../../player/lib/playerLoadoutDefaults";
+import type { Player } from "../../models/player";
 
-type ProfileWriteResult = {
-  profile: Profile;
+type PlayerWriteResult = {
+  player: Player;
   status: 200 | 201;
 };
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       Array.isArray(parsedBody)
     ) {
       return NextResponse.json(
-        { error: "Profile request body must be an object." },
+        { error: "Player request body must be an object." },
         { status: 400 },
       );
     }
@@ -80,82 +80,82 @@ export async function POST(request: Request) {
       );
     }
 
-    const profileFallback = createDefaultProfile({
+    const playerFallback = createDefaultPlayer({
       name:
         decodedToken.name ??
         decodedToken.email ??
         `Player ${decodedToken.uid.slice(0, 6)}`,
     });
     const firestore = getFirestore(adminApp);
-    const profileRef = firestore.collection("profiles").doc(decodedToken.uid);
-    const result = await firestore.runTransaction<ProfileWriteResult>(
+    const playerRef = firestore.collection("players").doc(decodedToken.uid);
+    const result = await firestore.runTransaction<PlayerWriteResult>(
       async (transaction) => {
-        const profileSnapshot = await transaction.get(profileRef);
+        const playerSnapshot = await transaction.get(playerRef);
 
-        if (!profileSnapshot.exists) {
-          const createdProfile = {
-            ...profileFallback,
+        if (!playerSnapshot.exists) {
+          const createdPlayer = {
+            ...playerFallback,
             nickname: nickname ?? "",
           };
 
-          transaction.set(profileRef, createdProfile);
+          transaction.set(playerRef, createdPlayer);
 
           return {
-            profile: createdProfile,
+            player: createdPlayer,
             status: 201,
           };
         }
 
-        const existingData = profileSnapshot.data() as Profile;
+        const existingData = playerSnapshot.data() as Player;
         const normalizedLoadout = normalizeLoadout(existingData.loadout);
-        const existingProfile = {
+        const existingPlayer = {
           ...existingData,
           loadout: normalizedLoadout,
         };
-        const profilePatch: {
-          loadout?: Profile["loadout"];
-          nickname?: Profile["nickname"];
+        const playerPatch: {
+          loadout?: Player["loadout"];
+          nickname?: Player["nickname"];
         } = {};
 
         if (shouldBackfillLoadout(existingData.loadout)) {
-          profilePatch.loadout = normalizedLoadout;
+          playerPatch.loadout = normalizedLoadout;
         }
 
         if (!nickname) {
-          if (Object.keys(profilePatch).length > 0) {
-            transaction.set(profileRef, profilePatch, { merge: true });
+          if (Object.keys(playerPatch).length > 0) {
+            transaction.set(playerRef, playerPatch, { merge: true });
           }
 
           return {
-            profile: existingProfile,
+            player: existingPlayer,
             status: 200,
           };
         }
 
-        const updatedProfile = {
-          ...existingProfile,
+        const updatedPlayer = {
+          ...existingPlayer,
           nickname,
         };
 
         transaction.set(
-          profileRef,
-          { ...profilePatch, nickname },
+          playerRef,
+          { ...playerPatch, nickname },
           { merge: true },
         );
 
         return {
-          profile: updatedProfile,
+          player: updatedPlayer,
           status: 200,
         };
       },
     );
 
     return NextResponse.json(
-      { profile: result.profile },
+      { player: result.player },
       { status: result.status },
     );
   } catch (error) {
-    console.error("Profile API failed.", error);
+    console.error("Player API failed.", error);
 
     if (
       error instanceof Error &&
@@ -165,7 +165,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "Profile request failed." },
+      { error: "Player request failed." },
       { status: 500 },
     );
   }

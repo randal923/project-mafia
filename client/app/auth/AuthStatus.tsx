@@ -5,12 +5,12 @@ import { signOut } from "firebase/auth";
 import { useState } from "react";
 import { Button } from "../components/Button";
 import { getFirebaseClientAuth } from "../firebase/getFirebaseClientAuth";
-import { useProfile } from "../hooks/useProfile";
+import { usePlayer } from "../hooks/usePlayer";
 import { useAuth } from "./useAuth";
 
 export function AuthStatus() {
   const { isLoading, user } = useAuth();
-  const { profile } = useProfile();
+  const { player } = usePlayer();
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -51,7 +51,7 @@ export function AuthStatus() {
   return (
     <div className="ml-auto flex flex-wrap items-center justify-end gap-3 text-xs uppercase tracking-widest">
       <span className="max-w-48 truncate text-ash">
-        {profile?.nickname || "Signed in"}
+        {player?.nickname || "Signed in"}
       </span>
       <Button
         className="py-0 text-xs tracking-widest"

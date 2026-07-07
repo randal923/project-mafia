@@ -1,8 +1,8 @@
 import Image from "next/image";
-import type { ProfileItem } from "../lib/profileTypes";
+import type { PlayerItem } from "../lib/playerTypes";
 
 type ItemTileProps = {
-  item: ProfileItem;
+  item: PlayerItem;
   isCompact?: boolean;
 };
 

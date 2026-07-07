@@ -57,7 +57,7 @@
     radial-gradient(circle at 18% 86%, rgb(116 31 24 / 0.3), transparent 30%);
 }
 
-@utility bg-profile-page {
+@utility bg-player-page {
   background-image:
     radial-gradient(circle at 52% 0%, rgb(169 114 53 / 0.18), transparent 32%),
     linear-gradient(180deg, var(--charcoal), var(--obsidian) 46%);
@@ -91,19 +91,19 @@
   background-size: 12px 12px;
 }
 
-@utility grid-profile-loadout {
+@utility grid-player-loadout {
   grid-template-columns: 34rem minmax(22rem, 1fr) 18rem;
 }
 
-@utility h-profile-character {
+@utility h-player-character {
   height: min(76dvh, 48rem);
 }
 
-@utility max-w-profile-loadout {
+@utility max-w-player-loadout {
   max-width: 105rem;
 }
 
-@utility drop-shadow-profile-character {
+@utility drop-shadow-player-character {
   filter: drop-shadow(0 30px 35px rgb(0 0 0 / 0.65));
 }
 

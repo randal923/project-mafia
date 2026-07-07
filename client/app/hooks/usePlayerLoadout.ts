@@ -5,40 +5,40 @@ import type { Dispatch } from "react";
 import {
   equipmentSlots,
   normalizeLoadout,
-} from "../profile/lib/profileLoadoutDefaults";
-import { profileLoadoutReducer } from "../profile/lib/profileLoadoutReducer";
-import type { Profile } from "../models/player";
+} from "../player/lib/playerLoadoutDefaults";
+import { playerLoadoutReducer } from "../player/lib/playerLoadoutReducer";
+import type { Player } from "../models/player";
 import type {
   EquipmentSlot,
   LoadoutAction,
   LoadoutState,
-  ProfileItem,
-  ProfileItemsById,
-  ProfileStatus,
-} from "../profile/lib/profileTypes";
+  PlayerItem,
+  PlayerItemsById,
+  PlayerStatus,
+} from "../player/lib/playerTypes";
 
-type UseProfileLoadoutResult = {
+type UsePlayerLoadoutResult = {
   dispatchLoadoutAction: Dispatch<LoadoutAction>;
   equipmentSlots: EquipmentSlot[];
-  itemsById: ProfileItemsById;
+  itemsById: PlayerItemsById;
   loadoutState: LoadoutState;
   power: number;
-  status: ProfileStatus;
+  status: PlayerStatus;
 };
 
-export function useProfileLoadout(profile: Profile): UseProfileLoadoutResult {
+export function usePlayerLoadout(player: Player): UsePlayerLoadoutResult {
   const normalizedLoadout = useMemo(
-    () => normalizeLoadout(profile.loadout),
-    [profile.loadout],
+    () => normalizeLoadout(player.loadout),
+    [player.loadout],
   );
   const itemsById = useMemo(
     () =>
       Object.fromEntries(
         normalizedLoadout.weapons.map((item) => [item.id, item]),
-      ) as ProfileItemsById,
+      ) as PlayerItemsById,
     [normalizedLoadout.weapons],
   );
-  const profileLoadoutState = useMemo<LoadoutState>(
+  const playerLoadoutState = useMemo<LoadoutState>(
     () => ({
       equipment: normalizedLoadout.equipment,
       inventory: normalizedLoadout.inventory,
@@ -47,40 +47,40 @@ export function useProfileLoadout(profile: Profile): UseProfileLoadoutResult {
   );
   const [loadoutState, dispatchLoadoutAction] = useReducer(
     (state: LoadoutState, action: LoadoutAction) =>
-      profileLoadoutReducer(state, action, itemsById),
-    profileLoadoutState,
+      playerLoadoutReducer(state, action, itemsById),
+    playerLoadoutState,
   );
-  const status = useMemo<ProfileStatus>(
+  const status = useMemo<PlayerStatus>(
     () => ({
-      name: profile.nickname || profile.name,
+      name: player.nickname || player.name,
       resources: {
-        cleanMoney: profile.resources.cleanMoney,
-        dirtyMoney: profile.resources.dirtyMoney,
-        power: profile.resources.power,
+        cleanMoney: player.resources.cleanMoney,
+        dirtyMoney: player.resources.dirtyMoney,
+        power: player.resources.power,
       },
     }),
     [
-      profile.name,
-      profile.nickname,
-      profile.resources.cleanMoney,
-      profile.resources.dirtyMoney,
-      profile.resources.power,
+      player.name,
+      player.nickname,
+      player.resources.cleanMoney,
+      player.resources.dirtyMoney,
+      player.resources.power,
     ],
   );
 
   useEffect(() => {
     dispatchLoadoutAction({
       type: "reset",
-      loadoutState: profileLoadoutState,
+      loadoutState: playerLoadoutState,
     });
-  }, [profileLoadoutState]);
+  }, [playerLoadoutState]);
 
   const equippedItems = Object.values(loadoutState.equipment)
     .map((itemId) => (itemId ? itemsById[itemId] : null))
-    .filter((item): item is ProfileItem => item !== null);
+    .filter((item): item is PlayerItem => item !== null);
   const power = equippedItems.reduce(
     (total, item) => total + item.power,
-    profile.resources.power,
+    player.resources.power,
   );
 
   return {

@@ -4,8 +4,8 @@ import type {
   EquipmentSlot,
   EquipmentSlotId,
   LoadoutState,
-  ProfileItemsById,
-} from "../lib/profileTypes";
+  PlayerItemsById,
+} from "../lib/playerTypes";
 import { Card } from "./Card";
 import { ItemTile } from "./ItemTile";
 
@@ -13,7 +13,7 @@ type EquipmentBoardProps = {
   activeSlotId: EquipmentSlotId | null;
   canDropOnSlot: (slotId: EquipmentSlotId) => boolean;
   equipmentSlots: EquipmentSlot[];
-  itemsById: ProfileItemsById;
+  itemsById: PlayerItemsById;
   loadoutState: LoadoutState;
   onDragEnd: () => void;
   onDragLeave: () => void;
@@ -53,7 +53,7 @@ export function EquipmentBoard({
   return (
     <Card
       className="flex min-h-0 flex-none basis-1/2 flex-col"
-      eyebrow="Profile"
+      eyebrow="Player"
       headerDetail="Gear slots"
       title="Loadout"
       titleLevel={1}
@@ -61,7 +61,7 @@ export function EquipmentBoard({
     >
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <Image
-          src="/assets/profile/character.png"
+          src="/assets/player/character.png"
           alt=""
           fill
           sizes="520px"

@@ -3,8 +3,8 @@ import { Cormorant_Garamond, Jost } from "next/font/google";
 import { AuthProvider } from "./auth/AuthProvider";
 import { Navigation } from "./components/Navigation";
 import "./globals.css";
-import { ProfileProvider } from "./hooks/useProfile";
-import { ProfileBootstrap } from "./profile/components/ProfileBootstrap";
+import { PlayerProvider } from "./hooks/usePlayer";
+import { PlayerBootstrap } from "./player/components/PlayerBootstrap";
 
 const mafiaSans = Jost({
   variable: "--font-mafia-sans",
@@ -34,11 +34,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
-          <ProfileProvider>
+          <PlayerProvider>
             <Navigation />
-            <ProfileBootstrap />
+            <PlayerBootstrap />
             {children}
-          </ProfileProvider>
+          </PlayerProvider>
         </AuthProvider>
       </body>
     </html>

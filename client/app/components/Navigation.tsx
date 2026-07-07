@@ -26,9 +26,9 @@ export function Navigation() {
         >
           <Link
             className="text-ivory transition hover:text-sulfur"
-            href="/profile"
+            href="/player"
           >
-            Profile
+            Player
           </Link>
           <Link className="transition hover:text-sulfur" href="/jobs">
             Jobs

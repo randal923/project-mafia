@@ -1,57 +1,57 @@
 import type { User } from "firebase/auth";
-import type { Profile } from "../models/player";
+import type { Player } from "../models/player";
 import { AppErrorHandler, type AppErrorResult } from "./errors";
 
-type ProfileResponse = {
-  profile: Profile;
+type PlayerResponse = {
+  player: Player;
 };
 
-type ProfileRequestBody = {
+type PlayerRequestBody = {
   nickname?: string;
 };
 
-type ProfileServiceSuccess = {
+type PlayerServiceSuccess = {
   ok: true;
-  profile: Profile;
+  player: Player;
 };
 
-type ProfileServiceFailure = {
+type PlayerServiceFailure = {
   error: AppErrorResult;
   ok: false;
 };
 
-export type ProfileServiceResult =
-  | ProfileServiceFailure
-  | ProfileServiceSuccess;
+export type PlayerServiceResult =
+  | PlayerServiceFailure
+  | PlayerServiceSuccess;
 
-export class ProfileService {
-  static async getProfile(user: User): Promise<ProfileServiceResult> {
-    return ProfileService.postProfile(
+export class PlayerService {
+  static async getPlayer(user: User): Promise<PlayerServiceResult> {
+    return PlayerService.postPlayer(
       user,
       {},
-      "Profile could not be loaded.",
+      "Player could not be loaded.",
     );
   }
 
   static async saveNickname(
     user: User,
     nickname: string,
-  ): Promise<ProfileServiceResult> {
-    return ProfileService.postProfile(
+  ): Promise<PlayerServiceResult> {
+    return PlayerService.postPlayer(
       user,
       { nickname },
       "Nickname could not be saved.",
     );
   }
 
-  private static async postProfile(
+  private static async postPlayer(
     user: User,
-    body: ProfileRequestBody,
+    body: PlayerRequestBody,
     fallbackMessage: string,
-  ): Promise<ProfileServiceResult> {
+  ): Promise<PlayerServiceResult> {
     try {
       const idToken = await user.getIdToken();
-      const response = await fetch("/api/profile", {
+      const response = await fetch("/api/player", {
         body: JSON.stringify(body),
         headers: {
           Authorization: `Bearer ${idToken}`,
@@ -64,11 +64,11 @@ export class ProfileService {
         throw await AppErrorHandler.createAPIError(response, fallbackMessage);
       }
 
-      const payload = (await response.json()) as ProfileResponse;
+      const payload = (await response.json()) as PlayerResponse;
 
       return {
         ok: true,
-        profile: payload.profile,
+        player: payload.player,
       };
     } catch (error) {
       return {
