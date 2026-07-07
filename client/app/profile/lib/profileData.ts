@@ -8,8 +8,11 @@ import type {
 
 export const profileStatus: ProfileStatus = {
   name: "Enzo Ricci",
-  cashOnHand: "$50",
-  basePower: 12,
+  resources: {
+    cleanMoney: 50,
+    dirtyMoney: 0,
+    power: 3,
+  },
 };
 
 export const equipmentSlots: EquipmentSlot[] = [

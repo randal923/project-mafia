@@ -1,3 +1,5 @@
+import type { PlayerResources } from "./profileModel";
+
 export type EquipmentSlotId = "hand" | "head" | "torso" | "waist" | "feet";
 
 export type ProfileItem = {
@@ -19,8 +21,7 @@ export type EquipmentSlot = {
 
 export type ProfileStatus = {
   name: string;
-  cashOnHand: string;
-  basePower: number;
+  resources: Pick<PlayerResources, "cleanMoney" | "dirtyMoney" | "power">;
 };
 
 export type LoadoutState = {

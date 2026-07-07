@@ -16,10 +16,16 @@ export function StatusPanel({ power, status }: StatusPanelProps) {
       value: status.name,
     },
     {
-      id: "cash-on-hand",
-      label: "Cash on Hand",
+      id: "clean-money",
+      label: "Clean Money",
       tone: "default",
-      value: status.cashOnHand,
+      value: `$${status.resources.cleanMoney}`,
+    },
+    {
+      id: "dirty-money",
+      label: "Dirty Money",
+      tone: "default",
+      value: `$${status.resources.dirtyMoney}`,
     },
     {
       id: "power",

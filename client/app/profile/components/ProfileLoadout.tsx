@@ -6,7 +6,7 @@ import { DragPreview } from "./DragPreview";
 import { EquipmentBoard } from "./EquipmentBoard";
 import { StashGrid } from "./StashGrid";
 import { StatusPanel } from "./StatusPanel";
-import { useProfile } from "../hooks/useProfile";
+import { useProfileLoadout } from "../hooks/useProfileLoadout";
 import type {
   DragPayload,
   EquipmentSlot,
@@ -30,7 +30,7 @@ export function ProfileLoadout() {
     loadoutState,
     power,
     status,
-  } = useProfile();
+  } = useProfileLoadout();
   const {
     activeTargetId: activeSlotId,
     clearDragState,
