@@ -2,7 +2,6 @@
 
 import {
   createContext,
-  createElement,
   type PropsWithChildren,
   useContext,
   useEffect,
@@ -10,10 +9,7 @@ import {
 } from "react";
 import { useAuth } from "../auth/useAuth";
 import type { Profile } from "../models/player";
-
-type ProfileResponse = {
-  profile: Profile;
-};
+import { ProfileService } from "../services/profile";
 
 type ProfileRecord = {
   profile: Profile;
@@ -41,10 +37,10 @@ const ProfileContext = createContext<UseProfileResult | null>(null);
 export function ProfileProvider({ children }: PropsWithChildren) {
   const profileState = useProfileState();
 
-  return createElement(
-    ProfileContext.Provider,
-    { value: profileState },
-    children,
+  return (
+    <ProfileContext.Provider value={profileState}>
+      {children}
+    </ProfileContext.Provider>
   );
 }
 
@@ -75,54 +71,31 @@ function useProfileState(): UseProfileResult {
 
     let isCancelled = false;
 
-    void user
-      .getIdToken()
-      .then((idToken) =>
-        fetch("/api/profile", {
-          body: JSON.stringify({}),
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-        }),
-      )
-      .then(async (response) => {
-        if (!response.ok) {
-          const payload = (await response.json().catch(() => ({}))) as {
-            error?: string;
-          };
-          throw new Error(payload.error ?? "Profile could not be loaded.");
-        }
+    const loadProfile = async () => {
+      const profileResult = await ProfileService.getProfile(user);
 
-        return (await response.json()) as ProfileResponse;
-      })
-      .then((payload) => {
-        if (isCancelled) {
-          return;
-        }
+      if (isCancelled) {
+        return;
+      }
 
-        setFormError(null);
-        setLoadError(null);
-        setNickname(payload.profile.nickname);
-        setProfileRecord({
-          profile: payload.profile,
-          userId: user.uid,
-        });
-      })
-      .catch((loadError: unknown) => {
-        if (isCancelled) {
-          return;
-        }
-
+      if (!profileResult.ok) {
         setLoadError({
-          message:
-            loadError instanceof Error
-              ? loadError.message
-              : "Profile could not be loaded.",
+          message: profileResult.error.message,
           userId: user.uid,
         });
+        return;
+      }
+
+      setFormError(null);
+      setLoadError(null);
+      setNickname(profileResult.profile.nickname);
+      setProfileRecord({
+        profile: profileResult.profile,
+        userId: user.uid,
       });
+    };
+
+    void loadProfile();
 
     return () => {
       isCancelled = true;
@@ -156,42 +129,26 @@ function useProfileState(): UseProfileResult {
     setFormError(null);
     setIsSaving(true);
 
-    try {
-      const idToken = await user.getIdToken();
-      const response = await fetch("/api/profile", {
-        body: JSON.stringify({ nickname: trimmedNickname }),
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-      });
+    const profileResult = await ProfileService.saveNickname(
+      user,
+      trimmedNickname,
+    );
 
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => ({}))) as {
-          error?: string;
-        };
-        throw new Error(payload.error ?? "Nickname could not be saved.");
-      }
-
-      const payload = (await response.json()) as ProfileResponse;
-
-      setProfileRecord({
-        profile: payload.profile,
-        userId: user.uid,
-      });
-      setNickname(payload.profile.nickname);
-    } catch (saveError) {
+    if (!profileResult.ok) {
       setFormError({
-        message:
-          saveError instanceof Error
-            ? saveError.message
-            : "Nickname could not be saved.",
+        message: profileResult.error.message,
         userId: user.uid,
       });
-    } finally {
       setIsSaving(false);
+      return;
     }
+
+    setProfileRecord({
+      profile: profileResult.profile,
+      userId: user.uid,
+    });
+    setNickname(profileResult.profile.nickname);
+    setIsSaving(false);
   };
 
   return {
