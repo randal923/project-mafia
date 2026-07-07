@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
+import { AuthProvider } from "./auth/AuthProvider";
 import { Navigation } from "./components/Navigation";
 import "./globals.css";
 
@@ -30,8 +31,10 @@ export default function RootLayout({
       className={`${mafiaSans.variable} ${mafiaSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navigation />
-        {children}
+        <AuthProvider>
+          <Navigation />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

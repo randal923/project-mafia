@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { HomeSignInButton } from "./auth/HomeSignInButton";
 import { BackdropOverlay } from "./components/BackdropOverlay";
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
         className="object-cover object-center opacity-80"
       />
       <BackdropOverlay />
+      <HomeSignInButton />
     </main>
   );
 }

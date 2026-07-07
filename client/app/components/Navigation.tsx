@@ -1,6 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { AuthStatus } from "../auth/AuthStatus";
+import { useAuth } from "../auth/useAuth";
 
 export function Navigation() {
+  const { isLoading, user } = useAuth();
+
+  if (isLoading || !user) {
+    return null;
+  }
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-5 py-5 sm:px-8 lg:px-14">
       <div className="flex flex-wrap items-center gap-4 border-b border-line pb-4 text-sm uppercase text-ash">
@@ -24,6 +34,7 @@ export function Navigation() {
             Jobs
           </Link>
         </nav>
+        <AuthStatus />
       </div>
     </header>
   );
