@@ -14,7 +14,7 @@ export function AuthStatus() {
 
   if (isLoading) {
     return (
-      <span className="ml-auto text-xs uppercase tracking-[0.14em] text-ash">
+      <span className="ml-auto text-xs uppercase tracking-widest text-ash">
         Checking
       </span>
     );
@@ -23,7 +23,7 @@ export function AuthStatus() {
   if (!user) {
     return (
       <Link
-        className="ml-auto text-xs uppercase tracking-[0.14em] text-sulfur transition hover:text-ivory"
+        className="ml-auto text-xs uppercase tracking-widest text-sulfur transition hover:text-ivory"
         href="/"
       >
         Sign in
@@ -32,12 +32,12 @@ export function AuthStatus() {
   }
 
   return (
-    <div className="ml-auto flex flex-wrap items-center justify-end gap-3 text-xs uppercase tracking-[0.14em]">
-      <span className="max-w-[12rem] truncate text-ash">
+    <div className="ml-auto flex flex-wrap items-center justify-end gap-3 text-xs uppercase tracking-widest">
+      <span className="max-w-48 truncate text-ash">
         {user.email ?? "Signed in"}
       </span>
       <Button
-        className="py-0 text-xs tracking-[0.14em]"
+        className="py-0 text-xs tracking-widest"
         disabled={isSigningOut}
         onClick={async () => {
           setSignOutError(null);

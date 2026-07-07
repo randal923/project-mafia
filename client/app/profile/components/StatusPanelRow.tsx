@@ -15,9 +15,9 @@ export function StatusPanelRow({
 
   return (
     <div className="flex items-center justify-between gap-4 px-3 py-3">
-      <p className="text-xs uppercase tracking-[0.18em] text-ash">{label}</p>
+      <p className="text-xs uppercase tracking-widest text-ash">{label}</p>
       <p
-        className={`text-right text-lg uppercase tracking-[0.12em] ${valueColorClass}`}
+        className={`text-right text-lg uppercase tracking-widest ${valueColorClass}`}
       >
         {value}
       </p>

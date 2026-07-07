@@ -58,7 +58,7 @@ export function StashGrid({
         {cells.map((item, index) => (
           <div
             key={item?.id ?? `empty-${index}`}
-            className="min-h-0 border-b border-r border-line bg-[linear-gradient(135deg,rgb(240_234_219_/_0.035)_25%,transparent_25%,transparent_50%,rgb(240_234_219_/_0.035)_50%,rgb(240_234_219_/_0.035)_75%,transparent_75%,transparent)] bg-[length:10px_10px] p-1.5"
+            className="min-h-0 border-b border-r border-line bg-stash-grid p-1.5"
           >
             {item ? (
               <div

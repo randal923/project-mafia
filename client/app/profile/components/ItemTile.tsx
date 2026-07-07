@@ -23,19 +23,19 @@ export function ItemTile({ item, isCompact = false }: ItemTileProps) {
             className="h-full w-full object-contain p-1"
           />
         ) : (
-          <span className="text-xl uppercase tracking-[0.14em] text-iron">
+          <span className="text-xl uppercase tracking-widest text-iron">
             {item.icon}
           </span>
         )}
       </div>
       <p
-        className={`truncate uppercase tracking-[0.12em] text-ivory ${
+        className={`truncate uppercase tracking-widest text-ivory ${
           isCompact ? "text-xs" : "text-sm"
         }`}
       >
         {item.label}
       </p>
-      <p className="mt-1 truncate text-[0.65rem] uppercase tracking-[0.12em] text-ash">
+      <p className="mt-1 truncate text-xs uppercase tracking-widest text-ash">
         {item.detail}
       </p>
     </div>

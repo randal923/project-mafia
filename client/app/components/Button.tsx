@@ -27,7 +27,7 @@ export function Button({
   return (
     <button
       {...buttonProps}
-      className={`border px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] transition disabled:cursor-not-allowed disabled:opacity-60 ${variantClassName} ${fullWidth ? "w-full" : ""} ${className}`}
+      className={`border px-5 py-3 text-sm font-semibold uppercase tracking-widest transition disabled:cursor-not-allowed disabled:opacity-60 ${variantClassName} ${fullWidth ? "w-full" : ""} ${className}`}
       type={type}
     >
       {children}

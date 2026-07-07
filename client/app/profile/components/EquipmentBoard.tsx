@@ -30,11 +30,11 @@ type EquipmentBoardProps = {
 };
 
 const slotPositions: Record<EquipmentSlotId, string> = {
-  head: "left-[38%] top-2",
-  torso: "left-[38%] top-[32%]",
-  hand: "left-3 top-[46%]",
-  waist: "right-3 top-[46%]",
-  feet: "left-[38%] bottom-2",
+  head: "left-2/5 top-2",
+  torso: "left-2/5 top-1/3",
+  hand: "left-3 top-1/2",
+  waist: "right-3 top-1/2",
+  feet: "left-2/5 bottom-2",
 };
 
 export function EquipmentBoard({
@@ -52,7 +52,7 @@ export function EquipmentBoard({
 }: EquipmentBoardProps) {
   return (
     <Card
-      className="flex min-h-0 flex-[0_0_52%] flex-col"
+      className="flex min-h-0 flex-none basis-1/2 flex-col"
       eyebrow="Profile"
       headerDetail="Gear slots"
       title="Loadout"
@@ -65,10 +65,10 @@ export function EquipmentBoard({
           alt=""
           fill
           sizes="520px"
-          className="object-contain opacity-[0.12] grayscale"
+          className="object-contain opacity-10 grayscale"
         />
         <div className="absolute inset-7 border border-line/60" />
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgb(240_234_219_/_0.04)_25%,transparent_25%,transparent_50%,rgb(240_234_219_/_0.04)_50%,rgb(240_234_219_/_0.04)_75%,transparent_75%,transparent)] bg-[length:12px_12px] opacity-25" />
+        <div className="absolute inset-0 bg-loadout-grid opacity-25" />
 
         {equipmentSlots.map((slot) => {
           const itemId = loadoutState.equipment[slot.id];
@@ -97,10 +97,10 @@ export function EquipmentBoard({
               onDrop={(event) => onDropOnSlot(event, slot.id)}
             >
               <div className="mb-2 flex items-center justify-between gap-2">
-                <p className="text-[0.65rem] uppercase tracking-[0.18em] text-ash">
+                <p className="text-xs uppercase tracking-widest text-ash">
                   {slot.label}
                 </p>
-                <p className="text-[0.65rem] uppercase tracking-[0.16em] text-sulfur">
+                <p className="text-xs uppercase tracking-widest text-sulfur">
                   Slot
                 </p>
               </div>
@@ -108,7 +108,7 @@ export function EquipmentBoard({
               {item ? (
                 <div
                   draggable
-                  className="h-[4.8rem] cursor-grab active:cursor-grabbing"
+                  className="h-20 cursor-grab active:cursor-grabbing"
                   onDrag={onDragMove}
                   onDragEnd={onDragEnd}
                   onDragStart={(event) =>
@@ -122,7 +122,7 @@ export function EquipmentBoard({
                   <ItemTile item={item} isCompact />
                 </div>
               ) : (
-                <div className="flex h-[4.8rem] items-center justify-center border border-dashed border-line text-xs uppercase tracking-[0.16em] text-iron">
+                <div className="flex h-20 items-center justify-center border border-dashed border-line text-xs uppercase tracking-widest text-iron">
                   Empty
                 </div>
               )}

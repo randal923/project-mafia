@@ -20,8 +20,8 @@ export function AuthGate({ children }: AuthGateProps) {
 
   if (isLoading) {
     return (
-      <section className="flex min-h-[24rem] items-center justify-center">
-        <p className="text-sm uppercase tracking-[0.18em] text-ash">
+      <section className="flex min-h-96 items-center justify-center">
+        <p className="text-sm uppercase tracking-widest text-ash">
           Checking access
         </p>
       </section>

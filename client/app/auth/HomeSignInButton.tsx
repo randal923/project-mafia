@@ -19,7 +19,7 @@ export function HomeSignInButton() {
     <section className="relative z-10 flex min-h-dvh items-center justify-start px-5 py-8 sm:px-8 lg:px-16">
       <div className="flex w-full max-w-xs flex-col items-start gap-4">
         {authError ? (
-          <p className="w-full border border-blood bg-[rgb(116_31_24_/_0.2)] px-3 py-2 text-sm text-ivory">
+          <p className="w-full border border-blood bg-blood/20 px-3 py-2 text-sm text-ivory">
             {authError}
           </p>
         ) : null}

@@ -25,8 +25,8 @@ const titleSizeClassBySize: Record<CardTitleSize, string> = {
 };
 
 const titleTrackingClassByTracking: Record<CardTitleTracking, string> = {
-  normal: "tracking-[0.16em]",
-  wide: "tracking-[0.2em]",
+  normal: "tracking-widest",
+  wide: "tracking-widest",
 };
 
 export function Card({
@@ -52,7 +52,7 @@ export function Card({
     >
       <div className="flex items-end justify-between border-b border-line px-3 py-2">
         <div>
-          <p className="text-xs uppercase tracking-[0.18em] text-ash">
+          <p className="text-xs uppercase tracking-widest text-ash">
             {eyebrow}
           </p>
           <Title
@@ -62,7 +62,7 @@ export function Card({
           </Title>
         </div>
         {headerDetail ? (
-          <p className="text-xs uppercase tracking-[0.14em] text-sulfur">
+          <p className="text-xs uppercase tracking-widest text-sulfur">
             {headerDetail}
           </p>
         ) : null}

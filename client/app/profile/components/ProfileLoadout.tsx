@@ -128,7 +128,7 @@ export function ProfileLoadout() {
 
   return (
     <section
-      className="mx-auto grid h-full min-h-0 max-w-[105rem] gap-3 xl:grid-cols-[34rem_minmax(22rem,1fr)_18rem]"
+      className="mx-auto grid h-full min-h-0 max-w-profile-loadout gap-3 xl:grid-profile-loadout"
       onDragOver={updateDragPosition}
     >
       <div className="flex min-h-0 flex-col gap-3">

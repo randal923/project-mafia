@@ -41,6 +41,72 @@
   --shadow-menu: 0 32px 90px rgb(0 0 0 / 0.45);
 }
 
+@utility bg-menu-veil {
+  background-image: linear-gradient(
+    90deg,
+    var(--obsidian) 0%,
+    rgb(8 8 6 / 0.9) 28%,
+    rgb(8 8 6 / 0.5) 60%,
+    rgb(8 8 6 / 0.76) 100%
+  );
+}
+
+@utility bg-menu-glow {
+  background-image:
+    radial-gradient(circle at 76% 28%, rgb(229 213 79 / 0.16), transparent 34%),
+    radial-gradient(circle at 18% 86%, rgb(116 31 24 / 0.3), transparent 30%);
+}
+
+@utility bg-profile-page {
+  background-image:
+    radial-gradient(circle at 52% 0%, rgb(169 114 53 / 0.18), transparent 32%),
+    linear-gradient(180deg, var(--charcoal), var(--obsidian) 46%);
+}
+
+@utility bg-stash-grid {
+  background-image: linear-gradient(
+    135deg,
+    rgb(240 234 219 / 0.035) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgb(240 234 219 / 0.035) 50%,
+    rgb(240 234 219 / 0.035) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 10px 10px;
+}
+
+@utility bg-loadout-grid {
+  background-image: linear-gradient(
+    135deg,
+    rgb(240 234 219 / 0.04) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgb(240 234 219 / 0.04) 50%,
+    rgb(240 234 219 / 0.04) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 12px 12px;
+}
+
+@utility grid-profile-loadout {
+  grid-template-columns: 34rem minmax(22rem, 1fr) 18rem;
+}
+
+@utility h-profile-character {
+  height: min(76dvh, 48rem);
+}
+
+@utility max-w-profile-loadout {
+  max-width: 105rem;
+}
+
+@utility drop-shadow-profile-character {
+  filter: drop-shadow(0 30px 35px rgb(0 0 0 / 0.65));
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
