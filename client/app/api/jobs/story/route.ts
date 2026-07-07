@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import type { Job, JobStoryChoice, JobStoryScene } from "../../../models/job";
-import { maximumJobStoryChoiceDepth } from "../../../models/job";
+import {
+  maximumJobStoryChoiceDepth,
+  minimumJobStoryChoiceDepth,
+} from "../../../models/job";
 import { AIService } from "../../../services/ai";
 import { introPromptVersion } from "../../../services/ai/promptVersions";
 import {
@@ -89,7 +92,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (choicePath.length < maximumJobStoryChoiceDepth) {
+    if (!shouldResolveJobStory(job, choicePath)) {
       const beat = await AIService.createJobStoryBeat({
         choice,
         choicePath,
@@ -167,4 +170,28 @@ function parseStoryChoicePath(value: unknown): JobStoryChoice[] | null {
   }
 
   return choices;
+}
+
+function shouldResolveJobStory(job: Job, choicePath: JobStoryChoice[]): boolean {
+  if (choicePath.length < minimumJobStoryChoiceDepth) {
+    return false;
+  }
+
+  if (choicePath.length >= maximumJobStoryChoiceDepth) {
+    return true;
+  }
+
+  const pathScore = scoreChoicePath(job, choicePath);
+  const resolveChance = choicePath.length === minimumJobStoryChoiceDepth ? 45 : 70;
+
+  return pathScore < resolveChance;
+}
+
+function scoreChoicePath(job: Job, choicePath: JobStoryChoice[]): number {
+  const pathKey = [job.id, ...choicePath.map((choice) => choice.id)].join("|");
+
+  return Array.from(pathKey).reduce(
+    (score, character) => (score + character.charCodeAt(0)) % 100,
+    0,
+  );
 }

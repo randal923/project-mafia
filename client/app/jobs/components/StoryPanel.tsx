@@ -4,7 +4,6 @@ import type {
   JobStoryOutcome,
   JobStoryScene,
 } from "../../models/job";
-import { maximumJobStoryChoiceDepth } from "../../models/job";
 import { OutcomePanel } from "./OutcomePanel";
 
 type StoryPanelProps = {
@@ -29,9 +28,7 @@ export function StoryPanel({
   storyPath,
 }: StoryPanelProps) {
   const previousScenes = storyPath.slice(0, -1);
-  const nextDecisionNumber = story
-    ? Math.min(story.choiceDepth + 1, maximumJobStoryChoiceDepth)
-    : 1;
+  const nextDecisionNumber = story ? story.choiceDepth + 1 : 1;
 
   return (
     <article className="min-h-96 border border-line bg-charcoal/35 lg:col-span-2">
@@ -44,7 +41,7 @@ export function StoryPanel({
         </h1>
         {story ? (
           <p className="mt-2 text-xs uppercase tracking-widest text-ash">
-            Path {nextDecisionNumber} of {maximumJobStoryChoiceDepth}
+            Choice {nextDecisionNumber}
           </p>
         ) : null}
       </div>

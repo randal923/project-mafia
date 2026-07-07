@@ -1,5 +1,5 @@
-export const introPromptVersion = "job-intro-v5";
+export const introPromptVersion = "job-intro-v8";
 
-export const storyBeatPromptVersion = "job-beat-v4";
+export const storyBeatPromptVersion = "job-beat-v7";
 
-export const outcomePromptVersion = "job-outcome-v5";
+export const outcomePromptVersion = "job-outcome-v8";

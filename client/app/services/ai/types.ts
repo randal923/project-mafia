@@ -3,7 +3,12 @@ import type {
   JobStoryChoice,
   JobStoryScene,
 } from "../../models/job";
-import type { NarrativeEvent, Player, StoryThread } from "../../models/player";
+import type {
+  LoadoutWeapon,
+  NarrativeEvent,
+  Player,
+  StoryThread,
+} from "../../models/player";
 
 export type AIIntroInput = {
   job: Job;
@@ -31,6 +36,10 @@ export type PlayerPromptContext = {
   effectivePower: number;
   heat: number;
   importantFacts: string[];
+  loadout: {
+    carriedItems: Pick<LoadoutWeapon, "detail" | "label" | "power" | "slot">[];
+    equippedItems: Pick<LoadoutWeapon, "detail" | "label" | "power" | "slot">[];
+  };
   majorEvents: Pick<
     NarrativeEvent,
     "districtId" | "relatedFactionIds" | "summary" | "title" | "type"

@@ -35,7 +35,7 @@ export const jobStoryChoiceApproaches = [
   "social",
 ] as const;
 
-export const minimumJobStoryChoiceDepth = 4;
+export const minimumJobStoryChoiceDepth = 3;
 
 export const maximumJobStoryChoiceDepth = 5;
 
