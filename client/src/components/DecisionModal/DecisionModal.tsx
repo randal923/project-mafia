@@ -6,6 +6,7 @@ import {
   type DialogHTMLAttributes,
   type SyntheticEvent
 } from "react";
+import { StoryPanel } from "../StoryPanel/StoryPanel";
 
 type DecisionTone = "primary" | "secondary" | "danger";
 
@@ -75,7 +76,7 @@ export function DecisionModal({
   };
 
   const classNames = [
-    "fixed inset-0 m-auto max-h-[calc(100vh-2rem)] w-11/12 max-w-2xl overflow-y-auto rounded-panel border border-line bg-surface-raised p-0 text-ink shadow-panel backdrop:bg-black/80 backdrop:backdrop-blur-sm",
+    "fixed inset-0 m-auto max-h-[calc(100vh-2rem)] w-11/12 max-w-3xl overflow-y-auto rounded-panel border border-line bg-surface-raised p-0 text-ink shadow-panel backdrop:bg-black/80 backdrop:backdrop-blur-sm",
     className
   ]
     .filter(Boolean)
@@ -97,9 +98,11 @@ export function DecisionModal({
           {title}
         </h2>
       </div>
-      <div className="p-6">
-        <p className="m-0 text-xl leading-relaxed text-ink">{intro}</p>
-        <div className="my-6 flex items-center gap-3" aria-hidden="true">
+      <div className="px-6 py-8 md:py-10">
+        <StoryPanel story={intro} />
+      </div>
+      <div className="px-6 pb-6">
+        <div className="mb-5 flex items-center gap-3" aria-hidden="true">
           <span className="h-px flex-1 bg-line" />
           <span className="h-3 w-3 rotate-45 border border-line" />
           <span className="h-px flex-1 bg-line" />
@@ -107,16 +110,16 @@ export function DecisionModal({
         <div className="grid gap-3 md:grid-cols-2">
           {options.map((option) => (
             <button
-              className={`min-h-36 cursor-pointer rounded-control border bg-black/30 p-4 text-left transition-[background-color,border-color,color] duration-150 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright disabled:cursor-not-allowed disabled:opacity-50 ${optionToneClasses[option.tone ?? "secondary"]}`}
+              className={`min-h-28 cursor-pointer rounded-control border bg-black/30 p-3 text-left transition-[background-color,border-color,color] duration-150 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright disabled:cursor-not-allowed disabled:opacity-50 ${optionToneClasses[option.tone ?? "secondary"]}`}
               disabled={option.disabled}
               key={option.id}
               onClick={option.onSelect}
               type="button"
             >
-              <span className="block font-display text-3xl uppercase leading-none tracking-normal">
+              <span className="block font-display text-2xl uppercase leading-none tracking-normal">
                 {option.label}
               </span>
-              <span className="mt-3 block text-base leading-relaxed text-muted">
+              <span className="mt-2 block text-sm leading-relaxed text-muted">
                 {option.description}
               </span>
             </button>

@@ -79,6 +79,16 @@ Use for LLM-authored world events, rumors, consequences, and story hooks.
 - Use `urgent` when the player should treat the event as risky or time-sensitive.
 - Include an action when there is a clear next player decision.
 
+### StoryPanel
+
+File: `client/src/components/StoryPanel/StoryPanel.tsx`
+
+Use for focused story text that should sit inside a larger interaction surface, such as a modal or decision flow.
+
+- Keep the story concise enough to read before choosing.
+- Use it when narrative context is more important than surrounding controls.
+- Do not use it for repeated event feeds; use `NarrativeCard` for those.
+
 ### DecisionModal
 
 File: `client/src/components/DecisionModal/DecisionModal.tsx`
