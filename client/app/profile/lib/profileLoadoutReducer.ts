@@ -1,10 +1,18 @@
-import { profileItemsById } from "./profileData";
-import type { LoadoutAction, LoadoutState } from "./profileTypes";
+import type {
+  LoadoutAction,
+  LoadoutState,
+  ProfileItemsById,
+} from "./profileTypes";
 
 export function profileLoadoutReducer(
   state: LoadoutState,
   action: LoadoutAction,
+  itemsById: ProfileItemsById,
 ): LoadoutState {
+  if (action.type === "reset") {
+    return action.loadoutState;
+  }
+
   if (action.type === "drop_on_inventory") {
     if (action.payload.source === "inventory") {
       return state;
@@ -19,9 +27,9 @@ export function profileLoadoutReducer(
     };
   }
 
-  const item = profileItemsById[action.payload.itemId];
+  const item = itemsById[action.payload.itemId];
 
-  if (!item || item.category !== action.slotId) {
+  if (!item || item.slot !== action.slotId) {
     return state;
   }
 

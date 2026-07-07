@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuth } from "../../auth/useAuth";
-import type { Profile } from "../lib/profileModel";
+import {
+  createContext,
+  createElement,
+  type PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useAuth } from "../auth/useAuth";
+import type { Profile } from "../models/player";
 
 type ProfileResponse = {
   profile: Profile;
@@ -29,7 +36,29 @@ type UseProfileResult = {
   setNickname: (nickname: string) => void;
 };
 
+const ProfileContext = createContext<UseProfileResult | null>(null);
+
+export function ProfileProvider({ children }: PropsWithChildren) {
+  const profileState = useProfileState();
+
+  return createElement(
+    ProfileContext.Provider,
+    { value: profileState },
+    children,
+  );
+}
+
 export function useProfile(): UseProfileResult {
+  const profileState = useContext(ProfileContext);
+
+  if (!profileState) {
+    throw new Error("useProfile must be used within ProfileProvider.");
+  }
+
+  return profileState;
+}
+
+function useProfileState(): UseProfileResult {
   const { user } = useAuth();
   const [profileRecord, setProfileRecord] = useState<ProfileRecord | null>(
     null,

@@ -1,4 +1,5 @@
-import type { Profile } from "./profileModel";
+import type { Profile } from "../../models/player";
+import { createDefaultLoadout } from "./profileLoadoutDefaults";
 
 type CreateDefaultProfileInput = {
   name: string;
@@ -21,13 +22,9 @@ export function createDefaultProfile({
     },
     status: "active",
     rank: "nobody",
+    loadout: createDefaultLoadout(),
     narrative: {
       origin: "ambitious_unknown",
-      personality: {
-        style: "calculated",
-        moralCode: "loyal_to_crew",
-        preferredApproach: "negotiation",
-      },
       storySummary: "",
       majorEvents: [],
       activeStoryThreads: [],

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "../../components/Button";
-import { useProfile } from "../hooks/useProfile";
+import { useProfile } from "../../hooks/useProfile";
 
 export function ProfileBootstrap() {
   const {

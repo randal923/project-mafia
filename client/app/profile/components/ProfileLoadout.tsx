@@ -6,7 +6,9 @@ import { DragPreview } from "./DragPreview";
 import { EquipmentBoard } from "./EquipmentBoard";
 import { StashGrid } from "./StashGrid";
 import { StatusPanel } from "./StatusPanel";
-import { useProfileLoadout } from "../hooks/useProfileLoadout";
+import { useProfile } from "../../hooks/useProfile";
+import { useProfileLoadout } from "../../hooks/useProfileLoadout";
+import type { Profile } from "../../models/player";
 import type {
   DragPayload,
   EquipmentSlot,
@@ -23,6 +25,36 @@ function isEquipmentSlotId(
 }
 
 export function ProfileLoadout() {
+  const { currentLoadError, isSignedIn, profile } = useProfile();
+
+  if (!isSignedIn) {
+    return null;
+  }
+
+  if (currentLoadError) {
+    return (
+      <section className="flex h-full items-center justify-center">
+        <p className="border border-blood bg-blood/20 px-4 py-3 text-sm text-ivory">
+          {currentLoadError}
+        </p>
+      </section>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <section className="flex h-full items-center justify-center">
+        <p className="text-sm uppercase tracking-widest text-ash">
+          Loading profile
+        </p>
+      </section>
+    );
+  }
+
+  return <ProfileLoadoutContent profile={profile} />;
+}
+
+function ProfileLoadoutContent({ profile }: { profile: Profile }) {
   const {
     dispatchLoadoutAction,
     equipmentSlots,
@@ -30,7 +62,7 @@ export function ProfileLoadout() {
     loadoutState,
     power,
     status,
-  } = useProfileLoadout();
+  } = useProfileLoadout(profile);
   const {
     activeTargetId: activeSlotId,
     clearDragState,
@@ -123,7 +155,7 @@ export function ProfileLoadout() {
       return false;
     }
 
-    return itemsById[draggedItemId]?.category === slotId;
+    return itemsById[draggedItemId]?.slot === slotId;
   };
 
   return (

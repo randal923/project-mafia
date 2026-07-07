@@ -3,7 +3,11 @@ import { getFirestore } from "firebase-admin/firestore";
 import { NextResponse } from "next/server";
 import { getFirebaseAdminApp } from "../../firebase/getFirebaseAdminApp";
 import { createDefaultProfile } from "../../profile/lib/createDefaultProfile";
-import type { Profile } from "../../profile/lib/profileModel";
+import {
+  normalizeLoadout,
+  shouldBackfillLoadout,
+} from "../../profile/lib/profileLoadoutDefaults";
+import type { Profile } from "../../models/player";
 
 type ProfileWriteResult = {
   profile: Profile;
@@ -102,12 +106,26 @@ export async function POST(request: Request) {
           };
         }
 
+        const existingData = profileSnapshot.data() as Profile;
+        const normalizedLoadout = normalizeLoadout(existingData.loadout);
         const existingProfile = {
-          ...profileFallback,
-          ...(profileSnapshot.data() as Partial<Profile> | undefined),
+          ...existingData,
+          loadout: normalizedLoadout,
         };
+        const profilePatch: {
+          loadout?: Profile["loadout"];
+          nickname?: Profile["nickname"];
+        } = {};
+
+        if (shouldBackfillLoadout(existingData.loadout)) {
+          profilePatch.loadout = normalizedLoadout;
+        }
 
         if (!nickname) {
+          if (Object.keys(profilePatch).length > 0) {
+            transaction.set(profileRef, profilePatch, { merge: true });
+          }
+
           return {
             profile: existingProfile,
             status: 200,
@@ -119,7 +137,11 @@ export async function POST(request: Request) {
           nickname,
         };
 
-        transaction.set(profileRef, { nickname }, { merge: true });
+        transaction.set(
+          profileRef,
+          { ...profilePatch, nickname },
+          { merge: true },
+        );
 
         return {
           profile: updatedProfile,
