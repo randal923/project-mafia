@@ -10,6 +10,8 @@ export type ProfileItem = {
   imageSrc?: string;
 };
 
+export type ProfileItemsById = Record<string, ProfileItem>;
+
 export type EquipmentSlot = {
   id: EquipmentSlotId;
   label: string;

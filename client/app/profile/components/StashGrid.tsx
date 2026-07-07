@@ -1,9 +1,14 @@
-import { profileItemsById } from "../lib/profileData";
-import type { DragPayload, LoadoutState } from "../lib/profileTypes";
+import type {
+  DragPayload,
+  LoadoutState,
+  ProfileItemsById,
+} from "../lib/profileTypes";
 import { Card } from "./Card";
 import { ItemTile } from "./ItemTile";
 
 type StashGridProps = {
+  itemsById: ProfileItemsById;
+  loadoutState: LoadoutState;
   onDragEnd: () => void;
   onDragMove: (event: React.DragEvent<HTMLElement>) => void;
   onDragStart: (
@@ -11,27 +16,28 @@ type StashGridProps = {
     payload: DragPayload,
   ) => void;
   onDropOnInventory: (event: React.DragEvent<HTMLElement>) => void;
-  state: LoadoutState;
 };
 
 const minimumStashCellCount = 12;
 const stashColumnCount = 4;
 
 export function StashGrid({
+  itemsById,
+  loadoutState,
   onDragEnd,
   onDragMove,
   onDragStart,
   onDropOnInventory,
-  state,
 }: StashGridProps) {
   const stashCellCount = Math.max(
     minimumStashCellCount,
-    Math.ceil(state.inventory.length / stashColumnCount) * stashColumnCount,
+    Math.ceil(loadoutState.inventory.length / stashColumnCount) *
+      stashColumnCount,
   );
   const cells = Array.from({ length: stashCellCount }, (_, index) => {
-    const itemId = state.inventory[index];
+    const itemId = loadoutState.inventory[index];
 
-    return itemId ? profileItemsById[itemId] : null;
+    return itemId ? itemsById[itemId] : null;
   });
 
   return (

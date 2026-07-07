@@ -1,24 +1,25 @@
-import { profileStatus } from "../lib/profileData";
+import type { ProfileStatus } from "../lib/profileTypes";
 import { Card } from "./Card";
 import { StatusPanelRow } from "./StatusPanelRow";
 
 type StatusPanelProps = {
   power: number;
+  status: ProfileStatus;
 };
 
-export function StatusPanel({ power }: StatusPanelProps) {
+export function StatusPanel({ power, status }: StatusPanelProps) {
   const rows = [
     {
       id: "name",
       label: "Name",
       tone: "default",
-      value: profileStatus.name,
+      value: status.name,
     },
     {
       id: "cash-on-hand",
       label: "Cash on Hand",
       tone: "default",
-      value: profileStatus.cashOnHand,
+      value: status.cashOnHand,
     },
     {
       id: "power",

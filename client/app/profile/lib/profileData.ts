@@ -2,6 +2,7 @@ import type {
   EquipmentSlot,
   LoadoutState,
   ProfileItem,
+  ProfileItemsById,
   ProfileStatus,
 } from "./profileTypes";
 
@@ -33,7 +34,7 @@ export const profileItems: ProfileItem[] = [
 
 export const profileItemsById = Object.fromEntries(
   profileItems.map((item) => [item.id, item]),
-) as Record<string, ProfileItem>;
+) as ProfileItemsById;
 
 export const initialLoadoutState: LoadoutState = {
   equipment: {

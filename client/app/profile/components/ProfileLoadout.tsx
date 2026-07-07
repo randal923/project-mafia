@@ -1,36 +1,36 @@
 "use client";
 
-import { useReducer } from "react";
 import { useDragState } from "../../hooks/useDragState";
 import { CharacterDisplay } from "./CharacterDisplay";
 import { DragPreview } from "./DragPreview";
 import { EquipmentBoard } from "./EquipmentBoard";
 import { StashGrid } from "./StashGrid";
 import { StatusPanel } from "./StatusPanel";
-import {
-  equipmentSlots,
-  initialLoadoutState,
-  profileItemsById,
-  profileStatus,
-} from "../lib/profileData";
-import { profileLoadoutReducer } from "../lib/profileLoadoutReducer";
+import { useProfile } from "../hooks/useProfile";
 import type {
   DragPayload,
+  EquipmentSlot,
   EquipmentSlotId,
-  ProfileItem,
 } from "../lib/profileTypes";
 
 const dragMimeType = "application/x-project-mafia-item";
 
-function isEquipmentSlotId(value: unknown): value is EquipmentSlotId {
+function isEquipmentSlotId(
+  value: unknown,
+  equipmentSlots: EquipmentSlot[],
+): value is EquipmentSlotId {
   return equipmentSlots.some((slot) => slot.id === value);
 }
 
 export function ProfileLoadout() {
-  const [state, dispatch] = useReducer(
-    profileLoadoutReducer,
-    initialLoadoutState,
-  );
+  const {
+    dispatchLoadoutAction,
+    equipmentSlots,
+    itemsById,
+    loadoutState,
+    power,
+    status,
+  } = useProfile();
   const {
     activeTargetId: activeSlotId,
     clearDragState,
@@ -41,14 +41,7 @@ export function ProfileLoadout() {
     updateDragPosition,
   } = useDragState<string, EquipmentSlotId>();
 
-  const draggedItem = draggedItemId ? profileItemsById[draggedItemId] : null;
-  const equippedItems = Object.values(state.equipment)
-    .map((itemId) => (itemId ? profileItemsById[itemId] : null))
-    .filter((item): item is ProfileItem => item !== null);
-  const power = equippedItems.reduce(
-    (total, item) => total + item.power,
-    profileStatus.basePower,
-  );
+  const draggedItem = draggedItemId ? itemsById[draggedItemId] : null;
 
   const startDrag = (
     event: React.DragEvent<HTMLElement>,
@@ -81,7 +74,7 @@ export function ProfileLoadout() {
       if (
         payload.source === "equipment" &&
         typeof payload.itemId === "string" &&
-        isEquipmentSlotId(payload.slotId)
+        isEquipmentSlotId(payload.slotId, equipmentSlots)
       ) {
         return {
           source: payload.source,
@@ -109,7 +102,7 @@ export function ProfileLoadout() {
       return;
     }
 
-    dispatch({ type: "drop_on_slot", payload, slotId });
+    dispatchLoadoutAction({ type: "drop_on_slot", payload, slotId });
   };
 
   const dropOnInventory = (event: React.DragEvent<HTMLElement>) => {
@@ -122,7 +115,7 @@ export function ProfileLoadout() {
       return;
     }
 
-    dispatch({ type: "drop_on_inventory", payload });
+    dispatchLoadoutAction({ type: "drop_on_inventory", payload });
   };
 
   const canDropOnSlot = (slotId: EquipmentSlotId) => {
@@ -130,7 +123,7 @@ export function ProfileLoadout() {
       return false;
     }
 
-    return profileItemsById[draggedItemId]?.category === slotId;
+    return itemsById[draggedItemId]?.category === slotId;
   };
 
   return (
@@ -142,26 +135,29 @@ export function ProfileLoadout() {
         <EquipmentBoard
           activeSlotId={activeSlotId}
           canDropOnSlot={canDropOnSlot}
+          equipmentSlots={equipmentSlots}
+          itemsById={itemsById}
+          loadoutState={loadoutState}
           onDragEnd={clearDragState}
           onDragLeave={() => setActiveSlotId(null)}
           onDragMove={updateDragPosition}
           onDragStart={startDrag}
           onDropOnSlot={dropOnSlot}
           onSetActiveSlot={setActiveSlotId}
-          state={state}
         />
         <StashGrid
+          itemsById={itemsById}
+          loadoutState={loadoutState}
           onDragEnd={clearDragState}
           onDragMove={updateDragPosition}
           onDragStart={startDrag}
           onDropOnInventory={dropOnInventory}
-          state={state}
         />
       </div>
 
       <CharacterDisplay />
 
-      <StatusPanel power={power} />
+      <StatusPanel power={power} status={status} />
 
       <DragPreview item={draggedItem} position={dragPosition} />
     </section>

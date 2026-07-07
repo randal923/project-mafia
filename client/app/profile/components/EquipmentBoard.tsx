@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { equipmentSlots, profileItemsById } from "../lib/profileData";
 import type {
   DragPayload,
+  EquipmentSlot,
   EquipmentSlotId,
   LoadoutState,
+  ProfileItemsById,
 } from "../lib/profileTypes";
 import { Card } from "./Card";
 import { ItemTile } from "./ItemTile";
@@ -11,6 +12,9 @@ import { ItemTile } from "./ItemTile";
 type EquipmentBoardProps = {
   activeSlotId: EquipmentSlotId | null;
   canDropOnSlot: (slotId: EquipmentSlotId) => boolean;
+  equipmentSlots: EquipmentSlot[];
+  itemsById: ProfileItemsById;
+  loadoutState: LoadoutState;
   onDragEnd: () => void;
   onDragLeave: () => void;
   onDragMove: (event: React.DragEvent<HTMLElement>) => void;
@@ -23,7 +27,6 @@ type EquipmentBoardProps = {
     slotId: EquipmentSlotId,
   ) => void;
   onSetActiveSlot: (slotId: EquipmentSlotId) => void;
-  state: LoadoutState;
 };
 
 const slotPositions: Record<EquipmentSlotId, string> = {
@@ -37,13 +40,15 @@ const slotPositions: Record<EquipmentSlotId, string> = {
 export function EquipmentBoard({
   activeSlotId,
   canDropOnSlot,
+  equipmentSlots,
+  itemsById,
+  loadoutState,
   onDragEnd,
   onDragLeave,
   onDragMove,
   onDragStart,
   onDropOnSlot,
   onSetActiveSlot,
-  state,
 }: EquipmentBoardProps) {
   return (
     <Card
@@ -66,8 +71,8 @@ export function EquipmentBoard({
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgb(240_234_219_/_0.04)_25%,transparent_25%,transparent_50%,rgb(240_234_219_/_0.04)_50%,rgb(240_234_219_/_0.04)_75%,transparent_75%,transparent)] bg-[length:12px_12px] opacity-25" />
 
         {equipmentSlots.map((slot) => {
-          const itemId = state.equipment[slot.id];
-          const item = itemId ? profileItemsById[itemId] : null;
+          const itemId = loadoutState.equipment[slot.id];
+          const item = itemId ? itemsById[itemId] : null;
           const canDrop = canDropOnSlot(slot.id);
           const isActive = activeSlotId === slot.id && canDrop;
 
