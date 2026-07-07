@@ -1,3 +1,5 @@
+import { Frame } from "../Frame/Frame";
+
 type StatTone = "neutral" | "profit" | "danger";
 
 type StatPanelProps = {
@@ -8,9 +10,15 @@ type StatPanelProps = {
 };
 
 const toneClasses: Record<StatTone, string> = {
-  danger: "border-t-danger-strong text-danger-strong",
-  neutral: "border-t-brass text-brass",
-  profit: "border-t-profit text-profit"
+  danger: "text-danger-strong",
+  neutral: "text-brass",
+  profit: "text-profit"
+};
+
+const toneBorderColors: Record<StatTone, "brass" | "danger" | "profit"> = {
+  danger: "danger",
+  neutral: "brass",
+  profit: "profit"
 };
 
 export function StatPanel({
@@ -20,25 +28,21 @@ export function StatPanel({
   value
 }: StatPanelProps) {
   return (
-    <article
-      className={`min-h-36 rounded-panel border border-t-2 border-line bg-surface p-4 ${toneClasses[tone]}`}
-      aria-label={label}
+    <Frame
+      ariaLabel={label}
+      className={`min-h-36 ${toneClasses[tone]}`}
+      element="article"
+      headerIcon="diamond"
+      headerTitle={label}
+      topBorderColor={toneBorderColors[tone]}
+      withHeader
     >
-      <div className="mb-4 flex items-center justify-between gap-4 border-b border-line pb-3">
-        <p className="m-0 font-display text-2xl uppercase leading-none tracking-normal text-current">
-          {label}
-        </p>
-        <span
-          className="h-2 w-2 rotate-45 border border-current"
-          aria-hidden="true"
-        />
-      </div>
       <p className="m-0 font-display text-5xl uppercase leading-none tracking-normal text-ink">
         {value}
       </p>
       <p className="mt-4 mb-0 text-base leading-relaxed text-muted">
         {detail}
       </p>
-    </article>
+    </Frame>
   );
 }

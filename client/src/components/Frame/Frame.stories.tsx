@@ -25,3 +25,14 @@ export const LongStory: Story = {
       "The union boss sends word that the docks are quiet, too quiet. A missing manifest points to a shipment no one wants named, and every crew in the ward is waiting to see who moves first."
   }
 };
+
+export const WithHeader: Story = {
+  args: {
+    children:
+      "Detectives are watching the docks, and the next risky order may pull patrols into the ward.",
+    className: "text-brass",
+    headerIcon: "diamond",
+    headerTitle: "Heat",
+    withHeader: true
+  }
+};

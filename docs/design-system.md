@@ -93,10 +93,12 @@ Use for compact labels inside cards, ledgers, and decision surfaces.
 
 File: `client/src/components/Frame/Frame.tsx`
 
-Use to frame focused story text or other concise content inside a larger interaction surface, such as a modal or decision flow.
+Use to frame focused story text, stat summaries, or short feedback inside a larger interaction surface, such as a modal or decision flow.
 
-- Keep the story concise enough to read before choosing.
-- Use it when narrative context is more important than surrounding controls.
+- Keep framed content concise enough to scan before choosing or acting.
+- Use it when narrative context, status, or immediate feedback is more important than surrounding controls.
+- Pass `withHeader`, `headerTitle`, and optional header props when the frame needs a separated title row.
+- Pass `topBorderColor` to change only the thick top border from its default line color.
 - Do not use it for repeated event feeds; use `NarrativeCard` for those.
 
 ### Modal
