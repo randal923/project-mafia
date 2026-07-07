@@ -37,7 +37,7 @@ export function NarrativeCard({
         </p>
         <p className="m-0 text-sm font-medium text-faint">{timeLabel}</p>
       </div>
-      <h2 className="mt-6 mb-5 max-w-3xl font-display text-5xl uppercase leading-none tracking-normal text-title md:text-6xl">
+      <h2 className="mt-6 mb-5 max-w-3xl font-display text-4xl uppercase leading-none tracking-normal text-title md:text-5xl">
         {title}
       </h2>
       <div className="mb-5 flex items-center gap-3" aria-hidden="true">
@@ -46,10 +46,10 @@ export function NarrativeCard({
         <span className="h-px flex-1 bg-line" />
       </div>
       <Tag label={district} />
-      <div className="mt-6 max-w-3xl text-xl leading-relaxed text-muted">
+      <div className="mt-8 max-w-3xl text-xl leading-relaxed text-muted">
         {children}
       </div>
-      {action ? <div className="mt-6">{action}</div> : null}
+      {action ? <div className="mt-8 flex justify-end">{action}</div> : null}
     </article>
   );
 }
