@@ -1,3 +1,6 @@
+import { cx } from "../../lib/cx";
+import { SectionHeader } from "../SectionHeader/SectionHeader";
+import { InventoryEmptySlot } from "./InventoryEmptySlot";
 import { InventoryItemCard } from "./InventoryItemCard";
 import { InventorySlotPanel } from "./InventorySlotPanel";
 import type {
@@ -47,20 +50,16 @@ export function Inventory({
   stashItems,
   stashTitle = "Stash"
 }: InventoryProps) {
-  const classNames = ["w-full max-w-5xl", className]
-    .filter(Boolean)
-    .join(" ");
+  const classNames = cx("w-full max-w-5xl", className);
   const stashCellCount = Math.max(1, stashCapacity, stashItems.length);
   const stashCells: Array<InventoryItem | undefined> = Array.from(
     { length: stashCellCount },
     (_, index) => stashItems[index]
   );
-  const stashClassNames = [
+  const stashClassNames = cx(
     "rounded-panel border border-line bg-surface shadow-panel",
-    showLoadout ? "mt-4" : ""
-  ]
-    .filter(Boolean)
-    .join(" ");
+    showLoadout && "mt-4"
+  );
 
   if (!showLoadout && !showStash) {
     return null;
@@ -70,19 +69,11 @@ export function Inventory({
     <section aria-label={ariaLabel} className={classNames}>
       {showLoadout ? (
         <div className="rounded-panel border border-line bg-surface shadow-panel">
-          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line bg-surface-raised px-4 py-4">
-            <div>
-              <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-faint">
-                {loadoutEyebrow}
-              </p>
-              <h2 className="mt-2 mb-0 font-display text-4xl uppercase leading-none tracking-normal text-title">
-                {loadoutTitle}
-              </h2>
-            </div>
-            <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-brass">
-              {gearSlotsLabel}
-            </p>
-          </div>
+          <SectionHeader
+            aside={gearSlotsLabel}
+            eyebrow={loadoutEyebrow}
+            title={loadoutTitle}
+          />
           <div className="grid gap-4 p-4 md:grid-cols-3 md:grid-rows-3">
             {slots.map((slot) => (
               <InventorySlotPanel
@@ -98,19 +89,11 @@ export function Inventory({
 
       {showStash ? (
         <div className={stashClassNames}>
-          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line bg-surface-raised px-4 py-4">
-            <div>
-              <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-faint">
-                Inventory
-              </p>
-              <h2 className="mt-2 mb-0 font-display text-4xl uppercase leading-none tracking-normal text-title">
-                {stashTitle}
-              </h2>
-            </div>
-            <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-brass">
-              {stashActionLabel}
-            </p>
-          </div>
+          <SectionHeader
+            aside={stashActionLabel}
+            eyebrow="Inventory"
+            title={stashTitle}
+          />
           <ol
             aria-label={stashTitle}
             className="m-0 grid list-none grid-cols-2 border-line p-0 sm:grid-cols-4"
@@ -124,7 +107,7 @@ export function Inventory({
                 {item ? (
                   <InventoryItemCard item={item} />
                 ) : (
-                  <div className="flex aspect-square w-full items-center justify-center border border-dashed border-line bg-black/20 p-3">
+                  <InventoryEmptySlot>
                     {index === 0 && stashItems.length === 0 ? (
                       <p className="m-0 text-center text-base leading-relaxed text-muted">
                         {emptyStashLabel}
@@ -132,7 +115,7 @@ export function Inventory({
                     ) : (
                       <span className="sr-only">Empty stash slot</span>
                     )}
-                  </div>
+                  </InventoryEmptySlot>
                 )}
               </li>
             ))}

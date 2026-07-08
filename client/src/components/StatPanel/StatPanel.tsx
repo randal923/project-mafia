@@ -1,3 +1,5 @@
+import { toneTextClasses } from "../../design-system/tones";
+import { typography } from "../../design-system/typography";
 import { Frame } from "../Frame/Frame";
 
 type StatTone = "neutral" | "profit" | "danger";
@@ -9,38 +11,32 @@ type StatPanelProps = {
   tone?: StatTone;
 };
 
-const toneClasses: Record<StatTone, string> = {
-  danger: "text-danger-strong",
-  neutral: "text-brass",
-  profit: "text-profit",
-};
-
-const toneBorderColors: Record<StatTone, "brass" | "danger" | "profit"> = {
+const toneTokens: Record<StatTone, "brass" | "danger" | "profit"> = {
   danger: "danger",
   neutral: "brass",
-  profit: "profit",
+  profit: "profit"
 };
 
 export function StatPanel({
   detail,
   label,
   tone = "neutral",
-  value,
+  value
 }: StatPanelProps) {
+  const toneToken = toneTokens[tone];
+
   return (
     <Frame
       ariaLabel={label}
-      className={`min-h-36 ${toneClasses[tone]}`}
+      className={`min-h-36 ${toneTextClasses[toneToken]}`}
       element="article"
       headerIcon="diamond"
       headerTitle={label}
-      topBorderColor={toneBorderColors[tone]}
+      topBorderColor={toneToken}
       withHeader
     >
-      <p className="m-0 font-display text-5xl uppercase leading-none tracking-normal text-ink">
-        {value}
-      </p>
-      <p className="mt-4 mb-0 text-base leading-relaxed text-muted">{detail}</p>
+      <p className={`m-0 ${typography.statValue}`}>{value}</p>
+      <p className={`mt-4 mb-0 ${typography.paragraph}`}>{detail}</p>
     </Frame>
   );
 }

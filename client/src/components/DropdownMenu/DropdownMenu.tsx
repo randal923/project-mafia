@@ -1,4 +1,6 @@
 import type { SelectHTMLAttributes } from "react";
+import { displayText, typography } from "../../design-system/typography";
+import { cx } from "../../lib/cx";
 
 type DropdownOption = {
   disabled?: boolean;
@@ -24,18 +26,14 @@ export function DropdownMenu({
   placeholder,
   ...props
 }: DropdownMenuProps) {
-  const classNames = [
-    "mafia-select w-full appearance-none rounded-control border border-line bg-black px-4 py-3 pr-10 font-display text-xl uppercase leading-none tracking-normal text-ink shadow-command focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+  const classNames = cx(
+    `mafia-select w-full appearance-none rounded-control border border-line bg-black px-4 py-3 pr-10 ${displayText} text-xl text-ink shadow-command focus:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
     className
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <label className="block">
-      <span className="mb-2 block font-display text-2xl uppercase leading-none tracking-normal text-brass">
-        {label}
-      </span>
+      <span className={`mb-2 block ${typography.eyebrow}`}>{label}</span>
       <span className="relative block">
         <select className={classNames} {...props}>
           {placeholder ? (
@@ -59,7 +57,7 @@ export function DropdownMenu({
         />
       </span>
       {helperText ? (
-        <span className="mt-2 block text-base leading-relaxed text-muted">
+        <span className={`mt-2 block ${typography.paragraph}`}>
           {helperText}
         </span>
       ) : null}

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { displayText, typography } from "../../design-system/typography";
+import { Diamond } from "../Diamond/Diamond";
 
 type NavigationItem = {
   badge?: string;
@@ -26,13 +28,10 @@ export function NavigationBar({
       className="border-b border-line py-4 md:flex md:items-center md:justify-between md:gap-6"
     >
       <Link
-        className="inline-flex items-center gap-3 font-display text-4xl uppercase leading-none tracking-normal text-title"
+        className={`inline-flex items-center gap-3 ${typography.brandMark}`}
         href="/"
       >
-        <span
-          className="h-4 w-4 rotate-45 border-2 border-brass"
-          aria-hidden="true"
-        />
+        <Diamond className="border-brass" size="large" />
         {brand}
       </Link>
       <div className="mt-4 flex flex-wrap items-center gap-2 md:mt-0 md:justify-end">
@@ -42,7 +41,7 @@ export function NavigationBar({
           return (
             <Link
               aria-current={isActive ? "page" : undefined}
-              className={`inline-flex min-h-10 items-center gap-2 rounded-control border px-4 py-2 font-display text-xl uppercase leading-none tracking-normal transition-[background-color,border-color,color] duration-150 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright ${
+              className={`inline-flex min-h-10 items-center gap-2 rounded-control border px-4 py-2 ${displayText} text-xl transition-[background-color,border-color,color] duration-150 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright ${
                 isActive
                   ? "border-brass bg-brass/10 text-ink"
                   : "border-transparent text-muted hover:border-line hover:text-ink"

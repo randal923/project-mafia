@@ -1,4 +1,6 @@
 import type { ButtonHTMLAttributes } from "react";
+import { displayText } from "../../design-system/typography";
+import { cx } from "../../lib/cx";
 
 type ButtonVariant = "primary" | "secondary" | "quiet";
 type ButtonSize = "medium" | "small";
@@ -29,14 +31,12 @@ export function Button({
   variant = "primary",
   ...props
 }: ButtonProps) {
-  const classNames = [
-    "inline-flex cursor-pointer items-center justify-center gap-2 rounded-control border text-center font-display uppercase leading-none tracking-normal transition-[background-color,border-color,color] duration-150 ease-in-out focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright disabled:cursor-not-allowed disabled:opacity-50",
+  const classNames = cx(
+    `inline-flex cursor-pointer items-center justify-center gap-2 rounded-control border text-center ${displayText} transition-[background-color,border-color,color] duration-150 ease-in-out focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright disabled:cursor-not-allowed disabled:opacity-50`,
     variantClasses[variant],
     sizeClasses[size],
     className
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return <button className={classNames} type={type} {...props} />;
 }

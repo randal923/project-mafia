@@ -1,44 +1,48 @@
 import type { AriaRole, ReactNode } from "react";
+import {
+  toneTopBorderClasses,
+  type TopBorderTone
+} from "../../design-system/tones";
+import { displayText, typography } from "../../design-system/typography";
+import { cx } from "../../lib/cx";
+import { Diamond } from "../Diamond/Diamond";
 
 type FrameElement = "article" | "div" | "section";
 type FrameHeaderIcon = "diamond";
-type FrameTopBorderColor =
-  | "brass"
-  | "brassBright"
-  | "danger"
-  | "line"
-  | "profit"
-  | "teal";
+type FramePadding = "medium" | "large";
+type FrameSurface = "base" | "raised";
 
 type FrameProps = {
   ariaLabel?: string;
   children: ReactNode;
   className?: string;
   element?: FrameElement;
+  headerAside?: ReactNode;
   headerDismissLabel?: string;
   headerIcon?: FrameHeaderIcon;
   headerLabel?: string;
   headerTitle?: string;
   onHeaderDismiss?: () => void;
+  padding?: FramePadding;
   role?: AriaRole;
-  topBorderColor?: FrameTopBorderColor;
+  surface?: FrameSurface;
+  topBorderColor?: TopBorderTone;
   withHeader?: boolean;
 };
 
-const topBorderColorClasses: Record<FrameTopBorderColor, string> = {
-  brass: "border-t-brass",
-  brassBright: "border-t-brass-bright",
-  danger: "border-t-danger-strong",
-  line: "border-t-line",
-  profit: "border-t-profit",
-  teal: "border-t-teal"
+const paddingClasses: Record<FramePadding, string> = {
+  large: "p-6",
+  medium: "p-4"
+};
+
+const surfaceClasses: Record<FrameSurface, string> = {
+  base: "bg-surface",
+  raised: "bg-surface-raised"
 };
 
 const headerTitleClasses = {
-  compact:
-    "m-0 font-display text-2xl uppercase leading-none tracking-normal text-current",
-  stacked:
-    "mt-2 mb-0 font-display text-3xl uppercase leading-none tracking-normal text-title"
+  compact: `m-0 ${displayText} text-2xl text-current`,
+  stacked: `mt-2 mb-0 ${typography.panelHeading}`
 };
 
 export function Frame({
@@ -46,25 +50,30 @@ export function Frame({
   children,
   className,
   element: Element = "div",
+  headerAside,
   headerDismissLabel = "Dismiss",
   headerIcon,
   headerLabel,
   headerTitle,
   onHeaderDismiss,
+  padding = "medium",
   role,
+  surface = "base",
   topBorderColor = "line",
   withHeader = false
 }: FrameProps) {
-  const classNames = [
-    "rounded-panel border border-t-2 border-line bg-surface p-4",
-    topBorderColorClasses[topBorderColor],
+  const classNames = cx(
+    "rounded-panel border border-t-2 border-line",
+    surfaceClasses[surface],
+    paddingClasses[padding],
+    toneTopBorderClasses[topBorderColor],
     className
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
   const shouldShowHeader =
     withHeader &&
-    Boolean(headerIcon || headerLabel || headerTitle || onHeaderDismiss);
+    Boolean(
+      headerAside || headerIcon || headerLabel || headerTitle || onHeaderDismiss
+    );
   const titleClasses = headerLabel
     ? headerTitleClasses.stacked
     : headerTitleClasses.compact;
@@ -73,10 +82,10 @@ export function Frame({
   return (
     <Element aria-label={ariaLabel} className={classNames} role={role}>
       {shouldShowHeader ? (
-        <div className="mb-4 flex items-center justify-between gap-4 border-b border-line pb-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border-b border-line pb-3">
           <div>
             {headerLabel ? (
-              <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-current">
+              <p className={`m-0 ${displayText} text-xl text-current`}>
                 {headerLabel}
               </p>
             ) : null}
@@ -86,16 +95,14 @@ export function Frame({
               </HeaderTitleElement>
             ) : null}
           </div>
+          {headerAside}
           {headerIcon === "diamond" ? (
-            <span
-              className="h-2 w-2 rotate-45 border border-current"
-              aria-hidden="true"
-            />
+            <Diamond className="border-current" />
           ) : null}
           {onHeaderDismiss ? (
             <button
               aria-label={headerDismissLabel}
-              className="min-h-8 min-w-8 cursor-pointer rounded-control border border-line bg-transparent font-display text-xl uppercase leading-none tracking-normal text-muted transition-[border-color,color] duration-150 hover:border-brass hover:text-ink focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright"
+              className={`min-h-8 min-w-8 cursor-pointer rounded-control border border-line bg-transparent ${displayText} text-xl text-muted transition-[border-color,color] duration-150 hover:border-brass hover:text-ink focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright`}
               onClick={onHeaderDismiss}
               type="button"
             >

@@ -6,7 +6,10 @@ import {
   type DialogHTMLAttributes,
   type SyntheticEvent
 } from "react";
+import { displayText, typography } from "../../design-system/typography";
+import { cx } from "../../lib/cx";
 import { Frame } from "../Frame/Frame";
+import { OrnamentDivider } from "../OrnamentDivider/OrnamentDivider";
 
 type ModalTone = "primary" | "secondary" | "danger";
 
@@ -75,12 +78,10 @@ export function Modal({
     onDismiss?.();
   };
 
-  const classNames = [
+  const classNames = cx(
     "fixed inset-0 m-auto max-h-[calc(100vh-2rem)] w-11/12 max-w-3xl overflow-y-auto rounded-panel border border-line bg-surface-raised p-0 text-ink shadow-panel backdrop:bg-black/80 backdrop:backdrop-blur-sm",
     className
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <dialog
@@ -91,12 +92,8 @@ export function Modal({
       {...props}
     >
       <div className="border-b border-line p-6">
-        <p className="m-0 font-display text-2xl uppercase leading-none tracking-normal text-brass">
-          {eyebrow}
-        </p>
-        <h2 className="mt-3 mb-0 font-display text-5xl uppercase leading-none tracking-normal text-title md:text-6xl">
-          {title}
-        </h2>
+        <p className={`m-0 ${typography.eyebrow}`}>{eyebrow}</p>
+        <h2 className={`mt-3 mb-0 ${typography.dialogTitle}`}>{title}</h2>
       </div>
       <div className="px-6 py-8 md:py-10">
         <Frame>
@@ -106,11 +103,7 @@ export function Modal({
         </Frame>
       </div>
       <div className="px-6 pb-6">
-        <div className="mb-5 flex items-center gap-3" aria-hidden="true">
-          <span className="h-px flex-1 bg-line" />
-          <span className="h-3 w-3 rotate-45 border border-line" />
-          <span className="h-px flex-1 bg-line" />
-        </div>
+        <OrnamentDivider className="mb-5" />
         <div className="grid gap-3 md:grid-cols-2">
           {options.map((option) => (
             <button
@@ -120,7 +113,7 @@ export function Modal({
               onClick={option.onSelect}
               type="button"
             >
-              <span className="block font-display text-2xl uppercase leading-none tracking-normal">
+              <span className={`block ${displayText} text-2xl`}>
                 {option.label}
               </span>
               <span className="mt-2 block text-sm leading-relaxed text-muted">
