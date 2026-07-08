@@ -8,6 +8,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/server/src/index.js",
+    "seed:equipments": "tsx src/seedData/seedEquipments.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

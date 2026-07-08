@@ -7,7 +7,7 @@ export const PLAYER_RANKS = [
   "local_boss",
   "district_boss",
   "crime_lord",
-  "city_kingpin"
+  "city_kingpin",
 ] as const;
 
 export type PlayerRank = (typeof PLAYER_RANKS)[number];
@@ -23,7 +23,8 @@ export type PlayerItem = {
     src: string;
   };
   name: string;
-  quantityLabel?: string;
+  power?: number;
+  quantity?: number;
   tone?: PlayerItemTone;
 };
 
@@ -67,12 +68,17 @@ export type Player = {
   updatedAt: string;
 };
 
-export function createNewPlayer(id: string, name: string, nowIso: string): Player {
+export function createNewPlayer(
+  id: string,
+  name: string,
+  nowIso: string,
+  loadout: PlayerLoadout = {},
+): Player {
   return {
     avatar: null,
     createdAt: nowIso,
     id,
-    loadout: {},
+    loadout,
     name,
     nameKey: playerNameKey(name),
     progression: {
@@ -85,15 +91,15 @@ export function createNewPlayer(id: string, name: string, nowIso: string): Playe
         leadership: 1,
         muscle: 1,
         stealth: 1,
-        strategy: 1
-      }
+        strategy: 1,
+      },
     },
     rank: "nobody",
     resources: {
-      cash: 500,
-      power: 0
+      cash: 0,
+      power: 2,
     },
     stash: [],
-    updatedAt: nowIso
+    updatedAt: nowIso,
   };
 }

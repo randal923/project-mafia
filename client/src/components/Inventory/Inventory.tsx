@@ -1,4 +1,5 @@
 import { cx } from "../../lib/cx";
+import { ItemHoverCard } from "../ItemHoverCard/ItemHoverCard";
 import { SectionHeader } from "../SectionHeader/SectionHeader";
 import { InventoryEmptySlot } from "./InventoryEmptySlot";
 import { InventoryItemCard } from "./InventoryItemCard";
@@ -105,7 +106,9 @@ export function Inventory({
                 key={item ? item.id : `stash-empty-${index}`}
               >
                 {item ? (
-                  <InventoryItemCard item={item} />
+                  <ItemHoverCard item={item}>
+                    <InventoryItemCard item={item} />
+                  </ItemHoverCard>
                 ) : (
                   <InventoryEmptySlot>
                     {index === 0 && stashItems.length === 0 ? (

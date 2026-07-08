@@ -1,11 +1,13 @@
-import { App } from './app';
-import { EnvConfig } from './config/env';
-import { FirebaseService } from './services/FirebaseService';
+import { App } from "./app";
+import { EnvConfig } from "./config/env";
+import { EquipmentService } from "./services/EquipmentService";
+import { FirebaseService } from "./services/FirebaseService";
 
 async function bootstrap(): Promise<void> {
   const config = new EnvConfig();
   const firebase = new FirebaseService(config);
-  const app = new App(config, firebase);
+  const equipment = new EquipmentService(firebase);
+  const app = new App(config, firebase, equipment);
 
   await app.start();
 
@@ -15,11 +17,11 @@ async function bootstrap(): Promise<void> {
     process.exit(0);
   };
 
-  process.on('SIGINT', () => void shutdown('SIGINT'));
-  process.on('SIGTERM', () => void shutdown('SIGTERM'));
+  process.on("SIGINT", () => void shutdown("SIGINT"));
+  process.on("SIGTERM", () => void shutdown("SIGTERM"));
 }
 
 bootstrap().catch((err) => {
-  console.error('Failed to start server:', err);
+  console.error("Failed to start server:", err);
   process.exit(1);
 });

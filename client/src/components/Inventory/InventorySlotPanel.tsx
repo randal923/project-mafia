@@ -1,5 +1,6 @@
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { ItemHoverCard } from "../ItemHoverCard/ItemHoverCard";
 import { InventoryEmptySlot } from "./InventoryEmptySlot";
 import { InventoryItemCard } from "./InventoryItemCard";
 import type { InventorySlot } from "./InventoryTypes";
@@ -34,7 +35,9 @@ export function InventorySlotPanel({
       </div>
       <div className="mt-3 flex items-center justify-center border border-line bg-page p-2">
         {slot.item ? (
-          <InventoryItemCard compact item={slot.item} />
+          <ItemHoverCard className="w-full" item={slot.item}>
+            <InventoryItemCard compact item={slot.item} />
+          </ItemHoverCard>
         ) : (
           <InventoryEmptySlot>
             <p className={`m-0 ${displayText} text-xl text-faint`}>

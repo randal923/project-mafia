@@ -9,6 +9,7 @@ const stilettoKnife = {
     src: "/images/items/stiletto-knife.png"
   },
   name: "Stiletto Knife",
+  power: 2,
   tone: "brass"
 } as const;
 
@@ -52,7 +53,7 @@ const stashItems = [
     detail: "Opens cheap locks without raising the street alarm.",
     id: "lockpick-roll",
     name: "Lockpick Roll",
-    quantityLabel: "x2",
+    quantity: 2,
     tone: "teal"
   },
   {
@@ -128,7 +129,6 @@ export const FullStash: Story = {
         detail: "Marked bills from a dockside collection.",
         id: "marked-cash",
         name: "Marked Cash",
-        quantityLabel: "$12k",
         tone: "profit"
       }
     ]

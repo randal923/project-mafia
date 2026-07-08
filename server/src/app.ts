@@ -7,6 +7,7 @@ import { HealthController } from './controllers/HealthController';
 import { PlayerController } from './controllers/PlayerController';
 import { AuthMiddleware } from './middleware/authenticate';
 import { ErrorHandler } from './middleware/errorHandler';
+import { EquipmentService } from './services/EquipmentService';
 import { FirebaseService } from './services/FirebaseService';
 import { PlayerService } from './services/PlayerService';
 
@@ -17,6 +18,7 @@ export class App {
   constructor(
     private readonly config: EnvConfig,
     firebase: FirebaseService,
+    equipment: EquipmentService,
   ) {
     this.express = express();
     this.express.use(helmet());
@@ -26,7 +28,7 @@ export class App {
     this.express.use(new HealthController(firebase).router);
 
     const auth = new AuthMiddleware(firebase);
-    const playerService = new PlayerService(firebase);
+    const playerService = new PlayerService(firebase, equipment);
     this.express.use('/players', auth.authenticate, new PlayerController(playerService).router);
 
     const errorHandler = new ErrorHandler(config);

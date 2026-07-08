@@ -25,6 +25,10 @@ export function InventoryItemCard({
   item
 }: InventoryItemCardProps) {
   const tone = item.tone ?? "neutral";
+  const quantityLabel =
+    item.quantity !== undefined && item.quantity > 1
+      ? `x${item.quantity}`
+      : undefined;
   const classNames = cx(
     "relative flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden rounded-control border bg-black/40 p-3 shadow-command",
     toneBorderClasses[toneTokens[tone]]
@@ -47,9 +51,9 @@ export function InventoryItemCard({
       ) : (
         <p className={titleClassNames}>{item.name}</p>
       )}
-      {item.quantityLabel ? (
+      {quantityLabel ? (
         <span className="absolute top-2 right-2 rounded-control border border-line bg-page/90 px-2 py-1 text-sm font-medium leading-none text-faint shadow-command">
-          {item.quantityLabel}
+          {quantityLabel}
         </span>
       ) : null}
     </div>

@@ -1,12 +1,20 @@
 import { CollectionReference, Firestore } from "firebase-admin/firestore";
-import { Player, createNewPlayer } from "../../../shared/player";
+import {
+  STARTER_EQUIPMENT_ID,
+  equipmentToPlayerItem,
+} from "../../../shared/equipment";
+import { Player, PlayerLoadout, createNewPlayer } from "../../../shared/player";
 import { HttpError } from "../middleware/errorHandler";
+import { EquipmentService } from "./EquipmentService";
 import { FirebaseService } from "./FirebaseService";
 
 export class PlayerService {
   private readonly db: Firestore;
 
-  constructor(firebase: FirebaseService) {
+  constructor(
+    firebase: FirebaseService,
+    private readonly equipment: EquipmentService,
+  ) {
     this.db = firebase.firestore;
   }
 
@@ -15,12 +23,9 @@ export class PlayerService {
     return snapshot.exists ? (snapshot.data() as Player) : null;
   }
 
-  /**
-   * Creates the player inside a transaction, checking the case-insensitive
-   * nameKey field on existing player docs to keep names unique.
-   */
   async createPlayer(uid: string, name: string): Promise<Player> {
-    const player = createNewPlayer(uid, name, new Date().toISOString());
+    const loadout = await this.starterLoadout();
+    const player = createNewPlayer(uid, name, new Date().toISOString(), loadout);
     const playerRef = this.players.doc(uid);
     const sameNameQuery = this.players
       .where("nameKey", "==", player.nameKey)
@@ -43,6 +48,16 @@ export class PlayerService {
     });
 
     return player;
+  }
+
+  private async starterLoadout(): Promise<PlayerLoadout> {
+    const knife = await this.equipment.getEquipment(STARTER_EQUIPMENT_ID);
+
+    if (!knife) {
+      throw new HttpError(500, "Starter equipment is missing.");
+    }
+
+    return { [knife.slot]: equipmentToPlayerItem(knife) };
   }
 
   private get players(): CollectionReference {
