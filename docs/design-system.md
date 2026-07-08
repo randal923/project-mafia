@@ -158,6 +158,18 @@ Use for dense ledgers, crew lists, resource logs, district reports, and other st
 - Use `profit` only for positive economic movement and `danger` for risk, heat, or scarcity.
 - Provide an empty message for tables that can legitimately have no rows.
 
+### Inventory
+
+File: `client/src/components/Inventory/Inventory.tsx`
+
+Use for player loadout and stash surfaces.
+
+- Keep slot labels short and equipment names scannable.
+- Use fixed slot IDs only for the supported body positions: head, torso, hand, waist, and feet.
+- Use the stash grid for items the player owns but has not equipped.
+- Use item tones sparingly: `danger` for risky items, `profit` for economic value, `teal` for informational or utility items, and `brass` for highlighted equipment.
+- Do not add drag-and-drop behavior unless the flow has an explicit interaction spec.
+
 ## Layout
 
 - First screens should be usable product surfaces, not landing pages.
