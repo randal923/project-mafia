@@ -74,7 +74,7 @@ export function Inventory({
             eyebrow={loadoutEyebrow}
             title={loadoutTitle}
           />
-          <div className="grid gap-4 p-4 md:grid-cols-3 md:grid-rows-3">
+          <div className="mx-auto grid w-full max-w-xl gap-4 p-4 md:grid-cols-3 md:grid-rows-3">
             {slots.map((slot) => (
               <InventorySlotPanel
                 emptyLabel={emptySlotLabel}

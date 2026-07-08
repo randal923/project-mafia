@@ -10,6 +10,15 @@ export const toneTextClasses = {
 
 export type TextTone = keyof typeof toneTextClasses;
 
+export const toneBackgroundClasses = {
+  brass: "bg-brass",
+  danger: "bg-danger-strong",
+  profit: "bg-profit",
+  teal: "bg-teal"
+} as const;
+
+export type BackgroundTone = keyof typeof toneBackgroundClasses;
+
 export const toneBorderClasses = {
   brass: "border-brass",
   danger: "border-danger-strong",
