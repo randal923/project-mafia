@@ -118,13 +118,13 @@ export function Inventory({
             {stashCells.map((item, index) => (
               <li
                 aria-label={item ? undefined : "Empty stash slot"}
-                className="min-h-36 border-r border-b border-line p-2"
+                className="border-r border-b border-line p-2"
                 key={item ? item.id : `stash-empty-${index}`}
               >
                 {item ? (
                   <InventoryItemCard item={item} />
                 ) : (
-                  <div className="flex h-full min-h-28 items-center justify-center border border-dashed border-line bg-black/20 p-3">
+                  <div className="flex aspect-square w-full items-center justify-center border border-dashed border-line bg-black/20 p-3">
                     {index === 0 && stashItems.length === 0 ? (
                       <p className="m-0 text-center text-base leading-relaxed text-muted">
                         {emptyStashLabel}

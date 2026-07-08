@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { InventoryItem, InventoryItemTone } from "./InventoryTypes";
 
 type InventoryItemCardProps = {
@@ -10,52 +11,43 @@ const toneBorderClasses: Record<InventoryItemTone, string> = {
   danger: "border-danger-strong",
   neutral: "border-line",
   profit: "border-profit",
-  teal: "border-teal"
-};
-
-const toneTextClasses: Record<InventoryItemTone, string> = {
-  brass: "text-brass-bright",
-  danger: "text-danger-strong",
-  neutral: "text-muted",
-  profit: "text-profit",
-  teal: "text-teal"
+  teal: "border-teal",
 };
 
 export function InventoryItemCard({
   compact = false,
-  item
+  item,
 }: InventoryItemCardProps) {
   const tone = item.tone ?? "neutral";
   const classNames = [
-    "flex h-full min-w-0 flex-col justify-between rounded-control border bg-black/40 p-3 shadow-command",
-    toneBorderClasses[tone]
+    "relative flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden rounded-control border bg-black/40 p-3 shadow-command",
+    toneBorderClasses[tone],
   ].join(" ");
   const titleClassNames = [
-    "m-0 min-w-0 break-words font-display uppercase leading-none tracking-normal text-ink",
-    compact ? "text-lg" : "text-xl"
+    "m-0 flex h-full w-full min-w-0 items-center justify-center break-words text-center font-display uppercase leading-none tracking-normal text-ink",
+    compact ? "text-lg" : "text-xl",
+  ].join(" ");
+  const imageClassNames = [
+    "h-full w-full object-contain drop-shadow",
   ].join(" ");
 
   return (
     <div className={classNames}>
-      <div className="min-w-0">
-        <div className="flex items-start justify-between gap-3">
-          <p className={titleClassNames}>{item.name}</p>
-          {item.quantityLabel ? (
-            <span className="shrink-0 rounded-control border border-line px-2 py-1 text-sm font-medium leading-none text-faint">
-              {item.quantityLabel}
-            </span>
-          ) : null}
-        </div>
-        <p
-          className={`mt-2 mb-0 font-display text-lg uppercase leading-none tracking-normal ${toneTextClasses[tone]}`}
-        >
-          {item.category}
-        </p>
-      </div>
-      {item.detail && !compact ? (
-        <p className="mt-4 mb-0 text-sm leading-relaxed text-muted">
-          {item.detail}
-        </p>
+      {item.image ? (
+        <Image
+          alt={item.image.alt}
+          className={imageClassNames}
+          height={compact ? 160 : 240}
+          src={item.image.src}
+          width={compact ? 160 : 240}
+        />
+      ) : (
+        <p className={titleClassNames}>{item.name}</p>
+      )}
+      {item.quantityLabel ? (
+        <span className="absolute top-2 right-2 rounded-control border border-line bg-page/90 px-2 py-1 text-sm font-medium leading-none text-faint shadow-command">
+          {item.quantityLabel}
+        </span>
       ) : null}
     </div>
   );

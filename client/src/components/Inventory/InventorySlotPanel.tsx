@@ -31,11 +31,11 @@ export function InventorySlotPanel({
           Slot
         </span>
       </div>
-      <div className="mt-3 flex min-h-24 items-stretch border border-line bg-page p-2">
+      <div className="mt-3 flex items-center justify-center border border-line bg-page p-2">
         {slot.item ? (
           <InventoryItemCard compact item={slot.item} />
         ) : (
-          <div className="flex flex-1 items-center justify-center border border-dashed border-line bg-black/20 p-3">
+          <div className="flex aspect-square w-full items-center justify-center border border-dashed border-line bg-black/20 p-3">
             <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-faint">
               {emptyLabel}
             </p>

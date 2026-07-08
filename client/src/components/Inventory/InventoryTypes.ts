@@ -6,9 +6,13 @@ export type InventoryItemTone =
   | "teal";
 
 export type InventoryItem = {
-  category: string;
+  category?: string;
   detail?: string;
   id: string;
+  image?: {
+    alt: string;
+    src: string;
+  };
   name: string;
   quantityLabel?: string;
   tone?: InventoryItemTone;

@@ -1,12 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import { Inventory } from "./Inventory";
 
+const stilettoKnife = {
+  detail: "Concealable steel for quiet work.",
+  id: "stiletto-knife",
+  image: {
+    alt: "Stiletto knife",
+    src: "/images/items/stiletto-knife.png"
+  },
+  name: "Stiletto Knife",
+  tone: "brass"
+} as const;
+
 const equippedSlots = [
   { id: "head", label: "Head" },
   {
     id: "torso",
     item: {
-      category: "Protection",
       detail: "A discreet layer under the suit jacket.",
       id: "armored-vest",
       name: "Armored Vest",
@@ -16,20 +26,13 @@ const equippedSlots = [
   },
   {
     id: "hand",
-    item: {
-      category: "Close weapon",
-      detail: "Concealable steel for quiet work.",
-      id: "stiletto-knife",
-      name: "Stiletto Knife",
-      tone: "brass"
-    },
+    item: stilettoKnife,
     label: "Hand"
   },
   { id: "waist", label: "Waist" },
   {
     id: "feet",
     item: {
-      category: "Movement",
       detail: "Keeps a meeting clean and exits quiet.",
       id: "polished-shoes",
       name: "Polished Shoes"
@@ -40,14 +43,12 @@ const equippedSlots = [
 
 const stashItems = [
   {
-    category: "Document",
     detail: "Names three patrol officers taking envelope money.",
     id: "payoff-ledger",
     name: "Payoff Ledger",
     tone: "profit"
   },
   {
-    category: "Tool",
     detail: "Opens cheap locks without raising the street alarm.",
     id: "lockpick-roll",
     name: "Lockpick Roll",
@@ -55,7 +56,6 @@ const stashItems = [
     tone: "teal"
   },
   {
-    category: "Risk",
     detail: "Useful once, then every badge in the ward listens harder.",
     id: "police-radio",
     name: "Police Radio",
@@ -120,11 +120,11 @@ export const EmptyStash: Story = {
 export const FullStash: Story = {
   args: {
     showLoadout: false,
-    stashCapacity: 4,
+    stashCapacity: 5,
     stashItems: [
       ...stashItems,
+      stilettoKnife,
       {
-        category: "Cash",
         detail: "Marked bills from a dockside collection.",
         id: "marked-cash",
         name: "Marked Cash",
