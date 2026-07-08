@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { Diamond } from "../Diamond/Diamond";
 
@@ -10,6 +11,7 @@ type NavigationItem = {
 };
 
 type NavigationBarProps = {
+  actions?: ReactNode;
   activeItemId?: string;
   ariaLabel?: string;
   brand: string;
@@ -17,15 +19,16 @@ type NavigationBarProps = {
 };
 
 export function NavigationBar({
+  actions,
   activeItemId,
   ariaLabel = "Primary",
   brand,
-  items
+  items,
 }: NavigationBarProps) {
   return (
     <nav
       aria-label={ariaLabel}
-      className="border-b border-line py-4 md:flex md:items-center md:justify-between md:gap-6"
+      className="border-b border-line py-4 md:flex md:items-center md:justify-between md:gap-4"
     >
       <Link
         className={`inline-flex items-center gap-3 ${typography.brandMark}`}
@@ -58,6 +61,7 @@ export function NavigationBar({
             </Link>
           );
         })}
+        {actions}
       </div>
     </nav>
   );

@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { AppShell } from "../components/AppShell/AppShell";
+import { AuthGuard } from "../components/AuthGuard/AuthGuard";
+import { AuthProvider } from "../components/AuthProvider/AuthProvider";
 import { mafiaFonts } from "./mafiaFonts";
 import "./globals.css";
 
@@ -17,7 +20,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
       lang="en"
       className={`${mafiaFonts.sans.variable} ${mafiaFonts.display.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          <AuthGuard>
+            <AppShell>{children}</AppShell>
+          </AuthGuard>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

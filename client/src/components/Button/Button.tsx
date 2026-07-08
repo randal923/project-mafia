@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from "react";
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 
-type ButtonVariant = "primary" | "secondary" | "quiet";
+type ButtonVariant = "primary" | "secondary" | "quiet" | "danger";
 type ButtonSize = "medium" | "small";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -16,7 +16,9 @@ const variantClasses: Record<ButtonVariant, string> = {
   secondary:
     "border-line bg-transparent text-brass enabled:hover:border-brass enabled:hover:bg-brass/10 enabled:hover:text-brass-bright",
   quiet:
-    "border-transparent bg-transparent text-muted enabled:hover:border-line enabled:hover:text-ink"
+    "border-transparent bg-transparent text-muted enabled:hover:border-line enabled:hover:text-ink",
+  danger:
+    "border-danger bg-black/50 text-danger-strong shadow-command enabled:hover:border-danger-strong enabled:hover:bg-danger/15"
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

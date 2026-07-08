@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   type DialogHTMLAttributes,
+  type MouseEvent,
   type SyntheticEvent
 } from "react";
 import { displayText, typography } from "../../design-system/typography";
@@ -47,6 +48,7 @@ export function Modal({
   className,
   eyebrow = "Decision required",
   intro,
+  onClick,
   onClose,
   onDismiss,
   open,
@@ -78,6 +80,14 @@ export function Modal({
     onDismiss?.();
   };
 
+  const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
+    onClick?.(event);
+
+    if (event.target === dialogRef.current) {
+      dialogRef.current?.close();
+    }
+  };
+
   const classNames = cx(
     "fixed inset-0 m-auto max-h-[calc(100vh-2rem)] w-11/12 max-w-3xl overflow-y-auto rounded-panel border border-line bg-surface-raised p-0 text-ink shadow-panel backdrop:bg-black/80 backdrop:backdrop-blur-sm",
     className
@@ -87,6 +97,7 @@ export function Modal({
     <dialog
       aria-label={title}
       className={classNames}
+      onClick={handleClick}
       onClose={handleClose}
       ref={dialogRef}
       {...props}
