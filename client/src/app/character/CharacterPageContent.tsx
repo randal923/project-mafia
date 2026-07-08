@@ -1,28 +1,21 @@
 "use client";
 
+import type { EquipmentSlotId } from "@shared/player";
 import { useState, type ReactNode } from "react";
 import { CharacterPortrait } from "../../components/CharacterPortrait/CharacterPortrait";
 import { CharacterStats } from "../../components/CharacterStats/CharacterStats";
-import type { PlayerProfile } from "../../components/CharacterStats/CharacterStatsTypes";
 import { Inventory } from "../../components/Inventory/Inventory";
-import type {
-  InventoryItem,
-  InventorySlot
-} from "../../components/Inventory/InventoryTypes";
+import type { InventorySlot } from "../../components/Inventory/InventoryTypes";
+import { usePlayer } from "../../components/PlayerProvider/PlayerProvider";
 import {
   Tabs,
   tabDomId,
   tabPanelDomId,
   type TabDefinition
 } from "../../components/Tabs/Tabs";
+import { typography } from "../../design-system/typography";
 
 type CharacterPageTabId = "loadout" | "overview" | "stash";
-
-type CharacterPageContentProps = {
-  profile: PlayerProfile;
-  slots: readonly InventorySlot[];
-  stashItems: readonly InventoryItem[];
-};
 
 const idPrefix = "character-page";
 
@@ -32,27 +25,56 @@ const tabs: readonly TabDefinition<CharacterPageTabId>[] = [
   { id: "stash", label: "Stash" }
 ];
 
-export function CharacterPageContent({
-  profile,
-  slots,
-  stashItems
-}: CharacterPageContentProps) {
+const slotOrder: readonly { id: EquipmentSlotId; label: string }[] = [
+  { id: "head", label: "Head" },
+  { id: "torso", label: "Torso" },
+  { id: "hand", label: "Hand" },
+  { id: "waist", label: "Waist" },
+  { id: "feet", label: "Feet" }
+];
+
+export function CharacterPageContent() {
+  const { player, status } = usePlayer();
   const [activeTabId, setActiveTabId] =
     useState<CharacterPageTabId>("overview");
 
+  if (status === "loading" || status === "missing") {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className={typography.metadata}>Pulling your file…</p>
+      </div>
+    );
+  }
+
+  if (status === "error" || !player) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className={typography.metadata}>
+          Could not reach the family archives. Refresh to try again.
+        </p>
+      </div>
+    );
+  }
+
+  const slots: readonly InventorySlot[] = slotOrder.map(({ id, label }) => ({
+    id,
+    item: player.loadout[id],
+    label
+  }));
+
   const panels: Record<CharacterPageTabId, ReactNode> = {
     loadout: (
-      <Inventory showStash={false} slots={slots} stashItems={stashItems} />
+      <Inventory showStash={false} slots={slots} stashItems={player.stash} />
     ),
-    overview: <CharacterStats profile={profile} />,
+    overview: <CharacterStats profile={player} />,
     stash: (
-      <Inventory showLoadout={false} slots={slots} stashItems={stashItems} />
+      <Inventory showLoadout={false} slots={slots} stashItems={player.stash} />
     )
   };
 
   return (
     <div className="grid gap-6 lg:h-full lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[minmax(0,1fr)]">
-      <CharacterPortrait fit="fill" name={profile.name} title={profile.title} />
+      <CharacterPortrait fit="fill" name={player.name} />
       <div className="relative">
         <div className="flex flex-col lg:absolute lg:inset-0">
           <Tabs

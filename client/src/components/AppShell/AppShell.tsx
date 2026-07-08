@@ -6,6 +6,8 @@ import { useAuth } from "../AuthProvider/AuthProvider";
 import { Button } from "../Button/Button";
 import { Modal } from "../Modal/Modal";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
+import { PlayerNameDialog } from "../PlayerNameDialog/PlayerNameDialog";
+import { usePlayer } from "../PlayerProvider/PlayerProvider";
 
 const navigationItems = [
   { href: "/", id: "news", label: "News" },
@@ -19,6 +21,7 @@ type AppShellProps = {
 
 export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser } = useAuth();
+  const { status: playerStatus } = usePlayer();
   const pathname = usePathname();
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 
@@ -55,6 +58,7 @@ export function AppShell({ children }: AppShellProps) {
         />
         <div className="mt-8 min-h-0 flex-1">{children}</div>
       </div>
+      {playerStatus === "missing" && <PlayerNameDialog />}
       <Modal
         eyebrow="Leaving the operation"
         intro="You are about to sign out. The family will keep your affairs in order until you return."

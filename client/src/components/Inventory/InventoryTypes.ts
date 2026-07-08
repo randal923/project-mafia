@@ -1,24 +1,14 @@
-export type InventoryItemTone =
-  | "brass"
-  | "danger"
-  | "neutral"
-  | "profit"
-  | "teal";
+import type {
+  EquipmentSlotId,
+  PlayerItem,
+  PlayerItemTone
+} from "@shared/player";
 
-export type InventoryItem = {
-  category?: string;
-  detail?: string;
-  id: string;
-  image?: {
-    alt: string;
-    src: string;
-  };
-  name: string;
-  quantityLabel?: string;
-  tone?: InventoryItemTone;
-};
+export type InventoryItemTone = PlayerItemTone;
 
-export type InventorySlotId = "feet" | "hand" | "head" | "torso" | "waist";
+export type InventoryItem = PlayerItem;
+
+export type InventorySlotId = EquipmentSlotId;
 
 export type InventorySlot = {
   id: InventorySlotId;

@@ -28,41 +28,17 @@ export const FreshStart: Story = {
   name: "Fresh Start"
 };
 
-export const EstablishedCapo: Story = {
+export const EstablishedBoss: Story = {
   args: {
     profile: soniaMarchetti
   },
-  name: "Established Capo"
+  name: "Established Boss"
 };
 
-export const ReputationTab: Story = {
+export const SkillsTab: Story = {
   args: {
-    initialTabId: "reputation",
+    initialTabId: "skills",
     profile: soniaMarchetti
   },
-  name: "Reputation Tab"
-};
-
-export const CrewTab: Story = {
-  args: {
-    initialTabId: "crew",
-    profile: soniaMarchetti
-  },
-  name: "Crew Tab"
-};
-
-export const TerritoryTab: Story = {
-  args: {
-    initialTabId: "territory",
-    profile: soniaMarchetti
-  },
-  name: "Territory Tab"
-};
-
-export const StoryTab: Story = {
-  args: {
-    initialTabId: "story",
-    profile: soniaMarchetti
-  },
-  name: "Story Tab"
+  name: "Skills Tab"
 };
