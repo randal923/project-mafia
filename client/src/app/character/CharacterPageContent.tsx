@@ -11,7 +11,7 @@ import {
   Tabs,
   tabDomId,
   tabPanelDomId,
-  type TabDefinition
+  type TabDefinition,
 } from "../../components/Tabs/Tabs";
 import { typography } from "../../design-system/typography";
 
@@ -22,7 +22,7 @@ const idPrefix = "character-page";
 const tabs: readonly TabDefinition<CharacterPageTabId>[] = [
   { id: "overview", label: "Overview" },
   { id: "loadout", label: "Loadout" },
-  { id: "stash", label: "Stash" }
+  { id: "stash", label: "Stash" },
 ];
 
 const slotOrder: readonly { id: EquipmentSlotId; label: string }[] = [
@@ -30,7 +30,7 @@ const slotOrder: readonly { id: EquipmentSlotId; label: string }[] = [
   { id: "torso", label: "Torso" },
   { id: "hand", label: "Hand" },
   { id: "waist", label: "Waist" },
-  { id: "feet", label: "Feet" }
+  { id: "feet", label: "Feet" },
 ];
 
 export function CharacterPageContent() {
@@ -59,7 +59,7 @@ export function CharacterPageContent() {
   const slots: readonly InventorySlot[] = slotOrder.map(({ id, label }) => ({
     id,
     item: player.loadout[id],
-    label
+    label,
   }));
 
   const panels: Record<CharacterPageTabId, ReactNode> = {
@@ -69,14 +69,21 @@ export function CharacterPageContent() {
     overview: <CharacterStats profile={player} />,
     stash: (
       <Inventory showLoadout={false} slots={slots} stashItems={player.stash} />
-    )
+    ),
   };
 
   return (
-    <div className="grid gap-6 lg:h-full lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[minmax(0,1fr)]">
-      <CharacterPortrait fit="fill" name={player.name} />
-      <div className="relative">
-        <div className="flex flex-col lg:absolute lg:inset-0">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <CharacterPortrait
+        fit="fill"
+        image={{
+          alt: `${player.name} character portrait`,
+          src: "",
+        }}
+        name={player.name}
+      />
+      <div>
+        <div className="flex flex-col">
           <Tabs
             activeTabId={activeTabId}
             ariaLabel="Character sections"
