@@ -4,18 +4,21 @@ import {
   EQUIPMENT_CATEGORIES,
   EQUIPMENT_CATEGORY_LABELS,
   type Equipment,
-  type EquipmentCategory
+  type EquipmentCategory,
 } from "@shared/equipment";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
+import { DropdownMenu } from "../../components/DropdownMenu/DropdownMenu";
 import { usePlayer } from "../../components/PlayerProvider/PlayerProvider";
 import { StoreItemCard } from "../../components/Store/StoreItemCard";
+import { TextInput } from "../../components/TextInput/TextInput";
 import { Toast } from "../../components/Toast/Toast";
 import { displayText, typography } from "../../design-system/typography";
 import { ApiError, buyEquipment, fetchStoreCatalog } from "../../lib/api";
 import { cx } from "../../lib/cx";
 
 type CategoryFilter = "all" | EquipmentCategory;
+type RequirementLevelFilter = "all" | number;
 
 type StoreToast = {
   message: string;
@@ -26,7 +29,7 @@ type StoreToast = {
 const moneyFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
   maximumFractionDigits: 0,
-  style: "currency"
+  style: "currency",
 });
 
 export function StorePageContent() {
@@ -34,7 +37,10 @@ export function StorePageContent() {
   const { player, setPlayer, status } = usePlayer();
   const [catalog, setCatalog] = useState<Equipment[] | null>(null);
   const [catalogError, setCatalogError] = useState(false);
-  const [filter, setFilter] = useState<CategoryFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
+  const [equipmentNameQuery, setEquipmentNameQuery] = useState("");
+  const [requirementLevelFilter, setRequirementLevelFilter] =
+    useState<RequirementLevelFilter>("all");
   const [busyItemId, setBusyItemId] = useState<string | null>(null);
   const [toast, setToast] = useState<StoreToast | null>(null);
 
@@ -47,6 +53,14 @@ export function StorePageContent() {
     fetchStoreCatalog(user)
       .then((result) => {
         if (!isCancelled) {
+          setRequirementLevelFilter((currentLevel) =>
+            currentLevel === "all" ||
+            result.items.some(
+              (item) => item.levelRequirement === currentLevel
+            )
+              ? currentLevel
+              : "all"
+          );
           setCatalog(result.items);
         }
       })
@@ -94,14 +108,31 @@ export function StorePageContent() {
     return ["all", ...EQUIPMENT_CATEGORIES.filter((c) => present.has(c))];
   }, [catalog]);
 
+  const requirementLevels = useMemo(() => {
+    if (!catalog) {
+      return [];
+    }
+
+    return [...new Set(catalog.map((item) => item.levelRequirement))].sort(
+      (first, second) => first - second,
+    );
+  }, [catalog]);
+
   const visibleItems = useMemo(() => {
     if (!catalog) {
       return [];
     }
-    return filter === "all"
-      ? catalog
-      : catalog.filter((item) => item.category === filter);
-  }, [catalog, filter]);
+
+    const normalizedNameQuery = equipmentNameQuery.trim().toLowerCase();
+
+    return catalog.filter(
+      (item) =>
+        item.name.toLowerCase().includes(normalizedNameQuery) &&
+        (categoryFilter === "all" || item.category === categoryFilter) &&
+        (requirementLevelFilter === "all" ||
+          item.levelRequirement === requirementLevelFilter),
+    );
+  }, [catalog, categoryFilter, equipmentNameQuery, requirementLevelFilter]);
 
   if (status === "loading" || status === "missing" || !player) {
     return (
@@ -124,7 +155,7 @@ export function StorePageContent() {
       setToast({
         message: `${quantity > 1 ? `${quantity}× ` : ""}${item?.name ?? "Gear"} moved to your stash.`,
         title: "Deal done",
-        tone: "success"
+        tone: "success",
       });
     } catch (error) {
       setToast({
@@ -133,7 +164,7 @@ export function StorePageContent() {
             ? error.message
             : "The fence isn't answering. Try again.",
         title: "No deal",
-        tone: "failure"
+        tone: "failure",
       });
     } finally {
       setBusyItemId(null);
@@ -151,8 +182,8 @@ export function StorePageContent() {
             The Store
           </h1>
           <p className={`mt-2 mb-0 ${typography.narrativeCaption}`}>
-            Cash buys the gear; jobs decide if you needed it. Locked pieces
-            open up as you level.
+            Cash buys the gear; jobs decide if you needed it. Locked pieces open
+            up as you level.
           </p>
         </div>
         <dl className="m-0 flex gap-8 text-right">
@@ -170,18 +201,18 @@ export function StorePageContent() {
           </div>
         </dl>
       </header>
-
       <nav aria-label="Store categories" className="flex flex-wrap gap-2">
         {categories.map((category) => (
           <button
+            aria-pressed={categoryFilter === category}
             className={cx(
-              `cursor-pointer rounded-control border px-4 py-2 ${displayText} text-lg transition-colors duration-150`,
-              filter === category
+              `cursor-pointer rounded-control border px-4 py-2 ${displayText} text-lg transition-colors duration-150 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright`,
+              categoryFilter === category
                 ? "border-brass bg-brass/15 text-brass-bright"
-                : "border-line bg-transparent text-muted hover:border-brass hover:text-brass"
+                : "border-line bg-transparent text-muted hover:border-brass hover:text-brass",
             )}
             key={category}
-            onClick={() => setFilter(category)}
+            onClick={() => setCategoryFilter(category)}
             type="button"
           >
             {category === "all"
@@ -191,12 +222,60 @@ export function StorePageContent() {
         ))}
       </nav>
 
+      <div className="flex flex-col gap-4 md:flex-row md:justify-between">
+        <TextInput
+          className="w-full"
+          id="equipment-name-search"
+          label="Equipment name"
+          onChange={(event) => setEquipmentNameQuery(event.target.value)}
+          placeholder="Search by name"
+          type="search"
+          value={equipmentNameQuery}
+        />
+
+        <div className="sm:w-64">
+          <DropdownMenu
+            className="focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright"
+            label="Required level"
+            onChange={(event) => {
+              const nextLevel = event.target.value;
+              if (nextLevel === "all") {
+                setRequirementLevelFilter("all");
+                return;
+              }
+
+              const parsedLevel = Number(nextLevel);
+              if (requirementLevels.includes(parsedLevel)) {
+                setRequirementLevelFilter(parsedLevel);
+              }
+            }}
+            options={[
+              { label: "All required levels", value: "all" },
+              ...requirementLevels.map((level) => ({
+                label: `Level ${level}`,
+                value: String(level),
+              })),
+            ]}
+            value={String(requirementLevelFilter)}
+          />
+        </div>
+      </div>
+
       {catalogError ? (
         <p className={typography.metadata}>
           The store is shuttered. Refresh to try again.
         </p>
       ) : !catalog ? (
         <p className={typography.metadata}>Laying the goods out…</p>
+      ) : catalog.length === 0 ? (
+        <p className={typography.metadata} role="status">
+          No gear is currently available.
+        </p>
+      ) : visibleItems.length === 0 ? (
+        <p className={typography.metadata} role="status">
+          No gear matches your current search and filters. Try another name,
+          category, or required level.
+        </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleItems.map((item) => (
