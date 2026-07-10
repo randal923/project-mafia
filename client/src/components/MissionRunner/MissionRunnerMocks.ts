@@ -1,7 +1,7 @@
 import type { JobOffer, MissionView } from "@shared/job";
 
 export const docksOffer: JobOffer = {
-  difficulty: 2,
+  difficulty: 12,
   district: "Docks",
   heatIncrease: 2,
   id: "mock-offer-0",
@@ -21,7 +21,8 @@ export const midMission: MissionView = {
   choices: [
     {
       approach: "quiet",
-      check: { difficulty: 3, skill: "stealth" },
+      check: { difficulty: 13, skill: "stealth" },
+      gear: null,
       id: "00",
       intent: "Reach the cage without waking the dock.",
       label: "Cut through the dark side of the pier",
@@ -29,7 +30,13 @@ export const midMission: MissionView = {
     },
     {
       approach: "force",
-      check: { difficulty: 5, skill: "muscle" },
+      check: { difficulty: 30, skill: "muscle" },
+      gear: {
+        consumes: false,
+        label: "Crowbar",
+        satisfied: false,
+        tags: ["crowbar"]
+      },
       id: "01",
       intent: "Make the lock the only obstacle.",
       label: "Force the cage shutter",
@@ -60,7 +67,8 @@ export const midMission: MissionView = {
     {
       edgeTaken: {
         approach: "social",
-        check: { difficulty: 2, skill: "leadership" },
+        check: { difficulty: 10, skill: "leadership" },
+        gear: null,
         id: "0",
         label: "Talk your way past the gate",
         margin: 22,
@@ -97,7 +105,8 @@ export const resolvedMission: MissionView = {
     {
       edgeTaken: {
         approach: "quiet",
-        check: { difficulty: 3, skill: "stealth" },
+        check: { difficulty: 13, skill: "stealth" },
+        gear: null,
         id: "00",
         label: "Cut through the dark side of the pier",
         margin: 41,

@@ -6,24 +6,64 @@ import {
   OUTCOME_TIERS,
   OutcomeTier,
 } from "../../../../shared/job";
-import { createNewPlayer } from "../../../../shared/player";
+import {
+  applyPlayerExperience,
+  applySkillExperience,
+  rankForLevel,
+  xpToNextLevel,
+} from "../../../../shared/leveling";
+import { PlayerItem, createNewPlayer } from "../../../../shared/player";
 import { JobCalculatorService } from "../JobCalculatorService";
 import { JobOfferBuilder } from "../JobOfferBuilder";
 import { MissionRng } from "../MissionRng";
 import { MomentumService } from "../MomentumService";
-import { PlayerContextService } from "../PlayerContextService";
+import {
+  EnginePlayerContext,
+  PlayerContextService,
+} from "../PlayerContextService";
 import { RewardService } from "../RewardService";
 import { ROOT_NODE_ID, SkeletonBuilder } from "../SkeletonBuilder";
-import { TEST_ENGINE, TEST_TEMPLATE } from "./fixtures";
+import { TEST_ENGINE, TEST_TEMPLATE, TEST_TEMPLATE_WITH_GEAR } from "./fixtures";
 
 const NOW = "2026-07-09T12:00:00.000Z";
 const SEED = "0123456789abcdef0123456789abcdef";
 const MISSION_ID = "mission-golden-1";
 
-function freshContext() {
+const FLASHBANG: PlayerItem = {
+  consumable: true,
+  id: "flashbang-mk1",
+  name: "Flashbang",
+  quantity: 1,
+  tags: ["flashbang"],
+};
+
+function freshContext(): EnginePlayerContext {
   return PlayerContextService.fromPlayer(
     createNewPlayer("uid-1", "Test Player", NOW),
   );
+}
+
+function contextWith(
+  overrides: Partial<EnginePlayerContext>,
+): EnginePlayerContext {
+  return {
+    armor: 0,
+    bonuses: { approachBonus: {}, heatReduction: 0, skillBonus: {} },
+    effectivePower: 0,
+    gearTags: {},
+    heat: 0,
+    level: 1,
+    rankTier: 0,
+    skills: {
+      corruption: 0,
+      leadership: 0,
+      muscle: 0,
+      stealth: 0,
+      strategy: 0,
+      tech: 0,
+    },
+    ...overrides,
+  };
 }
 
 function goldenOffer(): JobOffer {
@@ -38,6 +78,7 @@ function goldenSkeleton(): Record<string, MissionNode> {
     missionId: MISSION_ID,
     offer: goldenOffer(),
     seed: SEED,
+    template: TEST_TEMPLATE,
   }).build();
 }
 
@@ -61,10 +102,133 @@ describe("MissionRng", () => {
   });
 });
 
+describe("leveling (shared/leveling.ts)", () => {
+  it("needs 150 XP at level 1 and rises steeply toward the cap", () => {
+    expect(xpToNextLevel(1)).toBe(150);
+    expect(xpToNextLevel(50)).toBeGreaterThan(2500);
+    expect(xpToNextLevel(99)).toBeGreaterThan(9000);
+  });
+
+  it("levels up and carries the overflow", () => {
+    const result = applyPlayerExperience(1, 0, xpToNextLevel(1) + 10);
+    expect(result.level).toBe(2);
+    expect(result.experience).toBe(10);
+    expect(result.levelsGained).toBe(1);
+  });
+
+  it("cashes multiple level-ups from one big gain", () => {
+    const result = applyPlayerExperience(
+      1,
+      0,
+      xpToNextLevel(1) + xpToNextLevel(2) + 5,
+    );
+    expect(result.level).toBe(3);
+    expect(result.experience).toBe(5);
+    expect(result.levelsGained).toBe(2);
+  });
+
+  it("caps at level 100", () => {
+    const result = applyPlayerExperience(99, 0, 1_000_000);
+    expect(result.level).toBe(100);
+    expect(result.experience).toBe(0);
+    expect(result.rank).toBe("city_kingpin");
+  });
+
+  it("derives rank from level", () => {
+    expect(rankForLevel(1)).toBe("nobody");
+    expect(rankForLevel(10)).toBe("street_hustler");
+    expect(rankForLevel(25)).toBe("crew_leader");
+    expect(rankForLevel(40)).toBe("local_boss");
+    expect(rankForLevel(55)).toBe("district_boss");
+    expect(rankForLevel(70)).toBe("crime_lord");
+    expect(rankForLevel(85)).toBe("city_kingpin");
+  });
+
+  it("converts every 100 skill XP into a level and resets the bar", () => {
+    const player = createNewPlayer("uid-1", "Test Player", NOW);
+    const one = applySkillExperience(
+      player.progression.skills,
+      player.progression.skillExperience,
+      "stealth",
+      100,
+    );
+    expect(one.skills.stealth).toBe(2);
+    expect(one.skillExperience.stealth).toBe(0);
+    expect(one.levelsGained).toBe(1);
+
+    const two = applySkillExperience(one.skills, one.skillExperience, "stealth", 250);
+    expect(two.skills.stealth).toBe(4);
+    expect(two.skillExperience.stealth).toBe(50);
+    expect(two.levelsGained).toBe(2);
+  });
+
+  it("caps skills at 100 and stops banking XP", () => {
+    const player = createNewPlayer("uid-1", "Test Player", NOW);
+    const result = applySkillExperience(
+      { ...player.progression.skills, stealth: 99 },
+      { ...player.progression.skillExperience, stealth: 90 },
+      "stealth",
+      5_000,
+    );
+    expect(result.skills.stealth).toBe(100);
+    expect(result.skillExperience.stealth).toBe(0);
+  });
+});
+
 describe("MomentumService", () => {
   it("clamps pass chance to 5-95", () => {
-    expect(MomentumService.passChance(0, 10, 0, 100, TEST_ENGINE)).toBe(5);
-    expect(MomentumService.passChance(10, 1, 100, 0, TEST_ENGINE)).toBe(95);
+    expect(
+      MomentumService.passChance(
+        contextWith({ heat: 100 }),
+        "stealth",
+        "quiet",
+        100,
+        TEST_ENGINE,
+      ),
+    ).toBe(5);
+    expect(
+      MomentumService.passChance(
+        contextWith({
+          effectivePower: 500,
+          skills: { ...contextWith({}).skills, stealth: 100 },
+        }),
+        "stealth",
+        "quiet",
+        1,
+        TEST_ENGINE,
+      ),
+    ).toBe(95);
+  });
+
+  it("adds equipped skill and approach bonuses", () => {
+    const base = MomentumService.passChance(
+      contextWith({}),
+      "stealth",
+      "quiet",
+      50,
+      TEST_ENGINE,
+    );
+    const boosted = MomentumService.passChance(
+      contextWith({
+        bonuses: {
+          approachBonus: { quiet: 4 },
+          heatReduction: 0,
+          skillBonus: { stealth: 6 },
+        },
+      }),
+      "stealth",
+      "quiet",
+      50,
+      TEST_ENGINE,
+    );
+    expect(boosted).toBe(base + 10);
+  });
+
+  it("counts armor only on force checks", () => {
+    const armored = contextWith({ armor: 45 });
+    const force = MomentumService.passChance(armored, "muscle", "force", 50, TEST_ENGINE);
+    const quiet = MomentumService.passChance(armored, "stealth", "quiet", 50, TEST_ENGINE);
+    expect(force - quiet).toBe(45 / TEST_ENGINE.armor.forceChanceDivisor);
   });
 
   it("maps rolls to pass/fail with margins", () => {
@@ -126,42 +290,69 @@ describe("PlayerContextService", () => {
   it("counts an empty loadout as base power only", () => {
     expect(freshContext().effectivePower).toBe(2);
   });
+
+  it("indexes gear tags across loadout and stash", () => {
+    const player = createNewPlayer("uid-1", "Test Player", NOW, {
+      hand: {
+        id: "silenced-pistol",
+        name: "Silenced Pistol",
+        power: 20,
+        tags: ["silenced"],
+      },
+    });
+    player.stash = [
+      { ...FLASHBANG, quantity: 3 },
+      { id: "crowbar", name: "Crowbar", tags: ["crowbar"] },
+    ];
+    const { gearTags } = PlayerContextService.fromPlayer(player);
+    expect(gearTags.silenced).toEqual({ consumables: 0, permanent: true });
+    expect(gearTags.flashbang).toEqual({ consumables: 3, permanent: false });
+    expect(gearTags.crowbar).toEqual({ consumables: 0, permanent: true });
+  });
 });
 
 describe("JobCalculatorService", () => {
-  it("computes golden values for a fresh player", () => {
-    // Fresh player: rank nobody (tier 0), power 2, empty loadout.
+  it("computes golden values for a fresh level-1 player", () => {
     expect(
       JobCalculatorService.calculate(freshContext(), TEST_TEMPLATE, TEST_ENGINE),
     ).toEqual({
-      difficulty: 1,
+      difficulty: 2,
       heatIncrease: 1,
       heatPressure: 0,
-      powerTier: 0,
-      rewardMax: 30,
-      rewardMin: 20,
+      rewardMax: 95,
+      rewardMin: 70,
     });
+  });
+
+  it("stretches difficulty and pay as the player outlevels the band floor", () => {
+    const calculations = JobCalculatorService.calculate(
+      contextWith({ level: 8, skills: freshContext().skills }),
+      TEST_TEMPLATE,
+      TEST_ENGINE,
+    );
+    expect(calculations.difficulty).toBe(9); // base 2 + 7 levels into band
+    expect(calculations.rewardMin).toBe(420); // 20 + 50×8
   });
 });
 
 describe("JobOfferBuilder", () => {
-  it("builds 3 deterministic offers with distinct premises", () => {
+  it("builds a full deterministic board with distinct premises", () => {
     const offers = JobOfferBuilder.buildOffers(
       freshContext(),
       SEED,
       [TEST_TEMPLATE],
       TEST_ENGINE,
     );
-    expect(offers).toHaveLength(3);
-    expect(new Set(offers.map((o) => o.storySeed.premise)).size).toBe(3);
-    expect(new Set(offers.map((o) => o.id)).size).toBe(3);
+    expect(offers).toHaveLength(TEST_ENGINE.board.size);
+    expect(new Set(offers.map((o) => o.storySeed.premise)).size).toBe(offers.length);
+    expect(new Set(offers.map((o) => o.id)).size).toBe(offers.length);
     expect(offers.every((o) => o.templateId === TEST_TEMPLATE.id)).toBe(true);
     expect(offers).toEqual(
       JobOfferBuilder.buildOffers(freshContext(), SEED, [TEST_TEMPLATE], TEST_ENGINE),
     );
   });
 
-  it("puts every mission template on the board before repeating any", () => {
+  it("puts every eligible template on the board before repeating any", () => {
     const templates = [
       TEST_TEMPLATE,
       { ...TEST_TEMPLATE, id: "test-store" },
@@ -176,6 +367,54 @@ describe("JobOfferBuilder", () => {
     expect(new Set(offers.map((o) => o.templateId))).toEqual(
       new Set(["test-robbery", "test-store", "test-bank"]),
     );
+  });
+
+  it("hides templates written for higher level bands", () => {
+    const high = {
+      ...TEST_TEMPLATE,
+      id: "test-high",
+      levels: { max: 30, min: 20 },
+    };
+    const offers = JobOfferBuilder.buildOffers(
+      freshContext(),
+      SEED,
+      [TEST_TEMPLATE, high],
+      TEST_ENGINE,
+    );
+    expect(offers.every((o) => o.templateId === TEST_TEMPLATE.id)).toBe(true);
+  });
+
+  it("drops templates the player has outgrown past the grace window", () => {
+    const level30 = contextWith({ level: 30, skills: freshContext().skills });
+    const high = {
+      ...TEST_TEMPLATE,
+      id: "test-high",
+      levels: { max: 40, min: 25 },
+    };
+    // TEST_TEMPLATE band is 1-10; grace 15 → gone at level 30.
+    const offers = JobOfferBuilder.buildOffers(
+      level30,
+      SEED,
+      [TEST_TEMPLATE, high],
+      TEST_ENGINE,
+    );
+    expect(offers.every((o) => o.templateId === "test-high")).toBe(true);
+  });
+
+  it("falls back to the nearest bands when nothing matches", () => {
+    const high = {
+      ...TEST_TEMPLATE,
+      id: "test-high",
+      levels: { max: 60, min: 50 },
+    };
+    const offers = JobOfferBuilder.buildOffers(
+      freshContext(),
+      SEED,
+      [high],
+      TEST_ENGINE,
+    );
+    expect(offers).toHaveLength(TEST_ENGINE.board.size);
+    expect(offers.every((o) => o.templateId === "test-high")).toBe(true);
   });
 });
 
@@ -210,6 +449,7 @@ describe("SkeletonBuilder", () => {
       missionId: MISSION_ID,
       offer: goldenOffer(),
       seed: "ffffffffffffffffffffffffffffffff",
+      template: TEST_TEMPLATE,
     }).build();
     const rolls = (nodes: Record<string, MissionNode>) =>
       Object.values(nodes)
@@ -246,10 +486,72 @@ describe("SkeletonBuilder", () => {
         expect(child.momentum).toBe(node.momentum + edge.momentumDelta);
         expect(edge.momentumDelta).toBe(MomentumService.momentumDelta(edge.roll, TEST_ENGINE));
         expect(edge.check.difficulty).toBeGreaterThanOrEqual(1);
-        expect(edge.check.difficulty).toBeLessThanOrEqual(10);
+        expect(edge.check.difficulty).toBeLessThanOrEqual(100);
+        expect(edge.gear).toBeNull();
         expect(edge.label).toBeNull();
       }
     }
+  });
+
+  describe("gear", () => {
+    function gearSkeleton(stash: PlayerItem[]): Record<string, MissionNode> {
+      const player = createNewPlayer("uid-1", "Test Player", NOW);
+      player.stash = stash;
+      return new SkeletonBuilder({
+        context: PlayerContextService.fromPlayer(player),
+        depth: 3,
+        engine: TEST_ENGINE,
+        missionId: MISSION_ID,
+        // Mid-band difficulty so gear modifiers never hit the 1-100 clamp.
+        offer: { ...goldenOffer(), difficulty: 50 },
+        seed: SEED,
+        template: TEST_TEMPLATE_WITH_GEAR,
+      }).build();
+    }
+
+    function edges(nodes: Record<string, MissionNode>) {
+      return Object.values(nodes).flatMap((n) => n.choices ?? []);
+    }
+
+    it("marks every demanded edge unsatisfied without the item", () => {
+      const all = edges(gearSkeleton([]));
+      expect(all.length).toBeGreaterThan(0);
+      expect(all.every((e) => e.gear !== null)).toBe(true);
+      expect(all.every((e) => e.gear!.satisfied === false)).toBe(true);
+    });
+
+    it("improvising is harder than carrying the gear", () => {
+      const without = edges(gearSkeleton([]));
+      const withGear = edges(
+        gearSkeleton([{ ...FLASHBANG, quantity: 99 }]),
+      );
+      for (let i = 0; i < without.length; i += 1) {
+        expect(
+          without[i]!.check.difficulty - withGear[i]!.check.difficulty,
+        ).toBe(
+          TEST_ENGINE.gear.missingPenalty + TEST_ENGINE.gear.satisfiedBonus,
+        );
+      }
+    });
+
+    it("a single consumable only satisfies one demand per path", () => {
+      const nodes = gearSkeleton([{ ...FLASHBANG, quantity: 1 }]);
+      // Root edges can spend the one flashbang…
+      for (const edge of nodes[ROOT_NODE_ID]!.choices!) {
+        expect(edge.gear!.satisfied).toBe(true);
+        // …but every choice on the node it leads to finds it already spent.
+        for (const child of nodes[edge.id]!.choices!) {
+          expect(child.gear!.satisfied).toBe(false);
+        }
+      }
+    });
+
+    it("a non-consumable tool satisfies every demand on the run", () => {
+      const nodes = gearSkeleton([
+        { id: "crowbar", name: "Crowbar", tags: ["flashbang"] },
+      ]);
+      expect(edges(nodes).every((e) => e.gear!.satisfied)).toBe(true);
+    });
   });
 });
 
@@ -260,12 +562,17 @@ describe("RewardService", () => {
     RewardService.rewardsForTier(tier, offer, TEST_TEMPLATE);
 
   it("pays by tier from engine numbers only", () => {
-    expect(forTier("jackpot").cashChange).toBe(45);
+    expect(forTier("jackpot").cashChange).toBe(145);
     expect(forTier("successful").cashChange).toBe(offer.rewardMax);
-    expect(forTier("partially_successful").cashChange).toBe(25);
-    expect(forTier("partial_failure").cashChange).toBe(10);
+    expect(forTier("partially_successful").cashChange).toBe(75);
+    expect(forTier("partial_failure").cashChange).toBe(25);
     expect(forTier("failure").cashChange).toBe(0);
     expect(forTier("disaster").cashChange).toBe(0);
+  });
+
+  it("scales XP from xpBase plus difficulty", () => {
+    // successful: 1.5 × (30 + 2 × 6) = 63
+    expect(forTier("successful").xpChange).toBe(63);
   });
 
   it("adds more heat the worse the outcome", () => {
@@ -284,8 +591,45 @@ describe("RewardService", () => {
       { cashChange: -50, heatChange: 10, xpChange: 5 },
       NOW,
     );
-    expect(applied.resources.heat).toBe(100);
-    expect(applied.resources.cash).toBe(0);
-    expect(applied.progression.experience).toBe(5);
+    expect(applied.player.resources.heat).toBe(100);
+    expect(applied.player.resources.cash).toBe(0);
+    expect(applied.player.progression.experience).toBe(5);
+    expect(applied.levelsGained).toBe(0);
+  });
+
+  it("levels the player up when mission XP crosses the threshold", () => {
+    const player = createNewPlayer("uid-1", "Test Player", NOW);
+    const applied = RewardService.applyToPlayer(
+      player,
+      { cashChange: 0, heatChange: 0, xpChange: xpToNextLevel(1) + 3 },
+      NOW,
+    );
+    expect(applied.levelsGained).toBe(1);
+    expect(applied.player.progression.level).toBe(2);
+    expect(applied.player.progression.experience).toBe(3);
+  });
+
+  it("bleeds off heat for armor and heat-reduction effects, never below 1", () => {
+    const player = createNewPlayer("uid-1", "Test Player", NOW, {
+      torso: {
+        armor: 45,
+        effects: [{ type: "heatReduction", value: 2 }],
+        id: "vest",
+        name: "Vest",
+      },
+    });
+    const mitigated = RewardService.mitigateHeat(
+      { cashChange: 0, heatChange: 10, xpChange: 0 },
+      player,
+      TEST_ENGINE,
+    );
+    expect(mitigated.heatChange).toBe(5); // 10 − floor(45/15) − 2
+
+    const floored = RewardService.mitigateHeat(
+      { cashChange: 0, heatChange: 4, xpChange: 0 },
+      player,
+      TEST_ENGINE,
+    );
+    expect(floored.heatChange).toBe(1);
   });
 });

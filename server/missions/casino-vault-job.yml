@@ -1,0 +1,108 @@
+# Casino vault job — not the skim, the vault itself: a fortress built by
+# men who steal for a living and designed to stop people exactly like
+# you. The Strip's owners answer to nobody legal, so neither does their
+# revenge. Depth 5, full crew, full kit.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: casino-vault-job
+name: Casino Vault Job
+type: heist
+district: Neon Strip
+
+levels:
+  min: 72
+  max: 85
+
+depth: 5
+
+difficulty:
+  base: 73
+  perLevel: 1.15
+
+rewards:
+  cashBase: 160
+  cashPerLevel: 70
+  spreadBase: 90
+  spreadPerLevel: 18
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 4.5
+  perDifficulty: 0.11
+  max: 15
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [technical, force]
+    chance: 0.6
+    consumes: true
+    label: Breaching Charge
+    tags: [breaching, explosive]
+  - approaches: [technical]
+    chance: 0.55
+    consumes: false
+    label: Hacking Rig
+    tags: [hacking]
+  - approaches: [deception, social]
+    chance: 0.45
+    consumes: false
+    label: Staff Disguise
+    tags: [disguise]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.8
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 3
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 6
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.5
+    heatBonus: 11
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Golden Calf, the vault floor
+    premise: Fight night upstairs puts the biggest drop of the year in the vault by two a.m. — and the architect who built the vault floor kept a copy of the plans as insurance against exactly the man he built it for.
+    pressure: The count starts at four, eight men with adding machines, and the vault door stands open the entire time — open, and watched.
+  - location: The Tivoli, subterranean level
+    premise: The Tivoli's vault shares a wall with a storm drain that predates the casino, and the engineer who noticed spent six months quietly confirming it before he came to you instead of the owners.
+    pressure: The rains come this month; the drain runs chest-high after a storm, and the weather won't be consulting your schedule.
+  - location: Casino Royale Neon, the cage elevator shaft
+    premise: The vault elevator's control relays were replaced last spring by the lowest bidder, and the lowest bidder's foreman can make the car report a floor it never left — a vault door that believes the elevator is elsewhere doesn't lock its inner gate.
+    pressure: The relay trick trips a maintenance flag the next time the system self-tests, at six sharp every morning.
+  - location: The Sapphire, owner's private vault
+    premise: Beneath the Sapphire's license vault sits a second vault the gaming commission has never seen — the owner's own skim, plus the leverage he holds over half the Strip. Rob the first vault and he calls the police; rob the second and he can't call anyone.
+    pressure: The owner visits the private vault alone every night after close — the window between his visit and the day shift is three hours, and only he knows if tonight is a two-visit night.
+  - location: The Monte d'Oro, counting house transfer
+    premise: Four casinos under one silent partner consolidate their weekly take at the Monte d'Oro before it leaves for the coast — one night a week, one vault holds all four drops, and an armored convoy's worth of cash sits behind a single door.
+    pressure: The consolidation night rotates and only five men know the schedule; the one selling it to you is the one the other four already suspect.
+  - location: The Golden Calf, the old vault
+    premise: When the casino expanded, the original vault was sealed behind the new sports book rather than emptied — the owner's first decade of undeclared profit entombed in it, off every ledger, guarded only by concrete and the fact that officially it doesn't exist.
+    pressure: Demolition for the next expansion starts in nine days, with a contractor the owner hand-picked to work unsupervised — he means to open it himself.

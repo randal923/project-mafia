@@ -19,10 +19,11 @@ export class JobOfferBuilder {
     engine: EngineConfig,
   ): JobOffer[] {
     const rng = new MissionRng(boardSeed, "board");
+    const eligible = this.eligibleTemplates(context, templates, engine);
 
     // Fill the slots template-by-template, cycling when there are fewer
     // templates than slots; a template repeated twice gets distinct seeds.
-    const order = rng.pickDistinct(templates, templates.length, "templates");
+    const order = rng.pickDistinct(eligible, eligible.length, "templates");
     const slots = Array.from(
       { length: engine.board.size },
       (_, index) => order[index % order.length]!,
@@ -66,5 +67,33 @@ export class JobOfferBuilder {
         type: template.type,
       };
     });
+  }
+
+  /**
+   * Jobs written for the player's level: the band opens at levels.min and
+   * stays on the board until the player outgrows it by board.levelGrace.
+   * If nothing matches (bad data, capped player), the nearest bands fill
+   * in so the board is never empty.
+   */
+  private static eligibleTemplates(
+    context: EnginePlayerContext,
+    templates: MissionTemplate[],
+    engine: EngineConfig,
+  ): MissionTemplate[] {
+    const eligible = templates.filter(
+      (t) =>
+        context.level >= t.levels.min &&
+        context.level <= t.levels.max + engine.board.levelGrace,
+    );
+    if (eligible.length > 0) {
+      return eligible;
+    }
+
+    const distance = (t: MissionTemplate) =>
+      Math.min(
+        Math.abs(context.level - t.levels.min),
+        Math.abs(context.level - t.levels.max),
+      );
+    return [...templates].sort((a, b) => distance(a) - distance(b)).slice(0, 3);
   }
 }

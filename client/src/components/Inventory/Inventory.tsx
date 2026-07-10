@@ -1,4 +1,5 @@
 import { cx } from "../../lib/cx";
+import { Button } from "../Button/Button";
 import { ItemHoverCard } from "../ItemHoverCard/ItemHoverCard";
 import { SectionHeader } from "../SectionHeader/SectionHeader";
 import { InventoryEmptySlot } from "./InventoryEmptySlot";
@@ -11,6 +12,7 @@ import type {
 } from "./InventoryTypes";
 
 type InventoryProps = {
+  actionsDisabled?: boolean;
   ariaLabel?: string;
   className?: string;
   emptySlotLabel?: string;
@@ -18,6 +20,10 @@ type InventoryProps = {
   gearSlotsLabel?: string;
   loadoutEyebrow?: string;
   loadoutTitle?: string;
+  onEquip?: (item: InventoryItem) => void;
+  onSell?: (item: InventoryItem) => void;
+  onUnequip?: (slotId: InventorySlotId) => void;
+  playerLevel?: number;
   showLoadout?: boolean;
   showStash?: boolean;
   slots: readonly InventorySlot[];
@@ -36,6 +42,7 @@ const slotPlacementClasses: Record<InventorySlotId, string> = {
 };
 
 export function Inventory({
+  actionsDisabled = false,
   ariaLabel = "Inventory",
   className,
   emptySlotLabel = "Empty",
@@ -43,6 +50,10 @@ export function Inventory({
   gearSlotsLabel = "Gear slots",
   loadoutEyebrow = "Profile",
   loadoutTitle = "Loadout",
+  onEquip,
+  onSell,
+  onUnequip,
+  playerLevel,
   showLoadout = true,
   showStash = true,
   slots,
@@ -78,8 +89,10 @@ export function Inventory({
           <div className="mx-auto grid w-full max-w-xl gap-4 p-4 md:grid-cols-3 md:grid-rows-3">
             {slots.map((slot) => (
               <InventorySlotPanel
+                actionsDisabled={actionsDisabled}
                 emptyLabel={emptySlotLabel}
                 key={slot.id}
+                onUnequip={onUnequip}
                 placementClassName={slotPlacementClasses[slot.id]}
                 slot={slot}
               />
@@ -106,9 +119,46 @@ export function Inventory({
                 key={item ? item.id : `stash-empty-${index}`}
               >
                 {item ? (
-                  <ItemHoverCard item={item}>
-                    <InventoryItemCard item={item} />
-                  </ItemHoverCard>
+                  <div className="flex flex-col gap-2">
+                    <ItemHoverCard item={item}>
+                      <InventoryItemCard item={item} />
+                    </ItemHoverCard>
+                    {onEquip || onSell ? (
+                      <div className="flex gap-2">
+                        {onEquip && item.slot ? (
+                          <Button
+                            className="flex-1"
+                            disabled={
+                              actionsDisabled ||
+                              (item.levelRequirement !== undefined &&
+                                playerLevel !== undefined &&
+                                playerLevel < item.levelRequirement)
+                            }
+                            onClick={() => onEquip(item)}
+                            size="small"
+                            variant="secondary"
+                          >
+                            {item.levelRequirement !== undefined &&
+                            playerLevel !== undefined &&
+                            playerLevel < item.levelRequirement
+                              ? `Lv ${item.levelRequirement}`
+                              : "Equip"}
+                          </Button>
+                        ) : null}
+                        {onSell ? (
+                          <Button
+                            className="flex-1"
+                            disabled={actionsDisabled}
+                            onClick={() => onSell(item)}
+                            size="small"
+                            variant="quiet"
+                          >
+                            Sell
+                          </Button>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
                 ) : (
                   <InventoryEmptySlot>
                     {index === 0 && stashItems.length === 0 ? (

@@ -1,0 +1,105 @@
+# Armored car ambush — steel doors, scheduled routes, men paid to shoot
+# back. The take is banded and counted before you ever see it; the only
+# question is whether you open the truck faster than the city closes in.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: armored-car-ambush
+name: Armored Car Ambush
+type: ambush
+district: Riverside
+
+levels:
+  min: 30
+  max: 42
+
+depth: 4
+
+difficulty:
+  base: 31
+  perLevel: 1.15
+
+rewards:
+  cashBase: 100
+  cashPerLevel: 62
+  spreadBase: 70
+  spreadPerLevel: 16
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 3.5
+  perDifficulty: 0.1
+  max: 12
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [force]
+    chance: 0.5
+    consumes: true
+    label: AP Rounds
+    tags: [ap-rounds]
+  - approaches: [technical, force]
+    chance: 0.4
+    consumes: true
+    label: Explosive Charge
+    tags: [explosive]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.75
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 3
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 5
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.5
+    heatBonus: 9
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Riverside viaduct underpass
+    premise: A Garrison Security truck carries racetrack receipts along the river road every Sunday night, and the underpass kills its radio for ninety seconds.
+    pressure: Ninety seconds — after that the driver's check-in is overdue and the dispatcher starts making calls.
+  - location: Mill Street rail crossing
+    premise: >-
+      A retired Garrison driver sold you the schedule and one more thing: the
+      rear door's lock has a factory flaw, if you know where to drill and have
+      the tool to do it.
+    pressure: The crossing holds the truck for four minutes when the freight passes — and the freight is sometimes early.
+  - location: The Cathedral Hill switchback
+    premise: The mint-run truck grinds up the hill in first gear every second Tuesday, slow as a funeral, with the month's worn-bill exchange for the federal furnace.
+    pressure: Burned money is nobody's loss, so the guards are lazy — but the route was chosen because every window on the hill overlooks it.
+  - location: Wexford Loan & Trust rear dock
+    premise: The truck's crew takes an unauthorized coffee stop while the third man loads alone at the dock, a routine their own company would fire them for — which is why nobody has reported it.
+    pressure: The stop lasts twelve minutes, and the dock camera feeds a tape machine that an inside man can only rewind once.
+  - location: The Palisade Bridge tollgate
+    premise: A courier truck pays the toll like everyone else, and for thirty seconds it sits in a steel queue with its engine idling and nowhere to go.
+    pressure: The tollhouse keeps a shotgun under the counter and a direct line to the river patrol, and the far bank is the only way off the bridge.
+  - location: Meridian Transfer garage, night bay
+    premise: The trucks come home to the depot at midnight to count and re-band, and an electrician who rewired the bay knows which fuse quiets the door alarms and the lights together.
+    pressure: The count crew arrives forty minutes after the trucks, and the fuse trick only works until someone checks the panel.

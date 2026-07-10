@@ -1,0 +1,102 @@
+# Jewelry store heist — glass cases, silent alarms, and a fence tapping
+# his watch. The first job where preparation starts to matter more than
+# nerve: picks for the cases, a scanner for the response times.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: jewelry-store-heist
+name: Jewelry Store Heist
+type: heist
+district: Hillcrest
+
+levels:
+  min: 18
+  max: 28
+
+depth: 4
+
+difficulty:
+  base: 19
+  perLevel: 1.2
+
+rewards:
+  cashBase: 80
+  cashPerLevel: 58
+  spreadBase: 60
+  spreadPerLevel: 15
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 3
+  perDifficulty: 0.09
+  max: 10
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [quiet, technical]
+    chance: 0.4
+    consumes: false
+    label: Lockpick Set
+    tags: [lockpick]
+  - approaches: [opportunistic]
+    chance: 0.35
+    consumes: false
+    label: Police Scanner
+    tags: [scanner]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.7
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 3
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 5
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 8
+    xpFactor: 0.1
+
+storySeeds:
+  - location: Aldermann & Fitch, Hillcrest Parade
+    premise: The house jeweler to half the hill's old families keeps consignment pieces in a back-room safe the insurance company doesn't know about, because neither do the taxes.
+    pressure: Mr. Fitch walks his terrier past the shop at eleven every night, and he carries the only key that stops the case alarms singing.
+  - location: The Marchetti estate sale preview
+    premise: A dead shipping magnate's collection sits in a rented gallery overnight before auction, guarded by men hired for their suits rather than their eyes.
+    pressure: The auction house photographer catalogued every piece today — anything missing tomorrow has a portrait in evidence.
+  - location: Veranelli's, the arcade shop
+    premise: A tray of unmounted stones arrives Thursday for a commissioned tiara, and unmounted stones have no serial numbers, no engravings, and no history.
+    pressure: The courier who brings them waits in the shop until the safe closes, and he's a retired police sergeant who misses the work.
+  - location: The Pearl Room, Hotel Regent mezzanine
+    premise: The hotel jeweler rents display cases wired through the building's original alarm loop — one junction box in the service stair feeds them all.
+    pressure: The mezzanine is visible from the lobby bar, which serves until two, and the barman polishes glasses facing it.
+  - location: Kessler Fine Watches
+    premise: A smuggler paid Kessler in stolen chronographs he can't legally sell, so they sit in the workshop drawer while he loses his nerve — your fence will take them tonight, papers or no papers.
+    pressure: Kessler has started sleeping badly and coming to the shop at strange hours to look at the drawer.
+  - location: DuMont et Cie, the corner of Crown and Third
+    premise: The window display alone is worth a season of dock work, and the shop is switching alarm companies this week — for two nights, the new wires are in and nobody is listening to them.
+    pressure: The old alarm company knows the gap and has a man parked outside some nights, out of spite or hope.

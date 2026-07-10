@@ -6,50 +6,50 @@ import { MissionTemplate } from "../../../../shared/missionTemplate";
  * the tests were written — tuning the yml must NOT break engine tests.
  */
 export const TEST_ENGINE: EngineConfig = {
-  board: { size: 3 },
-  power: { tierBase: 8, tierStep: 6 },
+  board: { size: 4, levelGrace: 15 },
   checks: {
-    baseChance: 50,
-    perSkillPoint: 7,
-    perDifficulty: -6,
-    powerDivisor: 10,
+    baseChance: 52,
+    perSkillPoint: 1.0,
+    perDifficulty: -0.9,
+    powerDivisor: 25,
     heatChanceDivisor: 20,
     minChance: 5,
     maxChance: 95,
     criticalMargin: 40,
-    perBeatDepth: 1,
-    saferBolderGap: 1,
-    heatPressureDivisor: 25,
+    perBeatDepth: 2,
+    saferBolderGap: 5,
+    heatPressureDivisor: 5,
   },
+  gear: { missingPenalty: 15, satisfiedBonus: 5 },
+  armor: { forceChanceDivisor: 15, heatDivisor: 15 },
   momentum: { pass: 2, fail: -2, criticalBonus: 1 },
 };
 
 /**
- * Stable template fixture for golden engine tests. Mirrors the shipped
- * docks-robbery.yml values at the time the tests were written — content
- * edits to the yml must NOT break engine math tests.
+ * Stable template fixture for golden engine tests — content edits to the
+ * shipped yml files must NOT break engine math tests.
  */
 export const TEST_TEMPLATE: MissionTemplate = {
   id: "test-robbery",
   name: "Test Robbery",
   type: "robbery",
   district: "Docks",
+  levels: { min: 1, max: 10 },
   depth: 3,
-  difficulty: { base: 1, perPowerTier: 1, perRankTier: 1 },
+  difficulty: { base: 2, perLevel: 1 },
   rewards: {
     cashBase: 20,
-    cashPerPowerTier: 25,
-    cashPerRankTier: 45,
+    cashPerLevel: 50,
     spreadBase: 10,
-    spreadPerPowerTier: 15,
-    spreadPerRankTier: 25,
-    xpPerDifficulty: 10,
+    spreadPerLevel: 15,
+    xpBase: 30,
+    xpPerDifficulty: 6,
   },
-  heat: { base: 1, max: 12, perDifficulty: 0.5 },
+  heat: { base: 1, max: 12, perDifficulty: 0.1 },
   skillExperience: {
-    basePerSuccess: 2,
+    basePerSuccess: 30,
     criticalMultiplier: 2,
-    perCheckDifficulty: 2,
+    perCheckDifficulty: 0.05,
   },
   outcomes: {
     jackpot: { cashFactor: 1.5, heatBonus: 0, heatFactor: 1, xpFactor: 2 },
@@ -89,6 +89,31 @@ export const TEST_TEMPLATE: MissionTemplate = {
       location: "Dockside pawn shop",
       premise: "A tray of stolen watches is too hot for the broker to move.",
       pressure: "He sleeps above the shop with a shotgun.",
+    },
+  ],
+};
+
+/**
+ * Same template but every edge demands gear (chance 1), for exercising
+ * the gear-aware skeleton deterministically.
+ */
+export const TEST_TEMPLATE_WITH_GEAR: MissionTemplate = {
+  ...TEST_TEMPLATE,
+  id: "test-robbery-gear",
+  gear: [
+    {
+      approaches: [
+        "deception",
+        "force",
+        "opportunistic",
+        "quiet",
+        "social",
+        "technical",
+      ],
+      chance: 1,
+      consumes: true,
+      label: "Flashbang",
+      tags: ["flashbang"],
     },
   ],
 };

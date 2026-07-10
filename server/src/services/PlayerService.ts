@@ -3,6 +3,7 @@ import {
   STARTER_EQUIPMENT_ID,
   equipmentToPlayerItem,
 } from "../../../shared/equipment";
+import { decayedHeat } from "../../../shared/heat";
 import {
   Player,
   PlayerLoadout,
@@ -25,7 +26,38 @@ export class PlayerService {
 
   async getPlayer(uid: string): Promise<Player | null> {
     const snapshot = await this.players.doc(uid).get();
-    return snapshot.exists ? normalizePlayer(snapshot.data() as Player) : null;
+    if (!snapshot.exists) {
+      return null;
+    }
+
+    return this.applyHeatDecay(normalizePlayer(snapshot.data() as Player));
+  }
+
+  /**
+   * Laying low pays: heat bleeds off with idle time (shared/heat.ts).
+   * Persisted on read so the next transaction sees the cooled value.
+   */
+  private applyHeatDecay(player: Player): Player {
+    const nowIso = new Date().toISOString();
+    const cooled = decayedHeat(player.resources.heat, player.updatedAt, nowIso);
+    if (cooled >= player.resources.heat) {
+      return player;
+    }
+
+    const updated: Player = {
+      ...player,
+      resources: { ...player.resources, heat: cooled },
+      updatedAt: nowIso,
+    };
+
+    this.players
+      .doc(player.id)
+      .update({ "resources.heat": cooled, updatedAt: nowIso })
+      .catch((err) => {
+        console.error(`Failed to persist heat decay for ${player.id}:`, err);
+      });
+
+    return updated;
   }
 
   async createPlayer(uid: string, name: string): Promise<Player> {
@@ -58,7 +90,7 @@ export class PlayerService {
   private async starterLoadout(): Promise<PlayerLoadout> {
     const knife = await this.equipment.getEquipment(STARTER_EQUIPMENT_ID);
 
-    if (!knife) {
+    if (!knife || knife.slot === null) {
       throw new HttpError(500, "Starter equipment is missing.");
     }
 

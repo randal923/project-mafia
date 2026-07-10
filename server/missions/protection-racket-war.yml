@@ -1,0 +1,102 @@
+# Protection racket war — a rival outfit is collecting on your streets,
+# and every envelope they take is a vote against you. Part muscle, part
+# theater: the neighborhood has to see who wins.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: protection-racket-war
+name: Protection Racket War
+type: racket
+district: Old Quarter
+
+levels:
+  min: 24
+  max: 35
+
+depth: 4
+
+difficulty:
+  base: 25
+  perLevel: 1.2
+
+rewards:
+  cashBase: 80
+  cashPerLevel: 55
+  spreadBase: 60
+  spreadPerLevel: 14
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 3
+  perDifficulty: 0.1
+  max: 11
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [force]
+    chance: 0.4
+    consumes: true
+    label: Flashbang
+    tags: [flashbang]
+  - approaches: [deception, social]
+    chance: 0.35
+    consumes: false
+    label: Disguise
+    tags: [disguise]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.7
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 3
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 5
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 8
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Bellafiore brothers' collection route
+    premise: A crew from Ironworks has started walking your streets on Thursdays, taking envelopes from shopkeepers who used to pay you — and their bagman carries the whole route home in one satchel.
+    pressure: The third shop on the route belongs to a police captain's cousin, and whatever happens there gets reported twice.
+  - location: Antonelli's Trattoria, Via Perrone
+    premise: The rival outfit held a dinner in Antonelli's back room to announce the neighborhood was theirs now — the neighborhood needs to watch you hold your own dinner at the same table.
+    pressure: Half the guests you need to impress won't come if there's blood on the floor, and the other half won't come unless there could be.
+  - location: The Corsini social club
+    premise: Their crew runs collections out of a members-only club with a steel front door and a book of every merchant they've turned — take the book, and their racket unravels by itself.
+    pressure: The club never empties before four, and the doorman pulls the bar across at the first strange face.
+  - location: Rothstein's laundry, Carmine Street
+    premise: The launderer washes the rival crew's collection money through his books, and he'd rather switch sides than press shirts for dead men — he'll hand you a week of their take as a deposit on his loyalty.
+    pressure: Their counter comes for the ledgers Friday morning, and if the numbers are short they'll burn the laundry with him in it.
+  - location: The Feast of San Gennaro, Old Quarter
+    premise: Every stall at the street feast pays somebody, and this year the rival outfit sold 'permits' — collect their permit money out from under them in one night, in public, and the quarter knows who runs it.
+    pressure: The feast crawls with off-duty patrolmen working the crowd, and the archbishop's procession passes at nine.
+  - location: Vukovic's garage, the border street
+    premise: The mechanic on the boundary between your territory and theirs pays both crews and hates both crews — he's offered his garage as neutral ground for a sit-down that one side doesn't intend to walk out of.
+    pressure: Whoever moves first inside those walls had better finish it — the street outside belongs to nobody, and everybody brought friends.

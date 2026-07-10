@@ -1,7 +1,8 @@
 "use client";
 
-import type { EquipmentSlotId } from "@shared/player";
+import type { EquipmentSlotId, PlayerItem } from "@shared/player";
 import { useState, type ReactNode } from "react";
+import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { CharacterPortrait } from "../../components/CharacterPortrait/CharacterPortrait";
 import { CharacterStats } from "../../components/CharacterStats/CharacterStats";
 import { Inventory } from "../../components/Inventory/Inventory";
@@ -13,7 +14,9 @@ import {
   tabPanelDomId,
   type TabDefinition,
 } from "../../components/Tabs/Tabs";
+import { Toast } from "../../components/Toast/Toast";
 import { typography } from "../../design-system/typography";
+import { ApiError, equipItem, sellItem, unequipSlot } from "../../lib/api";
 import { cx } from "../../lib/cx";
 
 type CharacterPageTabId = "loadout" | "overview" | "stash";
@@ -37,9 +40,12 @@ const slotOrder: readonly { id: EquipmentSlotId; label: string }[] = [
 ];
 
 export function CharacterPageContent() {
-  const { player, status } = usePlayer();
+  const { user } = useAuth();
+  const { player, setPlayer, status } = usePlayer();
   const [activeTabId, setActiveTabId] =
     useState<CharacterPageTabId>("overview");
+  const [isMutating, setIsMutating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (status === "loading" || status === "missing") {
     return (
@@ -65,13 +71,57 @@ export function CharacterPageContent() {
     label,
   }));
 
+  const runMutation = async (mutate: () => Promise<typeof player>) => {
+    if (!user || isMutating) {
+      return;
+    }
+    setIsMutating(true);
+    setError(null);
+    try {
+      const updated = await mutate();
+      if (updated) {
+        setPlayer(updated);
+      }
+    } catch (mutationError) {
+      setError(
+        mutationError instanceof ApiError
+          ? mutationError.message
+          : "Something went wrong. Try again.",
+      );
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const handleEquip = (item: PlayerItem) =>
+    runMutation(() => equipItem(user!, item.id));
+  const handleUnequip = (slotId: EquipmentSlotId) =>
+    runMutation(() => unequipSlot(user!, slotId));
+  const handleSell = (item: PlayerItem) =>
+    runMutation(() => sellItem(user!, item.id).then((r) => r.player));
+
   const panels: Record<CharacterPageTabId, ReactNode> = {
     loadout: (
-      <Inventory showStash={false} slots={slots} stashItems={player.stash} />
+      <Inventory
+        actionsDisabled={isMutating}
+        onUnequip={handleUnequip}
+        showStash={false}
+        slots={slots}
+        stashItems={player.stash}
+      />
     ),
     overview: <CharacterStats profile={player} />,
     stash: (
-      <Inventory showLoadout={false} slots={slots} stashItems={player.stash} />
+      <Inventory
+        actionsDisabled={isMutating}
+        onEquip={handleEquip}
+        onSell={handleSell}
+        onUnequip={handleUnequip}
+        playerLevel={player.progression.level}
+        showLoadout={false}
+        slots={slots}
+        stashItems={player.stash}
+      />
     ),
   };
 
@@ -112,6 +162,16 @@ export function CharacterPageContent() {
           </div>
         </div>
       </div>
+      {error ? (
+        <div className="fixed right-6 bottom-6 z-20">
+          <Toast
+            message={error}
+            onDismiss={() => setError(null)}
+            title="No dice"
+            tone="failure"
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

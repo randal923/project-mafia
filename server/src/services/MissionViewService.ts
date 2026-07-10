@@ -39,6 +39,7 @@ export class MissionViewService {
         ? current.choices.map((edge) => ({
             approach: edge.approach,
             check: edge.check,
+            gear: edge.gear ?? null,
             id: edge.id,
             intent: edge.intent,
             label: edge.label,
@@ -78,6 +79,7 @@ export class MissionViewService {
     return {
       approach: edge.approach,
       check: edge.check,
+      gear: edge.gear ?? null,
       id: edge.id,
       label: edge.label,
       margin: edge.roll.margin,

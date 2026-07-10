@@ -36,6 +36,14 @@ export function MissionOutcomePanel({
       <p className={`m-0 ${typography.narrativeBody}`}>
         {step.narrative?.body}
       </p>
+      {resolution.levelsGained ? (
+        <p
+          className={`m-0 w-fit rounded-control border border-brass-bright bg-brass/10 px-4 py-2 ${displayText} text-2xl text-brass-bright`}
+        >
+          Level up
+          {resolution.levelsGained > 1 ? ` ×${resolution.levelsGained}` : ""}
+        </p>
+      ) : null}
       <dl className="m-0 flex flex-wrap gap-8">
         <div>
           <dt className={typography.metadata}>Take</dt>

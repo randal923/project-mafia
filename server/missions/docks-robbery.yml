@@ -1,45 +1,52 @@
-# Docks robbery — the starter mission line.
+# Docks robbery — waterfront work for a crew finding its feet. Better
+# money than corner stores, and the harbor keeps its secrets — but the
+# people you steal from down here settle things themselves.
 #
 # Full parameter + formula reference: README.md in this folder.
-# This file tunes THIS mission (difficulty, money, heat, XP, outcomes,
-# story seeds). Global rules — check math, pass chances, criticals,
-# momentum — live in _engine.yml.
 
 id: docks-robbery
 name: Docks Robbery
 type: robbery
-district: Docks
+district: The Docks
 
-# Choices per mission run (3-5). Node count doubles per level.
+levels:
+  min: 8
+  max: 18
+
 depth: 3
 
 difficulty:
-  base: 1
-  perRankTier: 1
-  perPowerTier: 1
+  base: 9
+  perLevel: 1.2
 
 rewards:
-  cashBase: 20
-  cashPerRankTier: 45
-  cashPerPowerTier: 25
-  spreadBase: 10
-  spreadPerRankTier: 25
-  spreadPerPowerTier: 15
-  xpPerDifficulty: 10
+  cashBase: 50
+  cashPerLevel: 50
+  spreadBase: 50
+  spreadPerLevel: 14
+  xpBase: 30
+  xpPerDifficulty: 6
 
 heat:
-  base: 1
-  perDifficulty: 0.5
-  max: 12
+  base: 2
+  perDifficulty: 0.08
+  max: 8
 
 skillExperience:
-  basePerSuccess: 2
-  perCheckDifficulty: 2
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
   criticalMultiplier: 2
+
+gear:
+  - approaches: [quiet, technical]
+    chance: 0.3
+    consumes: false
+    label: Lockpick Set
+    tags: [lockpick]
 
 outcomes:
   jackpot:
-    cashFactor: 1.5
+    cashFactor: 1.65
     heatFactor: 1
     heatBonus: 0
     xpFactor: 2
@@ -49,9 +56,9 @@ outcomes:
     heatBonus: 0
     xpFactor: 1.5
   partially_successful:
-    cashFactor: 0.8
+    cashFactor: 0.75
     heatFactor: 1
-    heatBonus: 0
+    heatBonus: 1
     xpFactor: 1
   partial_failure:
     cashFactor: 0.25
@@ -65,8 +72,8 @@ outcomes:
     xpFactor: 0.25
   disaster:
     cashFactor: 0
-    heatFactor: 1
-    heatBonus: 8
+    heatFactor: 1.25
+    heatBonus: 7
     xpFactor: 0.1
 
 storySeeds:
@@ -80,7 +87,7 @@ storySeeds:
     premise: The harbor master keeps a week of bribe envelopes in an old floor safe before passing them up the chain.
     pressure: A private security patrol loops past the office every twenty minutes.
   - location: Container yard, row F
-    premise: A mislabeled container holds counterfeit designer goods a rival crew hasn't collected yet.
+    premise: A mislabeled container holds counterfeit designer goods a rival crew hasn't collected yet — and its customs seal is wired to a cheap alarm anyone with steady hands could bypass.
     pressure: The rival crew's van has already been spotted circling the gate.
   - location: Dockside pawn shop
     premise: The pawnbroker who fences for half the waterfront just took in a tray of stolen watches too hot for him to move.

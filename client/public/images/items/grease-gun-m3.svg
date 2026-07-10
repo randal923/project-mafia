@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="M3 Grease Gun">
+    <rect x="6" y="33" width="18" height="6" rx="2" fill="#f7f2e8"/>
+    <polygon points="8,39 22,39 22,48 10,50" fill="#f7f2e8"/>
+    <rect x="22" y="29" width="48" height="15" rx="3" fill="#f7f2e8"/>
+    <rect x="70" y="33" width="18" height="7" rx="2" fill="#f7f2e8"/>
+      <rect x="84" y="29" width="4" height="6" fill="#f7f2e8"/>
+    <polygon points="28,44 38,44 34,64 24,62" fill="#f7f2e8"/>
+    <rect x="48" y="44" width="9" height="22" rx="2" fill="#f7f2e8"/><line x1="52.5" y1="48" x2="52.5" y2="62" stroke="#0a0a0a" stroke-opacity="0.25" fill="none" stroke-width="2"/>
+    <rect x="26" y="32" width="40" height="2.5" fill="#0a0a0a" opacity="0.25"/>
+    
+</svg>

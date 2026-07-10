@@ -1,0 +1,109 @@
+# Evidence vault break-in — the one score that isn't about money. What's
+# in the property vault under the Hall of Justice can put half the city
+# away or set it free, and everyone who matters knows which folder is
+# theirs. Depth 5, technical to the bone: cameras, card readers, wired
+# cages, and no version of loud that ends well.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: evidence-vault-break-in
+name: Evidence Vault Break-In
+type: infiltration
+district: Downtown
+
+levels:
+  min: 58
+  max: 70
+
+depth: 5
+
+difficulty:
+  base: 59
+  perLevel: 1.15
+
+rewards:
+  cashBase: 130
+  cashPerLevel: 65
+  spreadBase: 80
+  spreadPerLevel: 17
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 4
+  perDifficulty: 0.11
+  max: 14
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [technical]
+    chance: 0.6
+    consumes: false
+    label: Hacking Rig
+    tags: [hacking]
+  - approaches: [quiet, technical]
+    chance: 0.5
+    consumes: false
+    label: Signal Jammer
+    tags: [jammer]
+  - approaches: [quiet]
+    chance: 0.45
+    consumes: false
+    label: Lockpick Set
+    tags: [lockpick]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.75
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 3
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 6
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.5
+    heatBonus: 11
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Hall of Justice, sub-basement property vault
+    premise: A grand jury convenes Monday on the Marchetti case, and the wire recordings that make it — reels 40 through 46 — sit in a numbered cage two floors below the courtroom. The don will pay a fortune; his enemies would pay more.
+    pressure: The evidence clerk inventories the cage Sunday night to prepare the transfer, and every entry to the sub-basement after hours needs a signature that gets checked.
+  - location: The 9th Precinct property annex
+    premise: Before evidence reaches the Hall it sits in a precinct annex with one tired custodian — and among last month's seizures is your own crew's ledger, taken in the Fulton Street raid, still uncatalogued and still unread.
+    pressure: A federal task force requisitioned the Fulton Street boxes; their truck comes Wednesday, and after that the ledger lives in a building you'll never enter.
+  - location: The District Attorney's exhibit room
+    premise: The DA keeps his trial exhibits close — a murder weapon with the wrong fingerprints on it is scheduled for testimony Thursday, and the man those prints belong to has friends who'd rather it never take the stand.
+    pressure: The exhibit room shares the DA's office alarm circuit, and the DA works past midnight when he's about to win.
+  - location: Central Records, the microfilm vault
+    premise: Twenty years of informant files are being photographed onto microfilm for the new federal index, and for six weeks originals and copies sit in the same climate-controlled room — every name that ever whispered to the city, in one place, once.
+    pressure: The film contractor's technicians work rotating night shifts with no fixed schedule, and the vault door logs every card it swallows.
+  - location: The impound garage, bay 12
+    premise: A senator's car sits impounded after his driver's arrest, and what's welded into the rocker panels was never listed on any inventory because the arresting officer is saving it for his own retirement.
+    pressure: That officer visits the car every few days to check his pension is still there, and he doesn't come in uniform.
+  - location: The coroner's evidence refrigerator
+    premise: A dead accountant swallowed a safe-deposit key before he died, and the coroner's personal-effects locker now holds the only object that opens the box where he kept the proof of who killed him — and why.
+    pressure: The family claims the effects Friday; after that the key belongs to a widow with a lawyer and a grudge.

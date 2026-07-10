@@ -8,14 +8,15 @@ export type JobCalculations = {
   heatIncrease: number;
   /** Raises per-edge check difficulty as the player's heat climbs. */
   heatPressure: number;
-  powerTier: number;
   rewardMax: number;
   rewardMin: number;
 };
 
 /**
  * Turns a mission template's knobs plus the player's situation into the
- * offer numbers. All tuning lives in server/missions/*.yml.
+ * offer numbers. All tuning lives in server/missions/*.yml. Difficulty is
+ * on the 1-100 scale, anchored at the template's level band: playing past
+ * the band's floor stretches the job harder via difficulty.perLevel.
  */
 export class JobCalculatorService {
   static calculate(
@@ -24,29 +25,18 @@ export class JobCalculatorService {
     engine: EngineConfig,
   ): JobCalculations {
     const { difficulty: d, heat, rewards } = template;
-    const powerTier = Math.max(
-      0,
-      Math.floor(
-        (context.effectivePower - engine.power.tierBase) /
-          engine.power.tierStep,
-      ),
-    );
+    const levelsIntoBand = Math.max(0, context.level - template.levels.min);
     const difficulty = clamp(
-      d.base + d.perRankTier * context.rankTier + d.perPowerTier * powerTier,
+      Math.round(d.base + d.perLevel * levelsIntoBand),
       1,
-      10,
+      100,
     );
     const rewardMin = roundToFive(
-      rewards.cashBase +
-        rewards.cashPerRankTier * context.rankTier +
-        rewards.cashPerPowerTier * powerTier,
+      rewards.cashBase + rewards.cashPerLevel * context.level,
     );
-    const rewardMax = roundToFive(
+    const rewardMax =
       rewardMin +
-        rewards.spreadBase +
-        rewards.spreadPerRankTier * context.rankTier +
-        rewards.spreadPerPowerTier * powerTier,
-    );
+      roundToFive(rewards.spreadBase + rewards.spreadPerLevel * context.level);
 
     return {
       difficulty,
@@ -55,8 +45,9 @@ export class JobCalculatorService {
         1,
         heat.max,
       ),
-      heatPressure: Math.floor(context.heat / 25),
-      powerTier,
+      heatPressure: Math.floor(
+        context.heat / engine.checks.heatPressureDivisor,
+      ),
       rewardMax,
       rewardMin,
     };

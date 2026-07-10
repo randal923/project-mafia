@@ -3,29 +3,30 @@
 # Per-mission personality (difficulty, rewards, heat, story) belongs in
 # the mission files, not here.
 #
+# Skills, player levels and check difficulties all run on a 1-100 scale.
 # Full parameter reference: see README.md in this folder.
 
 board:
   # How many offers the job board shows.
-  size: 3
-
-power:
-  # Effective power above tierBase counts toward power tiers,
-  # one tier per tierStep. Power tiers raise difficulty and rewards.
-  tierBase: 8
-  tierStep: 6
+  size: 4
+  # A template keeps appearing until playerLevel > levels.max + levelGrace,
+  # so outleveled jobs fade off the board instead of vanishing overnight.
+  levelGrace: 15
 
 checks:
   # passChance = clamp(baseChance
-  #                    + perSkillPoint × skillValue
-  #                    + perDifficulty × checkDifficulty
+  #                    + perSkillPoint × skillValue      (skill 1-100)
+  #                    + perDifficulty × checkDifficulty (difficulty 1-100)
   #                    + floor(power / powerDivisor)
   #                    − floor(heat / heatChanceDivisor),
   #                    minChance, maxChance)
-  baseChance: 50
-  perSkillPoint: 7
-  perDifficulty: -6
-  powerDivisor: 10
+  #
+  # Tuned so an at-level player with at-level gear sits around 55-60%,
+  # climbing toward ~75% at level 100 with top-shelf equipment.
+  baseChance: 52
+  perSkillPoint: 1.0
+  perDifficulty: -0.8
+  powerDivisor: 25
   heatChanceDivisor: 20
   minChance: 5
   maxChance: 95
@@ -36,10 +37,24 @@ checks:
   # checkDifficulty = clamp(jobDifficulty
   #                         + floor(heat / heatPressureDivisor)
   #                         + beatDepth × perBeatDepth
-  #                         ± saferBolderGap,  1, 10)
-  perBeatDepth: 1
-  saferBolderGap: 1
-  heatPressureDivisor: 25
+  #                         ± saferBolderGap
+  #                         ± gear modifiers,  1, 100)
+  perBeatDepth: 2
+  saferBolderGap: 5
+  heatPressureDivisor: 10
+
+gear:
+  # A choice that demands gear the player is carrying gets easier by
+  # satisfiedBonus; improvising without it costs missingPenalty.
+  missingPenalty: 15
+  satisfiedBonus: 5
+
+armor:
+  # Loadout armor helps you survive things going loud: +1% pass chance on
+  # force checks per forceChanceDivisor armor, and −1 heat gained per
+  # heatDivisor armor when a job resolves (heat gain never drops below 1).
+  forceChanceDivisor: 15
+  heatDivisor: 15
 
 momentum:
   # Passed check: +pass momentum. Failed: +fail. Criticals add ±criticalBonus.

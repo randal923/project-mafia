@@ -21,6 +21,7 @@ function edgeWith(difficulty: number, roll: number, chance: number): ChoiceEdge 
   return {
     approach: "quiet",
     check: { difficulty, skill: "stealth" },
+    gear: null,
     id: "0",
     intent: null,
     label: null,

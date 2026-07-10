@@ -5,38 +5,57 @@
 # depth 5 = 31 beats + 32 endings (63 narrations per accepted job), so the
 # LLM cost per accept is ~4× a depth-3 mission.
 #
-# Knob reference: see docks-robbery.yml.
+# Full parameter + formula reference: README.md in this folder.
 
 id: downtown-bank-heist
 name: Bank Heist
-type: robbery
+type: heist
 district: Downtown
+
+levels:
+  min: 45
+  max: 60
 
 depth: 5
 
 difficulty:
-  base: 4
-  perRankTier: 1
-  perPowerTier: 1
+  base: 46
+  perLevel: 1.15
 
 rewards:
   cashBase: 150
-  cashPerRankTier: 120
-  cashPerPowerTier: 60
+  cashPerLevel: 68
   spreadBase: 100
-  spreadPerRankTier: 60
-  spreadPerPowerTier: 30
-  xpPerDifficulty: 15
+  spreadPerLevel: 18
+  xpBase: 30
+  xpPerDifficulty: 9
 
 heat:
   base: 4
-  perDifficulty: 0.5
-  max: 12
+  perDifficulty: 0.1
+  max: 14
 
 skillExperience:
-  basePerSuccess: 3
-  perCheckDifficulty: 2
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
   criticalMultiplier: 2
+
+gear:
+  - approaches: [technical, force]
+    chance: 0.55
+    consumes: true
+    label: Breaching Charge
+    tags: [breaching, explosive]
+  - approaches: [quiet]
+    chance: 0.45
+    consumes: true
+    label: Smoke Grenade
+    tags: [smoke]
+  - approaches: [opportunistic]
+    chance: 0.45
+    consumes: false
+    label: Getaway Car
+    tags: [getaway]
 
 outcomes:
   jackpot:
@@ -66,7 +85,7 @@ outcomes:
     xpFactor: 0.25
   disaster:
     cashFactor: 0
-    heatFactor: 1
+    heatFactor: 1.25
     heatBonus: 10
     xpFactor: 0.1
 

@@ -1,18 +1,23 @@
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { Button } from "../Button/Button";
 import { ItemHoverCard } from "../ItemHoverCard/ItemHoverCard";
 import { InventoryEmptySlot } from "./InventoryEmptySlot";
 import { InventoryItemCard } from "./InventoryItemCard";
-import type { InventorySlot } from "./InventoryTypes";
+import type { InventorySlot, InventorySlotId } from "./InventoryTypes";
 
 type InventorySlotPanelProps = {
+  actionsDisabled?: boolean;
   emptyLabel: string;
+  onUnequip?: (slotId: InventorySlotId) => void;
   placementClassName: string;
   slot: InventorySlot;
 };
 
 export function InventorySlotPanel({
+  actionsDisabled = false,
   emptyLabel,
+  onUnequip,
   placementClassName,
   slot
 }: InventorySlotPanelProps) {
@@ -46,6 +51,17 @@ export function InventorySlotPanel({
           </InventoryEmptySlot>
         )}
       </div>
+      {slot.item && onUnequip ? (
+        <Button
+          className="mt-2 w-full"
+          disabled={actionsDisabled}
+          onClick={() => onUnequip(slot.id)}
+          size="small"
+          variant="quiet"
+        >
+          Unequip
+        </Button>
+      ) : null}
     </article>
   );
 }

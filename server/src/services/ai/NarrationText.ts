@@ -21,6 +21,10 @@ export const APPROACH_TEXT: Record<JobApproach, { intent: string; label: string 
     intent: "Work the people instead of the locks.",
     label: "Talk your way through",
   },
+  technical: {
+    intent: "Beat the locks, wires, and alarms instead of the people.",
+    label: "Work the hardware",
+  },
 };
 
 export const OUTCOME_TEXT: Record<OutcomeTier, { body: string; title: string }> = {

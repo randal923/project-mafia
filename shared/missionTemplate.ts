@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { OUTCOME_TIERS } from "./job";
+import { JOB_APPROACHES, OUTCOME_TIERS } from "./job";
 
 /**
  * Per-tier reward knobs.
  *   cash = roundToFive(cashFactor × offer.rewardMax)
  *   heat = ceil(heatFactor × offer.heatIncrease) + heatBonus
- *   xp   = round(xpFactor × offer.difficulty × rewards.xpPerDifficulty)
+ *   xp   = round(xpFactor × (rewards.xpBase + offer.difficulty × rewards.xpPerDifficulty))
  */
 const outcomeRewardSchema = z
   .object({
@@ -17,8 +17,30 @@ const outcomeRewardSchema = z
   .strict();
 
 /**
+ * Gear a mission may demand on some choices. Each entry can attach to
+ * edges whose approach matches: with a matching item in the player's
+ * loadout or stash the check gets a bonus (and a consumable is spent on
+ * use); without one the player improvises and the check gets harder.
+ */
+const gearRequirementSchema = z
+  .object({
+    /** Edges with one of these approaches can roll this requirement. */
+    approaches: z.array(z.enum(JOB_APPROACHES)).min(1),
+    /** Probability an eligible edge actually demands the gear. */
+    chance: z.number().min(0).max(1),
+    /** Whether using the gear spends one (grenades yes, crowbars no). */
+    consumes: z.boolean(),
+    /** Display name, e.g. "Flashbang". */
+    label: z.string().min(1),
+    /** Any owned item carrying one of these tags satisfies it. */
+    tags: z.array(z.string().min(1)).min(1),
+  })
+  .strict();
+
+/**
  * A mission template as authored in server/missions/*.yml — every balance
- * knob a mission needs lives here, not in code.
+ * knob a mission needs lives here, not in code. Difficulty, rewards and
+ * XP are on a 1-100 scale anchored to the template's level band.
  */
 export const missionTemplateSchema = z
   .object({
@@ -26,23 +48,29 @@ export const missionTemplateSchema = z
     name: z.string().min(1),
     type: z.string().min(1),
     district: z.string().min(1),
+    /** Player level band this job is written for; the board matches on it. */
+    levels: z
+      .object({
+        max: z.number().int().min(1).max(100),
+        min: z.number().int().min(1).max(100),
+      })
+      .strict(),
     /** Choices per run; the tree doubles per level, so 3-5. */
     depth: z.number().int().min(3).max(5),
+    /** difficulty = clamp(round(base + perLevel × (playerLevel − levels.min)), 1, 100) */
     difficulty: z
       .object({
-        base: z.number(),
-        perPowerTier: z.number(),
-        perRankTier: z.number(),
+        base: z.number().min(1).max(100),
+        perLevel: z.number(),
       })
       .strict(),
     rewards: z
       .object({
         cashBase: z.number().min(0),
-        cashPerPowerTier: z.number().min(0),
-        cashPerRankTier: z.number().min(0),
+        cashPerLevel: z.number().min(0),
         spreadBase: z.number().min(0),
-        spreadPerPowerTier: z.number().min(0),
-        spreadPerRankTier: z.number().min(0),
+        spreadPerLevel: z.number().min(0),
+        xpBase: z.number().min(0),
         xpPerDifficulty: z.number().min(0),
       })
       .strict(),
@@ -60,6 +88,7 @@ export const missionTemplateSchema = z
         perCheckDifficulty: z.number().min(0),
       })
       .strict(),
+    gear: z.array(gearRequirementSchema).optional(),
     outcomes: z
       .object(
         Object.fromEntries(
@@ -83,4 +112,5 @@ export const missionTemplateSchema = z
 
 export type MissionTemplate = z.infer<typeof missionTemplateSchema>;
 export type OutcomeReward = z.infer<typeof outcomeRewardSchema>;
+export type GearRequirement = z.infer<typeof gearRequirementSchema>;
 export type SkillExperienceSettings = MissionTemplate["skillExperience"];

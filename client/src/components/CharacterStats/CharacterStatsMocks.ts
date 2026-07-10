@@ -25,9 +25,9 @@ export const ricoVale: Player = {
     skills: {
       muscle: 1,
       strategy: 1,
-      corruption: 0,
+      corruption: 1,
       stealth: 1,
-      business: 0,
+      tech: 1,
       leadership: 1
     },
     skillExperience: {
@@ -35,7 +35,7 @@ export const ricoVale: Player = {
       strategy: 0,
       corruption: 0,
       stealth: 0,
-      business: 0,
+      tech: 0,
       leadership: 0
     }
   },
@@ -65,24 +65,24 @@ export const soniaMarchetti: Player = {
     }
   },
   progression: {
-    level: 12,
-    experience: 8450,
-    skillPoints: 2,
+    level: 58,
+    experience: 2450,
+    skillPoints: 0,
     skills: {
-      muscle: 6,
-      strategy: 7,
-      corruption: 5,
-      stealth: 4,
-      business: 8,
-      leadership: 7
+      muscle: 41,
+      strategy: 52,
+      corruption: 38,
+      stealth: 24,
+      tech: 47,
+      leadership: 50
     },
     skillExperience: {
-      muscle: 310,
-      strategy: 445,
-      corruption: 180,
+      muscle: 31,
+      strategy: 45,
+      corruption: 80,
       stealth: 95,
-      business: 520,
-      leadership: 260
+      tech: 52,
+      leadership: 26
     }
   },
   loadout: {

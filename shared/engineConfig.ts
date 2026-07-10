@@ -4,7 +4,8 @@ import { z } from "zod";
  * Global engine constants, loaded from server/missions/_engine.yml.
  * These define what a skill point, a critical, or a momentum point MEANS
  * across the whole game — per-mission personality belongs in the mission
- * template files instead.
+ * template files instead. Skills, levels and check difficulties all live
+ * on a 1-100 scale.
  */
 export const engineConfigSchema = z
   .object({
@@ -12,14 +13,8 @@ export const engineConfigSchema = z
       .object({
         /** Offers on the job board. */
         size: z.number().int().min(1).max(6),
-      })
-      .strict(),
-    power: z
-      .object({
-        /** Power above tierBase counts toward power tiers... */
-        tierBase: z.number(),
-        /** ...one tier per tierStep power. */
-        tierStep: z.number().min(1),
+        /** A template stays offerable until playerLevel > levels.max + this. */
+        levelGrace: z.number().int().min(0),
       })
       .strict(),
     checks: z
@@ -42,6 +37,22 @@ export const engineConfigSchema = z
         saferBolderGap: z.number().min(0),
         /** +1 check difficulty per this much player heat. */
         heatPressureDivisor: z.number().min(1),
+      })
+      .strict(),
+    gear: z
+      .object({
+        /** Check difficulty added when required gear is missing. */
+        missingPenalty: z.number().min(0),
+        /** Check difficulty removed when required gear is carried. */
+        satisfiedBonus: z.number().min(0),
+      })
+      .strict(),
+    armor: z
+      .object({
+        /** +1% pass chance on force checks per this much loadout armor. */
+        forceChanceDivisor: z.number().min(1),
+        /** −1 mission heat per this much loadout armor (never below 1). */
+        heatDivisor: z.number().min(1),
       })
       .strict(),
     momentum: z

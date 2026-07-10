@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Kingpin Gun Belt">
+    
+    <rect x="8" y="38" width="80" height="15" rx="4" fill="#f7f2e8"/>
+    <rect x="38" y="34" width="20" height="23" rx="3" fill="#edc553"/>
+    <rect x="43" y="39" width="10" height="13" rx="2" fill="#0a0a0a" opacity="0.6"/>
+    <circle cx="70" cy="45.5" r="1.8" fill="#0a0a0a" opacity="0.25"/>
+    <circle cx="78" cy="45.5" r="1.8" fill="#0a0a0a" opacity="0.25"/>
+    <path d="M14 53 L32 53 L29 80 L18 80 Z" fill="#f7f2e8"/>
+    <path d="M64 53 L82 53 L79 80 L68 80 Z" fill="#f7f2e8"/>
+    <rect x="19" y="46" width="8" height="8" rx="2" fill="#0a0a0a" opacity="0.5"/>
+    <rect x="69" y="46" width="8" height="8" rx="2" fill="#0a0a0a" opacity="0.5"/>
+    <circle cx="48" cy="45.5" r="4" fill="#0a0a0a" opacity="0.55"/>
+    <circle cx="48" cy="45.5" r="4" fill="none" stroke="#edc553" stroke-width="1.8"/>
+</svg>

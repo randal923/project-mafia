@@ -1,0 +1,107 @@
+# Rival crew takedown — not a robbery, a removal. Another outfit's whole
+# operation comes apart in one coordinated night: their muscle, their
+# money, their nerve. Done right, nobody steps into the vacuum but you.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: rival-crew-takedown
+name: Rival Crew Takedown
+type: takedown
+district: Ironworks
+
+levels:
+  min: 50
+  max: 62
+
+depth: 4
+
+difficulty:
+  base: 51
+  perLevel: 1.15
+
+rewards:
+  cashBase: 120
+  cashPerLevel: 60
+  spreadBase: 75
+  spreadPerLevel: 16
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 4
+  perDifficulty: 0.1
+  max: 13
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [force, opportunistic]
+    chance: 0.45
+    consumes: false
+    label: Sniper Rifle
+    tags: [sniper]
+  - approaches: [force]
+    chance: 0.5
+    consumes: true
+    label: Flashbang
+    tags: [flashbang]
+  - approaches: [force]
+    chance: 0.4
+    consumes: true
+    label: AP Rounds
+    tags: [ap-rounds]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.75
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 3
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 6
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.5
+    heatBonus: 10
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Kettle Street foundry offices
+    premise: The Volkov outfit runs Ironworks from the office floor above a working foundry — their books, their armory, and their boss's Tuesday card game, all under one roof that never stops making noise.
+    pressure: Volkov's lieutenants check in by phone on the hour, every hour — from the first missed call, you're working against every gun he has left.
+  - location: The Brotherhood taxi garage
+    premise: Their whole operation moves through a taxi fleet — collections, product, lookouts — and the dispatcher's radio log knows where every car and every soldier is at any minute. Take the garage, and the crew goes blind and deaf at once.
+    pressure: Cabs come home at shift change, four a.m., a dozen armed drivers arriving in no particular order.
+  - location: Ferro's boxing gym, the back stairs
+    premise: The rival capo holds court ringside every fight night, and half his muscle will be in the crowd watching two of their own on the card — the books upstairs will be guarded by whoever drew the short straw.
+    pressure: Fight night means press photographers at the door, and one flashbulb at the wrong moment puts your face in the morning edition.
+  - location: The Stanhope Hotel, fourth floor
+    premise: Their consigliere lives in a residential hotel with their treasury in the mattress safe of the room next door, rented under his dead mother's name — take him and the money the same night, and the outfit can neither pay nor think.
+    pressure: The hotel's night porter is theirs, and the fourth-floor corridor has one way in, one way out, and a mirror at the turn.
+  - location: The Iron Bridge toll shack
+    premise: Every gram the Volkovs move crosses the old iron bridge in a bread van at dawn, and the toll shack's operator has agreed to raise the barrier a beat too late — one stalled van, one narrow bridge, no witnesses but the river.
+    pressure: The van carries a shooter in the back among the bread trays, and the dawn shift at the mill crosses the bridge on foot twenty minutes later.
+  - location: Volkov's daughter's wedding reception
+    premise: For one evening the whole outfit — every soldier, every book, every key — is in one rented hall wearing carnations, and their businesses across Ironworks stand empty and unwatched. Nobody says you have to hit the wedding.
+    pressure: The hall empties at midnight, and every safehouse you're standing in when the cars come home becomes a last stand.

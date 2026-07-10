@@ -6,15 +6,19 @@ code changes needed. There are two kinds of files:
 | File | What it controls |
 |---|---|
 | `_engine.yml` | Global rules: what a skill point, a critical, or a momentum point means. Applies to **all** missions. |
-| `<mission>.yml` (e.g. `docks-robbery.yml`) | One mission template: its difficulty, money, heat, XP, outcome payouts, and story seeds. |
+| `<mission>.yml` (e.g. `docks-robbery.yml`) | One mission template: its level band, difficulty, money, heat, XP, gear demands, outcome payouts, and story seeds. |
 
 Files are validated at server startup (zod, strict). A typo'd key, a missing
 field, or an out-of-range value stops the server with the exact problem —
 nothing fails silently. Files starting with `_` are never loaded as missions.
 
-**To add a mission:** copy an existing mission file, change the `id`, tune
-the knobs, write new story seeds. Restart the server. Done — its seeds join
-the job-board pool automatically.
+**Scale:** skills, player levels, and check difficulties all run on a
+**1–100 scale**. A template's numbers are anchored to its `levels` band — a
+level-50 job is difficulty ~50, not "5 out of 10".
+
+**To add a mission:** copy an existing mission file, change the `id` (it must
+match the filename), tune the knobs, write new story seeds. Restart the
+server. Done — its seeds join the job-board pool automatically.
 
 **Note:** missions snapshot their template when a player accepts them, so
 editing a file only affects *newly accepted* jobs, never runs in progress.
@@ -23,8 +27,9 @@ editing a file only affects *newly accepted* jobs, never runs in progress.
 
 ## How a mission plays (the pipeline)
 
-1. **Board** — `board.size` offers are drawn from all templates' story
-   seeds. Each offer's numbers come from that template's formulas below.
+1. **Board** — `board.size` offers are drawn from templates whose `levels`
+   band matches the player. Each offer's numbers come from that template's
+   formulas below.
 2. **Accept** — the engine builds the full decision tree (`depth` choices
    deep) and pre-rolls every check from a stored seed. Everything mechanical
    is decided at this moment; the LLM only writes the prose afterwards.
@@ -40,25 +45,14 @@ editing a file only affects *newly accepted* jobs, never runs in progress.
 
 | Key | Meaning |
 |---|---|
-| `size` | Offers shown on the job board (1–6). |
-
-### `power`
-
-Effective power = the player's base power + all equipped item power.
-
-| Key | Meaning |
-|---|---|
-| `tierBase` | Power up to this amount grants no tier. |
-| `tierStep` | One power tier per this much power above `tierBase`. |
-
-`powerTier = max(0, floor((effectivePower − tierBase) / tierStep))`
-Power tiers raise mission difficulty *and* rewards (see mission formulas).
+| `size` | Offers shown on the job board. |
+| `levelGrace` | A template keeps appearing until `playerLevel > levels.max + levelGrace`, so outleveled jobs fade off the board instead of vanishing overnight. |
 
 ### `checks`
 
 Every choice tests one skill: force→muscle, quiet→stealth,
-social→leadership, deception→corruption, opportunistic→strategy
-(business is reserved for future job types).
+social→leadership, deception→corruption, opportunistic→strategy,
+technical→tech.
 
 **Difficulty of a single check:**
 
@@ -66,7 +60,8 @@ social→leadership, deception→corruption, opportunistic→strategy
 checkDifficulty = clamp( jobDifficulty
                        + floor(playerHeat / heatPressureDivisor)
                        + beatDepth × perBeatDepth
-                       ± saferBolderGap,     1, 10 )
+                       ± saferBolderGap
+                       ± gear modifiers,      1, 100 )
 ```
 
 | Key | Meaning |
@@ -79,16 +74,16 @@ checkDifficulty = clamp( jobDifficulty
 
 ```
 passChance = clamp( baseChance
-                  + perSkillPoint × skillValue
+                  + perSkillPoint × skillValue           (skill 1-100)
                   + perDifficulty × checkDifficulty      (negative!)
-                  + floor(effectivePower / powerDivisor)
+                  + floor(power / powerDivisor)
                   − floor(playerHeat / heatChanceDivisor),
                   minChance, maxChance )
 ```
 
 | Key | Meaning |
 |---|---|
-| `baseChance` | Starting chance before modifiers (50 = coin flip). |
+| `baseChance` | Starting chance before modifiers. |
 | `perSkillPoint` | % added per point in the tested skill. |
 | `perDifficulty` | % per point of check difficulty — keep negative. |
 | `powerDivisor` | +1% per this much effective power. |
@@ -96,8 +91,26 @@ passChance = clamp( baseChance
 | `minChance` / `maxChance` | Floor/ceiling — nothing is ever certain. |
 | `criticalMargin` | Beating/missing the chance by this much makes the check *critical* (extra momentum, doubled skill XP). |
 
-The engine pre-rolls a d100 per choice at accept time (seeded — a mission
-always replays identically). Roll ≤ passChance = pass.
+Tuned so an at-level player with at-level gear sits around 55-60%, climbing
+toward ~75% at level 100 with top-shelf equipment. The engine pre-rolls a
+d100 per choice at accept time (seeded — a mission always replays
+identically). Roll ≤ passChance = pass.
+
+### `gear`
+
+Global half of the gear system (per-mission half: the `gear` array below).
+
+| Key | Meaning |
+|---|---|
+| `satisfiedBonus` | Check gets this much *easier* when the player carries demanded gear. |
+| `missingPenalty` | Check gets this much *harder* when they improvise without it. |
+
+### `armor`
+
+| Key | Meaning |
+|---|---|
+| `forceChanceDivisor` | +1% pass chance on force checks per this much loadout armor. |
+| `heatDivisor` | −1 heat gained on resolution per this much armor (never below 1). |
 
 ### `momentum`
 
@@ -121,33 +134,56 @@ Changing `pass`/`fail` reshapes what every tier means — tune carefully.
 
 | Key | Meaning |
 |---|---|
-| `id` | Unique slug. Duplicate ids across files fail startup. |
+| `id` | Unique slug, must equal the filename minus `.yml`. Duplicates fail startup. |
 | `name` | Display name. |
-| `type` | Free-form job type (`robbery`, …). |
+| `type` | Free-form job type (`robbery`, `heist`, `racket`, `ambush`, …). |
 | `district` | Free-form district shown on the offer card. |
 | `depth` | Choices per run, 3–5. **The tree doubles per level**: depth 3 = 15 narrated nodes, depth 4 = 31, depth 5 = 63 — that's the LLM cost per accepted job. |
+
+### `levels`
+
+```
+levels:
+  min: 30
+  max: 42
+```
+
+The player-level band the job is written for. The board offers a template
+while `playerLevel ≥ min` and `playerLevel ≤ max + board.levelGrace`. Bands
+overlap on purpose so the board always has 2-3 templates to draw from at any
+level.
 
 ### `difficulty`
 
 ```
-jobDifficulty = clamp(base + perRankTier × rankTier + perPowerTier × powerTier, 1, 10)
-```
-
-`rankTier` = 0 (nobody) … 6 (city_kingpin). Job difficulty feeds check
-difficulty, heat, and XP — it's the master "how hard is this" dial.
-
-### `rewards`
-
-```
-rewardMin = roundToFive(cashBase + cashPerRankTier × rankTier + cashPerPowerTier × powerTier)
-rewardMax = roundToFive(rewardMin + spreadBase + spreadPerRankTier × rankTier + spreadPerPowerTier × powerTier)
+jobDifficulty = clamp(round(base + perLevel × (playerLevel − levels.min)), 1, 100)
 ```
 
 | Key | Meaning |
 |---|---|
-| `cashBase` / `cashPerRankTier` / `cashPerPowerTier` | Floor of the take and how it scales. |
-| `spreadBase` / `spreadPerRankTier` / `spreadPerPowerTier` | Gap between min and max take. |
-| `xpPerDifficulty` | Base mission XP per point of job difficulty. |
+| `base` | Difficulty at the bottom of the band — roughly `levels.min + 1`. |
+| `perLevel` | Growth per player level above `levels.min`. Choose it so difficulty at `levels.max` lands ≈ `levels.max + 3`: jobs start comfortable and end slightly above your weight, nudging you to the next band. |
+
+Job difficulty feeds check difficulty, heat, and XP — it's the master "how
+hard is this" dial.
+
+### `rewards`
+
+```
+rewardMin = roundToFive(cashBase + cashPerLevel × playerLevel)
+rewardMax = roundToFive(rewardMin + spreadBase + spreadPerLevel × playerLevel)
+```
+
+| Key | Meaning |
+|---|---|
+| `cashBase` / `cashPerLevel` | Floor of the take and how it scales with player level. |
+| `spreadBase` / `spreadPerLevel` | Gap between min and max take. |
+| `xpBase` | Flat mission XP before difficulty scaling. |
+| `xpPerDifficulty` | Mission XP per point of job difficulty. Convention: 6 for depth-3 templates, 7.5 for depth 4, 9 for depth 5 — deeper runs earn more. |
+
+Base mission XP = `xpBase + jobDifficulty × xpPerDifficulty`; outcome tiers
+multiply it. Balance convention: `cashPerLevel` ≈ 45-50 on safe shallow
+jobs, ≈ 55-60 mid, up to 70 on deep high-risk scores.
 
 ### `heat`
 
@@ -156,6 +192,8 @@ heatIncrease = clamp(base + floor(jobDifficulty × perDifficulty), 1, max)
 ```
 
 This is the *base* heat cost shown on the offer; outcome tiers scale it.
+Convention: `base` 2 → 5 and `max` 8 → 18 from street work to endgame,
+`perDifficulty` 0.06–0.12.
 
 ### `skillExperience`
 
@@ -165,6 +203,42 @@ XP awarded to the tested skill each time the player **passes** a check:
 skillXp = round((basePerSuccess + perCheckDifficulty × checkDifficulty)
                 × (critical ? criticalMultiplier : 1))
 ```
+
+Current convention across all templates: `basePerSuccess: 18`,
+`perCheckDifficulty: 0.3`, `criticalMultiplier: 2`.
+
+### `gear` (optional)
+
+A list of equipment demands the mission can spring on the player:
+
+```
+gear:
+  - approaches: [technical, force]   # edges with one of these approaches can roll it
+    chance: 0.55                     # probability an eligible edge demands it
+    consumes: true                   # spent on use (grenades yes, crowbars no)
+    label: Breaching Charge          # shown to the player
+    tags: [breaching, explosive]     # any owned item with one of these tags satisfies it
+```
+
+When an edge demands gear: carrying a tagged item in loadout or stash makes
+that check *easier* by `gear.satisfiedBonus` (and consumables get spent on
+use); going in without one means improvising, `gear.missingPenalty` harder.
+
+| Field | Meaning |
+|---|---|
+| `approaches` | Which of `deception` / `force` / `opportunistic` / `quiet` / `social` / `technical` edges may roll this. |
+| `chance` | 0–1 probability per eligible edge. |
+| `consumes` | `true` for explosives, ammo, smoke, flashbangs, medkits; `false` for tools (crowbar, lockpick, disguise, scanner, getaway car…). |
+| `label` | Display name on the demand. |
+| `tags` | Item tags that satisfy it. Use tags the store actually sells: `flashbang`, `smoke`, `explosive`, `breaching`, `silenced`, `lockpick`, `hacking`, `disguise`, `climbing`, `getaway`, `scanner`, `ap-rounds`, `medkit`, `jammer`, `crowbar`, `sniper`. |
+
+Authoring convention: levels 1–14 templates carry 0–1 entries at
+`chance ≤ 0.35` (beginners shouldn't be gear-checked constantly); mid
+templates 1–2 entries at 0.3–0.5; level 45+ templates 2–3 entries at
+0.4–0.65 — endgame jobs assume a prepared professional. Match tags to
+theme: vaults → breaching/explosive/hacking, stealth → silenced/smoke/
+climbing/lockpick, social → disguise, vehicles → getaway/crowbar,
+firefights → ap-rounds/flashbang/sniper/medkit.
 
 ### `outcomes`
 
@@ -176,7 +250,13 @@ One block per tier — `jackpot`, `successful`, `partially_successful`,
 | `cashFactor` | Payout = `roundToFive(cashFactor × rewardMax)`. 0 = walks away empty. |
 | `heatFactor` | Multiplies the base heat (`ceil`ed). 0.5 = clean job draws half attention. |
 | `heatBonus` | Flat heat added on top — punish bad endings here. |
-| `xpFactor` | Multiplies base mission XP (`jobDifficulty × xpPerDifficulty`). |
+| `xpFactor` | Multiplies base mission XP (`xpBase + jobDifficulty × xpPerDifficulty`). |
+
+House pattern (small per-template variation for personality is fine):
+jackpot ≈ 1.6–1.85 / 2xp, successful 1 / 1.5xp at half heat,
+partially_successful ≈ 0.7 / 1xp, partial_failure ≈ 0.2 / 0.5xp,
+failure 0 / 0.25xp, disaster 0 / 0.1xp with `heatBonus` climbing as tiers
+worsen (disaster 6–12 by band).
 
 Convention: `failure` narrates a hospital ending, `disaster` a jail ending —
 both are story-only for now, but the tier is recorded on the player's
@@ -184,7 +264,8 @@ narrative event for future hospital/jail systems.
 
 ### `storySeeds`
 
-At least one; each is a board-offer premise the LLM builds the story from:
+At least one (in practice 4–6); each is a board-offer premise the LLM builds
+the story from:
 
 | Key | Meaning |
 |---|---|
@@ -193,3 +274,31 @@ At least one; each is a board-offer premise the LLM builds the story from:
 | `pressure` | The complication — what makes it dangerous or urgent. |
 
 More seeds = more variety; each seed is one candidate slot on the board.
+YAML note: a seed line containing `: ` (colon-space) must be a block scalar
+(`>-`) or quoted, or the parser rejects the file.
+
+---
+
+## Current template lineup
+
+| id | levels | depth | district | gear tags |
+|---|---|---|---|---|
+| `corner-hustle` | 1–6 | 3 | Old Quarter | — |
+| `downtown-convenience-store` | 1–10 | 3 | Downtown | crowbar |
+| `chop-shop-run` | 5–14 | 3 | Ironworks | crowbar |
+| `docks-robbery` | 8–18 | 3 | The Docks | lockpick |
+| `warehouse-hijack` | 12–22 | 4 | The Docks | crowbar, getaway |
+| `jewelry-store-heist` | 18–28 | 4 | Hillcrest | lockpick, scanner |
+| `protection-racket-war` | 24–35 | 4 | Old Quarter | flashbang, disguise |
+| `armored-car-ambush` | 30–42 | 4 | Riverside | ap-rounds, explosive |
+| `casino-skim` | 36–48 | 4 | Neon Strip | disguise, hacking |
+| `downtown-bank-heist` | 45–60 | 5 | Downtown | breaching/explosive, smoke, getaway |
+| `rival-crew-takedown` | 50–62 | 4 | Ironworks | sniper, flashbang, ap-rounds |
+| `evidence-vault-break-in` | 58–70 | 5 | Downtown | hacking, jammer, lockpick |
+| `arms-deal-hijack` | 65–78 | 5 | The Docks | ap-rounds, jammer, getaway |
+| `casino-vault-job` | 72–85 | 5 | Neon Strip | breaching/explosive, hacking, disguise |
+| `cartel-exchange-ambush` | 80–92 | 5 | Riverside | sniper, explosive, medkit |
+| `central-bank-vault` | 88–100 | 5 | Downtown | breaching/explosive, hacking, climbing |
+
+Every level 1–100 falls inside at least one band, and bands overlap so the
+board never runs dry at a band edge.

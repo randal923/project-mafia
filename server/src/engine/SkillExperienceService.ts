@@ -2,16 +2,20 @@ import { EngineConfig } from "../../../shared/engineConfig";
 import { ChoiceEdge } from "../../../shared/job";
 import { Player } from "../../../shared/player";
 import { SkillExperienceSettings } from "../../../shared/missionTemplate";
+import { LevelingService } from "./LevelingService";
 import { MomentumService } from "./MomentumService";
 
 export type SkillExperienceGain = {
   player: Player;
+  /** Skill levels the gain bought (XP resets each 100, see leveling.ts). */
+  skillLevelsGained: number;
   xpGained: number;
 };
 
 /**
- * Awards per-skill experience for checks the player passes. Numbers live
- * in the mission template (server/missions/*.yml) — tune there, not here.
+ * Awards per-skill experience for checks the player passes, converting
+ * every 100 XP into a skill level. XP numbers live in the mission
+ * template (server/missions/*.yml) — tune there, not here.
  */
 export class SkillExperienceService {
   static xpForCheck(
@@ -40,23 +44,19 @@ export class SkillExperienceService {
   ): SkillExperienceGain {
     const xpGained = this.xpForCheck(edge, settings, engine);
     if (xpGained === 0) {
-      return { player, xpGained };
+      return { player, skillLevelsGained: 0, xpGained };
     }
 
-    const skill = edge.check.skill;
+    const leveled = LevelingService.addSkillExperience(
+      player,
+      edge.check.skill,
+      xpGained,
+      nowIso,
+    );
 
     return {
-      player: {
-        ...player,
-        progression: {
-          ...player.progression,
-          skillExperience: {
-            ...player.progression.skillExperience,
-            [skill]: player.progression.skillExperience[skill] + xpGained,
-          },
-        },
-        updatedAt: nowIso,
-      },
+      player: leveled.player,
+      skillLevelsGained: leveled.levelsGained,
       xpGained,
     };
   }

@@ -2,42 +2,51 @@
 # Pays a little less than dock work and draws a little more heat: stores
 # have cameras, regulars, and cops on the corner.
 #
-# Knob reference: see docks-robbery.yml.
+# Full parameter + formula reference: README.md in this folder.
 
 id: downtown-convenience-store
 name: Convenience Store Job
 type: robbery
 district: Downtown
 
+levels:
+  min: 1
+  max: 10
+
 depth: 3
 
 difficulty:
-  base: 1
-  perRankTier: 1
-  perPowerTier: 1
+  base: 2
+  perLevel: 1.2
 
 rewards:
-  cashBase: 15
-  cashPerRankTier: 35
-  cashPerPowerTier: 20
-  spreadBase: 10
-  spreadPerRankTier: 20
-  spreadPerPowerTier: 10
-  xpPerDifficulty: 10
+  cashBase: 40
+  cashPerLevel: 48
+  spreadBase: 40
+  spreadPerLevel: 12
+  xpBase: 30
+  xpPerDifficulty: 6
 
 heat:
   base: 2
-  perDifficulty: 0.5
-  max: 12
+  perDifficulty: 0.08
+  max: 8
 
 skillExperience:
-  basePerSuccess: 2
-  perCheckDifficulty: 2
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
   criticalMultiplier: 2
+
+gear:
+  - approaches: [force, technical]
+    chance: 0.3
+    consumes: false
+    label: Crowbar
+    tags: [crowbar]
 
 outcomes:
   jackpot:
-    cashFactor: 1.5
+    cashFactor: 1.6
     heatFactor: 1
     heatBonus: 0
     xpFactor: 2
@@ -47,9 +56,9 @@ outcomes:
     heatBonus: 0
     xpFactor: 1.5
   partially_successful:
-    cashFactor: 0.8
+    cashFactor: 0.75
     heatFactor: 1
-    heatBonus: 0
+    heatBonus: 1
     xpFactor: 1
   partial_failure:
     cashFactor: 0.25
@@ -63,8 +72,8 @@ outcomes:
     xpFactor: 0.25
   disaster:
     cashFactor: 0
-    heatFactor: 1
-    heatBonus: 8
+    heatFactor: 1.25
+    heatBonus: 6
     xpFactor: 0.1
 
 storySeeds:

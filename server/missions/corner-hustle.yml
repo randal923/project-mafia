@@ -1,0 +1,87 @@
+# Corner hustle — the bottom rung. Numbers slips, lifted wallets, chalk
+# marks on lampposts. Nobody gets rich down here, but nobody's watching
+# too hard either. No gear checks: you work with your hands and your nerve.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: corner-hustle
+name: Corner Hustle
+type: racket
+district: Old Quarter
+
+levels:
+  min: 1
+  max: 6
+
+depth: 3
+
+difficulty:
+  base: 2
+  perLevel: 1.4
+
+rewards:
+  cashBase: 40
+  cashPerLevel: 45
+  spreadBase: 40
+  spreadPerLevel: 12
+  xpBase: 30
+  xpPerDifficulty: 6
+
+heat:
+  base: 2
+  perDifficulty: 0.06
+  max: 8
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+outcomes:
+  jackpot:
+    cashFactor: 1.6
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.75
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.25
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 4
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 6
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Saint Bruno Street market
+    premise: The numbers runner for three blocks got picked up drunk last night, and his satchel of slips and collection money is still making the rounds without him.
+    pressure: The bank closes the day's book at nine sharp — any slip not turned in by then is money somebody upstairs comes asking about.
+  - location: Tram line 4, evening run
+    premise: Payday at the cannery means forty men riding home with folded bills in their jacket pockets, packed shoulder to shoulder and half asleep.
+    pressure: The transit inspector works the same line on paydays, and he's caught two dippers this month already.
+  - location: Moretti's barbershop, back room
+    premise: The barber runs a punchboard game and keeps the week's take in a cigar box behind the mirror — and he's been shorting the crew he answers to, so nobody will cry for him.
+    pressure: His son sweeps up until close, and the kid runs fast and talks faster.
+  - location: The Old Quarter dice corner
+    premise: A crap game behind the shuttered chapel draws laborers every Friday, and the man holding the bank is a stranger nobody will vouch for.
+    pressure: Half the players carry knives, and the game breaks up the moment anyone hears a whistle.
+  - location: Widow Kessler's boarding house
+    premise: A tenant skipped town owing the local book three weeks of losses, and word is he left a coffee tin of savings under a loose floorboard in room six.
+    pressure: The widow locks the front door at ten and sits up by it with her late husband's service pistol.

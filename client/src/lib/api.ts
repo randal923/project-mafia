@@ -1,5 +1,6 @@
+import type { Equipment } from "@shared/equipment";
 import type { JobBoard, MissionView } from "@shared/job";
-import type { Player } from "@shared/player";
+import type { EquipmentSlotId, Player } from "@shared/player";
 import type { User } from "firebase/auth";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
@@ -80,6 +81,51 @@ export function fetchActiveMission(
   user: User
 ): Promise<{ mission: MissionView }> {
   return apiFetch<{ mission: MissionView }>(user, "/jobs/missions/active");
+}
+
+export function fetchStoreCatalog(
+  user: User
+): Promise<{ items: Equipment[] }> {
+  return apiFetch<{ items: Equipment[] }>(user, "/store/catalog");
+}
+
+export function buyEquipment(
+  user: User,
+  equipmentId: string,
+  quantity = 1
+): Promise<{ player: Player }> {
+  return apiFetch<{ player: Player }>(user, "/store/buy", {
+    body: JSON.stringify({ equipmentId, quantity }),
+    method: "POST"
+  });
+}
+
+export function sellItem(
+  user: User,
+  itemId: string,
+  quantity = 1
+): Promise<{ player: Player }> {
+  return apiFetch<{ player: Player }>(user, "/store/sell", {
+    body: JSON.stringify({ itemId, quantity }),
+    method: "POST"
+  });
+}
+
+export function equipItem(user: User, itemId: string): Promise<Player> {
+  return apiFetch<Player>(user, "/players/me/equip", {
+    body: JSON.stringify({ itemId }),
+    method: "POST"
+  });
+}
+
+export function unequipSlot(
+  user: User,
+  slot: EquipmentSlotId
+): Promise<Player> {
+  return apiFetch<Player>(user, "/players/me/unequip", {
+    body: JSON.stringify({ slot }),
+    method: "POST"
+  });
 }
 
 export function chooseMissionOption(

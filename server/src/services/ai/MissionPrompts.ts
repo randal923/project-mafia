@@ -41,7 +41,9 @@ export class MissionPrompts {
       );
     } else {
       sections.push(
-        `THIS BEAT: The player just attempted "${edgeTaken.approach}" (a ${edgeTaken.check.skill} check, difficulty ${edgeTaken.check.difficulty} of 10). ` +
+        `THIS BEAT: The player just attempted "${edgeTaken.approach}" (a ${edgeTaken.check.skill} check, difficulty ${edgeTaken.check.difficulty} of 100).` +
+          this.describeGear(edgeTaken) +
+          " " +
           this.describeResult(edgeTaken) +
           " Narrate that known result and carry the scene forward to the next decision.",
       );
@@ -53,6 +55,15 @@ export class MissionPrompts {
           (node.choices ?? []).map((choice) => ({
             approach: choice.approach,
             checkDifficulty: choice.check.difficulty,
+            gear: choice.gear
+              ? {
+                  calledFor: choice.gear.label,
+                  playerHasIt: choice.gear.satisfied,
+                  noteForWriting: choice.gear.satisfied
+                    ? "The player is carrying this — the label/intent may lean on using it."
+                    : "The player does NOT have this — the label/intent must read as improvising without it, and the riskHint should reflect the extra danger.",
+                }
+              : null,
             skillTested: choice.check.skill,
           })),
           null,
@@ -140,6 +151,15 @@ export class MissionPrompts {
         2,
       )
     );
+  }
+
+  private static describeGear(edge: ChoiceEdge): string {
+    if (!edge.gear) {
+      return "";
+    }
+    return edge.gear.satisfied
+      ? ` The move called for gear (${edge.gear.label}) and the player HAD it — work its use into the narration${edge.gear.consumes ? ", and it is now spent" : ""}.`
+      : ` The move called for gear (${edge.gear.label}) the player DIDN'T have — they improvised without it, which made this harder; let that scramble show.`;
   }
 
   private static describeResult(edge: ChoiceEdge): string {

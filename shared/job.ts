@@ -7,20 +7,19 @@ export const JOB_APPROACHES = [
   "opportunistic",
   "quiet",
   "social",
+  "technical",
 ] as const;
 
 export type JobApproach = (typeof JOB_APPROACHES)[number];
 
-/**
- * Which skill each approach checks. `business` is deliberately unused —
- * reserved for future trade/fence job types.
- */
+/** Which skill each approach checks. */
 export const APPROACH_SKILLS: Record<JobApproach, keyof PlayerSkills> = {
   deception: "corruption",
   force: "muscle",
   opportunistic: "strategy",
   quiet: "stealth",
   social: "leadership",
+  technical: "tech",
 };
 
 export const OUTCOME_TIERS = [
@@ -82,12 +81,30 @@ export type CheckRoll = {
 };
 
 /**
+ * Gear a choice calls for. Decided at accept time from the template and
+ * the player's inventory: with the gear the check gets easier and any
+ * consumable is spent on use; without it the player improvises and the
+ * check gets harder.
+ */
+export type EdgeGear = {
+  /** Whether taking the edge spends one of the matching consumables. */
+  consumes: boolean;
+  /** Short display name, e.g. "Flashbang" or "Breaching charge". */
+  label: string;
+  /** True if the player owned matching gear when the job was accepted. */
+  satisfied: boolean;
+  /** Owning ANY item with one of these tags satisfies the requirement. */
+  tags: string[];
+};
+
+/**
  * An edge from a beat node to one of its children. The roll is pre-computed
  * at accept time and must never reach the client before the edge is taken.
  */
 export type ChoiceEdge = {
   approach: JobApproach;
   check: SkillCheck;
+  gear: EdgeGear | null;
   /** Equals the child node id, e.g. "01". */
   id: string;
   intent: string | null;
@@ -128,6 +145,8 @@ export type MissionStatus = "active" | "generating" | "resolved";
 export type MissionResolution = {
   cashChange: number;
   heatChange: number;
+  /** Player levels gained when the job resolved; absent on older docs. */
+  levelsGained?: number;
   narrativeEventId: string;
   tier: OutcomeTier;
   xpChange: number;
@@ -158,6 +177,7 @@ export type Mission = {
 export type RevealedEdge = {
   approach: JobApproach;
   check: SkillCheck;
+  gear: EdgeGear | null;
   id: string;
   label: string | null;
   margin: number;
@@ -168,6 +188,7 @@ export type RevealedEdge = {
 export type MissionViewChoice = {
   approach: JobApproach;
   check: SkillCheck;
+  gear: EdgeGear | null;
   id: string;
   intent: string | null;
   label: string | null;

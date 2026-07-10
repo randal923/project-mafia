@@ -1,0 +1,102 @@
+# Warehouse hijack — a step up from smash-and-grab: whole truckloads,
+# inside men, and buyers lined up before the doors are even open.
+# First taste of real logistics — and of what happens when they go wrong.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: warehouse-hijack
+name: Warehouse Hijack
+type: hijack
+district: The Docks
+
+levels:
+  min: 12
+  max: 22
+
+depth: 4
+
+difficulty:
+  base: 13
+  perLevel: 1.2
+
+rewards:
+  cashBase: 70
+  cashPerLevel: 55
+  spreadBase: 50
+  spreadPerLevel: 14
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 2.5
+  perDifficulty: 0.08
+  max: 10
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [force, technical]
+    chance: 0.35
+    consumes: false
+    label: Crowbar
+    tags: [crowbar]
+  - approaches: [opportunistic]
+    chance: 0.3
+    consumes: false
+    label: Getaway Truck
+    tags: [getaway]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.7
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 5
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 7
+    xpFactor: 0.1
+
+storySeeds:
+  - location: Consolidated Storage, building 4
+    premise: A pharmacist's wholesale order — morphine ampoules, the real thing — sits in a wire cage waiting on a signature that was never coming, and the clerk who forged the hold order wants his cut in advance.
+    pressure: Consolidated runs its own inventory audit Tuesday, and the clerk gets nervous when he drinks, which is nightly.
+  - location: The Hartmann Textile warehouse
+    premise: Three trucks of silk bolts cleared customs under a false invoice, and the importer can't report stolen what he never legally owned.
+    pressure: His own guards know what the cargo is worth, and two of them have already asked around about buyers.
+  - location: Pier 14 cold storage
+    premise: The freezer house holds a season of poached sturgeon roe behind a padlocked bulkhead door, and the caviar broker who owns it is in a cell awaiting arraignment.
+    pressure: The compressors get serviced at midnight — for one hour the alarm circuit is down and the service crew's van is parked where yours should be.
+  - location: Delancey Bros. freight depot
+    premise: A rail shipment of copper wire spools was signed into the wrong bay, and the foreman will keep it lost for three more days at a price.
+    pressure: Copper that heavy needs a truck and a winch, and the depot's weighbridge man logs every axle that crosses after dark.
+  - location: The Excelsior bonded liquor stores
+    premise: Cases of pre-war Scotch sit under a customs bond nobody has paid in a year, and the auction house that wants them quietly can't be seen buying them loudly.
+    pressure: The bond office's night door runs on an electric buzzer lock, and the wire to it staples along the outside wall in plain reach.
+  - location: Ironworks tool & die warehouse
+    premise: A rival outfit stores its hijacked goods in a legitimate warehouse under a dead man's name, and your buyer likes the idea of stealing from thieves.
+    pressure: The rival crew checks the space at odd hours, and they don't knock first.

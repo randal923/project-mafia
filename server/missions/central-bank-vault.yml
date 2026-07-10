@@ -1,0 +1,108 @@
+# Central bank vault — the last score. The Federal Reserve Bank branch:
+# the vault under the vaults, where the city's banks keep their banks'
+# money. Nobody has ever taken it, which is either a warning or an
+# invitation. The retirement job — one way or the other. Depth 5.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: central-bank-vault
+name: Central Bank Vault
+type: heist
+district: Downtown
+
+levels:
+  min: 88
+  max: 100
+
+depth: 5
+
+difficulty:
+  base: 89
+  perLevel: 1.0
+
+rewards:
+  cashBase: 200
+  cashPerLevel: 70
+  spreadBase: 100
+  spreadPerLevel: 20
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 5
+  perDifficulty: 0.12
+  max: 18
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [technical, force]
+    chance: 0.65
+    consumes: true
+    label: Breaching Charge
+    tags: [breaching, explosive]
+  - approaches: [technical]
+    chance: 0.55
+    consumes: false
+    label: Hacking Rig
+    tags: [hacking]
+  - approaches: [quiet]
+    chance: 0.5
+    consumes: false
+    label: Climbing Gear
+    tags: [climbing]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.85
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 4
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 7
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.5
+    heatBonus: 12
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Federal Reserve branch, Coin Street
+    premise: Ninety feet below the marble lobby, the settlement vault holds what the city's banks owe each other — and once a decade the vault door's time-lock mechanism is serviced by the manufacturer, whose senior engineer has terminal debts and six months to live.
+    pressure: The service window is one night, supervised by two federal officers who have done this before, and the engineer's hands shake now — someone will have to turn the tools he can only point at.
+  - location: The old bullion tunnel, Coin Street to the Mint
+    premise: A tunnel built to move gold between the Reserve and the Mint was decommissioned, bricked, and struck from the drawings forty years ago — but your grandfather's crew laid those bricks a course thin on purpose, and left you the map.
+    pressure: The tunnel passes under the new subway line, and the track inspection trolley runs through the shared dark twice a night on no fixed timetable.
+  - location: The currency destruction wing
+    premise: Worn bills come to the Reserve to die — counted, shredded, burned. The count is federal, but the furnace room is contractor-run, and for three years the contractor has been burning paper blanks and trucking the real bills out as ash barrels. He needs one last load moved, and he can't use his own men because they're all under subpoena.
+    pressure: The task force serves its warrants Friday at dawn; anything still inside the wing when they arrive belongs to the government's case.
+  - location: The gold settlement floor, quarterly audit night
+    premise: Four times a year every bar is weighed against the ledger, and for six hours the vault cage stands open while federal auditors work in shifts — the only night the gold is out from behind the time-lock, and the only night strangers with clipboards belong on the vault floor.
+    pressure: Every auditor's face arrived on a wire photo this morning; the shift supervisor checks them against the sheet at each rotation, and the rotations are ninety minutes apart.
+  - location: The Reserve's pneumatic archive
+    premise: The vault's alarm doesn't ring at the police station — it rings in a listening room inside the building, wired through a pneumatic tube shaft as old as the foundation. A dying wire-man who helped install it swears the whole system can be made to lie for exactly as long as its test cycle runs.
+    pressure: The test cycle is twenty-two minutes, it can only be triggered once without a supervisor's key, and the listening room is never empty.
+  - location: The Governor's Ball, Reserve rotunda
+    premise: Once a year the Reserve opens its rotunda for the bankers' gala — orchestra above, and below, a skeleton vault crew watching the cameras between glances at the ballroom feed. Every important vault key in the city arrives in a dinner jacket, and the coat check takes no responsibility for lost items.
+    pressure: The gala ends at one, the vault crew doubles at shift change at two, and your invitation belongs to a man whose absence will eventually be noticed by his wife, then his bank, then everyone.

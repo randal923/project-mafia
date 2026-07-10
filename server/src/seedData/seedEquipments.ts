@@ -1,12 +1,12 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { Equipment } from "../../../shared/equipment";
+import { Equipment, equipmentCatalogSchema } from "../../../shared/equipment";
 import { EnvConfig } from "../config/env";
 import { FirebaseService } from "../services/FirebaseService";
 
 function loadEquipments(): Equipment[] {
   const file = join(__dirname, "equipments.json");
-  return JSON.parse(readFileSync(file, "utf-8")) as Equipment[];
+  return equipmentCatalogSchema.parse(JSON.parse(readFileSync(file, "utf-8")));
 }
 
 async function seedEquipments(): Promise<void> {
@@ -15,9 +15,10 @@ async function seedEquipments(): Promise<void> {
   const equipments = loadEquipments();
   const collection = firebase.firestore.collection("equipments");
 
+  // Full set (no merge) so retired fields don't linger on catalog docs.
   await Promise.all(
     equipments.map((equipment) =>
-      collection.doc(equipment.id).set(equipment, { merge: true }),
+      collection.doc(equipment.id).set(equipment),
     ),
   );
 

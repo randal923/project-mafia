@@ -1,0 +1,119 @@
+# Cartel exchange ambush — product one way, a truck of cash the other,
+# and a hundred guns paid to see it happen quietly. Hitting a cartel
+# exchange isn't robbery, it's a declaration of war — the score has to
+# be big enough to buy the army you'll need afterward. Depth 5.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: cartel-exchange-ambush
+name: Cartel Exchange Ambush
+type: ambush
+district: Riverside
+
+levels:
+  min: 80
+  max: 92
+
+depth: 5
+
+difficulty:
+  base: 81
+  perLevel: 1.15
+
+rewards:
+  cashBase: 180
+  cashPerLevel: 70
+  spreadBase: 95
+  spreadPerLevel: 19
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 5
+  perDifficulty: 0.12
+  max: 17
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+gear:
+  - approaches: [force, opportunistic]
+    chance: 0.55
+    consumes: false
+    label: Sniper Rifle
+    tags: [sniper]
+  - approaches: [force]
+    chance: 0.5
+    consumes: true
+    label: Explosive Charge
+    tags: [explosive]
+  - approaches: [force, opportunistic]
+    chance: 0.45
+    consumes: true
+    label: Medkit
+    tags: [medkit]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.85
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 4
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 7
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.5
+    heatBonus: 12
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Riverside stockyards, pen row
+    premise: The cartel moves its monthly settlement through a cattle broker — the cash crosses the stockyards in feed trucks while the auction covers the noise, and this month's settlement is three months' worth, because someone upstream got arrested.
+    pressure: The cartel's counting crew travels with the trucks, and the stockyard's kill floor works all night — screams down there are just Tuesday.
+  - location: The drowned quarry at Miller's Bend
+    premise: >-
+      Exchange point: a flooded quarry outside city limits, one road in, divers
+      lifting sealed product from the water while the money waits in a car on
+      the rim. Their perfect security is one road out — for them too.
+    pressure: Both sides post spotters on the quarry rim an hour before, and the only cover worth having is the cover they'll want.
+  - location: The San Rafael funeral home
+    premise: >-
+      The cartel's northern franchise launders its exchange through funerals —
+      cash in the casket going in, product in the casket coming out, mourners
+      on the payroll. Thursday's funeral is their biggest ever, and the
+      deceased was real: their own accountant.
+    pressure: Half the mourners are armed, the widow is federal, and neither side of that aisle knows about the other.
+  - location: The Palisade rail spur, refrigerated cars
+    premise: >-
+      A cartel money train — literal: a leased refrigerator car of
+      vacuum-packed bills — waits on a dead spur for the northbound freight to
+      couple it in at dawn. The bill of lading says frozen shrimp, and the rail
+      bull who wrote it wants out of the arrangement.
+    pressure: The couple-in is at five-forty; after that the car is moving at forty miles an hour with the cartel's escort riding two cars back.
+  - location: The Hotel Meridian penthouse, the summit
+    premise: The cartel and the city's commission meet to set territory and price — protocol says no weapons above the lobby, and the elevator man they trust to enforce it has a brother in your crew and a price of his own.
+    pressure: Two organizations' worth of bodyguards drink coffee in the lobby, and the meeting ends the moment anyone upstairs stops answering the house phone.
+  - location: The floating dry dock, berth 9
+    premise: The exchange happens inside a flooded dry dock — the cartel's launch sails in, the dock pumps out, and the deal is done on a dry riverbed walled in steel until it's pumped full again. The pump house operator is one man, and he's for sale.
+    pressure: Pumping the dock either direction takes eleven minutes of a siren the whole waterfront can hear, and nobody inside those walls has anywhere to go until it's done.

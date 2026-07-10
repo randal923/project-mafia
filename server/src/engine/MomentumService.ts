@@ -1,6 +1,8 @@
 import { EngineConfig } from "../../../shared/engineConfig";
-import { CheckRoll, OutcomeTier } from "../../../shared/job";
+import { CheckRoll, JobApproach, OutcomeTier } from "../../../shared/job";
+import { PlayerSkills } from "../../../shared/player";
 import { clamp } from "./math";
+import { EnginePlayerContext } from "./PlayerContextService";
 
 /**
  * Check resolution and momentum math. All constants come from
@@ -8,20 +10,32 @@ import { clamp } from "./math";
  */
 export class MomentumService {
   static passChance(
-    skillValue: number,
+    context: EnginePlayerContext,
+    skill: keyof PlayerSkills,
+    approach: JobApproach,
     checkDifficulty: number,
-    effectivePower: number,
-    heat: number,
     engine: EngineConfig,
   ): number {
     const c = engine.checks;
+    const skillValue =
+      context.skills[skill] + (context.bonuses.skillBonus[skill] ?? 0);
+    const approachBonus = context.bonuses.approachBonus[approach] ?? 0;
+    // Armor lets you weather things going loud, so it only aids force.
+    const armorBonus =
+      approach === "force"
+        ? Math.floor(context.armor / engine.armor.forceChanceDivisor)
+        : 0;
 
     return clamp(
-      c.baseChance +
-        c.perSkillPoint * skillValue +
-        c.perDifficulty * checkDifficulty +
-        Math.floor(effectivePower / c.powerDivisor) -
-        Math.floor(heat / c.heatChanceDivisor),
+      Math.round(
+        c.baseChance +
+          c.perSkillPoint * skillValue +
+          c.perDifficulty * checkDifficulty +
+          Math.floor(context.effectivePower / c.powerDivisor) -
+          Math.floor(context.heat / c.heatChanceDivisor) +
+          approachBonus +
+          armorBonus,
+      ),
       c.minChance,
       c.maxChance,
     );

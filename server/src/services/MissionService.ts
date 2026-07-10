@@ -79,6 +79,7 @@ export class MissionService {
         missionId,
         offer,
         seed,
+        template,
       }).build();
 
       const created: Mission = {
@@ -186,7 +187,8 @@ export class MissionService {
       mission.updatedAt = nowIso;
 
       // Taking the edge reveals its pre-rolled check; a pass teaches the
-      // skill that was tested. Numbers come from the mission template.
+      // skill that was tested (100 XP = a skill level). Numbers come from
+      // the mission template.
       const template = this.templateOf(mission);
       const skillGain = SkillExperienceService.applyToPlayer(
         normalizePlayer(playerSnap.data() as Player),
@@ -196,8 +198,11 @@ export class MissionService {
         nowIso,
       );
 
+      // Gear the edge relied on gets spent — the flashbang goes off.
+      const afterGear = this.consumeGear(skillGain.player, edge, nowIso);
+
       let updatedPlayer: Player | null =
-        skillGain.xpGained > 0 ? skillGain.player : null;
+        skillGain.xpGained > 0 || afterGear.consumed ? afterGear.player : null;
 
       if (target.kind === "outcome") {
         updatedPlayer = this.resolve(
@@ -205,7 +210,7 @@ export class MissionService {
           mission,
           template,
           target,
-          skillGain.player,
+          afterGear.player,
           playerRef,
           eventId,
           nowIso,
@@ -233,18 +238,22 @@ export class MissionService {
     nowIso: string,
   ): Player {
     const tier = outcome.outcomeTier ?? "partial_failure";
-    const rewards = RewardService.rewardsForTier(tier, mission.offer, template);
+    const rewards = RewardService.mitigateHeat(
+      RewardService.rewardsForTier(tier, mission.offer, template),
+      player,
+      this.engine.config,
+    );
     const summary =
       outcome.narrative?.storySummary ??
       `The ${mission.offer.storySeed.location} job ended in ${tier.replace(/_/g, " ")}.`;
 
-    const rewarded = RewardService.applyToPlayer(player, rewards, nowIso);
+    const applied = RewardService.applyToPlayer(player, rewards, nowIso);
     const updatedPlayer: Player = {
-      ...rewarded,
+      ...applied.player,
       narrative: {
-        ...rewarded.narrative,
+        ...applied.player.narrative,
         storySummary: appendStorySummary(
-          rewarded.narrative.storySummary,
+          applied.player.narrative.storySummary,
           summary,
         ),
       },
@@ -266,6 +275,7 @@ export class MissionService {
     mission.resolution = {
       cashChange: rewards.cashChange,
       heatChange: rewards.heatChange,
+      levelsGained: applied.levelsGained,
       narrativeEventId: eventId,
       tier,
       xpChange: rewards.xpChange,
@@ -389,6 +399,58 @@ export class MissionService {
 
     // Node ids like "01" start with a digit, so use an explicit FieldPath.
     await missionRef.update(new FieldPath("nodes", node.id), node);
+  }
+
+  /**
+   * Spends one consumable matching the taken edge's gear demand. The
+   * demand was judged against the accept-time inventory, so if the item
+   * was sold mid-mission there is simply nothing left to burn.
+   */
+  private consumeGear(
+    player: Player,
+    edge: ChoiceEdge,
+    nowIso: string,
+  ): { consumed: boolean; player: Player } {
+    const gear = edge.gear;
+    if (!gear || !gear.satisfied || !gear.consumes) {
+      return { consumed: false, player };
+    }
+
+    // A non-consumable item (crowbar, equipped gear) covers it for free.
+    const items = [...Object.values(player.loadout), ...player.stash];
+    const coveredByTool = items.some(
+      (item) =>
+        item &&
+        !item.consumable &&
+        item.tags?.some((tag) => gear.tags.includes(tag)),
+    );
+    if (coveredByTool) {
+      return { consumed: false, player };
+    }
+
+    const index = player.stash.findIndex(
+      (item) =>
+        item.consumable &&
+        (item.quantity ?? 0) > 0 &&
+        item.tags?.some((tag) => gear.tags.includes(tag)),
+    );
+    if (index === -1) {
+      return { consumed: false, player };
+    }
+
+    const item = player.stash[index]!;
+    const remaining = (item.quantity ?? 1) - 1;
+    const stash =
+      remaining > 0
+        ? player.stash.map((entry, i) =>
+            i === index ? { ...entry, quantity: remaining } : entry,
+          )
+        : player.stash.filter((_, i) => i !== index);
+
+    return {
+      consumed: true,
+      player: { ...player, stash, updatedAt: nowIso },
+    };
   }
 
   /** Snapshot on the mission doc; falls back for pre-template missions. */

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Wool Fedora">
+    <path d="M30 28 L64 28 L70 52 L26 52 Z" fill="#f7f2e8"/>
+    <path d="M42 28 Q48 36 54 28" stroke="#0a0a0a" stroke-opacity="0.25" fill="none" stroke-width="2.5"/>
+    <ellipse cx="48" cy="56" rx="34" ry="9" fill="#f7f2e8"/>
+    <rect x="27" y="45" width="42" height="7" fill="#b68a2d"/>
+    <ellipse cx="48" cy="56" rx="24" ry="5" fill="#0a0a0a" opacity="0.25"/>
+</svg>

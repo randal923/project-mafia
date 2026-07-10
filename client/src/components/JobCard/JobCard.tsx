@@ -21,7 +21,7 @@ export function JobCard({ disabled = false, offer, onAccept }: JobCardProps) {
       <div className="flex items-center justify-between gap-3">
         <Tag label={offer.district} />
         <p className={`m-0 ${typography.metadata}`}>
-          Difficulty {offer.difficulty} / 10
+          Difficulty {offer.difficulty} / 100
         </p>
       </div>
       <h3 className={`m-0 ${displayText} text-2xl text-title`}>
