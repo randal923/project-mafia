@@ -10,6 +10,15 @@ const stilettoKnife = {
   },
   name: "Stiletto Knife",
   power: 2,
+  slot: "hand",
+  tone: "brass"
+} as const;
+
+const pocketPistol = {
+  detail: "A compact fallback for close work.",
+  id: "pocket-pistol",
+  name: "Pocket Pistol",
+  slot: "hand",
   tone: "brass"
 } as const;
 
@@ -93,6 +102,15 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+export const LoadoutWorkspace: Story = {
+  args: {
+    onEquip: () => undefined,
+    onUnequip: () => undefined,
+    stashItems: [...stashItems, pocketPistol]
+  },
+  name: "Loadout Workspace"
+};
+
 export const EmptyLoadout: Story = {
   args: {
     slots: emptySlots,
@@ -112,7 +130,7 @@ export const FullLoadout: Story = {
 export const EmptyStash: Story = {
   args: {
     showLoadout: false,
-    stashCapacity: 8,
+    stashSlotsPerPage: 8,
     stashItems: []
   },
   name: "Empty Stash"
@@ -121,7 +139,7 @@ export const EmptyStash: Story = {
 export const FullStash: Story = {
   args: {
     showLoadout: false,
-    stashCapacity: 5,
+    stashSlotsPerPage: 5,
     stashItems: [
       ...stashItems,
       stilettoKnife,

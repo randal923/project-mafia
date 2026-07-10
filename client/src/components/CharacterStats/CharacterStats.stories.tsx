@@ -6,18 +6,18 @@ const meta = {
   title: "Components/CharacterStats",
   component: CharacterStats,
   args: {
-    profile: ricoVale
+    profile: ricoVale,
   },
   parameters: {
-    layout: "fullscreen"
+    layout: "fullscreen",
   },
   render: (args) => (
     <div className="flex min-h-screen w-screen justify-center bg-page p-6">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-5xl">
         <CharacterStats {...args} />
       </div>
     </div>
-  )
+  ),
 } satisfies Meta<typeof CharacterStats>;
 
 export default meta;
@@ -25,20 +25,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const FreshStart: Story = {
-  name: "Fresh Start"
+  name: "Fresh Start",
 };
 
 export const EstablishedBoss: Story = {
   args: {
-    profile: soniaMarchetti
+    profile: soniaMarchetti,
   },
-  name: "Established Boss"
-};
-
-export const SkillsTab: Story = {
-  args: {
-    initialTabId: "skills",
-    profile: soniaMarchetti
-  },
-  name: "Skills Tab"
+  name: "Established Boss",
 };

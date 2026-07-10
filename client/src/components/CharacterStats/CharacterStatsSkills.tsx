@@ -52,7 +52,7 @@ export function CharacterStatsSkills({
         </div>
       </CharacterStatsGroup>
       <CharacterStatsGroup label="Skills">
-        <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+        <div className="grid gap-x-8 gap-y-6 lg:grid-cols-2">
           {SKILL_IDS.map((id) => {
             const level = progression.skills[id];
             const xp = progression.skillExperience[id];

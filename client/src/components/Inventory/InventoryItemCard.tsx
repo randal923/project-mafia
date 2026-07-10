@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { DragEventHandler } from "react";
 import {
   toneBorderClasses,
   type BorderTone
@@ -9,7 +10,10 @@ import type { InventoryItem, InventoryItemTone } from "./InventoryTypes";
 
 type InventoryItemCardProps = {
   compact?: boolean;
+  draggable?: boolean;
   item: InventoryItem;
+  onDragEnd?: DragEventHandler<HTMLDivElement>;
+  onDragStart?: DragEventHandler<HTMLDivElement>;
 };
 
 const toneTokens: Record<InventoryItemTone, BorderTone> = {
@@ -22,7 +26,10 @@ const toneTokens: Record<InventoryItemTone, BorderTone> = {
 
 export function InventoryItemCard({
   compact = false,
-  item
+  draggable = false,
+  item,
+  onDragEnd,
+  onDragStart
 }: InventoryItemCardProps) {
   const tone = item.tone ?? "neutral";
   const quantityLabel =
@@ -30,7 +37,9 @@ export function InventoryItemCard({
       ? `x${item.quantity}`
       : undefined;
   const classNames = cx(
-    "relative flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden rounded-control border bg-black/40 p-3 shadow-command",
+    "relative flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden rounded-control border bg-black/40 shadow-command",
+    compact ? "p-2" : "p-3",
+    draggable && "cursor-grab active:cursor-grabbing",
     toneBorderClasses[toneTokens[tone]]
   );
   const titleClassNames = cx(
@@ -39,7 +48,12 @@ export function InventoryItemCard({
   );
 
   return (
-    <div className={classNames}>
+    <div
+      className={classNames}
+      draggable={draggable}
+      onDragEnd={onDragEnd}
+      onDragStart={onDragStart}
+    >
       {item.image ? (
         <Image
           alt={item.image.alt}

@@ -14,7 +14,8 @@ const navigationItems = [
   { href: "/", id: "news", label: "News" },
   { href: "/jobs", id: "jobs", label: "Jobs" },
   { href: "/store", id: "store", label: "Store" },
-  { href: "/character", id: "character", label: "Character" }
+  { href: "/character", id: "character", label: "Character" },
+  { href: "/loadout", id: "loadout", label: "Loadout" }
 ];
 
 type AppShellProps = {
