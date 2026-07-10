@@ -33,7 +33,8 @@ editing a file only affects *newly accepted* jobs, never runs in progress.
 2. **Accept** — the engine builds the full decision tree (`depth` choices
    deep) and pre-rolls every check from a stored seed. Everything mechanical
    is decided at this moment; the LLM only writes the prose afterwards.
-3. **Play** — each choice tests a skill. Pass/fail moves *momentum*.
+3. **Play** — each choice tests a skill. Pass/fail moves *momentum*; failed
+   risky choices also apply their precomputed damage after accepted armor soak.
 4. **End** — final momentum picks an outcome tier; the tier's knobs decide
    cash, heat, and XP.
 
@@ -76,7 +77,9 @@ checkDifficulty = clamp( jobDifficulty
 passChance = clamp( baseChance
                   + perSkillPoint × skillValue           (skill 1-100)
                   + perDifficulty × checkDifficulty      (negative!)
-                  + floor(power / powerDivisor)
+                  + floor((character power + accepted equipment power)
+                          / powerDivisor)
+                  + consumed-item power step
                   − floor(playerHeat / heatChanceDivisor),
                   minChance, maxChance )
 ```
@@ -90,6 +93,12 @@ passChance = clamp( baseChance
 | `heatChanceDivisor` | −1% per this much player heat. |
 | `minChance` / `maxChance` | Floor/ceiling — nothing is ever certain. |
 | `criticalMargin` | Beating/missing the chance by this much makes the check *critical* (extra momentum, doubled skill XP). |
+
+Only equipped power is part of the locked mission baseline. If a choice
+spends an exact consumable, that edge adds the difference between the power
+step with and without the item's power. Unused stash power contributes zero.
+Weapons remain generic power: weapon category never changes the skill an
+approach tests.
 
 Tuned so an at-level player with at-level gear sits around 55-60%, climbing
 toward ~75% at level 100 with top-shelf equipment. The engine pre-rolls a
@@ -105,12 +114,14 @@ Global half of the gear system (per-mission half: the `gear` array below).
 | `satisfiedBonus` | Check gets this much *easier* when the player carries demanded gear. |
 | `missingPenalty` | Check gets this much *harder* when they improvise without it. |
 
-### `armor`
+### Health and armor
 
-| Key | Meaning |
-|---|---|
-| `forceChanceDivisor` | +1% pass chance on force checks per this much loadout armor. |
-| `heatDivisor` | −1 heat gained on resolution per this much armor (never below 1). |
+Health runs from 1–100. A failed choice covered by its template's
+`healthRisk.approaches` deals `ceil(checkDifficulty / 5)` incoming damage.
+The equipment accepted with the mission absorbs `ceil(totalArmor / 30)`,
+capped at the incoming amount. Damage never drops Health below 1. Health
+recovers by 10 per idle hour, and kits can be used between mission choices.
+Healing never changes the mission's stored rolls, tree, or narration.
 
 ### `momentum`
 
@@ -204,8 +215,16 @@ skillXp = round((basePerSuccess + perCheckDifficulty × checkDifficulty)
                 × (critical ? criticalMultiplier : 1))
 ```
 
-Current convention across all templates: `basePerSuccess: 18`,
-`perCheckDifficulty: 0.3`, `criticalMultiplier: 2`.
+Current convention across regular templates: `basePerSuccess: 30`,
+`perCheckDifficulty: 0.05`, `criticalMultiplier: 2` (lay-low uses a smaller
+base award).
+
+### `healthRisk`
+
+Every mission declares the approaches whose failed choices can hurt the
+player. `force` is always risky; mission-specific approaches add hazards that
+fit that job. The full damage and soak result is stored on the edge, hidden
+until the choice is taken, and then narrated from engine facts.
 
 ### `gear` (optional)
 
@@ -223,22 +242,27 @@ gear:
 When an edge demands gear: carrying a tagged item in loadout or stash makes
 that check *easier* by `gear.satisfiedBonus` (and consumables get spent on
 use); going in without one means improvising, `gear.missingPenalty` harder.
+When several items match, the engine deterministically selects the strongest
+one, snapshots its identity and power, and reserves enough exact quantity for
+every still-possible path. Reusable tools are never spent. Consumables add
+their power step only to the edge that uses them.
 
 | Field | Meaning |
 |---|---|
 | `approaches` | Which of `deception` / `force` / `opportunistic` / `quiet` / `social` / `technical` edges may roll this. |
 | `chance` | 0–1 probability per eligible edge. |
-| `consumes` | `true` for explosives, ammo, smoke, flashbangs, medkits; `false` for tools (crowbar, lockpick, disguise, scanner, getaway car…). |
+| `consumes` | `true` for explosives, smoke, flashbangs, and one-use getaway keys; `false` for tools (crowbar, lockpick, disguise, scanner, getaway equipment…). Healing kits are never mission gear. |
 | `label` | Display name on the demand. |
-| `tags` | Item tags that satisfy it. Use tags the store actually sells: `flashbang`, `smoke`, `explosive`, `breaching`, `silenced`, `lockpick`, `hacking`, `disguise`, `climbing`, `getaway`, `scanner`, `ap-rounds`, `medkit`, `jammer`, `crowbar`, `sniper`. |
+| `tags` | Item tags that satisfy it. Current roles: `flashbang`, `smoke`, `explosive`, `breaching`, `lockpick`, `hacking`, `disguise`, `climbing`, `getaway`, `scanner`, `jammer`, `crowbar`. |
 
 Authoring convention: levels 1–14 templates carry 0–1 entries at
 `chance ≤ 0.35` (beginners shouldn't be gear-checked constantly); mid
 templates 1–2 entries at 0.3–0.5; level 45+ templates 2–3 entries at
 0.4–0.65 — endgame jobs assume a prepared professional. Match tags to
-theme: vaults → breaching/explosive/hacking, stealth → silenced/smoke/
+theme: vaults → breaching/explosive/hacking, stealth → smoke/
 climbing/lockpick, social → disguise, vehicles → getaway/crowbar,
-firefights → ap-rounds/flashbang/sniper/medkit.
+firefights → explosive/flashbang/scanner. Healing kits are live inventory,
+not mission gear.
 
 ### `outcomes`
 
@@ -258,9 +282,8 @@ partially_successful ≈ 0.7 / 1xp, partial_failure ≈ 0.2 / 0.5xp,
 failure 0 / 0.25xp, disaster 0 / 0.1xp with `heatBonus` climbing as tiers
 worsen (disaster 6–12 by band).
 
-Convention: `failure` narrates a hospital ending, `disaster` a jail ending —
-both are story-only for now, but the tier is recorded on the player's
-narrative event for future hospital/jail systems.
+Convention: `failure` narrates a hospital ending; `disaster` sends the player
+to jail. Per-choice Health damage is independent of those outcome tiers.
 
 ### `storySeeds`
 
@@ -284,21 +307,35 @@ YAML note: a seed line containing `: ` (colon-space) must be a block scalar
 | id | levels | depth | district | gear tags |
 |---|---|---|---|---|
 | `corner-hustle` | 1–6 | 3 | Old Quarter | — |
-| `downtown-convenience-store` | 1–10 | 3 | Downtown | crowbar |
+| `back-alley-collection` | 1–7 | 3 | Old Quarter | — |
+| `lay-low` | 1–100 | 3 | Old Quarter | — |
+| `downtown-convenience-store` | 2–10 | 3 | Downtown | lockpick |
+| `bootlegger-truck-robbery` | 4–12 | 3 | Riverside | lockpick |
 | `chop-shop-run` | 5–14 | 3 | Ironworks | crowbar |
 | `docks-robbery` | 8–18 | 3 | The Docks | lockpick |
-| `warehouse-hijack` | 12–22 | 4 | The Docks | crowbar, getaway |
-| `jewelry-store-heist` | 18–28 | 4 | Hillcrest | lockpick, scanner |
+| `riverside-card-game-shakedown` | 8–18 | 3 | Riverside | explosive |
+| `warehouse-hijack` | 12–22 | 4 | The Docks | crowbar, breaching |
+| `union-payroll-theft` | 14–25 | 4 | Ironworks | crowbar, breaching |
+| `jewelry-store-heist` | 18–28 | 4 | Hillcrest | lockpick, climbing, disguise |
+| `speakeasy-takeover` | 20–32 | 4 | Old Quarter | flashbang, disguise |
 | `protection-racket-war` | 24–35 | 4 | Old Quarter | flashbang, disguise |
-| `armored-car-ambush` | 30–42 | 4 | Riverside | ap-rounds, explosive |
+| `corrupt-cop-ledger` | 28–40 | 4 | Downtown | climbing, disguise |
+| `armored-car-ambush` | 30–42 | 4 | Riverside | explosive, flashbang |
+| `train-yard-hijack` | 35–48 | 4 | Ironworks | hacking, getaway, explosive |
 | `casino-skim` | 36–48 | 4 | Neon Strip | disguise, hacking |
+| `nightclub-casino-robbery` | 42–56 | 4 | Neon Strip | disguise, hacking, scanner |
 | `downtown-bank-heist` | 45–60 | 5 | Downtown | breaching/explosive, smoke, getaway |
-| `rival-crew-takedown` | 50–62 | 4 | Ironworks | sniper, flashbang, ap-rounds |
-| `evidence-vault-break-in` | 58–70 | 5 | Downtown | hacking, jammer, lockpick |
-| `arms-deal-hijack` | 65–78 | 5 | The Docks | ap-rounds, jammer, getaway |
+| `rival-crew-takedown` | 50–62 | 4 | Ironworks | flashbang, scanner |
+| `federal-evidence-transfer` | 50–65 | 5 | Downtown | scanner, smoke, breaching |
+| `evidence-vault-break-in` | 58–70 | 5 | Downtown | hacking, lockpick, scanner |
+| `syndicate-arms-convoy` | 60–74 | 5 | The Docks | getaway, smoke, explosive |
+| `arms-deal-hijack` | 65–78 | 5 | The Docks | jammer, getaway, smoke |
 | `casino-vault-job` | 72–85 | 5 | Neon Strip | breaching/explosive, hacking, disguise |
-| `cartel-exchange-ambush` | 80–92 | 5 | Riverside | sniper, explosive, medkit |
-| `central-bank-vault` | 88–100 | 5 | Downtown | breaching/explosive, hacking, climbing |
+| `hotel-summit-hit` | 72–86 | 5 | Hillcrest | jammer, disguise, scanner |
+| `cartel-exchange-ambush` | 80–92 | 5 | Riverside | explosive, flashbang |
+| `treasury-gold-transfer` | 84–100 | 5 | Downtown | breaching/explosive, hacking, climbing, jammer |
+| `central-bank-vault` | 88–100 | 5 | Downtown | breaching/explosive, hacking, climbing, jammer |
 
+All 29 templates have been path-tested at both ends of their level band.
 Every level 1–100 falls inside at least one band, and bands overlap so the
 board never runs dry at a band edge.

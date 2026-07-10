@@ -37,17 +37,20 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force, opportunistic, technical]
+
 gear:
   - approaches: [force]
     chance: 0.5
     consumes: true
-    label: AP Rounds
-    tags: [ap-rounds]
-  - approaches: [technical, force]
-    chance: 0.4
-    consumes: true
     label: Explosive Charge
     tags: [explosive]
+  - approaches: [opportunistic]
+    chance: 0.4
+    consumes: true
+    label: Flashbang
+    tags: [flashbang]
 
 outcomes:
   jackpot:

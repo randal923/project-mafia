@@ -15,10 +15,12 @@ import { MissionTemplate } from "../../../shared/missionTemplate";
 import { NarrativeEvent, appendStorySummary } from "../../../shared/narrative";
 import { Player, normalizePlayer } from "../../../shared/player";
 import { JobCalculatorService } from "../engine/JobCalculatorService";
+import { HealthService } from "../engine/HealthService";
 import { PlayerContextService } from "../engine/PlayerContextService";
 import { RewardService } from "../engine/RewardService";
 import { SkillExperienceService } from "../engine/SkillExperienceService";
 import { ROOT_NODE_ID, SkeletonBuilder } from "../engine/SkeletonBuilder";
+import { consumeMissionGear } from "../engine/consumeMissionGear";
 import { HttpError } from "../middleware/errorHandler";
 import { MissionNarrator } from "./ai/MissionNarrator";
 import { EngineConfigService } from "./EngineConfigService";
@@ -98,8 +100,9 @@ export class MissionService {
         );
       }
 
+      const context = PlayerContextService.fromPlayer(current);
       const nodes = new SkeletonBuilder({
-        context: PlayerContextService.fromPlayer(current),
+        context,
         depth: template.depth,
         engine: this.engine.config,
         missionId,
@@ -109,6 +112,7 @@ export class MissionService {
       }).build();
 
       const created: Mission = {
+        acceptedState: PlayerContextService.acceptedState(current, template),
         choicePath: [],
         createdAt: nowIso,
         currentNodeId: ROOT_NODE_ID,
@@ -132,6 +136,10 @@ export class MissionService {
       });
       tx.set(playerRef, {
         ...current,
+        reservedEquipment: {
+          items: SkeletonBuilder.reservationsForSubtree(nodes),
+          missionId,
+        },
         resources: {
           ...current.resources,
           stamina: current.resources.stamina - staminaCost,
@@ -178,7 +186,7 @@ export class MissionService {
     player: Player,
     missionId: string,
     choiceId: string,
-  ): Promise<{ mission: Mission; player: Player | null }> {
+  ): Promise<{ mission: Mission; player: Player }> {
     const nowIso = new Date().toISOString();
     const missionRef = this.missions(player.id).doc(missionId);
     const playerRef = this.db.collection("players").doc(player.id);
@@ -233,10 +241,38 @@ export class MissionService {
       );
 
       // Gear the edge relied on gets spent — the flashbang goes off.
-      const afterGear = this.consumeGear(skillGain.player, edge, nowIso);
-
-      let updatedPlayer: Player | null =
-        skillGain.xpGained > 0 || afterGear.consumed ? afterGear.player : null;
+      const afterGear = consumeMissionGear(skillGain.player, edge, nowIso);
+      if (
+        edge.gear?.satisfied &&
+        edge.gear.consumes &&
+        edge.gear.item &&
+        !afterGear.consumed
+      ) {
+        throw new HttpError(
+          409,
+          `${edge.gear.item.name} is no longer available for this choice.`,
+        );
+      }
+      edge.damage = HealthService.damageAtCurrentHealth(
+        edge.damage,
+        afterGear.player.resources.health,
+      );
+      const afterDamage = HealthService.applyDamage(
+        afterGear.player,
+        edge.damage,
+        nowIso,
+      );
+      let updatedPlayer: Player = {
+        ...afterDamage,
+        reservedEquipment: {
+          items: SkeletonBuilder.reservationsForSubtree(
+            mission.nodes,
+            target.id,
+          ),
+          missionId: mission.id,
+        },
+        updatedAt: nowIso,
+      };
 
       if (target.kind === "outcome") {
         updatedPlayer = this.resolve(
@@ -244,12 +280,12 @@ export class MissionService {
           mission,
           template,
           target,
-          afterGear.player,
+          updatedPlayer,
           playerRef,
           eventId,
           nowIso,
         );
-      } else if (updatedPlayer) {
+      } else {
         tx.set(playerRef, updatedPlayer);
       }
 
@@ -274,8 +310,7 @@ export class MissionService {
     const tier = outcome.outcomeTier ?? "partial_failure";
     const rewards = RewardService.mitigateHeat(
       RewardService.rewardsForTier(tier, mission.offer, template),
-      player,
-      this.engine.config,
+      mission.acceptedState?.loadout ?? player.loadout,
     );
     const summary =
       outcome.narrative?.storySummary ??
@@ -298,6 +333,7 @@ export class MissionService {
           nowIso,
         ),
       }),
+      reservedEquipment: null,
     };
 
     const event: NarrativeEvent = {
@@ -421,10 +457,13 @@ export class MissionService {
       const tier = node.outcomeTier ?? "partial_failure";
       const result = await this.narrator.narrateOutcome({
         ...input,
-        rewards: RewardService.rewardsForTier(
-          tier,
-          mission.offer,
-          this.templateOf(mission),
+        rewards: RewardService.mitigateHeat(
+          RewardService.rewardsForTier(
+            tier,
+            mission.offer,
+            this.templateOf(mission),
+          ),
+          mission.acceptedState?.loadout ?? player.loadout,
         ),
       });
       node.narrative = result.narrative;
@@ -445,58 +484,6 @@ export class MissionService {
 
     // Node ids like "01" start with a digit, so use an explicit FieldPath.
     await missionRef.update(new FieldPath("nodes", node.id), node);
-  }
-
-  /**
-   * Spends one consumable matching the taken edge's gear demand. The
-   * demand was judged against the accept-time inventory, so if the item
-   * was sold mid-mission there is simply nothing left to burn.
-   */
-  private consumeGear(
-    player: Player,
-    edge: ChoiceEdge,
-    nowIso: string,
-  ): { consumed: boolean; player: Player } {
-    const gear = edge.gear;
-    if (!gear || !gear.satisfied || !gear.consumes) {
-      return { consumed: false, player };
-    }
-
-    // A non-consumable item (crowbar, equipped gear) covers it for free.
-    const items = [...Object.values(player.loadout), ...player.stash];
-    const coveredByTool = items.some(
-      (item) =>
-        item &&
-        !item.consumable &&
-        item.tags?.some((tag) => gear.tags.includes(tag)),
-    );
-    if (coveredByTool) {
-      return { consumed: false, player };
-    }
-
-    const index = player.stash.findIndex(
-      (item) =>
-        item.consumable &&
-        (item.quantity ?? 0) > 0 &&
-        item.tags?.some((tag) => gear.tags.includes(tag)),
-    );
-    if (index === -1) {
-      return { consumed: false, player };
-    }
-
-    const item = player.stash[index]!;
-    const remaining = (item.quantity ?? 1) - 1;
-    const stash =
-      remaining > 0
-        ? player.stash.map((entry, i) =>
-            i === index ? { ...entry, quantity: remaining } : entry,
-          )
-        : player.stash.filter((_, i) => i !== index);
-
-    return {
-      consumed: true,
-      player: { ...player, stash, updatedAt: nowIso },
-    };
   }
 
   /** Snapshot on the mission doc; falls back for pre-template missions. */

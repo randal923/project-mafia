@@ -12,9 +12,13 @@ import {
   MissionTemplate,
 } from "../../../shared/missionTemplate";
 import { clamp } from "./math";
+import { HealthService } from "./HealthService";
 import { MissionRng } from "./MissionRng";
 import { MomentumService } from "./MomentumService";
-import { EnginePlayerContext } from "./PlayerContextService";
+import {
+  EngineGearItem,
+  EnginePlayerContext,
+} from "./PlayerContextService";
 
 /**
  * Node ids are binary path strings ("0", "01", "110"...) except the root,
@@ -32,8 +36,8 @@ export type SkeletonInput = {
   template: MissionTemplate;
 };
 
-/** How many of each tag's consumables a root→node path has spent. */
-type ConsumedByTag = Record<string, number>;
+/** How many units of each exact item a root→node path has spent. */
+type ConsumedByItem = Record<string, number>;
 
 /**
  * Builds the complete mission tree: every edge's check is pre-rolled and
@@ -67,6 +71,36 @@ export class SkeletonBuilder {
     return id.length === 1 ? ROOT_NODE_ID : id.slice(0, -1);
   }
 
+  /** Maximum exact item quantities needed on any path below a node. */
+  static reservationsForSubtree(
+    nodes: Record<string, MissionNode>,
+    nodeId = ROOT_NODE_ID,
+  ): Record<string, number> {
+    const node = nodes[nodeId];
+    if (!node?.choices) {
+      return {};
+    }
+
+    const branches = node.choices.map((edge) => {
+      const reserved = this.reservationsForSubtree(nodes, edge.id);
+      const item = edge.gear?.item;
+      if (edge.gear?.satisfied && item) {
+        reserved[item.id] = edge.gear.consumes
+          ? (reserved[item.id] ?? 0) + 1
+          : 1;
+      }
+      return reserved;
+    });
+    const ids = new Set(branches.flatMap((branch) => Object.keys(branch)));
+
+    return Object.fromEntries(
+      [...ids].map((id) => [
+        id,
+        Math.max(...branches.map((branch) => branch[id] ?? 0)),
+      ]),
+    );
+  }
+
   build(): Record<string, MissionNode> {
     this.buildNode(ROOT_NODE_ID, 0, 0, {});
     return this.nodes;
@@ -76,7 +110,7 @@ export class SkeletonBuilder {
     id: string,
     depth: number,
     momentum: number,
-    consumed: ConsumedByTag,
+    consumed: ConsumedByItem,
   ): void {
     if (depth === this.input.depth) {
       this.nodes[id] = {
@@ -139,23 +173,38 @@ export class SkeletonBuilder {
         100,
       );
       const skill = APPROACH_SKILLS[approach];
-      const chance = MomentumService.passChance(
+      const consumablePower =
+        gear?.satisfied && gear.consumes ? (gear.item?.power ?? 0) : 0;
+      const checkBreakdown = MomentumService.checkBreakdown(
         this.input.context,
         skill,
         approach,
         checkDifficulty,
         engine,
+        consumablePower,
       );
       const roll = MomentumService.resolveCheck(
         this.rng.rollD100(`edge:${edgeId}`),
-        chance,
+        checkBreakdown.finalChance,
       );
       const delta = MomentumService.momentumDelta(roll, engine);
+      const healthRisk =
+        this.input.template.healthRisk?.approaches.includes(approach) ?? false;
+      const damage =
+        healthRisk && !roll.passed
+          ? HealthService.damageForFailure(
+              checkDifficulty,
+              this.input.context.armor,
+            )
+          : null;
 
       node.choices!.push({
         approach,
         check: { difficulty: checkDifficulty, skill },
+        checkBreakdown,
+        damage,
         gear,
+        healthRisk,
         id: edgeId,
         intent: null,
         label: null,
@@ -181,7 +230,7 @@ export class SkeletonBuilder {
   private rollGear(
     edgeId: string,
     approach: JobApproach,
-    consumed: ConsumedByTag,
+    consumed: ConsumedByItem,
   ): EdgeGear | null {
     const requirements = this.input.template.gear ?? [];
 
@@ -192,10 +241,19 @@ export class SkeletonBuilder {
       const roll = this.rng.rollD100(`gear:${edgeId}:${i}`);
       if (roll > requirement.chance * 100) continue;
 
+      const item = this.selectItem(requirement, consumed);
       return {
-        consumes: requirement.consumes,
+        consumes: item?.consumable ?? requirement.consumes,
         label: requirement.label,
-        satisfied: this.isSatisfied(requirement, consumed),
+        item: item
+          ? {
+              consumable: item.consumable,
+              id: item.id,
+              name: item.name,
+              power: item.power,
+            }
+          : null,
+        satisfied: item !== null,
         tags: requirement.tags,
       };
     }
@@ -203,43 +261,31 @@ export class SkeletonBuilder {
     return null;
   }
 
-  private isSatisfied(
+  private selectItem(
     requirement: GearRequirement,
-    consumed: ConsumedByTag,
-  ): boolean {
-    return requirement.tags.some((tag) => {
-      const owned = this.input.context.gearTags[tag];
-      if (!owned) return false;
-      if (owned.permanent) return true;
-      return owned.consumables - (consumed[tag] ?? 0) > 0;
-    });
+    consumed: ConsumedByItem,
+  ): EngineGearItem | null {
+    return (
+      this.input.context.gearItems.find(
+        (item) =>
+          item.tags.some((tag) => requirement.tags.includes(tag)) &&
+          (!item.consumable ||
+            item.quantity - (consumed[item.id] ?? 0) > 0),
+      ) ?? null
+    );
   }
 
   /** Books one consumable against the path when a satisfied edge spends it. */
   private consumeAlongPath(
     gear: EdgeGear | null,
-    consumed: ConsumedByTag,
-  ): ConsumedByTag {
+    consumed: ConsumedByItem,
+  ): ConsumedByItem {
     if (!gear || !gear.satisfied || !gear.consumes) {
       return consumed;
     }
-
-    // A non-consumable item (a crowbar, an equipped piece) covers the
-    // demand for free; only reach for consumable stock without one.
-    const hasPermanent = gear.tags.some(
-      (tag) => this.input.context.gearTags[tag]?.permanent,
-    );
-    if (hasPermanent) {
-      return consumed;
-    }
-
-    for (const tag of gear.tags) {
-      const owned = this.input.context.gearTags[tag];
-      if (owned && owned.consumables - (consumed[tag] ?? 0) > 0) {
-        return { ...consumed, [tag]: (consumed[tag] ?? 0) + 1 };
-      }
-    }
-
-    return consumed;
+    const itemId = gear.item?.id;
+    return itemId
+      ? { ...consumed, [itemId]: (consumed[itemId] ?? 0) + 1 }
+      : consumed;
   }
 }

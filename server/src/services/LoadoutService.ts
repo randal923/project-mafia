@@ -3,6 +3,7 @@ import {
   MAX_INTOXICATION,
   toleranceMultiplier,
 } from "../../../shared/intoxication";
+import { MAX_HEALTH, recoveredHealth } from "../../../shared/health";
 import {
   EquipmentSlotId,
   MAX_HEAT,
@@ -11,6 +12,7 @@ import {
   PlayerItem,
   normalizePlayer,
 } from "../../../shared/player";
+import { HealthService } from "../engine/HealthService";
 import { clamp } from "../engine/math";
 import { HttpError } from "../middleware/errorHandler";
 import { FirebaseService } from "./FirebaseService";
@@ -95,7 +97,10 @@ export class LoadoutService {
 
       const item = player.stash[index]!;
       const use = item.use;
-      if (!use || (!use.stamina && !use.heat && !use.high && !use.drunk)) {
+      if (
+        !use ||
+        (!use.stamina && !use.health && !use.heat && !use.high && !use.drunk)
+      ) {
         throw new HttpError(400, "That item can't be used — it's gear, not a fix.");
       }
       if (
@@ -106,6 +111,16 @@ export class LoadoutService {
           403,
           `You need to be level ${item.levelRequirement} to handle that.`,
         );
+      }
+      const reserved = player.reservedEquipment?.items[item.id] ?? 0;
+      if ((item.quantity ?? 1) <= reserved) {
+        throw new HttpError(
+          409,
+          "That item is packed for your active job and can't be used right now.",
+        );
+      }
+      if (use.health && player.resources.health >= MAX_HEALTH) {
+        throw new HttpError(400, "You're already at full health.");
       }
 
       // Tolerance runs on the meter the dose feeds: drugs check how high
@@ -119,10 +134,14 @@ export class LoadoutService {
         (use.stamina ?? 0) * toleranceMultiplier(toleranceLevel),
       );
 
+      const healed = use.health
+        ? HealthService.heal(player, use.health, player.updatedAt)
+        : player;
+
       return {
-        ...player,
+        ...healed,
         resources: {
-          ...player.resources,
+          ...healed.resources,
           drunk: clamp(
             player.resources.drunk + (use.drunk ?? 0),
             0,
@@ -167,9 +186,22 @@ export class LoadoutService {
         throw new HttpError(404, "Player not found.");
       }
 
+      const nowIso = new Date().toISOString();
+      const stored = normalizePlayer(snapshot.data() as Player);
+      const current: Player = {
+        ...stored,
+        resources: {
+          ...stored.resources,
+          health: recoveredHealth(
+            stored.resources.health,
+            stored.updatedAt,
+            nowIso,
+          ),
+        },
+      };
       const updated: Player = {
-        ...change(normalizePlayer(snapshot.data() as Player)),
-        updatedAt: new Date().toISOString(),
+        ...change(current),
+        updatedAt: nowIso,
       };
 
       tx.set(playerRef, updated);

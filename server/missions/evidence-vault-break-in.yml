@@ -39,22 +39,25 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force, quiet, technical]
+
 gear:
   - approaches: [technical]
     chance: 0.6
     consumes: false
     label: Hacking Rig
     tags: [hacking]
-  - approaches: [quiet, technical]
-    chance: 0.5
-    consumes: false
-    label: Signal Jammer
-    tags: [jammer]
   - approaches: [quiet]
     chance: 0.45
     consumes: false
     label: Lockpick Set
     tags: [lockpick]
+  - approaches: [opportunistic]
+    chance: 0.4
+    consumes: false
+    label: Police Scanner
+    tags: [scanner]
 
 outcomes:
   jackpot:

@@ -18,11 +18,55 @@ export const docksOffer: JobOffer = {
 };
 
 export const midMission: MissionView = {
+  acceptedState: {
+    armor: 6,
+    characterPower: 2,
+    equipmentPower: 30,
+    gear: [
+      {
+        id: "lockpick-set",
+        name: "Lockpick Set",
+        quantity: 1,
+        tags: ["lockpick"]
+      }
+    ],
+    loadout: {
+      hand: { id: "service-45", name: "Service .45", power: 27, slot: "hand" },
+      torso: {
+        armor: 6,
+        id: "padded-work-vest",
+        name: "Padded Work Vest",
+        power: 3,
+        slot: "torso"
+      }
+    },
+    totalPower: 32
+  },
   choices: [
     {
       approach: "quiet",
       check: { difficulty: 13, skill: "stealth" },
+      checkBreakdown: {
+        approachBonus: 0,
+        baseChance: 52,
+        characterPower: 2,
+        characterPowerBonus: 0,
+        consumablePower: 0,
+        consumablePowerBonus: 0,
+        difficultyModifier: -10.4,
+        equipmentPower: 30,
+        equipmentPowerBonus: 1,
+        equipmentSkillBonus: 0,
+        finalAdjustment: 0,
+        finalChance: 72,
+        heatPenalty: 0,
+        intoxicationPenalty: 0,
+        skillChance: 29.4,
+        skillLevel: 29.4,
+        unclampedChance: 72
+      },
       gear: null,
+      healthRisk: true,
       id: "00",
       intent: "Reach the cage without waking the dock.",
       label: "Cut through the dark side of the pier",
@@ -111,6 +155,22 @@ export const equippedMission: MissionView = {
   ) ?? null
 };
 
+export const injuredMission: MissionView = {
+  ...midMission,
+  steps: midMission.steps.map((step, index) =>
+    index === 1 && step.edgeTaken
+      ? {
+          ...step,
+          edgeTaken: {
+            ...step.edgeTaken,
+            damage: { absorbed: 1, healthLost: 5, incoming: 6 },
+            passed: false
+          }
+        }
+      : step
+  )
+};
+
 export const resolvedMission: MissionView = {
   ...midMission,
   choices: null,
@@ -151,6 +211,35 @@ export const resolvedMission: MissionView = {
       outcomeTier: "successful"
     }
   ]
+};
+
+export const resolvedAfterDamageMission: MissionView = {
+  ...resolvedMission,
+  steps: resolvedMission.steps.map((step, index) =>
+    index === resolvedMission.steps.length - 1 && step.edgeTaken
+      ? {
+          ...step,
+          edgeTaken: {
+            ...step.edgeTaken,
+            damage: { absorbed: 1, healthLost: 1, incoming: 5 },
+            gear: {
+              consumes: true,
+              item: {
+                consumable: true,
+                id: "door-buster-charge",
+                name: "Door-Buster Charge",
+                power: 38,
+              },
+              label: "Breaching charge",
+              satisfied: true,
+              tags: ["breaching"],
+            },
+            margin: -12,
+            passed: false,
+          },
+        }
+      : step,
+  ),
 };
 
 export const zeroSkillExperienceMission: MissionView = {

@@ -4,6 +4,7 @@ import {
   equipmentToPlayerItem,
 } from "../../../shared/equipment";
 import { decayedHeat } from "../../../shared/heat";
+import { recoveredHealth } from "../../../shared/health";
 import { soberedIntoxication } from "../../../shared/intoxication";
 import { regeneratedStamina } from "../../../shared/stamina";
 import { roundToFive } from "../engine/math";
@@ -40,11 +41,11 @@ export class PlayerService {
 
   /**
    * Everything idle time repairs, applied lazily on read and persisted so
-   * the next transaction sees it: heat decays (shared/heat.ts), stamina
-   * regenerates (shared/stamina.ts), and a served-out prison sentence is
-   * lifted — doing the full time also shaves off some heat.
+   * the next transaction sees it: heat decays, stamina and Health recover,
+   * intoxication clears, and a served-out prison sentence is lifted — doing
+   * the full time also shaves off some heat.
    */
-  private applyIdleRecovery(player: Player): Player {
+  private async applyIdleRecovery(player: Player): Promise<Player> {
     const nowIso = new Date().toISOString();
     const prison = this.engine.config.prison;
 
@@ -64,6 +65,11 @@ export class PlayerService {
       player.updatedAt,
       nowIso,
     );
+    const health = recoveredHealth(
+      player.resources.health,
+      player.updatedAt,
+      nowIso,
+    );
 
     let released = false;
     if (player.prison && Date.parse(player.prison.releaseAt) <= Date.now()) {
@@ -76,6 +82,7 @@ export class PlayerService {
       stamina === player.resources.stamina &&
       high === player.resources.high &&
       drunk === player.resources.drunk &&
+      health === player.resources.health &&
       !released
     ) {
       return player;
@@ -84,23 +91,19 @@ export class PlayerService {
     const updated: Player = {
       ...player,
       prison: released ? null : player.prison,
-      resources: { ...player.resources, drunk, heat, high, stamina },
+      resources: { ...player.resources, drunk, health, heat, high, stamina },
       updatedAt: nowIso,
     };
 
-    this.players
-      .doc(player.id)
-      .update({
-        "resources.drunk": drunk,
-        "resources.heat": heat,
-        "resources.high": high,
-        "resources.stamina": stamina,
-        ...(released && { prison: null }),
-        updatedAt: nowIso,
-      })
-      .catch((err) => {
-        console.error(`Failed to persist idle recovery for ${player.id}:`, err);
-      });
+    await this.players.doc(player.id).update({
+      "resources.drunk": drunk,
+      "resources.health": health,
+      "resources.heat": heat,
+      "resources.high": high,
+      "resources.stamina": stamina,
+      ...(released && { prison: null }),
+      updatedAt: nowIso,
+    });
 
     return updated;
   }

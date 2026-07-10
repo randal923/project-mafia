@@ -25,22 +25,43 @@ const offer: JobOffer = {
 const futureEdge: ChoiceEdge = {
   approach: "quiet",
   check: { difficulty: 20, skill: "stealth" },
+  checkBreakdown: {
+    approachBonus: 0,
+    baseChance: 52,
+    characterPower: 2,
+    characterPowerBonus: 0,
+    consumablePower: 0,
+    consumablePowerBonus: 0,
+    difficultyModifier: -16,
+    equipmentPower: 30,
+    equipmentPowerBonus: 1,
+    equipmentSkillBonus: 6,
+    finalAdjustment: 0,
+    finalChance: 63,
+    heatPenalty: 0,
+    intoxicationPenalty: 0,
+    skillChance: 20,
+    skillLevel: 20,
+    unclampedChance: 63,
+  },
+  damage: { absorbed: 1, healthLost: 3, incoming: 4 },
   gear: {
     consumes: false,
     label: "Crowbar",
     satisfied: false,
     tags: ["crowbar"],
   },
+  healthRisk: true,
   id: "0",
   intent: "Stay out of sight.",
   label: "Take the dark stairwell",
-  momentumDelta: 3,
+  momentumDelta: -2,
   riskHint: "The guard can hear every loose stair.",
   roll: {
-    margin: 46,
+    margin: -17,
     passChance: 63,
-    passed: true,
-    value: 17,
+    passed: false,
+    value: 80,
   },
 };
 
@@ -72,10 +93,10 @@ const mission: Mission = {
       depth: 1,
       id: "0",
       kind: "outcome",
-      momentum: 3,
+      momentum: -2,
       narrative: null,
       narrativeStatus: "pending",
-      outcomeTier: "jackpot",
+      outcomeTier: "partial_failure",
     },
   },
   offer,
@@ -94,14 +115,31 @@ describe("MissionViewService", () => {
 
     expect(choice).toMatchObject({
       check: { difficulty: 20, skill: "stealth" },
+      checkBreakdown: { equipmentPowerBonus: 1, finalChance: 63 },
+      healthRisk: true,
       odds: { failure: 37, success: 63 },
       skillExperience: { criticalSuccess: 62, success: 31 },
     });
     expect(choice).not.toHaveProperty("roll");
     expect(choice).not.toHaveProperty("momentumDelta");
+    expect(choice).not.toHaveProperty("damage");
     expect(JSON.stringify(choice)).not.toContain('"passed"');
     expect(JSON.stringify(choice)).not.toContain('"value"');
     expect(JSON.stringify(choice)).not.toContain('"margin"');
+  });
+
+  it("reveals stored damage only after the edge is taken", () => {
+    const advanced: Mission = {
+      ...mission,
+      choicePath: ["0"],
+      currentNodeId: "0",
+    };
+    const edge = MissionViewService.toView(advanced).steps[1]?.edgeTaken;
+
+    expect(edge).toMatchObject({
+      damage: { absorbed: 1, healthLost: 3, incoming: 4 },
+      passed: false,
+    });
   });
 
   it("keeps older missions readable when XP settings are absent", () => {

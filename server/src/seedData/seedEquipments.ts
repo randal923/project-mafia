@@ -14,12 +14,23 @@ async function seedEquipments(): Promise<void> {
   const firebase = new FirebaseService(config);
   const equipments = loadEquipments();
   const collection = firebase.firestore.collection("equipments");
+  const retiredIds = [
+    "armor-piercing-rounds",
+    "buckshot-shells",
+    "incendiary-rounds",
+    "match-grade-rounds",
+    "steel-core-rounds",
+    "tranquilizer-darts",
+  ];
 
-  // Full set (no merge) so retired fields don't linger on catalog docs.
+  // Full document writes remove retired fields; explicit deletes retire ammo.
   await Promise.all(
-    equipments.map((equipment) =>
-      collection.doc(equipment.id).set(equipment),
-    ),
+    [
+      ...equipments.map((equipment) =>
+        collection.doc(equipment.id).set(equipment),
+      ),
+      ...retiredIds.map((id) => collection.doc(id).delete()),
+    ],
   );
 
   console.log(`Seeded ${equipments.length} equipment(s).`);

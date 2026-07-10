@@ -7,7 +7,8 @@ import { usePlayer } from "../../../components/PlayerProvider/PlayerProvider";
 import {
   ApiError,
   chooseMissionOption,
-  fetchActiveMission
+  fetchActiveMission,
+  useInventoryItem as consumeInventoryItem
 } from "../../../lib/api";
 
 export type MissionStatus = "error" | "loading" | "none" | "ready";
@@ -38,8 +39,10 @@ export function useMission() {
   const [mission, setMission] = useState<MissionView | null>(null);
   const [status, setStatus] = useState<MissionStatus>("loading");
   const [isChoosing, setIsChoosing] = useState(false);
+  const [healingError, setHealingError] = useState<string | null>(null);
+  const [healingItemId, setHealingItemId] = useState<string | null>(null);
   const [pollKey, setPollKey] = useState(0);
-  const chooseInFlight = useRef(false);
+  const actionInFlight = useRef(false);
 
   useEffect(() => {
     if (!user) {
@@ -97,11 +100,12 @@ export function useMission() {
     async (choiceId: string) => {
       // Ref guard: two clicks in the same render tick both see
       // isChoosing === false, so state alone can double-submit.
-      if (!user || !mission || chooseInFlight.current) {
+      if (!user || !mission || actionInFlight.current) {
         return;
       }
 
-      chooseInFlight.current = true;
+      actionInFlight.current = true;
+      setHealingError(null);
       setIsChoosing(true);
       try {
         const result = await chooseMissionOption(user, mission.id, choiceId);
@@ -116,8 +120,34 @@ export function useMission() {
         }
         console.error("Failed to submit the choice:", error);
       } finally {
-        chooseInFlight.current = false;
+        actionInFlight.current = false;
         setIsChoosing(false);
+      }
+    },
+    [mission, setPlayer, user]
+  );
+
+  const heal = useCallback(
+    async (itemId: string) => {
+      if (!user || !mission || actionInFlight.current) {
+        return;
+      }
+
+      actionInFlight.current = true;
+      setHealingError(null);
+      setHealingItemId(itemId);
+      try {
+        setPlayer(await consumeInventoryItem(user, itemId));
+      } catch (error) {
+        console.error("Failed to use healing item:", error);
+        setHealingError(
+          error instanceof ApiError
+            ? error.message
+            : "That kit could not be used. Refresh and try again."
+        );
+      } finally {
+        actionInFlight.current = false;
+        setHealingItemId(null);
       }
     },
     [mission, setPlayer, user]
@@ -133,5 +163,15 @@ export function useMission() {
     setStatus("none");
   }, []);
 
-  return { choose, clearMission, isChoosing, mission, startMission, status };
+  return {
+    choose,
+    clearMission,
+    heal,
+    healingError,
+    healingItemId,
+    isChoosing,
+    mission,
+    startMission,
+    status
+  };
 }

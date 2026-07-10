@@ -1,4 +1,5 @@
 import type { JobOffer } from "@shared/job";
+import type { PlayerItem } from "@shared/player";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { Button } from "../Button/Button";
@@ -8,8 +9,8 @@ type JobCardProps = {
   disabled?: boolean;
   offer: JobOffer;
   onAccept: (offerId: string) => void;
-  /** Tags the player owns (loadout + stash); powers the gear checklist. */
-  ownedTags?: ReadonlySet<string>;
+  /** Current loadout + stash; powers the live gear checklist. */
+  ownedItems?: readonly PlayerItem[];
   /** When provided, the card blocks jobs the player is too tired for. */
   playerStamina?: number;
 };
@@ -24,7 +25,7 @@ export function JobCard({
   disabled = false,
   offer,
   onAccept,
-  ownedTags,
+  ownedItems,
   playerStamina
 }: JobCardProps) {
   const tooTired =
@@ -54,9 +55,23 @@ export function JobCard({
           </p>
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
             {gear.map((entry) => {
-              const carried = ownedTags
-                ? entry.tags.some((tag) => ownedTags.has(tag))
+              const matchingItem = ownedItems
+                ? [...ownedItems]
+                    .filter(
+                      (item) =>
+                        (!item.consumable || (item.quantity ?? 1) > 0) &&
+                        item.tags?.some((tag) => entry.tags.includes(tag)),
+                    )
+                    .sort(
+                      (a, b) =>
+                        (b.power ?? 0) - (a.power ?? 0) ||
+                        a.id.localeCompare(b.id),
+                    )[0]
                 : undefined;
+              const carried = ownedItems
+                ? matchingItem !== undefined
+                : undefined;
+              const consumes = matchingItem?.consumable ?? entry.consumes;
 
               return (
                 <li
@@ -70,14 +85,14 @@ export function JobCard({
                   )}
                   key={entry.label}
                   title={
-                    entry.consumes
+                    consumes
                       ? "Consumable — one gets used up per demand on the run."
                       : "Reusable tool — carrying one covers the whole run."
                   }
                 >
                   {carried === undefined ? "" : carried ? "✓ " : "✗ "}
                   {entry.label}
-                  {entry.consumes ? " ◦" : ""}
+                  {consumes ? " ◦" : ""}
                 </li>
               );
             })}

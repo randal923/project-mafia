@@ -21,7 +21,6 @@ export const TEST_ENGINE: EngineConfig = {
     heatPressureDivisor: 5,
   },
   gear: { missingPenalty: 15, satisfiedBonus: 5 },
-  armor: { forceChanceDivisor: 15, heatDivisor: 15 },
   momentum: { pass: 2, fail: -2, criticalBonus: 1 },
   stamina: { baseCost: 8, costPerDepth: 4, perDifficulty: 0.18 },
   prison: {
@@ -74,6 +73,7 @@ export const TEST_TEMPLATE: MissionTemplate = {
     criticalMultiplier: 2,
     perCheckDifficulty: 0.05,
   },
+  healthRisk: { approaches: ["force"] },
   outcomes: {
     jackpot: { cashFactor: 1.5, heatBonus: 0, heatFactor: 1, xpFactor: 2 },
     successful: { cashFactor: 1, heatBonus: 0, heatFactor: 0.5, xpFactor: 1.5 },

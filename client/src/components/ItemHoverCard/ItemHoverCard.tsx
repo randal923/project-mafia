@@ -102,6 +102,11 @@ export function ItemHoverCard({
                 +{item.use.stamina} stamina
               </p>
             ) : null}
+            {item.use?.health ? (
+              <p className="m-0 text-sm font-medium leading-normal text-teal">
+                +{item.use.health} health
+              </p>
+            ) : null}
             {item.use?.heat ? (
               <p className="m-0 text-sm font-medium leading-normal text-teal">
                 {item.use.heat > 0 ? `+${item.use.heat}` : item.use.heat} heat

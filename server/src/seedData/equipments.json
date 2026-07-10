@@ -142,13 +142,6 @@
   {
     "category": "pistol",
     "description": "Coughs once and the room goes quiet forever.",
-    "effects": [
-      {
-        "type": "approachBonus",
-        "approach": "quiet",
-        "value": 4
-      }
-    ],
     "id": "hushed-welrod",
     "image": {
       "alt": "Hushed Welrod",
@@ -158,10 +151,7 @@
     "name": "Hushed Welrod",
     "power": 57,
     "price": 6940,
-    "slot": "hand",
-    "tags": [
-      "silenced"
-    ]
+    "slot": "hand"
   },
   {
     "category": "pistol",
@@ -236,13 +226,6 @@
   {
     "category": "smg",
     "description": "Spits its whole story without raising its voice.",
-    "effects": [
-      {
-        "type": "approachBonus",
-        "approach": "quiet",
-        "value": 7
-      }
-    ],
     "id": "silenced-sten",
     "image": {
       "alt": "Silenced Sten",
@@ -252,10 +235,7 @@
     "name": "Silenced Sten",
     "power": 108,
     "price": 19755,
-    "slot": "hand",
-    "tags": [
-      "silenced"
-    ]
+    "slot": "hand"
   },
   {
     "category": "smg",
@@ -451,10 +431,7 @@
     "name": "Scoped Springfield",
     "power": 130,
     "price": 25025,
-    "slot": "hand",
-    "tags": [
-      "sniper"
-    ]
+    "slot": "hand"
   },
   {
     "category": "sniper",
@@ -468,21 +445,11 @@
     "name": "Rooftop Special",
     "power": 151,
     "price": 31890,
-    "slot": "hand",
-    "tags": [
-      "sniper"
-    ]
+    "slot": "hand"
   },
   {
     "category": "sniper",
     "description": "The last thing they never hear.",
-    "effects": [
-      {
-        "type": "approachBonus",
-        "approach": "quiet",
-        "value": 10
-      }
-    ],
     "id": "whisper-scope",
     "image": {
       "alt": "Whisper Scope",
@@ -492,11 +459,7 @@
     "name": "Whisper Scope",
     "power": 166,
     "price": 39510,
-    "slot": "hand",
-    "tags": [
-      "sniper",
-      "silenced"
-    ]
+    "slot": "hand"
   },
   {
     "category": "sniper",
@@ -510,10 +473,7 @@
     "name": "G.I. Sniper '03A4",
     "power": 192,
     "price": 47875,
-    "slot": "hand",
-    "tags": [
-      "sniper"
-    ]
+    "slot": "hand"
   },
   {
     "category": "sniper",
@@ -527,10 +487,7 @@
     "name": "Match-Grade Enfield",
     "power": 215,
     "price": 56970,
-    "slot": "hand",
-    "tags": [
-      "sniper"
-    ]
+    "slot": "hand"
   },
   {
     "category": "sniper",
@@ -544,10 +501,7 @@
     "name": "The Longshot",
     "power": 238,
     "price": 66790,
-    "slot": "hand",
-    "tags": [
-      "sniper"
-    ]
+    "slot": "hand"
   },
   {
     "category": "machine_gun",
@@ -1014,7 +968,8 @@
     "name": "Leather Holster",
     "power": 2,
     "price": 160,
-    "slot": "waist"
+    "slot": "waist",
+    "armor": 2
   },
   {
     "category": "utility",
@@ -1028,7 +983,8 @@
     "name": "Canvas Tool Belt",
     "power": 4,
     "price": 1070,
-    "slot": "waist"
+    "slot": "waist",
+    "armor": 4
   },
   {
     "category": "utility",
@@ -1042,7 +998,8 @@
     "name": "Shoulder Holster Rig",
     "power": 8,
     "price": 3360,
-    "slot": "waist"
+    "slot": "waist",
+    "armor": 8
   },
   {
     "category": "utility",
@@ -1056,7 +1013,8 @@
     "name": "Ammo Bandolier",
     "power": 12,
     "price": 7450,
-    "slot": "waist"
+    "slot": "waist",
+    "armor": 12
   },
   {
     "category": "utility",
@@ -1077,7 +1035,8 @@
     "name": "Extended Magazine Rig",
     "power": 17,
     "price": 13430,
-    "slot": "waist"
+    "slot": "waist",
+    "armor": 17
   },
   {
     "category": "utility",
@@ -1100,7 +1059,8 @@
     "slot": "waist",
     "tags": [
       "scanner"
-    ]
+    ],
+    "armor": 21
   },
   {
     "category": "utility",
@@ -1121,7 +1081,8 @@
     "name": "Kingpin Gun Belt",
     "power": 27,
     "price": 33405,
-    "slot": "waist"
+    "slot": "waist",
+    "armor": 27
   },
   {
     "category": "explosive",
@@ -1344,114 +1305,6 @@
     ]
   },
   {
-    "category": "ammo",
-    "consumable": true,
-    "description": "Spreads wide, hits hard, and takes hinges off doors on breach jobs.",
-    "id": "buckshot-shells",
-    "image": {
-      "alt": "Buckshot Shells",
-      "src": "/images/items/buckshot-shells.svg"
-    },
-    "levelRequirement": 10,
-    "name": "Buckshot Shells",
-    "power": 0,
-    "price": 160,
-    "slot": null,
-    "tags": [
-      "breaching"
-    ]
-  },
-  {
-    "category": "ammo",
-    "consumable": true,
-    "description": "Punches through car doors and cheap vests on armored jobs.",
-    "id": "steel-core-rounds",
-    "image": {
-      "alt": "Steel-Core Rounds",
-      "src": "/images/items/steel-core-rounds.svg"
-    },
-    "levelRequirement": 30,
-    "name": "Steel-Core Rounds",
-    "power": 0,
-    "price": 925,
-    "slot": null,
-    "tags": [
-      "ap-rounds"
-    ]
-  },
-  {
-    "category": "ammo",
-    "consumable": true,
-    "description": "Puts the guard dog and the guard to sleep alike on quiet jobs.",
-    "id": "tranquilizer-darts",
-    "image": {
-      "alt": "Tranquilizer Darts",
-      "src": "/images/items/tranquilizer-darts.svg"
-    },
-    "levelRequirement": 35,
-    "name": "Tranquilizer Darts",
-    "power": 0,
-    "price": 1180,
-    "slot": null,
-    "tags": [
-      "silenced"
-    ]
-  },
-  {
-    "category": "ammo",
-    "consumable": true,
-    "description": "Every hit starts its own little fire; arson crews pay double.",
-    "id": "incendiary-rounds",
-    "image": {
-      "alt": "Incendiary Rounds",
-      "src": "/images/items/incendiary-rounds.svg"
-    },
-    "levelRequirement": 50,
-    "name": "Incendiary Rounds",
-    "power": 0,
-    "price": 2090,
-    "slot": null,
-    "tags": [
-      "explosive"
-    ]
-  },
-  {
-    "category": "ammo",
-    "consumable": true,
-    "description": "Laughs at plate steel and armored payroll trucks.",
-    "id": "armor-piercing-rounds",
-    "image": {
-      "alt": "Armor-Piercing Rounds",
-      "src": "/images/items/armor-piercing-rounds.svg"
-    },
-    "levelRequirement": 60,
-    "name": "Armor-Piercing Rounds",
-    "power": 0,
-    "price": 2800,
-    "slot": null,
-    "tags": [
-      "ap-rounds"
-    ]
-  },
-  {
-    "category": "ammo",
-    "consumable": true,
-    "description": "Hand-loaded perfection for jobs measured in city blocks.",
-    "id": "match-grade-rounds",
-    "image": {
-      "alt": "Match-Grade Rounds",
-      "src": "/images/items/match-grade-rounds.svg"
-    },
-    "levelRequirement": 80,
-    "name": "Match-Grade Rounds",
-    "power": 0,
-    "price": 4435,
-    "slot": null,
-    "tags": [
-      "sniper"
-    ]
-  },
-  {
     "category": "tool",
     "description": "Sings through a padlock like it was never there.",
     "id": "lockpick-set",
@@ -1499,9 +1352,9 @@
     "power": 0,
     "price": 400,
     "slot": null,
-    "tags": [
-      "medkit"
-    ]
+    "use": {
+      "health": 25
+    }
   },
   {
     "category": "tool",
@@ -1620,9 +1473,9 @@
     "power": 0,
     "price": 5170,
     "slot": null,
-    "tags": [
-      "medkit"
-    ]
+    "use": {
+      "health": 50
+    }
   },
   {
     "category": "tool",
@@ -1672,9 +1525,9 @@
     "power": 0,
     "price": 13750,
     "slot": null,
-    "tags": [
-      "medkit"
-    ]
+    "use": {
+      "health": 100
+    }
   },
   {
     "id": "pep-pills",
@@ -1727,7 +1580,7 @@
     "power": 0,
     "levelRequirement": 15,
     "price": 290,
-    "description": "Uppers cut with downers \u2014 smooth ride, but people notice the eyes.",
+    "description": "Uppers cut with downers — smooth ride, but people notice the eyes.",
     "use": {
       "stamina": 40,
       "heat": 2,
@@ -1766,7 +1619,7 @@
     "power": 0,
     "levelRequirement": 35,
     "price": 1100,
-    "description": "Old Quarter opium \u2014 melts an evening and the trail behind you with it.",
+    "description": "Old Quarter opium — melts an evening and the trail behind you with it.",
     "use": {
       "stamina": 25,
       "heat": -8,
@@ -1806,7 +1659,7 @@
     "power": 0,
     "levelRequirement": 60,
     "price": 3900,
-    "description": "Hospital-grade quiet in a glass ampoule \u2014 the city stops looking for a man who isn't moving.",
+    "description": "Hospital-grade quiet in a glass ampoule — the city stops looking for a man who isn't moving.",
     "use": {
       "stamina": 50,
       "heat": -12,
@@ -1846,7 +1699,7 @@
     "power": 0,
     "levelRequirement": 90,
     "price": 13500,
-    "description": "Sealed bottles walked out of a factory loading dock \u2014 the pure article.",
+    "description": "Sealed bottles walked out of a factory loading dock — the pure article.",
     "use": {
       "stamina": 100,
       "high": 24
@@ -1922,7 +1775,7 @@
     "power": 0,
     "levelRequirement": 18,
     "price": 340,
-    "description": "The honest stuff \u2014 puts steel back in the spine.",
+    "description": "The honest stuff — puts steel back in the spine.",
     "use": {
       "stamina": 35,
       "drunk": 20

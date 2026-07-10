@@ -37,6 +37,9 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force]
+
 outcomes:
   jackpot:
     cashFactor: 1

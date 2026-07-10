@@ -172,8 +172,8 @@ export function chooseMissionOption(
   user: User,
   missionId: string,
   choiceId: string
-): Promise<{ mission: MissionView; player: Player | null }> {
-  return apiFetch<{ mission: MissionView; player: Player | null }>(
+): Promise<{ mission: MissionView; player: Player }> {
+  return apiFetch<{ mission: MissionView; player: Player }>(
     user,
     `/jobs/missions/${missionId}/choose`,
     {

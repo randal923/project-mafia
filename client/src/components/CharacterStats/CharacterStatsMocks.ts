@@ -7,9 +7,11 @@ export const ricoVale: Player = {
   avatar: null,
   prison: null,
   rank: "nobody",
+  reservedEquipment: null,
   resources: {
     cash: 500,
     drunk: 0,
+    health: 100,
     heat: 0,
     high: 0,
     power: 3,
@@ -58,9 +60,11 @@ export const soniaMarchetti: Player = {
   avatar: null,
   prison: null,
   rank: "district_boss",
+  reservedEquipment: null,
   resources: {
     cash: 48200,
     drunk: 25,
+    health: 72,
     heat: 34,
     high: 10,
     power: 18,

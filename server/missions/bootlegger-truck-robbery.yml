@@ -1,0 +1,64 @@
+id: bootlegger-truck-robbery
+name: Bootlegger Truck Robbery
+type: robbery
+district: Riverside
+
+levels:
+  min: 4
+  max: 12
+
+depth: 3
+
+difficulty:
+  base: 5
+  perLevel: 1.2
+
+rewards:
+  cashBase: 45
+  cashPerLevel: 49
+  spreadBase: 40
+  spreadPerLevel: 12
+  xpBase: 30
+  xpPerDifficulty: 6
+
+heat:
+  base: 2
+  perDifficulty: 0.08
+  max: 8
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic, quiet]
+
+gear:
+  - approaches: [quiet, technical]
+    chance: 0.3
+    consumes: false
+    label: Lockpick Set
+    tags: [lockpick]
+
+outcomes:
+  jackpot: { cashFactor: 1.62, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
+  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
+  partially_successful: { cashFactor: 0.75, heatFactor: 1, heatBonus: 1, xpFactor: 1 }
+  partial_failure: { cashFactor: 0.25, heatFactor: 1, heatBonus: 2, xpFactor: 0.5 }
+  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 4, xpFactor: 0.25 }
+  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 7, xpFactor: 0.1 }
+
+storySeeds:
+  - location: Riverside bottling road
+    premise: A truck of Canadian rye makes the same unescorted turn every Thursday.
+    pressure: The driver carries a pistol and a strict delivery clock.
+  - location: Old canal tollhouse
+    premise: Confiscated gin waits in a locked lorry before its police escort arrives.
+    pressure: The night clerk keeps phoning in every fifteen minutes.
+  - location: Foundry bridge approach
+    premise: A bootlegger's axle has cracked with two hundred cases still aboard.
+    pressure: His repair crew is already on the way from Ironworks.
+  - location: Orchard freight spur
+    premise: A false produce truck is packed with bourbon under the apple crates.
+    pressure: Railroad detectives are checking seals one siding at a time.

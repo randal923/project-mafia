@@ -119,6 +119,11 @@ export function StoreItemCard({
               +{item.use.stamina} Stamina
             </span>
           ) : null}
+          {item.use?.health ? (
+            <span className={`${displayText} text-lg text-teal`}>
+              +{item.use.health} Health
+            </span>
+          ) : null}
           {item.use?.heat ? (
             <span
               className={`${displayText} text-lg ${item.use.heat > 0 ? "text-danger-strong" : "text-teal"}`}

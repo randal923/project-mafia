@@ -1,4 +1,5 @@
 import { createEmptyNarrative, type PlayerNarrative } from "./narrative";
+import { MAX_HEALTH, MIN_HEALTH } from "./health";
 import { playerNameKey } from "./playerSchemas";
 import {
   SKILL_IDS,
@@ -44,6 +45,7 @@ export type PlayerItem = {
   /** Consumed-on-use effect (drugs/liquor): stamina, heat delta, buzz. */
   use?: {
     drunk?: number;
+    health?: number;
     heat?: number;
     high?: number;
     stamina?: number;
@@ -67,6 +69,8 @@ export type PlayerResources = {
   cash: number;
   /** How drunk, 0-100. Alcohol raises it; it debuffs checks and sobers off idle. */
   drunk: number;
+  /** Physical condition, 1-100. Mission damage lowers it; kits and rest restore it. */
+  health: number;
   /** Police attention, 0-100. Raised by jobs, raises job risk. */
   heat: number;
   /** How high, 0-100. Drugs raise it; it debuffs checks and builds tolerance. */
@@ -120,6 +124,11 @@ export type Player = {
   progression: PlayerProgression;
   rank: PlayerRank;
   resources: PlayerResources;
+  /** Exact equipment held aside for the active mission's precomputed paths. */
+  reservedEquipment: {
+    items: Record<string, number>;
+    missionId: string;
+  } | null;
   stash: PlayerItem[];
   updatedAt: string;
 };
@@ -147,9 +156,11 @@ export function createNewPlayer(
       skills: createSkillRecord(STARTING_SKILL_LEVEL),
     },
     rank: "nobody",
+    reservedEquipment: null,
     resources: {
       cash: 0,
       drunk: 0,
+      health: MAX_HEALTH,
       heat: 0,
       high: 0,
       power: 2,
@@ -160,9 +171,34 @@ export function createNewPlayer(
   };
 }
 
+const HEALING_BY_ITEM_ID: Readonly<Record<string, number>> = {
+  "black-market-trauma-kit": 100,
+  "field-surgeon-kit": 50,
+  "first-aid-tin": 25,
+};
+
+const RETIRED_EQUIPMENT_IDS = new Set([
+  "armor-piercing-rounds",
+  "buckshot-shells",
+  "incendiary-rounds",
+  "match-grade-rounds",
+  "steel-core-rounds",
+  "tranquilizer-darts",
+]);
+
+const WAIST_ARMOR_BY_ITEM_ID: Readonly<Record<string, number>> = {
+  "ammo-bandolier": 12,
+  "canvas-tool-belt": 4,
+  "extended-magazine-rig": 17,
+  "kingpin-gun-belt": 27,
+  "leather-holster": 2,
+  "radio-scanner-belt": 21,
+  "shoulder-holster-rig": 8,
+};
+
 /**
- * Fills fields that predate them on stored player docs (heat, narrative)
- * and migrates the retired `business` skill into `tech`.
+ * Fills fields that predate them on stored player docs and migrates retired
+ * skills and equipment mechanics without blocking an existing save.
  */
 export function normalizePlayer(player: Player): Player {
   return {
@@ -183,12 +219,49 @@ export function normalizePlayer(player: Player): Player {
     resources: {
       cash: player.resources.cash,
       drunk: player.resources.drunk ?? 0,
+      health: Math.min(
+        MAX_HEALTH,
+        Math.max(MIN_HEALTH, player.resources.health ?? MAX_HEALTH),
+      ),
       heat: player.resources.heat ?? 0,
       high: player.resources.high ?? 0,
       power: player.resources.power,
       stamina: player.resources.stamina ?? MAX_STAMINA,
     },
+    loadout: Object.fromEntries(
+      Object.entries(player.loadout ?? {}).map(([slot, item]) => [
+        slot,
+        normalizePlayerItem(item),
+      ]),
+    ),
+    reservedEquipment: player.reservedEquipment ?? null,
+    stash: (player.stash ?? [])
+      .filter((item) => !RETIRED_EQUIPMENT_IDS.has(item.id))
+      .map(normalizePlayerItem),
   };
+}
+
+function normalizePlayerItem(item: PlayerItem): PlayerItem {
+  const normalized = { ...item };
+  const healing = HEALING_BY_ITEM_ID[item.id];
+  const waistArmor = WAIST_ARMOR_BY_ITEM_ID[item.id];
+
+  if (healing !== undefined) {
+    normalized.use = { ...normalized.use, health: healing };
+    delete normalized.tags;
+  }
+  if (waistArmor !== undefined) {
+    normalized.armor = waistArmor;
+  }
+  if (normalized.slot === "hand") {
+    delete normalized.armor;
+    delete normalized.consumable;
+    delete normalized.effects;
+    delete normalized.tags;
+    delete normalized.use;
+  }
+
+  return normalized;
 }
 
 /**

@@ -91,6 +91,12 @@ export const missionTemplateSchema = z
         perCheckDifficulty: z.number().min(0),
       })
       .strict(),
+    /** Failed choices using one of these approaches can injure the player. */
+    healthRisk: z
+      .object({
+        approaches: z.array(z.enum(JOB_APPROACHES)).min(1),
+      })
+      .strict(),
     gear: z.array(gearRequirementSchema).optional(),
     outcomes: z
       .object(
@@ -111,7 +117,23 @@ export const missionTemplateSchema = z
       )
       .min(1),
   })
-  .strict();
+  .strict()
+  .superRefine((template, context) => {
+    if (template.levels.min > template.levels.max) {
+      context.addIssue({
+        code: "custom",
+        message: "Mission minimum level cannot exceed its maximum level.",
+        path: ["levels"],
+      });
+    }
+    if (!template.healthRisk.approaches.includes("force")) {
+      context.addIssue({
+        code: "custom",
+        message: "Every mission must make force choices a Health risk.",
+        path: ["healthRisk", "approaches"],
+      });
+    }
+  });
 
 export type MissionTemplate = z.infer<typeof missionTemplateSchema>;
 export type OutcomeReward = z.infer<typeof outcomeRewardSchema>;

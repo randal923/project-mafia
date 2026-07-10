@@ -37,22 +37,20 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force, opportunistic, quiet]
+
 gear:
-  - approaches: [force, opportunistic]
-    chance: 0.45
-    consumes: false
-    label: Sniper Rifle
-    tags: [sniper]
   - approaches: [force]
     chance: 0.5
     consumes: true
     label: Flashbang
     tags: [flashbang]
-  - approaches: [force]
+  - approaches: [opportunistic]
     chance: 0.4
-    consumes: true
-    label: AP Rounds
-    tags: [ap-rounds]
+    consumes: false
+    label: Police Scanner
+    tags: [scanner]
 
 outcomes:
   jackpot:

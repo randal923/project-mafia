@@ -5,6 +5,7 @@ import {
   meetsLevelRequirement,
   sellPrice,
 } from "../../../shared/equipment";
+import { recoveredHealth } from "../../../shared/health";
 import { Player, normalizePlayer } from "../../../shared/player";
 import { HttpError } from "../middleware/errorHandler";
 import { EquipmentService } from "./EquipmentService";
@@ -45,7 +46,19 @@ export class StoreService {
         throw new HttpError(404, "Player not found.");
       }
 
-      const player = normalizePlayer(snapshot.data() as Player);
+      const nowIso = new Date().toISOString();
+      const stored = normalizePlayer(snapshot.data() as Player);
+      const player: Player = {
+        ...stored,
+        resources: {
+          ...stored.resources,
+          health: recoveredHealth(
+            stored.resources.health,
+            stored.updatedAt,
+            nowIso,
+          ),
+        },
+      };
       if (!meetsLevelRequirement(player.progression.level, item)) {
         throw new HttpError(
           403,
@@ -63,7 +76,7 @@ export class StoreService {
           cash: player.resources.cash - cost,
         },
         stash: this.addToStash(player.stash, item, amount),
-        updatedAt: new Date().toISOString(),
+        updatedAt: nowIso,
       };
 
       tx.set(playerRef, updated);
@@ -80,7 +93,19 @@ export class StoreService {
         throw new HttpError(404, "Player not found.");
       }
 
-      const player = normalizePlayer(snapshot.data() as Player);
+      const nowIso = new Date().toISOString();
+      const stored = normalizePlayer(snapshot.data() as Player);
+      const player: Player = {
+        ...stored,
+        resources: {
+          ...stored.resources,
+          health: recoveredHealth(
+            stored.resources.health,
+            stored.updatedAt,
+            nowIso,
+          ),
+        },
+      };
       const index = player.stash.findIndex((entry) => entry.id === itemId);
       if (index === -1) {
         throw new HttpError(404, "That item isn't in your stash.");
@@ -88,7 +113,15 @@ export class StoreService {
 
       const item = player.stash[index]!;
       const owned = item.quantity ?? 1;
-      const amount = Math.min(owned, quantity);
+      const reserved = player.reservedEquipment?.items[item.id] ?? 0;
+      const available = Math.max(0, owned - reserved);
+      if (available === 0) {
+        throw new HttpError(
+          409,
+          "That quantity is packed for your active job and can't be sold.",
+        );
+      }
+      const amount = Math.min(available, quantity);
       const payout = sellPrice(item.price ?? 0, amount);
       const remaining = owned - amount;
 
@@ -104,7 +137,7 @@ export class StoreService {
                 i === index ? { ...entry, quantity: remaining } : entry,
               )
             : player.stash.filter((_, i) => i !== index),
-        updatedAt: new Date().toISOString(),
+        updatedAt: nowIso,
       };
 
       tx.set(playerRef, updated);

@@ -1,0 +1,74 @@
+id: federal-evidence-transfer
+name: Federal Evidence Transfer
+type: ambush
+district: Downtown
+
+levels:
+  min: 50
+  max: 65
+
+depth: 5
+
+difficulty:
+  base: 51
+  perLevel: 1.15
+
+rewards:
+  cashBase: 135
+  cashPerLevel: 67
+  spreadBase: 80
+  spreadPerLevel: 17
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 4
+  perDifficulty: 0.11
+  max: 14
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic, quiet, technical]
+
+gear:
+  - approaches: [opportunistic]
+    chance: 0.5
+    consumes: false
+    label: Police Scanner
+    tags: [scanner]
+  - approaches: [quiet]
+    chance: 0.45
+    consumes: true
+    label: Smoke Grenade
+    tags: [smoke]
+  - approaches: [technical]
+    chance: 0.45
+    consumes: true
+    label: Breaching Gear
+    tags: [breaching]
+
+outcomes:
+  jackpot: { cashFactor: 1.78, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
+  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
+  partially_successful: { cashFactor: 0.68, heatFactor: 1, heatBonus: 2, xpFactor: 1 }
+  partial_failure: { cashFactor: 0.18, heatFactor: 1, heatBonus: 4, xpFactor: 0.5 }
+  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 7, xpFactor: 0.25 }
+  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 11, xpFactor: 0.1 }
+
+storySeeds:
+  - location: Federal courthouse loading bay
+    premise: Seized account books are moving to a guarded archive before trial.
+    pressure: The transfer schedule has been split between two decoy vans.
+  - location: Downtown postal tunnel
+    premise: An evidence pouch will cross underground with ordinary registered mail.
+    pressure: Federal inspectors have closed one exit after a separate theft.
+  - location: Union Station secure platform
+    premise: A witness ledger is traveling north in a locked diplomatic trunk.
+    pressure: Agents are checking every railroad employee twice.
+  - location: River Street motor pool
+    premise: A damaged evidence van must change vehicles inside the federal garage.
+    pressure: Its escort refuses to leave until replacement agents arrive.

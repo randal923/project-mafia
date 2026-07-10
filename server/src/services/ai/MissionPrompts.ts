@@ -23,6 +23,7 @@ export class MissionPrompts {
       "Keep violence consequential and not glamorous.",
       "Choices must be playable, distinct, and grounded in the current scene. Never offer cosmetic choices that lead to the same beat.",
       "Choice labels describe what the player attempts. They must never hint at whether the attempt will succeed or fail.",
+      "Narrate damage and armor only from supplied engine facts. Do not assume an injury persists into later scenes; the player may heal between choices.",
       "Return only valid JSON. Do not wrap JSON in markdown.",
     ].join("\n");
   }
@@ -45,6 +46,7 @@ export class MissionPrompts {
           this.describeGear(edgeTaken) +
           " " +
           this.describeResult(edgeTaken) +
+          this.describeDamage(edgeTaken) +
           " Narrate that known result and carry the scene forward to the next decision.",
       );
     }
@@ -58,12 +60,15 @@ export class MissionPrompts {
             gear: choice.gear
               ? {
                   calledFor: choice.gear.label,
+                  exactItem: choice.gear.item?.name ?? null,
+                  itemPower: choice.gear.item?.power ?? 0,
                   playerHasIt: choice.gear.satisfied,
                   noteForWriting: choice.gear.satisfied
                     ? "The player is carrying this — the label/intent may lean on using it."
                     : "The player does NOT have this — the label/intent must read as improvising without it, and the riskHint should reflect the extra danger.",
                 }
               : null,
+            healthRisk: choice.healthRisk ?? false,
             skillTested: choice.check.skill,
           })),
           null,
@@ -79,13 +84,23 @@ export class MissionPrompts {
   }
 
   static outcomePrompt(input: OutcomeNarrationInput): string {
-    const { node, rewards } = input;
+    const { edgeTaken, node, rewards } = input;
     const tier = node.outcomeTier ?? "partial_failure";
 
     const sections = [
       this.playerSection(input.player),
       this.jobSection(input.mission),
       this.storySoFarSection(input.ancestors),
+      ...(edgeTaken
+        ? [
+            `FINAL CHOICE (engine-decided): The player attempted "${edgeTaken.approach}" (a ${edgeTaken.check.skill} check, difficulty ${edgeTaken.check.difficulty} of 100).` +
+              this.describeGear(edgeTaken) +
+              " " +
+              this.describeResult(edgeTaken) +
+              this.describeDamage(edgeTaken) +
+              " Narrate this final choice before closing the job.",
+          ]
+        : []),
       `FINAL RESULT (engine-decided, narrate it faithfully): outcome tier "${tier}". ` +
         this.describeTier(tier) +
         ` The player's take is $${rewards.cashChange}, heat rises by ${rewards.heatChange}, and they earn ${rewards.xpChange} experience. Reference the money and the attention plainly; never state other numbers.`,
@@ -157,8 +172,9 @@ export class MissionPrompts {
     if (!edge.gear) {
       return "";
     }
+    const item = edge.gear.item?.name ?? edge.gear.label;
     return edge.gear.satisfied
-      ? ` The move called for gear (${edge.gear.label}) and the player HAD it — work its use into the narration${edge.gear.consumes ? ", and it is now spent" : ""}.`
+      ? ` The move called for gear (${edge.gear.label}) and the player HAD the exact matched item, ${item} — work its use into the narration${edge.gear.consumes ? ", and it is now spent" : ""}.`
       : ` The move called for gear (${edge.gear.label}) the player DIDN'T have — they improvised without it, which made this harder; let that scramble show.`;
   }
 
@@ -174,6 +190,14 @@ export class MissionPrompts {
     return wide
       ? "The attempt FAILED badly — narrate it going seriously wrong."
       : "The attempt FAILED.";
+  }
+
+  private static describeDamage(edge: ChoiceEdge): string {
+    if (!edge.damage) {
+      return "";
+    }
+
+    return ` The failure brought ${edge.damage.incoming} incoming damage and accepted armor absorbed ${edge.damage.absorbed}. Describe those protection facts exactly, but do not state a live Health total or exact Health loss; the 1-Health floor and between-choice healing are applied when the choice is taken.`;
   }
 
   private static describeTier(tier: string): string {

@@ -1,0 +1,64 @@
+id: riverside-card-game-shakedown
+name: Riverside Card-Game Shakedown
+type: shakedown
+district: Riverside
+
+levels:
+  min: 8
+  max: 18
+
+depth: 3
+
+difficulty:
+  base: 9
+  perLevel: 1.2
+
+rewards:
+  cashBase: 55
+  cashPerLevel: 52
+  spreadBase: 45
+  spreadPerLevel: 13
+  xpBase: 30
+  xpPerDifficulty: 6
+
+heat:
+  base: 2
+  perDifficulty: 0.08
+  max: 9
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic, social]
+
+gear:
+  - approaches: [force]
+    chance: 0.3
+    consumes: true
+    label: Explosive Distraction
+    tags: [explosive]
+
+outcomes:
+  jackpot: { cashFactor: 1.65, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
+  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
+  partially_successful: { cashFactor: 0.75, heatFactor: 1, heatBonus: 1, xpFactor: 1 }
+  partial_failure: { cashFactor: 0.25, heatFactor: 1, heatBonus: 2, xpFactor: 0.5 }
+  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 4, xpFactor: 0.25 }
+  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 8, xpFactor: 0.1 }
+
+storySeeds:
+  - location: River Queen back room
+    premise: A floating card game has collected a week's worth of high-roller losses.
+    pressure: The house dealer recognizes faces from every crew in the district.
+  - location: Willow Street social club
+    premise: An unaffiliated game is using your territory without paying a cut.
+    pressure: Two off-duty deputies are deep in the tournament.
+  - location: Riverside bathhouse cellar
+    premise: A marked-deck operation keeps its reserve bank beneath the steam rooms.
+    pressure: A cheated dock boss is arriving to settle his own account.
+  - location: Beacon Hotel poker suite
+    premise: Traveling salesmen have filled a private table with expense money.
+    pressure: Hotel security is looking for the missing room key.

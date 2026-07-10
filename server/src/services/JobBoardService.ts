@@ -14,7 +14,7 @@ import { MissionTemplateService } from "./MissionTemplateService";
  * content changes are covered separately by the template-id part of the
  * key.
  */
-const BOARD_FORMAT_VERSION = 2;
+const BOARD_FORMAT_VERSION = 3;
 
 export class JobBoardService {
   private readonly db: Firestore;

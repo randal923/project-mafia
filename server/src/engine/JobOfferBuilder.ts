@@ -63,11 +63,18 @@ export class JobOfferBuilder {
       return {
         difficulty: calculations.difficulty,
         district: template.district,
-        gear: (template.gear ?? []).map((entry) => ({
-          consumes: entry.consumes,
-          label: entry.label,
-          tags: entry.tags,
-        })),
+        gear: (template.gear ?? []).map((entry) => {
+          const matchingItem = context.gearItems.find(
+            (item) =>
+              (!item.consumable || item.quantity > 0) &&
+              item.tags.some((tag) => entry.tags.includes(tag)),
+          );
+          return {
+            consumes: matchingItem?.consumable ?? entry.consumes,
+            label: entry.label,
+            tags: entry.tags,
+          };
+        }),
         heatIncrease: calculations.heatIncrease,
         id: `${boardSeed.slice(0, 12)}-${index}`,
         rewardMax: calculations.rewardMax,

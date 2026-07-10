@@ -49,13 +49,6 @@ gear:
   missingPenalty: 15
   satisfiedBonus: 5
 
-armor:
-  # Loadout armor helps you survive things going loud: +1% pass chance on
-  # force checks per forceChanceDivisor armor, and −1 heat gained per
-  # heatDivisor armor when a job resolves (heat gain never drops below 1).
-  forceChanceDivisor: 15
-  heatDivisor: 15
-
 momentum:
   # Passed check: +pass momentum. Failed: +fail. Criticals add ±criticalBonus.
   # Outcome tier bands are derived from pass × depth (a "perfect run"),

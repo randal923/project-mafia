@@ -1,11 +1,7 @@
-import { EngineConfig } from "../../../shared/engineConfig";
 import { JobOffer, OutcomeTier } from "../../../shared/job";
 import { MissionTemplate } from "../../../shared/missionTemplate";
-import { MAX_HEAT, Player } from "../../../shared/player";
-import {
-  calculateLoadoutArmor,
-  calculateLoadoutBonuses,
-} from "../../../shared/playerPower";
+import { MAX_HEAT, Player, PlayerLoadout } from "../../../shared/player";
+import { calculateLoadoutBonuses } from "../../../shared/playerPower";
 import { LevelingService } from "./LevelingService";
 import { clamp, roundToFive } from "./math";
 
@@ -47,23 +43,18 @@ export class RewardService {
   }
 
   /**
-   * Armor and heat-reduction effects bleed off some of the heat a job
-   * earns — a crew that walks out unscathed draws fewer headlines. Heat
-   * gained never drops below 1: there is no clean job.
+   * Accept-time heat-reduction effects bleed off some of the heat a job
+   * earns. Heat gained never drops below 1: there is no clean job.
    */
   static mitigateHeat(
     rewards: MissionRewards,
-    player: Player,
-    engine: EngineConfig,
+    acceptedLoadout: PlayerLoadout,
   ): MissionRewards {
     if (rewards.heatChange <= 1) {
       return rewards;
     }
 
-    const soak =
-      Math.floor(
-        calculateLoadoutArmor(player.loadout) / engine.armor.heatDivisor,
-      ) + calculateLoadoutBonuses(player.loadout).heatReduction;
+    const soak = calculateLoadoutBonuses(acceptedLoadout).heatReduction;
 
     return {
       ...rewards,

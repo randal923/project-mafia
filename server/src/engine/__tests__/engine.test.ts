@@ -17,6 +17,7 @@ import {
   xpToNextLevel,
 } from "../../../../shared/leveling";
 import { PlayerItem, createNewPlayer } from "../../../../shared/player";
+import { HealthService } from "../HealthService";
 import { JobCalculatorService } from "../JobCalculatorService";
 import { JobOfferBuilder } from "../JobOfferBuilder";
 import { MissionRng } from "../MissionRng";
@@ -53,8 +54,11 @@ function contextWith(
   return {
     armor: 0,
     bonuses: { approachBonus: {}, heatReduction: 0, skillBonus: {} },
+    characterPower: 0,
     drunk: 0,
     effectivePower: 0,
+    equipmentPower: 0,
+    gearItems: [],
     gearTags: {},
     heat: 0,
     high: 0,
@@ -265,11 +269,19 @@ describe("MomentumService", () => {
     expect(intoxicationPenalty(60, 45)).toBe(10); // 6 + 4
   });
 
-  it("counts armor only on force checks", () => {
+  it("keeps armor out of pass chance and uses it for damage soak", () => {
+    const unarmored = contextWith({ armor: 0 });
     const armored = contextWith({ armor: 45 });
-    const force = MomentumService.passChance(armored, "muscle", "force", 50, TEST_ENGINE);
-    const quiet = MomentumService.passChance(armored, "stealth", "quiet", 50, TEST_ENGINE);
-    expect(force - quiet).toBe(45 / TEST_ENGINE.armor.forceChanceDivisor);
+    expect(
+      MomentumService.passChance(armored, "muscle", "force", 50, TEST_ENGINE),
+    ).toBe(
+      MomentumService.passChance(unarmored, "muscle", "force", 50, TEST_ENGINE),
+    );
+    expect(HealthService.damageForFailure(50, 45)).toEqual({
+      absorbed: 2,
+      healthLost: 8,
+      incoming: 10,
+    });
   });
 
   it("maps rolls to pass/fail with margins", () => {
@@ -334,11 +346,12 @@ describe("PlayerContextService", () => {
 
   it("indexes gear tags across loadout and stash", () => {
     const player = createNewPlayer("uid-1", "Test Player", NOW, {
-      hand: {
-        id: "silenced-pistol",
-        name: "Silenced Pistol",
+      waist: {
+        armor: 10,
+        id: "scanner-belt",
+        name: "Scanner Belt",
         power: 20,
-        tags: ["silenced"],
+        tags: ["scanner"],
       },
     });
     player.stash = [
@@ -346,7 +359,7 @@ describe("PlayerContextService", () => {
       { id: "crowbar", name: "Crowbar", tags: ["crowbar"] },
     ];
     const { gearTags } = PlayerContextService.fromPlayer(player);
-    expect(gearTags.silenced).toEqual({ consumables: 0, permanent: true });
+    expect(gearTags.scanner).toEqual({ consumables: 0, permanent: true });
     expect(gearTags.flashbang).toEqual({ consumables: 3, permanent: false });
     expect(gearTags.crowbar).toEqual({ consumables: 0, permanent: true });
   });
@@ -473,6 +486,31 @@ describe("JobOfferBuilder", () => {
     );
     expect(offers.filter((o) => o.templateId === "lay-low")).toHaveLength(1);
     expect(offers).toHaveLength(TEST_ENGINE.board.size + 1);
+  });
+
+  it("describes gear consumption from the player's strongest matching item", () => {
+    const context = contextWith({
+      gearItems: [
+        {
+          consumable: false,
+          id: "reusable-flash-tool",
+          name: "Reusable Flash Tool",
+          power: 10,
+          quantity: 1,
+          tags: ["flashbang"],
+        },
+      ],
+      level: 1,
+      skills: freshContext().skills,
+    });
+    const offer = JobOfferBuilder.buildOffers(
+      context,
+      SEED,
+      [TEST_TEMPLATE_WITH_GEAR],
+      TEST_ENGINE,
+    )[0]!;
+
+    expect(offer.gear?.[0]).toMatchObject({ consumes: false });
   });
 
   it("falls back to the nearest bands when nothing matches", () => {
@@ -683,7 +721,7 @@ describe("RewardService", () => {
     expect(applied.player.progression.experience).toBe(3);
   });
 
-  it("bleeds off heat for armor and heat-reduction effects, never below 1", () => {
+  it("bleeds off heat for accepted heat-reduction effects", () => {
     const player = createNewPlayer("uid-1", "Test Player", NOW, {
       torso: {
         armor: 45,
@@ -694,16 +732,14 @@ describe("RewardService", () => {
     });
     const mitigated = RewardService.mitigateHeat(
       { cashChange: 0, heatChange: 10, xpChange: 0 },
-      player,
-      TEST_ENGINE,
+      player.loadout,
     );
-    expect(mitigated.heatChange).toBe(5); // 10 − floor(45/15) − 2
+    expect(mitigated.heatChange).toBe(8);
 
     const floored = RewardService.mitigateHeat(
       { cashChange: 0, heatChange: 4, xpChange: 0 },
-      player,
-      TEST_ENGINE,
+      player.loadout,
     );
-    expect(floored.heatChange).toBe(1);
+    expect(floored.heatChange).toBe(2);
   });
 });

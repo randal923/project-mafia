@@ -1,9 +1,12 @@
 import type { MissionView } from "@shared/job";
+import type { PlayerItem } from "@shared/player";
 import { typography } from "../../design-system/typography";
 import { NarrativeCard } from "../NarrativeCard/NarrativeCard";
 import { MissionCheckBadge } from "./MissionCheckBadge";
+import { MissionAcceptedEquipment } from "./MissionAcceptedEquipment";
 import { MissionChoiceCard } from "./MissionChoiceCard";
 import { MissionOutcomePanel } from "./MissionOutcomePanel";
+import { MissionHealthPanel } from "./MissionHealthPanel";
 import {
   currentStep,
   isWaitingOnNarration
@@ -11,16 +14,28 @@ import {
 
 type MissionRunnerProps = {
   isChoosing: boolean;
+  healingError: string | null;
+  healingItemId: string | null;
+  health: number;
+  healingItems: PlayerItem[];
   mission: MissionView;
+  healthUpdatedAt: string;
   onChoose: (choiceId: string) => void;
   onFinish: () => void;
+  onHeal: (itemId: string) => void;
 };
 
 export function MissionRunner({
+  healingError,
+  healingItemId,
+  healingItems,
+  health,
+  healthUpdatedAt,
   isChoosing,
   mission,
   onChoose,
-  onFinish
+  onFinish,
+  onHeal
 }: MissionRunnerProps) {
   const step = currentStep(mission);
   const beatNumber = mission.steps.length;
@@ -46,12 +61,28 @@ export function MissionRunner({
             : (step.narrative?.title ?? "Setting up the job…")
       }
     >
-      {mission.status === "resolved" && mission.resolution ? (
-        <MissionOutcomePanel
-          onFinish={onFinish}
-          resolution={mission.resolution}
-          step={step}
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
+        <MissionHealthPanel
+          canHeal={mission.status !== "resolved" && mission.steps.length > 1}
+          errorMessage={healingError}
+          healingItemId={healingItemId}
+          health={health}
+          healthUpdatedAt={healthUpdatedAt}
+          isBusy={isChoosing}
+          items={healingItems}
+          onHeal={onHeal}
         />
+        <MissionAcceptedEquipment acceptedState={mission.acceptedState} />
+      </div>
+      {mission.status === "resolved" && mission.resolution ? (
+        <div className="flex flex-col gap-5">
+          {step.edgeTaken ? <MissionCheckBadge edge={step.edgeTaken} /> : null}
+          <MissionOutcomePanel
+            onFinish={onFinish}
+            resolution={mission.resolution}
+            step={step}
+          />
+        </div>
       ) : isWaitingOnNarration(mission) ? (
         <div className="flex flex-col gap-3">
           <p className={`m-0 ${typography.narrativeBody}`}>

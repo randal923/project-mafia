@@ -74,7 +74,11 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
     () => ({
       player,
       setPlayer: (nextPlayer: Player) => {
-        setPlayerState(nextPlayer);
+        setPlayerState((current) =>
+          !current || nextPlayer.updatedAt >= current.updatedAt
+            ? nextPlayer
+            : current
+        );
         setStatus("ready");
       },
       status

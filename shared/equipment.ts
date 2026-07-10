@@ -16,7 +16,6 @@ export const EQUIPMENT_CATEGORIES = [
   "headgear",
   "footwear",
   "utility",
-  "ammo",
   "tool",
   "drug",
   "alcohol",
@@ -26,7 +25,6 @@ export type EquipmentCategory = (typeof EQUIPMENT_CATEGORIES)[number];
 
 export const EQUIPMENT_CATEGORY_LABELS: Record<EquipmentCategory, string> = {
   alcohol: "Liquor",
-  ammo: "Ammunition",
   armor: "Body Armor",
   drug: "Narcotics",
   explosive: "Explosives",
@@ -71,10 +69,10 @@ export type EquipmentEffect = z.infer<typeof equipmentEffectSchema>;
 
 export const equipmentSchema = z
   .object({
-    /** Damage soak: aids force checks and bleeds off mission heat. */
+    /** Damage soak applied to failed risky mission choices. */
     armor: z.number().min(0).optional(),
     category: z.enum(EQUIPMENT_CATEGORIES),
-    /** Consumables stack in the stash and are spent by mission gear checks. */
+    /** Consumables stack in the stash and are spent on use or by mission gear. */
     consumable: z.boolean().optional(),
     description: z.string().min(1),
     effects: z.array(equipmentEffectSchema).optional(),
@@ -92,11 +90,11 @@ export const equipmentSchema = z
     name: z.string().min(1),
     power: z.number().min(0),
     price: z.number().int().min(0),
-    /** null = stash-only (consumables, ammo); otherwise the loadout slot. */
+    /** null = stash-only; otherwise the loadout slot. */
     slot: z.enum(["feet", "hand", "head", "torso", "waist"]).nullable(),
     tags: z.array(z.string().min(1)).optional(),
     /**
-     * What USING the item from the stash does (drugs, tonics). Consumes
+     * What USING the item from the stash does (kits, drugs, liquor). Consumes
      * one. stamina restores (clamped to 100); heat is a delta — positive
      * for risky highs, negative for sedatives that keep you off the street.
      */
@@ -104,6 +102,8 @@ export const equipmentSchema = z
       .object({
         /** How much drunker this makes you (alcohol). */
         drunk: z.number().int().min(0).optional(),
+        /** Health restored immediately, clamped to the player maximum. */
+        health: z.number().int().min(0).optional(),
         heat: z.number().int().optional(),
         /** How much higher this gets you (drugs). */
         high: z.number().int().min(0).optional(),
@@ -112,7 +112,45 @@ export const equipmentSchema = z
       .strict()
       .optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((equipment, context) => {
+    if (equipment.use && equipment.tags?.length) {
+      context.addIssue({
+        code: "custom",
+        message: "Active-use items cannot also satisfy mission gear demands.",
+        path: ["tags"],
+      });
+    }
+
+    if (
+      equipment.slot !== null &&
+      equipment.slot !== "hand" &&
+      (equipment.armor === undefined ||
+        equipment.armor <= 0 ||
+        equipment.power <= 0)
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: `${equipment.slot} equipment must define positive power and armor.`,
+        path: ["armor"],
+      });
+    }
+
+    if (
+      equipment.slot === "hand" &&
+      (equipment.power <= 0 ||
+        equipment.armor !== undefined ||
+        equipment.consumable !== undefined ||
+        equipment.effects !== undefined ||
+        equipment.tags !== undefined ||
+        equipment.use !== undefined)
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Hand weapons require positive power and cannot define armor, consumable behavior, effects, tags, or use effects.",
+      });
+    }
+  });
 
 export type Equipment = z.infer<typeof equipmentSchema>;
 
@@ -122,7 +160,6 @@ export const STARTER_EQUIPMENT_ID = "stiletto-knife";
 
 const CATEGORY_TONES: Record<EquipmentCategory, PlayerItemTone> = {
   alcohol: "brass",
-  ammo: "brass",
   armor: "teal",
   drug: "profit",
   explosive: "danger",

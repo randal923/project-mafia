@@ -1,0 +1,74 @@
+id: train-yard-hijack
+name: Train-Yard Hijack
+type: hijack
+district: Ironworks
+
+levels:
+  min: 35
+  max: 48
+
+depth: 4
+
+difficulty:
+  base: 36
+  perLevel: 1.15
+
+rewards:
+  cashBase: 105
+  cashPerLevel: 62
+  spreadBase: 65
+  spreadPerLevel: 16
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 4
+  perDifficulty: 0.1
+  max: 12
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic, quiet, technical]
+
+gear:
+  - approaches: [technical]
+    chance: 0.45
+    consumes: false
+    label: Hacking Rig
+    tags: [hacking]
+  - approaches: [opportunistic]
+    chance: 0.4
+    consumes: true
+    label: Getaway Vehicle
+    tags: [getaway]
+  - approaches: [force]
+    chance: 0.4
+    consumes: true
+    label: Explosive Charge
+    tags: [explosive]
+
+outcomes:
+  jackpot: { cashFactor: 1.74, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
+  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
+  partially_successful: { cashFactor: 0.7, heatFactor: 1, heatBonus: 2, xpFactor: 1 }
+  partial_failure: { cashFactor: 0.2, heatFactor: 1, heatBonus: 3, xpFactor: 0.5 }
+  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 6, xpFactor: 0.25 }
+  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 10, xpFactor: 0.1 }
+
+storySeeds:
+  - location: Ironworks classification yard
+    premise: A sealed boxcar of machine parts is being held off the manifest overnight.
+    pressure: Railroad bulls patrol the ladder tracks with dogs.
+  - location: East switch tower
+    premise: One changed signal can send a luxury freight car onto an abandoned spur.
+    pressure: The regular operator has brought his suspicious nephew to work.
+  - location: Foundry interchange
+    premise: A rival crew's stolen cargo is changing locomotives before dawn.
+    pressure: Both train crews expect armed escorts who have not yet arrived.
+  - location: Coal Street roundhouse
+    premise: A payroll express car needs repairs and sits detached behind the engines.
+    pressure: Steam crews can return pressure to the locomotive in minutes.

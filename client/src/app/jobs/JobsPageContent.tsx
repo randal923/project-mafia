@@ -1,6 +1,7 @@
 "use client";
 
 import type { PrisonAttemptResult, PrisonStatus } from "@shared/prison";
+import type { PlayerItem } from "@shared/player";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Button } from "../../components/Button/Button";
@@ -36,27 +37,25 @@ export function JobsPageContent() {
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
   const imprisoned = Boolean(player?.prison);
+  const activePrisonStatus =
+    player?.prison &&
+    prisonStatus?.prison.sentencedAt === player.prison.sentencedAt
+      ? prisonStatus
+      : null;
 
-  // Tags the player owns right now — keeps the gear checklists on job
+  // Equipment the player owns right now — keeps the gear checklists on job
   // cards live as they shop, without waiting for a board rebuild.
-  const ownedTags = useMemo(() => {
-    const tags = new Set<string>();
+  const ownedItems = useMemo(() => {
     if (!player) {
-      return tags;
+      return [];
     }
-    for (const item of [...Object.values(player.loadout), ...player.stash]) {
-      if (!item?.tags?.length) continue;
-      if (item.consumable && (item.quantity ?? 0) <= 0) continue;
-      for (const tag of item.tags) {
-        tags.add(tag);
-      }
-    }
-    return tags;
+    return [...Object.values(player.loadout), ...player.stash].filter(
+      (item): item is PlayerItem => item !== undefined,
+    );
   }, [player]);
 
   useEffect(() => {
     if (!user || !imprisoned) {
-      setPrisonStatus(null);
       return;
     }
 
@@ -136,7 +135,7 @@ export function JobsPageContent() {
     }
   };
 
-  if (imprisoned && prisonStatus) {
+  if (imprisoned && activePrisonStatus) {
     return (
       <PrisonPanel
         isBusy={isActing}
@@ -160,7 +159,7 @@ export function JobsPageContent() {
             void fetchMyPlayer(user).then(setPlayer).catch(() => undefined);
           }
         }}
-        status={prisonStatus}
+        status={activePrisonStatus}
       />
     );
   }
@@ -176,7 +175,12 @@ export function JobsPageContent() {
   if (mission.mission) {
     return (
       <MissionRunner
-        isChoosing={mission.isChoosing}
+        healingError={mission.healingError}
+        healingItemId={mission.healingItemId}
+        healingItems={player.stash.filter((item) => Boolean(item.use?.health))}
+        health={player.resources.health}
+        healthUpdatedAt={player.updatedAt}
+        isChoosing={mission.isChoosing || mission.healingItemId !== null}
         mission={mission.mission}
         onChoose={(choiceId) => void mission.choose(choiceId)}
         onFinish={() => {
@@ -186,6 +190,7 @@ export function JobsPageContent() {
             void fetchMyPlayer(user).then(setPlayer).catch(() => undefined);
           }
         }}
+        onHeal={(itemId) => void mission.heal(itemId)}
       />
     );
   }
@@ -250,7 +255,7 @@ export function JobsPageContent() {
               key={offer.id}
               offer={offer}
               onAccept={(offerId) => void handleAccept(offerId)}
-              ownedTags={ownedTags}
+              ownedItems={ownedItems}
               playerStamina={player.resources.stamina}
             />
           ))}

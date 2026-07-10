@@ -38,22 +38,20 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force, opportunistic, quiet]
+
 gear:
-  - approaches: [force, opportunistic]
-    chance: 0.55
-    consumes: false
-    label: Sniper Rifle
-    tags: [sniper]
   - approaches: [force]
     chance: 0.5
     consumes: true
     label: Explosive Charge
     tags: [explosive]
-  - approaches: [force, opportunistic]
+  - approaches: [opportunistic]
     chance: 0.45
     consumes: true
-    label: Medkit
-    tags: [medkit]
+    label: Flashbang
+    tags: [flashbang]
 
 outcomes:
   jackpot:

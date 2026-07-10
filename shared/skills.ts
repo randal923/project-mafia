@@ -40,7 +40,7 @@ export const SKILLS: Record<SkillId, SkillDefinition> = {
   },
   muscle: {
     description:
-      "Hitting hard and taking a hit. Rolled by force choices on jobs; loadout armor adds extra chance on these checks. +1% check chance per level.",
+      "Hitting hard and holding your ground. Rolled by force choices on jobs. Equipped power helps every approach, while armor absorbs Health damage after risky failures. +1% check chance per level.",
     label: "Muscle",
   },
   stealth: {

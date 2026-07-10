@@ -41,7 +41,11 @@ export class MissionViewService {
         ? current.choices.map((edge) => ({
             approach: edge.approach,
             check: edge.check,
+            ...(edge.checkBreakdown && {
+              checkBreakdown: edge.checkBreakdown,
+            }),
             gear: edge.gear ?? null,
+            healthRisk: edge.healthRisk ?? false,
             id: edge.id,
             intent: edge.intent,
             label: edge.label,
@@ -62,6 +66,7 @@ export class MissionViewService {
     const nodes = Object.values(mission.nodes);
 
     return {
+      ...(mission.acceptedState && { acceptedState: mission.acceptedState }),
       choices,
       createdAt: mission.createdAt,
       depth: mission.depth,
@@ -91,6 +96,8 @@ export class MissionViewService {
     return {
       approach: edge.approach,
       check: edge.check,
+      ...(edge.checkBreakdown && { checkBreakdown: edge.checkBreakdown }),
+      damage: edge.damage ?? null,
       gear: edge.gear ?? null,
       id: edge.id,
       label: edge.label,

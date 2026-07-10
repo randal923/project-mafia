@@ -1,6 +1,11 @@
 import { EngineConfig } from "../../../shared/engineConfig";
 import { intoxicationPenalty } from "../../../shared/intoxication";
-import { CheckRoll, JobApproach, OutcomeTier } from "../../../shared/job";
+import {
+  CheckModifierBreakdown,
+  CheckRoll,
+  JobApproach,
+  OutcomeTier,
+} from "../../../shared/job";
 import { PlayerSkills } from "../../../shared/player";
 import { clamp } from "./math";
 import { EnginePlayerContext } from "./PlayerContextService";
@@ -16,31 +21,82 @@ export class MomentumService {
     approach: JobApproach,
     checkDifficulty: number,
     engine: EngineConfig,
+    consumablePower = 0,
   ): number {
-    const c = engine.checks;
-    const skillValue =
-      context.skills[skill] + (context.bonuses.skillBonus[skill] ?? 0);
-    const approachBonus = context.bonuses.approachBonus[approach] ?? 0;
-    // Armor lets you weather things going loud, so it only aids force.
-    const armorBonus =
-      approach === "force"
-        ? Math.floor(context.armor / engine.armor.forceChanceDivisor)
-        : 0;
+    return this.checkBreakdown(
+      context,
+      skill,
+      approach,
+      checkDifficulty,
+      engine,
+      consumablePower,
+    ).finalChance;
+  }
 
-    return clamp(
-      Math.round(
-        c.baseChance +
-          c.perSkillPoint * skillValue +
-          c.perDifficulty * checkDifficulty +
-          Math.floor(context.effectivePower / c.powerDivisor) -
-          Math.floor(context.heat / c.heatChanceDivisor) -
-          intoxicationPenalty(context.high, context.drunk) +
-          approachBonus +
-          armorBonus,
-      ),
+  static checkBreakdown(
+    context: EnginePlayerContext,
+    skill: keyof PlayerSkills,
+    approach: JobApproach,
+    checkDifficulty: number,
+    engine: EngineConfig,
+    consumablePower = 0,
+  ): CheckModifierBreakdown {
+    const c = engine.checks;
+    const skillLevel = context.skills[skill];
+    const equipmentSkillLevel = context.bonuses.skillBonus[skill] ?? 0;
+    const approachBonus = context.bonuses.approachBonus[approach] ?? 0;
+    const skillChance = c.perSkillPoint * skillLevel;
+    const equipmentSkillBonus = c.perSkillPoint * equipmentSkillLevel;
+    const difficultyModifier = c.perDifficulty * checkDifficulty;
+    const characterPowerBonus = Math.floor(
+      context.characterPower / c.powerDivisor,
+    );
+    const normalPowerBonus = Math.floor(
+      context.effectivePower / c.powerDivisor,
+    );
+    const equipmentPowerBonus = normalPowerBonus - characterPowerBonus;
+    const withConsumableBonus = Math.floor(
+      (context.effectivePower + consumablePower) / c.powerDivisor,
+    );
+    const consumablePowerBonus = withConsumableBonus - normalPowerBonus;
+    const heatPenalty = Math.floor(context.heat / c.heatChanceDivisor);
+    const impairment = intoxicationPenalty(context.high, context.drunk);
+    const unclampedChance =
+      c.baseChance +
+      skillChance +
+      equipmentSkillBonus +
+      difficultyModifier +
+      characterPowerBonus +
+      equipmentPowerBonus +
+      consumablePowerBonus -
+      heatPenalty -
+      impairment +
+      approachBonus;
+    const finalChance = clamp(
+      Math.round(unclampedChance),
       c.minChance,
       c.maxChance,
     );
+
+    return {
+      approachBonus,
+      baseChance: c.baseChance,
+      characterPower: context.characterPower,
+      characterPowerBonus,
+      consumablePower,
+      consumablePowerBonus,
+      difficultyModifier,
+      equipmentPower: context.equipmentPower,
+      equipmentPowerBonus,
+      equipmentSkillBonus,
+      finalAdjustment: finalChance - unclampedChance,
+      finalChance,
+      heatPenalty,
+      intoxicationPenalty: impairment,
+      skillChance,
+      skillLevel,
+      unclampedChance,
+    };
   }
 
   static resolveCheck(rollValue: number, chance: number): CheckRoll {

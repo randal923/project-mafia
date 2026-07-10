@@ -3,6 +3,7 @@ import { SKILLS } from "@shared/skills";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { Button } from "../Button/Button";
+import { MissionCheckBreakdown } from "./MissionCheckBreakdown";
 
 type MissionChoiceCardProps = {
   choice: MissionViewChoice;
@@ -15,13 +16,14 @@ export function MissionChoiceCard({
   disabled,
   onChoose,
 }: MissionChoiceCardProps) {
+  const matchedItem = choice.gear?.item?.name ?? choice.gear?.label;
   const equipmentStatus = !choice.gear
     ? "No equipment required — odds shown as-is"
     : !choice.gear.satisfied
       ? `Missing: ${choice.gear.label} — penalty included in odds`
       : choice.gear.consumes
-        ? `Ready: ${choice.gear.label} — consumed on use; bonus included in odds`
-        : `Ready: ${choice.gear.label} — reusable; bonus included in odds`;
+        ? `Ready: ${matchedItem} — consumed on use; its power is included in this choice only`
+        : `Ready: ${matchedItem} — reusable; readiness is included in the odds`;
 
   return (
     <article className="flex flex-col gap-3 rounded-panel border border-line bg-black/30 p-4">
@@ -73,6 +75,12 @@ export function MissionChoiceCard({
               : "Unavailable for this older job"}
           </dd>
         </div>
+        {choice.checkBreakdown ? (
+          <MissionCheckBreakdown
+            breakdown={choice.checkBreakdown}
+            gear={choice.gear}
+          />
+        ) : null}
       </dl>
       <p
         className={cx(
@@ -86,6 +94,12 @@ export function MissionChoiceCard({
       >
         Equipment: {equipmentStatus}
       </p>
+      {choice.healthRisk ? (
+        <p className={`m-0 ${typography.metadata} text-danger-strong`}>
+          Health risk: failure can cause damage; accepted armor is already
+          included in protection.
+        </p>
+      ) : null}
     </article>
   );
 }

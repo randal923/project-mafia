@@ -51,9 +51,11 @@ const player: Player = {
     }
   },
   rank: "nobody",
+  reservedEquipment: null,
   resources: {
     cash: 0,
     drunk: 0,
+    health: 100,
     heat: 0,
     high: 0,
     power: 0,

@@ -40,6 +40,9 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force, opportunistic, quiet, technical]
+
 gear:
   - approaches: [technical, force]
     chance: 0.55
@@ -53,7 +56,7 @@ gear:
     tags: [smoke]
   - approaches: [opportunistic]
     chance: 0.45
-    consumes: false
+    consumes: true
     label: Getaway Car
     tags: [getaway]
 

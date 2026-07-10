@@ -1,4 +1,5 @@
 import { intoxicationPenalty } from "@shared/intoxication";
+import { MAX_HEALTH } from "@shared/health";
 import { MAX_HEAT, MAX_STAMINA } from "@shared/player";
 import { calculatePlayerPower } from "@shared/playerPower";
 import { typography } from "../../design-system/typography";
@@ -34,6 +35,14 @@ export function CharacterStatsOverview({ player }: CharacterStatsOverviewProps) 
       </CharacterStatsGroup>
       <CharacterStatsGroup label="Condition">
         <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+          <CharacterStatsMeter
+            hint="Physical condition. Failed risky choices can cause damage; armor absorbs part of the hit, while kits and rest restore Health."
+            label="Health"
+            max={MAX_HEALTH}
+            tone="teal"
+            value={resources.health}
+            valueLabel={`${resources.health} / ${MAX_HEALTH}`}
+          />
           <CharacterStatsMeter
             hint="Energy for jobs — each contract costs some. Regenerates 25 per hour while you rest; drugs and liquor refill it faster, at a price."
             label="Stamina"

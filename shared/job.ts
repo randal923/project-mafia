@@ -1,5 +1,9 @@
 import type { MissionTemplate } from "./missionTemplate";
-import type { PlayerSkills } from "./player";
+import type {
+  PlayerItem,
+  PlayerLoadout,
+  PlayerSkills,
+} from "./player";
 
 /**
  * Ways to play a beat. Each approach rolls exactly one skill — to make a
@@ -101,6 +105,36 @@ export type CheckRoll = {
   value: number;
 };
 
+/** Server-authored contribution math shown beside a choice's final odds. */
+export type CheckModifierBreakdown = {
+  approachBonus: number;
+  baseChance: number;
+  characterPower: number;
+  characterPowerBonus: number;
+  consumablePower: number;
+  consumablePowerBonus: number;
+  difficultyModifier: number;
+  equipmentPower: number;
+  equipmentPowerBonus: number;
+  equipmentSkillBonus: number;
+  /** Rounding and min/max clamp delta so displayed components total finalChance. */
+  finalAdjustment: number;
+  finalChance: number;
+  heatPenalty: number;
+  intoxicationPenalty: number;
+  skillChance: number;
+  skillLevel: number;
+  unclampedChance: number;
+};
+
+/** Exact item selected to cover a mission gear demand. */
+export type EdgeGearItem = {
+  consumable: boolean;
+  id: string;
+  name: string;
+  power: number;
+};
+
 /**
  * Gear a choice calls for. Decided at accept time from the template and
  * the player's inventory: with the gear the check gets easier and any
@@ -112,10 +146,19 @@ export type EdgeGear = {
   consumes: boolean;
   /** Short display name, e.g. "Flashbang" or "Breaching charge". */
   label: string;
+  /** Exact strongest matching item snapshotted at acceptance. */
+  item?: EdgeGearItem | null;
   /** True if the player owned matching gear when the job was accepted. */
   satisfied: boolean;
   /** Owning ANY item with one of these tags satisfies the requirement. */
   tags: string[];
+};
+
+/** Damage facts remain hidden until the edge is taken. */
+export type EdgeDamage = {
+  absorbed: number;
+  healthLost: number;
+  incoming: number;
 };
 
 /**
@@ -125,7 +168,11 @@ export type EdgeGear = {
 export type ChoiceEdge = {
   approach: JobApproach;
   check: SkillCheck;
+  checkBreakdown?: CheckModifierBreakdown;
+  damage?: EdgeDamage | null;
   gear: EdgeGear | null;
+  /** Whether a failure on this edge carries health risk. */
+  healthRisk?: boolean;
   /** Equals the child node id, e.g. "01". */
   id: string;
   intent: string | null;
@@ -175,6 +222,16 @@ export type MissionResolution = {
   xpChange: number;
 };
 
+/** Accept-time equipment facts that remain authoritative for this mission. */
+export type MissionAcceptedState = {
+  armor: number;
+  characterPower: number;
+  equipmentPower: number;
+  gear: PlayerItem[];
+  loadout: PlayerLoadout;
+  totalPower: number;
+};
+
 export type SkillExperiencePreview = {
   criticalSuccess: number;
   success: number;
@@ -190,6 +247,8 @@ export type MissionChoiceOdds = {
 };
 
 export type Mission = {
+  /** Snapshot used by every precomputed edge; absent on legacy missions. */
+  acceptedState?: MissionAcceptedState;
   choicePath: string[];
   createdAt: string;
   currentNodeId: string;
@@ -214,6 +273,8 @@ export type Mission = {
 export type RevealedEdge = {
   approach: JobApproach;
   check: SkillCheck;
+  checkBreakdown?: CheckModifierBreakdown;
+  damage?: EdgeDamage | null;
   gear: EdgeGear | null;
   id: string;
   label: string | null;
@@ -225,7 +286,9 @@ export type RevealedEdge = {
 export type MissionViewChoice = {
   approach: JobApproach;
   check: SkillCheck;
+  checkBreakdown?: CheckModifierBreakdown;
   gear: EdgeGear | null;
+  healthRisk?: boolean;
   id: string;
   intent: string | null;
   label: string | null;
@@ -248,6 +311,7 @@ export type MissionViewStep = {
 
 /** Redacted mission sent to the client. Unvisited branches never appear. */
 export type MissionView = {
+  acceptedState?: MissionAcceptedState;
   /** Outgoing choices of the current node; null on outcome nodes. */
   choices: MissionViewChoice[] | null;
   createdAt: string;

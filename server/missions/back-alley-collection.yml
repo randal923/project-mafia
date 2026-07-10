@@ -1,0 +1,57 @@
+id: back-alley-collection
+name: Back-Alley Collection
+type: collection
+district: Old Quarter
+
+levels:
+  min: 1
+  max: 7
+
+depth: 3
+
+difficulty:
+  base: 2
+  perLevel: 1.2
+
+rewards:
+  cashBase: 30
+  cashPerLevel: 46
+  spreadBase: 35
+  spreadPerLevel: 11
+  xpBase: 30
+  xpPerDifficulty: 6
+
+heat:
+  base: 2
+  perDifficulty: 0.08
+  max: 8
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, social]
+
+outcomes:
+  jackpot: { cashFactor: 1.6, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
+  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
+  partially_successful: { cashFactor: 0.75, heatFactor: 1, heatBonus: 1, xpFactor: 1 }
+  partial_failure: { cashFactor: 0.25, heatFactor: 1, heatBonus: 2, xpFactor: 0.5 }
+  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 4, xpFactor: 0.25 }
+  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 7, xpFactor: 0.1 }
+
+storySeeds:
+  - location: Laundry Row service alley
+    premise: Three shopkeepers are a week behind on protection and the envelope is due tonight.
+    pressure: A neighborhood patrolman has started taking his supper nearby.
+  - location: Mulberry Court tenements
+    premise: A bookmaker is hiding the day's receipts in his basement office.
+    pressure: His runners are returning from the final races in shifts.
+  - location: Saint Agnes market lane
+    premise: A produce wholesaler owes the crew for keeping vandals away.
+    pressure: His union cousins have gathered to help close the stalls.
+  - location: Bianchi's repair yard
+    premise: A mechanic has the cash but wants one last chance to bargain down the debt.
+    pressure: A rival collector is already circling the block.

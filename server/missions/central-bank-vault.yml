@@ -38,6 +38,9 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force, opportunistic, quiet, technical]
+
 gear:
   - approaches: [technical, force]
     chance: 0.65
@@ -54,6 +57,11 @@ gear:
     consumes: false
     label: Climbing Gear
     tags: [climbing]
+  - approaches: [opportunistic]
+    chance: 0.45
+    consumes: false
+    label: Signal Jammer
+    tags: [jammer]
 
 outcomes:
   jackpot:

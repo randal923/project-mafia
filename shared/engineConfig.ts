@@ -47,14 +47,6 @@ export const engineConfigSchema = z
         satisfiedBonus: z.number().min(0),
       })
       .strict(),
-    armor: z
-      .object({
-        /** +1% pass chance on force checks per this much loadout armor. */
-        forceChanceDivisor: z.number().min(1),
-        /** −1 mission heat per this much loadout armor (never below 1). */
-        heatDivisor: z.number().min(1),
-      })
-      .strict(),
     momentum: z
       .object({
         pass: z.number(),

@@ -10,7 +10,7 @@ type: robbery
 district: Downtown
 
 levels:
-  min: 1
+  min: 2
   max: 10
 
 depth: 3
@@ -37,12 +37,15 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force]
+
 gear:
-  - approaches: [force, technical]
+  - approaches: [quiet, technical]
     chance: 0.3
     consumes: false
-    label: Crowbar
-    tags: [crowbar]
+    label: Lockpick Set
+    tags: [lockpick]
 
 outcomes:
   jackpot:

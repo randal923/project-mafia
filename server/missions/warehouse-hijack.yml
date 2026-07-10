@@ -37,17 +37,20 @@ skillExperience:
   perCheckDifficulty: 0.05
   criticalMultiplier: 2
 
+healthRisk:
+  approaches: [force, opportunistic, technical]
+
 gear:
-  - approaches: [force, technical]
+  - approaches: [force]
     chance: 0.35
     consumes: false
     label: Crowbar
     tags: [crowbar]
-  - approaches: [opportunistic]
+  - approaches: [technical]
     chance: 0.3
-    consumes: false
-    label: Getaway Truck
-    tags: [getaway]
+    consumes: true
+    label: Breaching Gear
+    tags: [breaching]
 
 outcomes:
   jackpot:
