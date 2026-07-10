@@ -1,34 +1,20 @@
 import { App } from "./app";
 import { EnvConfig } from "./config/env";
-import { AiNarratorService } from "./services/ai/AiNarratorService";
-import { FallbackNarratorService } from "./services/ai/FallbackNarratorService";
-import { OpenAiProviderService } from "./services/ai/OpenAiProviderService";
-import { EngineConfigService } from "./services/EngineConfigService";
-import { EquipmentService } from "./services/EquipmentService";
-import { FirebaseService } from "./services/FirebaseService";
-import { MissionTemplateService } from "./services/MissionTemplateService";
+import { Container } from "./container";
 
 async function bootstrap(): Promise<void> {
   const config = new EnvConfig();
-  const firebase = new FirebaseService(config);
-  const equipment = new EquipmentService(firebase);
-  const narrator = config.aiEnabled
-    ? new AiNarratorService(new OpenAiProviderService(config))
-    : new FallbackNarratorService();
+  const container = new Container(config);
+
+  console.log(`Mission narrator: OpenAI (${config.openAiModel})`);
   console.log(
-    config.aiEnabled
-      ? `Mission narrator: OpenAI (${config.openAiModel})`
-      : "Mission narrator: fallback text (AI disabled or no OPENAI_API_KEY)",
-  );
-  const missionTemplates = new MissionTemplateService();
-  console.log(
-    `Loaded ${missionTemplates.all().length} mission template(s): ${missionTemplates
+    `Loaded ${container.missionTemplates.all().length} mission template(s): ${container.missionTemplates
       .all()
       .map((t) => t.id)
       .join(", ")}`,
   );
-  const engineConfig = new EngineConfigService();
-  const app = new App(config, firebase, equipment, narrator, missionTemplates, engineConfig);
+
+  const app = new App(config, container.routes, container.errorHandler);
 
   await app.start();
 

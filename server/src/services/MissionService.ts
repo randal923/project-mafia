@@ -372,11 +372,11 @@ export class MissionService {
         ),
       });
       node.narrative = result.narrative;
-      node.narrativeStatus = result.status;
+      node.narrativeStatus = "ready";
     } else {
       const result = await this.narrator.narrateBeat(input);
       node.narrative = result.narrative;
-      node.narrativeStatus = result.status;
+      node.narrativeStatus = "ready";
       node.choices?.forEach((edge, index) => {
         const text = result.choices[index];
         if (text) {

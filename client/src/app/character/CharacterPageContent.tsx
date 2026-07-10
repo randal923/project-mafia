@@ -14,6 +14,7 @@ import {
   type TabDefinition,
 } from "../../components/Tabs/Tabs";
 import { typography } from "../../design-system/typography";
+import { cx } from "../../lib/cx";
 
 type CharacterPageTabId = "loadout" | "overview" | "stash";
 
@@ -93,13 +94,21 @@ export function CharacterPageContent() {
             onTabChange={setActiveTabId}
             tabs={tabs}
           />
-          <div
-            aria-labelledby={tabDomId(idPrefix, activeTabId)}
-            className="mt-4 min-h-0 flex-1 lg:overflow-y-auto"
-            id={tabPanelDomId(idPrefix, activeTabId)}
-            role="tabpanel"
-          >
-            {panels[activeTabId]}
+          <div className="mt-4 grid min-h-0 flex-1 lg:overflow-y-auto">
+            {tabs.map(({ id }) => (
+              <div
+                aria-labelledby={tabDomId(idPrefix, id)}
+                className={cx(
+                  "col-start-1 row-start-1",
+                  id !== activeTabId && "invisible",
+                )}
+                id={tabPanelDomId(idPrefix, id)}
+                key={id}
+                role="tabpanel"
+              >
+                {panels[id]}
+              </div>
+            ))}
           </div>
         </div>
       </div>

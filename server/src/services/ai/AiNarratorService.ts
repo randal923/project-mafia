@@ -3,7 +3,6 @@ import {
   beatNarrativeSchema,
   outcomeNarrativeSchema,
 } from "../../../../shared/jobSchemas";
-import { FallbackNarratorService } from "./FallbackNarratorService";
 import {
   BeatNarrationResult,
   MissionNarrator,
@@ -15,66 +14,45 @@ import { MissionPrompts } from "./MissionPrompts";
 import { OpenAiProviderService } from "./OpenAiProviderService";
 
 /**
- * LLM game master. Validates every reply against the shared zod contract,
- * retries once with the validation errors quoted, and hands the node to
- * the fallback narrator on a second failure — missions never block on AI.
+ * LLM game master. Validates every reply against the shared zod contract
+ * and retries once with the validation errors quoted.
  */
 export class AiNarratorService implements MissionNarrator {
-  private readonly fallback = new FallbackNarratorService();
-
   constructor(private readonly provider: OpenAiProviderService) {}
 
   async narrateBeat(input: NarrationInput): Promise<BeatNarrationResult> {
-    try {
-      const output = await this.generateValidated(
-        MissionPrompts.beatPrompt(input),
-        beatNarrativeSchema,
-      );
+    const output = await this.generateValidated(
+      MissionPrompts.beatPrompt(input),
+      beatNarrativeSchema,
+    );
 
-      return {
-        choices: output.choices,
-        narrative: {
-          body: output.scene,
-          stakes: output.stakes,
-          storySummary: null,
-          title: output.title,
-        },
-        status: "ready",
-      };
-    } catch (err) {
-      console.error(
-        `AI beat narration failed for node ${input.node.id}:`,
-        err,
-      );
-      return this.fallback.narrateBeat(input);
-    }
+    return {
+      choices: output.choices,
+      narrative: {
+        body: output.scene,
+        stakes: output.stakes,
+        storySummary: null,
+        title: output.title,
+      },
+    };
   }
 
   async narrateOutcome(
     input: OutcomeNarrationInput,
   ): Promise<OutcomeNarrationResult> {
-    try {
-      const output = await this.generateValidated(
-        MissionPrompts.outcomePrompt(input),
-        outcomeNarrativeSchema,
-      );
+    const output = await this.generateValidated(
+      MissionPrompts.outcomePrompt(input),
+      outcomeNarrativeSchema,
+    );
 
-      return {
-        narrative: {
-          body: output.narration,
-          stakes: null,
-          storySummary: output.storySummary,
-          title: output.title,
-        },
-        status: "ready",
-      };
-    } catch (err) {
-      console.error(
-        `AI outcome narration failed for node ${input.node.id}:`,
-        err,
-      );
-      return this.fallback.narrateOutcome(input);
-    }
+    return {
+      narrative: {
+        body: output.narration,
+        stakes: null,
+        storySummary: output.storySummary,
+        title: output.title,
+      },
+    };
   }
 
   private async generateValidated<T>(

@@ -10,10 +10,6 @@ export class OpenAiProviderService {
 
   /** Calls the model in JSON mode and returns the parsed object. */
   async generateJson(request: LlmRequest): Promise<unknown> {
-    if (!this.config.openAiApiKey) {
-      throw new Error("OPENAI_API_KEY is not configured.");
-    }
-
     const response = await fetch(this.config.openAiApiUrl, {
       body: JSON.stringify({
         messages: [

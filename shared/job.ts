@@ -98,7 +98,7 @@ export type ChoiceEdge = {
 };
 
 export type MissionNodeKind = "beat" | "outcome";
-export type NodeNarrativeStatus = "fallback" | "pending" | "ready";
+export type NodeNarrativeStatus = "pending" | "ready";
 
 export type NodeNarrative = {
   body: string;

@@ -31,12 +31,10 @@ export type OutcomeNarrationInput = NarrationInput & {
 export type BeatNarrationResult = {
   choices: BeatChoiceText[];
   narrative: NodeNarrative;
-  status: "fallback" | "ready";
 };
 
 export type OutcomeNarrationResult = {
   narrative: NodeNarrative;
-  status: "fallback" | "ready";
 };
 
 /**

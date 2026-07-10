@@ -9,10 +9,9 @@ export class EnvConfig {
   readonly firebaseProjectId: string;
   readonly firebaseClientEmail: string;
   readonly firebasePrivateKey: string;
-  readonly openAiApiKey?: string;
+  readonly openAiApiKey: string;
   readonly openAiModel: string;
   readonly openAiApiUrl: string;
-  readonly aiDisabled: boolean;
 
   constructor(env: NodeJS.ProcessEnv = process.env) {
     this.nodeEnv = env.NODE_ENV ?? 'development';
@@ -22,10 +21,9 @@ export class EnvConfig {
     this.firebaseClientEmail = this.requireVar(env, 'FIREBASE_CLIENT_EMAIL');
     // .env stores the key with literal \n sequences; restore real newlines
     this.firebasePrivateKey = this.requireVar(env, 'FIREBASE_PRIVATE_KEY').replace(/\\n/g, '\n');
-    this.openAiApiKey = env.OPENAI_API_KEY;
+    this.openAiApiKey = this.requireVar(env, 'OPENAI_API_KEY');
     this.openAiModel = env.OPENAI_MODEL ?? 'gpt-5.4-mini';
     this.openAiApiUrl = env.OPENAI_API_URL ?? 'https://api.openai.com/v1/chat/completions';
-    this.aiDisabled = env.AI_DISABLED === '1' || env.AI_DISABLED === 'true';
 
     if (!Number.isInteger(this.port) || this.port <= 0) {
       throw new Error(`Invalid PORT value: ${env.PORT}`);
@@ -34,11 +32,6 @@ export class EnvConfig {
 
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
-  }
-
-  /** Missions fall back to canned narration when this is false. */
-  get aiEnabled(): boolean {
-    return Boolean(this.openAiApiKey) && !this.aiDisabled;
   }
 
   private requireVar(env: NodeJS.ProcessEnv, name: string): string {
