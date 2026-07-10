@@ -1,7 +1,14 @@
 import type { MissionTemplate } from "./missionTemplate";
 import type { PlayerSkills } from "./player";
 
+/**
+ * Ways to play a beat. Each approach rolls exactly one skill — to make a
+ * new skill rollable on jobs, add the skill in skills.ts and one approach
+ * entry here; the skeleton builder, prompts, and UI pick it up from this
+ * list.
+ */
 export const JOB_APPROACHES = [
+  "charm",
   "deception",
   "force",
   "opportunistic",
@@ -14,6 +21,7 @@ export type JobApproach = (typeof JOB_APPROACHES)[number];
 
 /** Which skill each approach checks. */
 export const APPROACH_SKILLS: Record<JobApproach, keyof PlayerSkills> = {
+  charm: "charisma",
   deception: "corruption",
   force: "muscle",
   opportunistic: "strategy",
@@ -46,14 +54,27 @@ export type JobStorySeed = {
   pressure: string;
 };
 
+/** Gear a job may call for, listed on the offer so the player can shop. */
+export type JobOfferGear = {
+  /** Whether using it spends one (grenades yes, crowbars no). */
+  consumes: boolean;
+  label: string;
+  /** Owning ANY item with one of these tags covers the demand. */
+  tags: string[];
+};
+
 /** A job on the board. All numbers are engine-computed, never LLM-set. */
 export type JobOffer = {
   difficulty: number;
   district: JobDistrict;
+  /** Gear the job's choices may demand; absent on older boards. */
+  gear?: JobOfferGear[];
   heatIncrease: number;
   id: string;
   rewardMax: number;
   rewardMin: number;
+  /** Stamina spent on accept; absent on boards built before the knob. */
+  staminaCost?: number;
   storySeed: JobStorySeed;
   /** Which server/missions/*.yml this offer was built from. */
   templateId: string;

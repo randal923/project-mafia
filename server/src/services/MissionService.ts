@@ -14,6 +14,7 @@ import {
 import { MissionTemplate } from "../../../shared/missionTemplate";
 import { NarrativeEvent, appendStorySummary } from "../../../shared/narrative";
 import { Player, normalizePlayer } from "../../../shared/player";
+import { JobCalculatorService } from "../engine/JobCalculatorService";
 import { PlayerContextService } from "../engine/PlayerContextService";
 import { RewardService } from "../engine/RewardService";
 import { SkillExperienceService } from "../engine/SkillExperienceService";
@@ -24,6 +25,7 @@ import { EngineConfigService } from "./EngineConfigService";
 import { FirebaseService } from "./FirebaseService";
 import { JobBoardService } from "./JobBoardService";
 import { MissionTemplateService } from "./MissionTemplateService";
+import { PrisonService } from "./PrisonService";
 
 /** A generation older than this with pending nodes is considered crashed. */
 const STALE_GENERATION_MS = 60_000;
@@ -41,6 +43,7 @@ export class MissionService {
     private readonly narrator: MissionNarrator,
     private readonly templates: MissionTemplateService,
     private readonly engine: EngineConfigService,
+    private readonly prison: PrisonService,
   ) {
     this.db = firebase.firestore;
   }
@@ -51,16 +54,26 @@ export class MissionService {
     const nowIso = new Date().toISOString();
     const boardRef = this.board.boardRef(player.id);
     const missionRef = this.missions(player.id).doc(missionId);
+    const playerRef = this.db.collection("players").doc(player.id);
     const activeQuery = this.activeMissionQuery(player.id);
 
     const mission = await this.db.runTransaction(async (tx) => {
-      const [boardSnap, activeSnap] = await Promise.all([
+      const [boardSnap, activeSnap, playerSnap] = await Promise.all([
         tx.get(boardRef),
         tx.get(activeQuery),
+        tx.get(playerRef),
       ]);
 
       if (!activeSnap.empty) {
         throw new HttpError(409, "You already have a job in progress.");
+      }
+      if (!playerSnap.exists) {
+        throw new HttpError(404, "Player not found.");
+      }
+
+      const current = normalizePlayer(playerSnap.data() as Player);
+      if (current.prison) {
+        throw new HttpError(403, "You're in prison. Jobs can wait.");
       }
 
       const boardData = boardSnap.exists ? (boardSnap.data() as JobBoard) : null;
@@ -72,8 +85,21 @@ export class MissionService {
       const template =
         this.templates.find(offer.templateId) ?? this.templates.first();
 
+      // Every job costs energy; drugs or idle time buy it back.
+      const staminaCost = JobCalculatorService.staminaCost(
+        template,
+        offer.difficulty,
+        this.engine.config,
+      );
+      if (current.resources.stamina < staminaCost) {
+        throw new HttpError(
+          400,
+          "You're running on empty. Rest up or find something at the store.",
+        );
+      }
+
       const nodes = new SkeletonBuilder({
-        context: PlayerContextService.fromPlayer(player),
+        context: PlayerContextService.fromPlayer(current),
         depth: template.depth,
         engine: this.engine.config,
         missionId,
@@ -103,6 +129,14 @@ export class MissionService {
       tx.set(boardRef, {
         ...boardData,
         offers: boardData.offers.filter((o) => o.id !== offerId),
+      });
+      tx.set(playerRef, {
+        ...current,
+        resources: {
+          ...current.resources,
+          stamina: current.resources.stamina - staminaCost,
+        },
+        updatedAt: nowIso,
       });
       tx.create(missionRef, created);
       return created;
@@ -257,6 +291,13 @@ export class MissionService {
           summary,
         ),
       },
+      // A disaster means the police got you — off to the county lockup.
+      ...(tier === "disaster" && {
+        prison: this.prison.sentence(
+          `Arrested after the ${mission.offer.storySeed.location} job.`,
+          nowIso,
+        ),
+      }),
     };
 
     const event: NarrativeEvent = {

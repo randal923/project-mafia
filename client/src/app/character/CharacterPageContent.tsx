@@ -16,7 +16,13 @@ import {
 } from "../../components/Tabs/Tabs";
 import { Toast } from "../../components/Toast/Toast";
 import { typography } from "../../design-system/typography";
-import { ApiError, equipItem, sellItem, unequipSlot } from "../../lib/api";
+import {
+  ApiError,
+  equipItem,
+  sellItem,
+  unequipSlot,
+  useInventoryItem,
+} from "../../lib/api";
 import { cx } from "../../lib/cx";
 
 type CharacterPageTabId = "loadout" | "overview" | "stash";
@@ -99,6 +105,8 @@ export function CharacterPageContent() {
     runMutation(() => unequipSlot(user!, slotId));
   const handleSell = (item: PlayerItem) =>
     runMutation(() => sellItem(user!, item.id).then((r) => r.player));
+  const handleUse = (item: PlayerItem) =>
+    runMutation(() => useInventoryItem(user!, item.id));
 
   const panels: Record<CharacterPageTabId, ReactNode> = {
     loadout: (
@@ -117,6 +125,7 @@ export function CharacterPageContent() {
         onEquip={handleEquip}
         onSell={handleSell}
         onUnequip={handleUnequip}
+        onUse={handleUse}
         playerLevel={player.progression.level}
         showLoadout={false}
         slots={slots}

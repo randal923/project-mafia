@@ -97,6 +97,26 @@ export function ItemHoverCard({
                 Lv {item.levelRequirement}
               </p>
             ) : null}
+            {item.use?.stamina ? (
+              <p className="m-0 text-sm font-medium leading-normal text-profit">
+                +{item.use.stamina} stamina
+              </p>
+            ) : null}
+            {item.use?.heat ? (
+              <p className="m-0 text-sm font-medium leading-normal text-teal">
+                {item.use.heat > 0 ? `+${item.use.heat}` : item.use.heat} heat
+              </p>
+            ) : null}
+            {item.use?.high ? (
+              <p className="m-0 text-sm font-medium leading-normal text-teal">
+                +{item.use.high} high
+              </p>
+            ) : null}
+            {item.use?.drunk ? (
+              <p className="m-0 text-sm font-medium leading-normal text-teal">
+                +{item.use.drunk} drunk
+              </p>
+            ) : null}
           </div>
           {item.effects?.length ? (
             <ul className="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-center">

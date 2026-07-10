@@ -1,6 +1,7 @@
 import type { Equipment } from "@shared/equipment";
 import type { JobBoard, MissionView } from "@shared/job";
 import type { EquipmentSlotId, Player } from "@shared/player";
+import type { PrisonAttemptResult, PrisonStatus } from "@shared/prison";
 import type { User } from "firebase/auth";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
@@ -124,6 +125,45 @@ export function unequipSlot(
 ): Promise<Player> {
   return apiFetch<Player>(user, "/players/me/unequip", {
     body: JSON.stringify({ slot }),
+    method: "POST"
+  });
+}
+
+export function useInventoryItem(
+  user: User,
+  itemId: string
+): Promise<Player> {
+  return apiFetch<Player>(user, "/players/me/use", {
+    body: JSON.stringify({ itemId }),
+    method: "POST"
+  });
+}
+
+export function fetchPrecinctQuote(
+  user: User
+): Promise<{ chunk: number; cost: number }> {
+  return apiFetch<{ chunk: number; cost: number }>(
+    user,
+    "/players/me/precinct-quote"
+  );
+}
+
+export function bribeHeat(user: User): Promise<Player> {
+  return apiFetch<Player>(user, "/players/me/bribe-heat", { method: "POST" });
+}
+
+export function fetchPrisonStatus(user: User): Promise<PrisonStatus> {
+  return apiFetch<PrisonStatus>(user, "/prison/status");
+}
+
+export function bribePrisonGuard(user: User): Promise<PrisonAttemptResult> {
+  return apiFetch<PrisonAttemptResult>(user, "/prison/bribe", {
+    method: "POST"
+  });
+}
+
+export function escapePrison(user: User): Promise<PrisonAttemptResult> {
+  return apiFetch<PrisonAttemptResult>(user, "/prison/escape", {
     method: "POST"
   });
 }

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { Button } from "../Button/Button";
+import { GameClock } from "../GameClock/GameClock";
 import { Modal } from "../Modal/Modal";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import { PlayerNameDialog } from "../PlayerNameDialog/PlayerNameDialog";
@@ -44,14 +45,16 @@ export function AppShell({ children }: AppShellProps) {
       <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col">
         <NavigationBar
           actions={
-            <Button
-              className="ml-8"
-              onClick={() => setIsSignOutModalOpen(true)}
-              size="small"
-              variant="danger"
-            >
-              Sign out
-            </Button>
+            <div className="ml-8 flex items-center gap-3">
+              <GameClock />
+              <Button
+                onClick={() => setIsSignOutModalOpen(true)}
+                size="small"
+                variant="danger"
+              >
+                Sign out
+              </Button>
+            </div>
           }
           activeItemId={activeItemId}
           brand="Project Mafia"

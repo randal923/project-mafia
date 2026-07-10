@@ -114,6 +114,28 @@ export function StoreItemCard({
               Armor {item.armor}
             </span>
           ) : null}
+          {item.use?.stamina ? (
+            <span className={`${displayText} text-lg text-profit`}>
+              +{item.use.stamina} Stamina
+            </span>
+          ) : null}
+          {item.use?.heat ? (
+            <span
+              className={`${displayText} text-lg ${item.use.heat > 0 ? "text-danger-strong" : "text-teal"}`}
+            >
+              {item.use.heat > 0 ? `+${item.use.heat}` : item.use.heat} Heat
+            </span>
+          ) : null}
+          {item.use?.high ? (
+            <span className={`${displayText} text-lg text-teal`}>
+              +{item.use.high} High
+            </span>
+          ) : null}
+          {item.use?.drunk ? (
+            <span className={`${displayText} text-lg text-teal`}>
+              +{item.use.drunk} Drunk
+            </span>
+          ) : null}
           {item.consumable ? (
             <span className={`${displayText} text-lg text-faint`}>
               Single use

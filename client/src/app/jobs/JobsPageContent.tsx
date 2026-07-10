@@ -1,17 +1,95 @@
 "use client";
 
+import type { PrisonAttemptResult, PrisonStatus } from "@shared/prison";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../../components/AuthProvider/AuthProvider";
+import { Button } from "../../components/Button/Button";
 import { JobCard } from "../../components/JobCard/JobCard";
 import { MissionRunner } from "../../components/MissionRunner/MissionRunner";
-import { Button } from "../../components/Button/Button";
+import { PrisonPanel } from "../../components/PrisonPanel/PrisonPanel";
+import { StreetStatus } from "../../components/StreetStatus/StreetStatus";
 import { usePlayer } from "../../components/PlayerProvider/PlayerProvider";
 import { typography } from "../../design-system/typography";
+import {
+  ApiError,
+  bribeHeat,
+  bribePrisonGuard,
+  escapePrison,
+  fetchMyPlayer,
+  fetchPrecinctQuote,
+  fetchPrisonStatus
+} from "../../lib/api";
 import { useJobBoard } from "./hooks/useJobBoard";
 import { useMission } from "./hooks/useMission";
 
 export function JobsPageContent() {
-  const { status: playerStatus } = usePlayer();
+  const { user } = useAuth();
+  const { player, setPlayer, status: playerStatus } = usePlayer();
   const board = useJobBoard();
   const mission = useMission();
+  const [prisonStatus, setPrisonStatus] = useState<PrisonStatus | null>(null);
+  const [precinctQuote, setPrecinctQuote] = useState<{
+    chunk: number;
+    cost: number;
+  } | null>(null);
+  const [isActing, setIsActing] = useState(false);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+
+  const imprisoned = Boolean(player?.prison);
+
+  // Tags the player owns right now — keeps the gear checklists on job
+  // cards live as they shop, without waiting for a board rebuild.
+  const ownedTags = useMemo(() => {
+    const tags = new Set<string>();
+    if (!player) {
+      return tags;
+    }
+    for (const item of [...Object.values(player.loadout), ...player.stash]) {
+      if (!item?.tags?.length) continue;
+      if (item.consumable && (item.quantity ?? 0) <= 0) continue;
+      for (const tag of item.tags) {
+        tags.add(tag);
+      }
+    }
+    return tags;
+  }, [player]);
+
+  useEffect(() => {
+    if (!user || !imprisoned) {
+      setPrisonStatus(null);
+      return;
+    }
+
+    let isCancelled = false;
+    fetchPrisonStatus(user)
+      .then((status) => {
+        if (!isCancelled) setPrisonStatus(status);
+      })
+      .catch((error: unknown) => {
+        console.error("Failed to load prison status:", error);
+      });
+    return () => {
+      isCancelled = true;
+    };
+  }, [user, imprisoned, player?.prison?.releaseAt]);
+
+  useEffect(() => {
+    if (!user || imprisoned) {
+      return;
+    }
+
+    let isCancelled = false;
+    fetchPrecinctQuote(user)
+      .then((quote) => {
+        if (!isCancelled) setPrecinctQuote(quote);
+      })
+      .catch((error: unknown) => {
+        console.error("Failed to load precinct quote:", error);
+      });
+    return () => {
+      isCancelled = true;
+    };
+  }, [user, imprisoned, player?.progression.level]);
 
   if (
     playerStatus === "loading" ||
@@ -25,12 +103,72 @@ export function JobsPageContent() {
     );
   }
 
-  if (playerStatus === "error" || mission.status === "error") {
+  if (playerStatus === "error" || mission.status === "error" || !player) {
     return (
       <div className="flex h-full items-center justify-center">
         <p className={typography.metadata}>
           Could not reach your contacts. Refresh to try again.
         </p>
+      </div>
+    );
+  }
+
+  const runPrisonAction = async (
+    action: () => Promise<PrisonAttemptResult>,
+    successMessage: string,
+    failureMessage: string
+  ) => {
+    if (!user || isActing) return;
+    setIsActing(true);
+    try {
+      const result = await action();
+      setPlayer(result.player);
+      setActionMessage(result.succeeded ? successMessage : failureMessage);
+      if (!result.succeeded) {
+        setPrisonStatus(await fetchPrisonStatus(user));
+      }
+    } catch (error) {
+      setActionMessage(
+        error instanceof ApiError ? error.message : "That didn't work. Try again."
+      );
+    } finally {
+      setIsActing(false);
+    }
+  };
+
+  if (imprisoned && prisonStatus) {
+    return (
+      <PrisonPanel
+        isBusy={isActing}
+        message={actionMessage}
+        onBribe={() =>
+          void runPrisonAction(
+            () => bribePrisonGuard(user!),
+            "The guard pockets the envelope and forgets to lock a door. You walk.",
+            "He takes the money and calls it a donation. You're still here."
+          )
+        }
+        onEscape={() =>
+          void runPrisonAction(
+            () => escapePrison(user!),
+            "Over the wall and gone — but the whole city is looking for you now.",
+            "A spotlight, a whistle, and a longer sentence."
+          )
+        }
+        onServed={() => {
+          if (user) {
+            void fetchMyPlayer(user).then(setPlayer).catch(() => undefined);
+          }
+        }}
+        status={prisonStatus}
+      />
+    );
+  }
+
+  if (imprisoned) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className={typography.metadata}>Checking in with the warden…</p>
       </div>
     );
   }
@@ -44,6 +182,9 @@ export function JobsPageContent() {
         onFinish={() => {
           mission.clearMission();
           void board.reload();
+          if (user) {
+            void fetchMyPlayer(user).then(setPlayer).catch(() => undefined);
+          }
         }}
       />
     );
@@ -53,6 +194,21 @@ export function JobsPageContent() {
     const view = await board.accept(offerId);
     if (view) {
       mission.startMission(view);
+      if (user) {
+        void fetchMyPlayer(user).then(setPlayer).catch(() => undefined);
+      }
+    }
+  };
+
+  const handleBribeHeat = async () => {
+    if (!user || isActing) return;
+    setIsActing(true);
+    try {
+      setPlayer(await bribeHeat(user));
+    } catch (error) {
+      console.error("Precinct bribe failed:", error);
+    } finally {
+      setIsActing(false);
     }
   };
 
@@ -74,6 +230,12 @@ export function JobsPageContent() {
           Ask around again
         </Button>
       </div>
+      <StreetStatus
+        isBusy={isActing}
+        onBribeHeat={() => void handleBribeHeat()}
+        player={player}
+        precinctQuote={precinctQuote}
+      />
       {board.status === "loading" ? (
         <p className={typography.metadata}>Listening for rumors…</p>
       ) : board.status === "error" || !board.board ? (
@@ -88,6 +250,8 @@ export function JobsPageContent() {
               key={offer.id}
               offer={offer}
               onAccept={(offerId) => void handleAccept(offerId)}
+              ownedTags={ownedTags}
+              playerStamina={player.resources.stamina}
             />
           ))}
         </div>

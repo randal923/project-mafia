@@ -1,4 +1,5 @@
 import { EngineConfig } from "../../../shared/engineConfig";
+import { intoxicationPenalty } from "../../../shared/intoxication";
 import { CheckRoll, JobApproach, OutcomeTier } from "../../../shared/job";
 import { PlayerSkills } from "../../../shared/player";
 import { clamp } from "./math";
@@ -32,7 +33,8 @@ export class MomentumService {
           c.perSkillPoint * skillValue +
           c.perDifficulty * checkDifficulty +
           Math.floor(context.effectivePower / c.powerDivisor) -
-          Math.floor(context.heat / c.heatChanceDivisor) +
+          Math.floor(context.heat / c.heatChanceDivisor) -
+          intoxicationPenalty(context.high, context.drunk) +
           approachBonus +
           armorBonus,
       ),

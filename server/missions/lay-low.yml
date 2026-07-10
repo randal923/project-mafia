@@ -1,0 +1,99 @@
+# Lay low — the pressure valve. Not a score: a quiet stretch spent making
+# the city forget your face. Pays next to nothing, but good outcomes SHED
+# heat (negative heatBonus per tier). Always on the board (type: lay_low
+# gets a guaranteed slot) and cheap on stamina.
+
+id: lay-low
+name: Lay Low
+type: lay_low
+district: Old Quarter
+
+levels:
+  min: 1
+  max: 100
+
+depth: 3
+staminaCost: 5
+
+difficulty:
+  base: 2
+  perLevel: 0.15
+
+rewards:
+  cashBase: 0
+  cashPerLevel: 4
+  spreadBase: 20
+  spreadPerLevel: 2
+  xpBase: 10
+  xpPerDifficulty: 1
+
+heat:
+  base: 1
+  perDifficulty: 0.02
+  max: 4
+
+skillExperience:
+  basePerSuccess: 12
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+outcomes:
+  jackpot:
+    cashFactor: 1
+    heatFactor: 0
+    heatBonus: -35
+    xpFactor: 1.5
+  successful:
+    cashFactor: 0.6
+    heatFactor: 0
+    heatBonus: -25
+    xpFactor: 1
+  partially_successful:
+    cashFactor: 0.3
+    heatFactor: 0
+    heatBonus: -15
+    xpFactor: 0.75
+  partial_failure:
+    cashFactor: 0
+    heatFactor: 0
+    heatBonus: -5
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 8
+    xpFactor: 0.1
+
+storySeeds:
+  - location: A cousin's farmhouse upstate
+    premise: >-
+      Your cousin owes the family a favor and has a spare room, a wood pile
+      that needs splitting, and neighbors who don't ask questions.
+    pressure: A county deputy drinks at the roadhouse two miles down and
+      likes new faces.
+  - location: The Church of St. Anselm's boarding rooms
+    premise: >-
+      Father Emilio rents quiet rooms to quiet men and asks only that you
+      attend one mass and keep your hands folded.
+    pressure: Half the congregation are cops' wives who never forget a face.
+  - location: A fishing boat out of Riverside
+    premise: >-
+      Old Marek needs a deckhand for a week on the water, cash under the
+      table and no names over the radio.
+    pressure: The harbor master checks crew papers whenever the catch comes
+      in light.
+  - location: The night shift at Kowalski's garage
+    premise: >-
+      Kowalski will vouch for you as his new mechanic if you actually turn
+      wrenches — honest grease under the nails is the best alibi in town.
+    pressure: Squad cars fuel up there every morning at six sharp.
+  - location: A rooming house on Delancey Court
+    premise: >-
+      Pay the landlady double, take the room under the eaves, and become
+      the kind of tenant nobody remembers when someone knocks.
+    pressure: The tenant below sells information to whoever pays for it.

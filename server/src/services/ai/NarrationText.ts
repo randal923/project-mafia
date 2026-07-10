@@ -1,6 +1,10 @@
 import { JobApproach, OutcomeTier } from "../../../../shared/job";
 
 export const APPROACH_TEXT: Record<JobApproach, { intent: string; label: string }> = {
+  charm: {
+    intent: "Make them like you enough to stop asking questions.",
+    label: "Turn on the charm",
+  },
   deception: {
     intent: "Grease the right palm and walk in like you belong.",
     label: "Run a con",

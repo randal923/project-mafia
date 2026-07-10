@@ -3,6 +3,7 @@ import { createPlayerRequestSchema } from "../../../shared/playerSchemas";
 import {
   equipItemRequestSchema,
   unequipSlotRequestSchema,
+  useItemRequestSchema,
 } from "../../../shared/storeSchemas";
 import { HttpError } from "../middleware/errorHandler";
 import { LoadoutService } from "../services/LoadoutService";
@@ -20,6 +21,9 @@ export class PlayerController {
     this.router.post("/", this.create);
     this.router.post("/me/equip", this.equip);
     this.router.post("/me/unequip", this.unequip);
+    this.router.post("/me/use", this.use);
+    this.router.get("/me/precinct-quote", this.precinctQuote);
+    this.router.post("/me/bribe-heat", this.bribeHeat);
   }
 
   private getMe = async (req: Request, res: Response): Promise<void> => {
@@ -60,6 +64,30 @@ export class PlayerController {
     }
 
     const player = await this.loadout.unequip(this.requireUid(req), parsed.data.slot);
+    res.json(player);
+  };
+
+  private use = async (req: Request, res: Response): Promise<void> => {
+    const parsed = useItemRequestSchema.safeParse(req.body);
+    if (!parsed.success) {
+      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+    }
+
+    const player = await this.loadout.useItem(this.requireUid(req), parsed.data.itemId);
+    res.json(player);
+  };
+
+  private precinctQuote = async (req: Request, res: Response): Promise<void> => {
+    const player = await this.players.getPlayer(this.requireUid(req));
+    if (!player) {
+      throw new HttpError(404, "Player not found");
+    }
+
+    res.json(this.players.precinctQuote(player));
+  };
+
+  private bribeHeat = async (req: Request, res: Response): Promise<void> => {
+    const player = await this.players.bribeHeat(this.requireUid(req));
     res.json(player);
   };
 

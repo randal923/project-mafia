@@ -23,6 +23,7 @@ type InventoryProps = {
   onEquip?: (item: InventoryItem) => void;
   onSell?: (item: InventoryItem) => void;
   onUnequip?: (slotId: InventorySlotId) => void;
+  onUse?: (item: InventoryItem) => void;
   playerLevel?: number;
   showLoadout?: boolean;
   showStash?: boolean;
@@ -53,6 +54,7 @@ export function Inventory({
   onEquip,
   onSell,
   onUnequip,
+  onUse,
   playerLevel,
   showLoadout = true,
   showStash = true,
@@ -123,8 +125,24 @@ export function Inventory({
                     <ItemHoverCard item={item}>
                       <InventoryItemCard item={item} />
                     </ItemHoverCard>
-                    {onEquip || onSell ? (
+                    {onEquip || onSell || onUse ? (
                       <div className="flex gap-2">
+                        {onUse && item.use ? (
+                          <Button
+                            className="flex-1"
+                            disabled={
+                              actionsDisabled ||
+                              (item.levelRequirement !== undefined &&
+                                playerLevel !== undefined &&
+                                playerLevel < item.levelRequirement)
+                            }
+                            onClick={() => onUse(item)}
+                            size="small"
+                            variant="primary"
+                          >
+                            Use
+                          </Button>
+                        ) : null}
                         {onEquip && item.slot ? (
                           <Button
                             className="flex-1"

@@ -19,6 +19,26 @@ export type JobCalculations = {
  * the band's floor stretches the job harder via difficulty.perLevel.
  */
 export class JobCalculatorService {
+  /**
+   * What accepting this job costs in stamina — deeper and harder jobs
+   * burn more. A template's own staminaCost (lay-low) overrides.
+   */
+  static staminaCost(
+    template: MissionTemplate,
+    difficulty: number,
+    engine: EngineConfig,
+  ): number {
+    const { stamina } = engine;
+    return (
+      template.staminaCost ??
+      Math.round(
+        stamina.baseCost +
+          stamina.costPerDepth * (template.depth - 3) +
+          stamina.perDifficulty * difficulty,
+      )
+    );
+  }
+
   static calculate(
     context: EnginePlayerContext,
     template: MissionTemplate,

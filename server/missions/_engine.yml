@@ -63,3 +63,44 @@ momentum:
   pass: 2
   fail: -2
   criticalBonus: 1
+
+stamina:
+  # Accepting a job costs
+  #   round(baseCost + costPerDepth × (depth − 3) + perDifficulty × difficulty)
+  # so harder jobs burn more energy: a level-5 street job ≈ 9, a mid-game
+  # depth-4 score ≈ 22, an endgame depth-5 heist ≈ 33 — roughly 3 top-shelf
+  # jobs on a full tank. Templates can override with their own staminaCost
+  # (lay-low does). Regen is 25/hour idle (shared/stamina.ts); drugs and
+  # liquor from the store refill it instantly.
+  baseCost: 8
+  costPerDepth: 4
+  perDifficulty: 0.18
+
+prison:
+  # A disaster outcome means you were arrested. One game day behind bars
+  # equals one real hour (shared/gameTime.ts).
+  sentenceGameDays: 1
+  # Bribing a guard rolls charisma and costs cash win or lose.
+  bribeBaseCost: 300
+  bribeCostPerLevel: 90
+  bribeBaseChance: 30
+  bribePerCharisma: 0.6
+  # Breaking out rolls stealth; failing extends the stay.
+  escapeBaseChance: 25
+  escapePerStealth: 0.6
+  minChance: 5
+  maxChance: 90
+  escapeFailExtensionMinutes: 30
+  escapeHeat: 15
+  serveHeatRelief: 30
+  attemptCooldownMinutes: 10
+
+precinct:
+  # Paying off the precinct: removes `chunk` heat per payment at
+  # (baseCost + costPerLevel × level), discounted by corruption up to
+  # maxDiscount.
+  chunk: 20
+  baseCost: 250
+  costPerLevel: 45
+  discountPerCorruption: 0.004
+  maxDiscount: 0.4

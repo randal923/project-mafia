@@ -1675,5 +1675,333 @@
     "tags": [
       "medkit"
     ]
+  },
+  {
+    "id": "pep-pills",
+    "image": {
+      "alt": "Pep Pills",
+      "src": "/images/items/pep-pills.svg"
+    },
+    "name": "Pep Pills",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 2,
+    "price": 45,
+    "description": "Corner-drugstore courage; twenty minutes of feeling bulletproof.",
+    "use": {
+      "stamina": 20,
+      "high": 10
+    }
+  },
+  {
+    "id": "bennies",
+    "image": {
+      "alt": "Bennies",
+      "src": "/images/items/bennies.svg"
+    },
+    "name": "Bennies",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 8,
+    "price": 120,
+    "description": "Truck-stop amphetamines that turn 4 a.m. into noon.",
+    "use": {
+      "stamina": 30,
+      "high": 14
+    }
+  },
+  {
+    "id": "goofballs",
+    "image": {
+      "alt": "Goofballs",
+      "src": "/images/items/goofballs.svg"
+    },
+    "name": "Goofballs",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 15,
+    "price": 290,
+    "description": "Uppers cut with downers \u2014 smooth ride, but people notice the eyes.",
+    "use": {
+      "stamina": 40,
+      "heat": 2,
+      "high": 18
+    }
+  },
+  {
+    "id": "white-cross",
+    "image": {
+      "alt": "White Cross",
+      "src": "/images/items/white-cross.svg"
+    },
+    "name": "White Cross",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 25,
+    "price": 600,
+    "description": "Pharmacy-white tablets the long-haul crews swear by.",
+    "use": {
+      "stamina": 55,
+      "high": 20
+    }
+  },
+  {
+    "id": "hop-tar",
+    "image": {
+      "alt": "Hop Tar",
+      "src": "/images/items/hop-tar.svg"
+    },
+    "name": "Hop Tar",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 35,
+    "price": 1100,
+    "description": "Old Quarter opium \u2014 melts an evening and the trail behind you with it.",
+    "use": {
+      "stamina": 25,
+      "heat": -8,
+      "high": 24
+    }
+  },
+  {
+    "id": "nose-candy",
+    "image": {
+      "alt": "Nose Candy",
+      "src": "/images/items/nose-candy.svg"
+    },
+    "name": "Nose Candy",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 45,
+    "price": 2100,
+    "description": "Uptown powder; makes you brilliant and loud in that order.",
+    "use": {
+      "stamina": 70,
+      "heat": 4,
+      "high": 25
+    }
+  },
+  {
+    "id": "morphine-ampoule",
+    "image": {
+      "alt": "Morphine Ampoule",
+      "src": "/images/items/morphine-ampoule.svg"
+    },
+    "name": "Morphine Ampoule",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 60,
+    "price": 3900,
+    "description": "Hospital-grade quiet in a glass ampoule \u2014 the city stops looking for a man who isn't moving.",
+    "use": {
+      "stamina": 50,
+      "heat": -12,
+      "high": 28
+    }
+  },
+  {
+    "id": "speedball-kit",
+    "image": {
+      "alt": "Speedball Kit",
+      "src": "/images/items/speedball-kit.svg"
+    },
+    "name": "Speedball Kit",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 75,
+    "price": 7200,
+    "description": "Both directions at once. Works every time until it doesn't.",
+    "use": {
+      "stamina": 90,
+      "heat": 6,
+      "high": 32
+    }
+  },
+  {
+    "id": "pharma-amps",
+    "image": {
+      "alt": "Pharma-Grade Amps",
+      "src": "/images/items/pharma-amps.svg"
+    },
+    "name": "Pharma-Grade Amps",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 90,
+    "price": 13500,
+    "description": "Sealed bottles walked out of a factory loading dock \u2014 the pure article.",
+    "use": {
+      "stamina": 100,
+      "high": 24
+    }
+  },
+  {
+    "id": "growler-of-beer",
+    "image": {
+      "alt": "Growler of Beer",
+      "src": "/images/items/growler-of-beer.svg"
+    },
+    "name": "Growler of Beer",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 1,
+    "price": 25,
+    "description": "Warm, flat, and better than nothing after a long night.",
+    "use": {
+      "stamina": 10,
+      "drunk": 8
+    }
+  },
+  {
+    "id": "rotgut-whiskey",
+    "image": {
+      "alt": "Rotgut Whiskey",
+      "src": "/images/items/rotgut-whiskey.svg"
+    },
+    "name": "Rotgut Whiskey",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 4,
+    "price": 60,
+    "description": "Burns going down and takes the day's aches with it.",
+    "use": {
+      "stamina": 18,
+      "drunk": 14
+    }
+  },
+  {
+    "id": "bathtub-gin",
+    "image": {
+      "alt": "Bathtub Gin",
+      "src": "/images/items/bathtub-gin.svg"
+    },
+    "name": "Bathtub Gin",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 10,
+    "price": 140,
+    "description": "Juniper and menace, bottled in somebody's basement.",
+    "use": {
+      "stamina": 25,
+      "drunk": 18
+    }
+  },
+  {
+    "id": "rye-whiskey",
+    "image": {
+      "alt": "Rye Whiskey",
+      "src": "/images/items/rye-whiskey.svg"
+    },
+    "name": "Rye Whiskey",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 18,
+    "price": 340,
+    "description": "The honest stuff \u2014 puts steel back in the spine.",
+    "use": {
+      "stamina": 35,
+      "drunk": 20
+    }
+  },
+  {
+    "id": "smuggled-bourbon",
+    "image": {
+      "alt": "Smuggled Bourbon",
+      "src": "/images/items/smuggled-bourbon.svg"
+    },
+    "name": "Smuggled Bourbon",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 30,
+    "price": 800,
+    "description": "Kentucky's finest, minus the tax stamp.",
+    "use": {
+      "stamina": 45,
+      "drunk": 22
+    }
+  },
+  {
+    "id": "french-champagne",
+    "image": {
+      "alt": "French Champagne",
+      "src": "/images/items/french-champagne.svg"
+    },
+    "name": "French Champagne",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 45,
+    "price": 1900,
+    "description": "Celebrating early is a professional hazard worth having.",
+    "use": {
+      "stamina": 55,
+      "drunk": 20
+    }
+  },
+  {
+    "id": "single-malt-scotch",
+    "image": {
+      "alt": "Single Malt Scotch",
+      "src": "/images/items/single-malt-scotch.svg"
+    },
+    "name": "Single Malt Scotch",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 60,
+    "price": 3800,
+    "description": "Older than your rap sheet and twice as smooth.",
+    "use": {
+      "stamina": 65,
+      "drunk": 22
+    }
+  },
+  {
+    "id": "prewar-cognac",
+    "image": {
+      "alt": "Prewar Cognac",
+      "src": "/images/items/prewar-cognac.svg"
+    },
+    "name": "Prewar Cognac",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 80,
+    "price": 8500,
+    "description": "What the bosses pour when the city belongs to them.",
+    "use": {
+      "stamina": 80,
+      "drunk": 25
+    }
   }
 ]

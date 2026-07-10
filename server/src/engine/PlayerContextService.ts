@@ -18,10 +18,14 @@ export type GearAvailability = {
 export type EnginePlayerContext = {
   armor: number;
   bonuses: LoadoutBonuses;
+  /** How drunk (0-100); debuffs every check. */
+  drunk: number;
   effectivePower: number;
   /** tag → availability, from the loadout plus the stash. */
   gearTags: Record<string, GearAvailability>;
   heat: number;
+  /** How high (0-100); debuffs every check. */
+  high: number;
   level: number;
   rankTier: number;
   skills: PlayerSkills;
@@ -32,9 +36,11 @@ export class PlayerContextService {
     return {
       armor: calculateLoadoutArmor(player.loadout),
       bonuses: calculateLoadoutBonuses(player.loadout),
+      drunk: player.resources.drunk,
       effectivePower: calculatePlayerPower(player),
       gearTags: this.gearTags(player),
       heat: player.resources.heat,
+      high: player.resources.high,
       level: player.progression.level,
       rankTier: Math.max(0, PLAYER_RANKS.indexOf(player.rank)),
       skills: player.progression.skills,

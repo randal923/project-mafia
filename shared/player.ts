@@ -1,5 +1,11 @@
 import { createEmptyNarrative, type PlayerNarrative } from "./narrative";
 import { playerNameKey } from "./playerSchemas";
+import {
+  SKILL_IDS,
+  STARTING_SKILL_LEVEL,
+  SkillId,
+  createSkillRecord,
+} from "./skills";
 
 export const PLAYER_RANKS = [
   "nobody",
@@ -35,6 +41,13 @@ export type PlayerItem = {
   slot?: EquipmentSlotId;
   tags?: string[];
   tone?: PlayerItemTone;
+  /** Consumed-on-use effect (drugs/liquor): stamina, heat delta, buzz. */
+  use?: {
+    drunk?: number;
+    heat?: number;
+    high?: number;
+    stamina?: number;
+  };
 };
 
 /** Passive bonuses an equipped item grants. Mirrors EquipmentEffect. */
@@ -48,37 +61,43 @@ export type EquipmentSlotId = "feet" | "hand" | "head" | "torso" | "waist";
 export type PlayerLoadout = Partial<Record<EquipmentSlotId, PlayerItem>>;
 
 export const MAX_HEAT = 100;
+export const MAX_STAMINA = 100;
 
 export type PlayerResources = {
   cash: number;
+  /** How drunk, 0-100. Alcohol raises it; it debuffs checks and sobers off idle. */
+  drunk: number;
   /** Police attention, 0-100. Raised by jobs, raises job risk. */
   heat: number;
+  /** How high, 0-100. Drugs raise it; it debuffs checks and builds tolerance. */
+  high: number;
   power: number;
+  /** Energy for jobs, 0-100. Regenerates while idle; drugs refill it. */
+  stamina: number;
 };
 
-export type PlayerSkills = {
-  corruption: number;
-  leadership: number;
-  muscle: number;
-  stealth: number;
-  strategy: number;
-  /** Locks, wires, alarms, explosives — the technical trades. */
-  tech: number;
-};
+/**
+ * Skill levels, keyed by the registry in skills.ts — adding a skill there
+ * automatically extends this record.
+ */
+export type PlayerSkills = Record<SkillId, number>;
 
 /** Experience earned per skill by passing checks with it. */
-export type PlayerSkillExperience = Record<keyof PlayerSkills, number>;
+export type PlayerSkillExperience = Record<SkillId, number>;
 
 export function createEmptySkillExperience(): PlayerSkillExperience {
-  return {
-    corruption: 0,
-    leadership: 0,
-    muscle: 0,
-    stealth: 0,
-    strategy: 0,
-    tech: 0,
-  };
+  return createSkillRecord(0);
 }
+
+/** Set while the player is locked up; null when free. */
+export type PlayerPrison = {
+  /** Next bribe/escape attempt allowed at (throttles retries). */
+  attemptCooldownUntil: string | null;
+  /** Narrative context: which job put them here. */
+  reason: string;
+  releaseAt: string;
+  sentencedAt: string;
+};
 
 export type PlayerProgression = {
   experience: number;
@@ -97,6 +116,7 @@ export type Player = {
   /** Lowercased, whitespace-collapsed name used for uniqueness checks. */
   nameKey: string;
   narrative: PlayerNarrative;
+  prison: PlayerPrison | null;
   progression: PlayerProgression;
   rank: PlayerRank;
   resources: PlayerResources;
@@ -118,25 +138,22 @@ export function createNewPlayer(
     name,
     nameKey: playerNameKey(name),
     narrative: createEmptyNarrative(),
+    prison: null,
     progression: {
       experience: 0,
       level: 1,
       skillExperience: createEmptySkillExperience(),
       skillPoints: 0,
-      skills: {
-        corruption: 1,
-        leadership: 1,
-        muscle: 1,
-        stealth: 1,
-        strategy: 1,
-        tech: 1,
-      },
+      skills: createSkillRecord(STARTING_SKILL_LEVEL),
     },
     rank: "nobody",
     resources: {
       cash: 0,
+      drunk: 0,
       heat: 0,
+      high: 0,
       power: 2,
+      stamina: MAX_STAMINA,
     },
     stash: [],
     updatedAt: nowIso,
@@ -151,45 +168,47 @@ export function normalizePlayer(player: Player): Player {
   return {
     ...player,
     narrative: player.narrative ?? createEmptyNarrative(),
+    prison: player.prison ?? null,
     progression: {
       ...player.progression,
       skillExperience: normalizeSkillRecord(
         player.progression.skillExperience,
-        createEmptySkillExperience(),
+        0,
       ),
-      skills: normalizeSkillRecord(player.progression.skills, {
-        corruption: 1,
-        leadership: 1,
-        muscle: 1,
-        stealth: 1,
-        strategy: 1,
-        tech: 1,
-      }),
+      skills: normalizeSkillRecord(
+        player.progression.skills,
+        STARTING_SKILL_LEVEL,
+      ),
     },
     resources: {
       cash: player.resources.cash,
+      drunk: player.resources.drunk ?? 0,
       heat: player.resources.heat ?? 0,
+      high: player.resources.high ?? 0,
       power: player.resources.power,
+      stamina: player.resources.stamina ?? MAX_STAMINA,
     },
   };
 }
 
-function normalizeSkillRecord<T extends Record<keyof PlayerSkills, number>>(
-  stored: T | undefined,
-  fallback: T,
-): T {
-  if (!stored) {
-    return fallback;
-  }
+/**
+ * Backfills any skill the stored doc predates with `fallback`, so adding
+ * a skill to the registry migrates every player automatically. The
+ * retired `business` skill folds into tech.
+ */
+function normalizeSkillRecord(
+  stored: Partial<Record<SkillId, number>> | undefined,
+  fallback: number,
+): Record<SkillId, number> {
+  const legacy = (stored ?? {}) as Partial<Record<SkillId, number>> & {
+    business?: number;
+  };
+  const record = createSkillRecord(fallback);
 
-  const legacy = stored as T & { business?: number };
-  return {
-    corruption: legacy.corruption ?? fallback.corruption,
-    leadership: legacy.leadership ?? fallback.leadership,
-    muscle: legacy.muscle ?? fallback.muscle,
-    stealth: legacy.stealth ?? fallback.stealth,
-    strategy: legacy.strategy ?? fallback.strategy,
-    // The old `business` skill was never rollable; its points move to tech.
-    tech: legacy.tech ?? legacy.business ?? fallback.tech,
-  } as T;
+  for (const id of SKILL_IDS) {
+    record[id] = legacy[id] ?? fallback;
+  }
+  record.tech = legacy.tech ?? legacy.business ?? fallback;
+
+  return record;
 }

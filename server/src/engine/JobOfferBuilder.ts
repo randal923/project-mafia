@@ -19,15 +19,20 @@ export class JobOfferBuilder {
     engine: EngineConfig,
   ): JobOffer[] {
     const rng = new MissionRng(boardSeed, "board");
-    const eligible = this.eligibleTemplates(context, templates, engine);
+    const all = this.eligibleTemplates(context, templates, engine);
+    // Lay-low work is always on offer — it's the reliable way to shed
+    // heat — so it gets a guaranteed extra slot instead of competing.
+    const layLow = all.filter((t) => t.type === "lay_low");
+    const eligible = all.filter((t) => t.type !== "lay_low");
 
     // Fill the slots template-by-template, cycling when there are fewer
     // templates than slots; a template repeated twice gets distinct seeds.
     const order = rng.pickDistinct(eligible, eligible.length, "templates");
     const slots = Array.from(
-      { length: engine.board.size },
+      { length: order.length === 0 ? 0 : engine.board.size },
       (_, index) => order[index % order.length]!,
     );
+    slots.push(...layLow);
 
     const slotCounts = new Map<string, number>();
     for (const template of slots) {
@@ -35,7 +40,7 @@ export class JobOfferBuilder {
     }
     const seedsByTemplate = new Map(
       [...slotCounts].map(([id, count]) => {
-        const template = order.find((t) => t.id === id)!;
+        const template = slots.find((t) => t.id === id)!;
         return [
           id,
           rng.pickDistinct(template.storySeeds, count, `seeds:${id}`),
@@ -58,10 +63,20 @@ export class JobOfferBuilder {
       return {
         difficulty: calculations.difficulty,
         district: template.district,
+        gear: (template.gear ?? []).map((entry) => ({
+          consumes: entry.consumes,
+          label: entry.label,
+          tags: entry.tags,
+        })),
         heatIncrease: calculations.heatIncrease,
         id: `${boardSeed.slice(0, 12)}-${index}`,
         rewardMax: calculations.rewardMax,
         rewardMin: calculations.rewardMin,
+        staminaCost: JobCalculatorService.staminaCost(
+          template,
+          calculations.difficulty,
+          engine,
+        ),
         storySeed,
         templateId: template.id,
         type: template.type,

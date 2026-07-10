@@ -10,7 +10,8 @@ import { JOB_APPROACHES, OUTCOME_TIERS } from "./job";
 const outcomeRewardSchema = z
   .object({
     cashFactor: z.number().min(0),
-    heatBonus: z.number().min(0),
+    /** May be negative: lay-low jobs SHED heat on good outcomes. */
+    heatBonus: z.number().min(-60),
     heatFactor: z.number().min(0),
     xpFactor: z.number().min(0),
   })
@@ -57,6 +58,8 @@ export const missionTemplateSchema = z
       .strict(),
     /** Choices per run; the tree doubles per level, so 3-5. */
     depth: z.number().int().min(3).max(5),
+    /** Overrides the engine's depth-based stamina cost when set. */
+    staminaCost: z.number().int().min(0).max(100).optional(),
     /** difficulty = clamp(round(base + perLevel × (playerLevel − levels.min)), 1, 100) */
     difficulty: z
       .object({

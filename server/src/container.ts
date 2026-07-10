@@ -3,6 +3,7 @@ import { EnvConfig } from './config/env';
 import { HealthController } from './controllers/HealthController';
 import { JobsController } from './controllers/JobsController';
 import { PlayerController } from './controllers/PlayerController';
+import { PrisonController } from './controllers/PrisonController';
 import { StoreController } from './controllers/StoreController';
 import { AuthMiddleware } from './middleware/authenticate';
 import { ErrorHandler } from './middleware/errorHandler';
@@ -17,6 +18,7 @@ import { LoadoutService } from './services/LoadoutService';
 import { MissionService } from './services/MissionService';
 import { MissionTemplateService } from './services/MissionTemplateService';
 import { PlayerService } from './services/PlayerService';
+import { PrisonService } from './services/PrisonService';
 import { StoreService } from './services/StoreService';
 
 export class Container {
@@ -33,9 +35,10 @@ export class Container {
     this.missionTemplates = new MissionTemplateService();
     const engineConfig = new EngineConfigService();
 
-    const playerService = new PlayerService(this.firebase, equipment);
+    const playerService = new PlayerService(this.firebase, equipment, engineConfig);
     const loadoutService = new LoadoutService(this.firebase);
     const storeService = new StoreService(this.firebase, equipment);
+    const prisonService = new PrisonService(this.firebase, engineConfig);
     const jobBoardService = new JobBoardService(this.firebase, this.missionTemplates, engineConfig);
     const missionService = new MissionService(
       this.firebase,
@@ -43,6 +46,7 @@ export class Container {
       this.narrator,
       this.missionTemplates,
       engineConfig,
+      prisonService,
     );
 
     const auth = new AuthMiddleware(this.firebase);
@@ -66,6 +70,13 @@ export class Container {
       {
         handlers: [auth.authenticate, new StoreController(storeService).router],
         path: '/store',
+      },
+      {
+        handlers: [
+          auth.authenticate,
+          new PrisonController(playerService, prisonService).router,
+        ],
+        path: '/prison',
       },
     ];
 

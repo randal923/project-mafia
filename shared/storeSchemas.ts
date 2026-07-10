@@ -33,3 +33,11 @@ export const unequipSlotRequestSchema = z
   .strict();
 
 export type UnequipSlotRequest = z.infer<typeof unequipSlotRequestSchema>;
+
+export const useItemRequestSchema = z
+  .object({
+    itemId: z.string().min(1, { error: "itemId is required." }),
+  })
+  .strict();
+
+export type UseItemRequest = z.infer<typeof useItemRequestSchema>;

@@ -5,11 +5,15 @@ export const ricoVale: Player = {
   name: "Rico Vale",
   nameKey: "rico vale",
   avatar: null,
+  prison: null,
   rank: "nobody",
   resources: {
     cash: 500,
+    drunk: 0,
     heat: 0,
-    power: 3
+    high: 0,
+    power: 3,
+    stamina: 100
   },
   narrative: {
     storySummary: "",
@@ -23,6 +27,7 @@ export const ricoVale: Player = {
     experience: 0,
     skillPoints: 0,
     skills: {
+      charisma: 1,
       muscle: 1,
       strategy: 1,
       corruption: 1,
@@ -31,6 +36,7 @@ export const ricoVale: Player = {
       leadership: 1
     },
     skillExperience: {
+      charisma: 0,
       muscle: 0,
       strategy: 0,
       corruption: 0,
@@ -50,11 +56,15 @@ export const soniaMarchetti: Player = {
   name: "Sonia Marchetti",
   nameKey: "sonia marchetti",
   avatar: null,
+  prison: null,
   rank: "district_boss",
   resources: {
     cash: 48200,
+    drunk: 25,
     heat: 34,
-    power: 18
+    high: 10,
+    power: 18,
+    stamina: 65
   },
   narrative: {
     storySummary:
@@ -69,6 +79,7 @@ export const soniaMarchetti: Player = {
     experience: 2450,
     skillPoints: 0,
     skills: {
+      charisma: 33,
       muscle: 41,
       strategy: 52,
       corruption: 38,
@@ -77,6 +88,7 @@ export const soniaMarchetti: Player = {
       leadership: 50
     },
     skillExperience: {
+      charisma: 12,
       muscle: 31,
       strategy: 45,
       corruption: 80,

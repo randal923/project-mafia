@@ -4,24 +4,16 @@ import {
   SKILL_XP_PER_LEVEL,
   xpToNextLevel
 } from "@shared/leveling";
+import { SKILLS, SKILL_IDS } from "@shared/skills";
 import { numberFormatter } from "./CharacterStatsFormat";
 import { CharacterStatsGroup } from "./CharacterStatsGroup";
 import { CharacterStatsMeter } from "./CharacterStatsMeter";
 import { CharacterStatsTile } from "./CharacterStatsTile";
-import type { PlayerProgression, PlayerSkills } from "./CharacterStatsTypes";
+import type { PlayerProgression } from "./CharacterStatsTypes";
 
 type CharacterStatsSkillsProps = {
   progression: PlayerProgression;
 };
-
-const skillOrder: readonly { key: keyof PlayerSkills; label: string }[] = [
-  { key: "muscle", label: "Muscle" },
-  { key: "strategy", label: "Strategy" },
-  { key: "corruption", label: "Corruption" },
-  { key: "stealth", label: "Stealth" },
-  { key: "tech", label: "Tech" },
-  { key: "leadership", label: "Leadership" }
-];
 
 export function CharacterStatsSkills({
   progression
@@ -61,15 +53,16 @@ export function CharacterStatsSkills({
       </CharacterStatsGroup>
       <CharacterStatsGroup label="Skills">
         <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
-          {skillOrder.map((skill) => {
-            const level = progression.skills[skill.key];
-            const xp = progression.skillExperience[skill.key];
+          {SKILL_IDS.map((id) => {
+            const level = progression.skills[id];
+            const xp = progression.skillExperience[id];
             const capped = level >= MAX_SKILL_LEVEL;
 
             return (
               <CharacterStatsMeter
-                key={skill.key}
-                label={skill.label}
+                hint={SKILLS[id].description}
+                key={id}
+                label={SKILLS[id].label}
                 max={MAX_SKILL_LEVEL}
                 tone="brass"
                 value={level}

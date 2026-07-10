@@ -1,11 +1,7 @@
 import { z } from "zod";
 import { JOB_APPROACHES } from "./job";
-import {
-  EquipmentSlotId,
-  PlayerItem,
-  PlayerItemTone,
-  PlayerSkills,
-} from "./player";
+import { EquipmentSlotId, PlayerItem, PlayerItemTone } from "./player";
+import { SKILL_IDS } from "./skills";
 
 export const EQUIPMENT_CATEGORIES = [
   "melee",
@@ -22,13 +18,17 @@ export const EQUIPMENT_CATEGORIES = [
   "utility",
   "ammo",
   "tool",
+  "drug",
+  "alcohol",
 ] as const;
 
 export type EquipmentCategory = (typeof EQUIPMENT_CATEGORIES)[number];
 
 export const EQUIPMENT_CATEGORY_LABELS: Record<EquipmentCategory, string> = {
+  alcohol: "Liquor",
   ammo: "Ammunition",
   armor: "Body Armor",
+  drug: "Narcotics",
   explosive: "Explosives",
   footwear: "Footwear",
   headgear: "Headgear",
@@ -43,20 +43,11 @@ export const EQUIPMENT_CATEGORY_LABELS: Record<EquipmentCategory, string> = {
   utility: "Utility",
 };
 
-const SKILL_KEYS = [
-  "corruption",
-  "leadership",
-  "muscle",
-  "stealth",
-  "strategy",
-  "tech",
-] as const satisfies readonly (keyof PlayerSkills)[];
-
 /** Passive bonuses granted while the item is equipped in the loadout. */
 export const equipmentEffectSchema = z.discriminatedUnion("type", [
   z
     .object({
-      skill: z.enum(SKILL_KEYS),
+      skill: z.enum(SKILL_IDS),
       type: z.literal("skillBonus"),
       value: z.number(),
     })
@@ -104,6 +95,22 @@ export const equipmentSchema = z
     /** null = stash-only (consumables, ammo); otherwise the loadout slot. */
     slot: z.enum(["feet", "hand", "head", "torso", "waist"]).nullable(),
     tags: z.array(z.string().min(1)).optional(),
+    /**
+     * What USING the item from the stash does (drugs, tonics). Consumes
+     * one. stamina restores (clamped to 100); heat is a delta — positive
+     * for risky highs, negative for sedatives that keep you off the street.
+     */
+    use: z
+      .object({
+        /** How much drunker this makes you (alcohol). */
+        drunk: z.number().int().min(0).optional(),
+        heat: z.number().int().optional(),
+        /** How much higher this gets you (drugs). */
+        high: z.number().int().min(0).optional(),
+        stamina: z.number().int().min(0).optional(),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 
@@ -114,8 +121,10 @@ export const equipmentCatalogSchema = z.array(equipmentSchema);
 export const STARTER_EQUIPMENT_ID = "stiletto-knife";
 
 const CATEGORY_TONES: Record<EquipmentCategory, PlayerItemTone> = {
+  alcohol: "brass",
   ammo: "brass",
   armor: "teal",
+  drug: "profit",
   explosive: "danger",
   footwear: "neutral",
   headgear: "neutral",
@@ -152,6 +161,7 @@ export function equipmentToPlayerItem(
     ...(equipment.slot !== null && { slot: equipment.slot }),
     ...(equipment.tags !== undefined && { tags: equipment.tags }),
     tone: CATEGORY_TONES[equipment.category],
+    ...(equipment.use !== undefined && { use: equipment.use }),
   };
 }
 

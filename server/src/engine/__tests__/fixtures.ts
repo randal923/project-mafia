@@ -23,6 +23,29 @@ export const TEST_ENGINE: EngineConfig = {
   gear: { missingPenalty: 15, satisfiedBonus: 5 },
   armor: { forceChanceDivisor: 15, heatDivisor: 15 },
   momentum: { pass: 2, fail: -2, criticalBonus: 1 },
+  stamina: { baseCost: 8, costPerDepth: 4, perDifficulty: 0.18 },
+  prison: {
+    sentenceGameDays: 1,
+    bribeBaseCost: 300,
+    bribeCostPerLevel: 90,
+    bribeBaseChance: 30,
+    bribePerCharisma: 0.6,
+    escapeBaseChance: 25,
+    escapePerStealth: 0.6,
+    minChance: 5,
+    maxChance: 90,
+    escapeFailExtensionMinutes: 30,
+    escapeHeat: 15,
+    serveHeatRelief: 30,
+    attemptCooldownMinutes: 10,
+  },
+  precinct: {
+    chunk: 20,
+    baseCost: 250,
+    costPerLevel: 45,
+    discountPerCorruption: 0.004,
+    maxDiscount: 0.4,
+  },
 };
 
 /**
@@ -103,6 +126,7 @@ export const TEST_TEMPLATE_WITH_GEAR: MissionTemplate = {
   gear: [
     {
       approaches: [
+        "charm",
         "deception",
         "force",
         "opportunistic",

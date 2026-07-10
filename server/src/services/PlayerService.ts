@@ -4,6 +4,9 @@ import {
   equipmentToPlayerItem,
 } from "../../../shared/equipment";
 import { decayedHeat } from "../../../shared/heat";
+import { soberedIntoxication } from "../../../shared/intoxication";
+import { regeneratedStamina } from "../../../shared/stamina";
+import { roundToFive } from "../engine/math";
 import {
   Player,
   PlayerLoadout,
@@ -11,6 +14,7 @@ import {
   normalizePlayer,
 } from "../../../shared/player";
 import { HttpError } from "../middleware/errorHandler";
+import { EngineConfigService } from "./EngineConfigService";
 import { EquipmentService } from "./EquipmentService";
 import { FirebaseService } from "./FirebaseService";
 
@@ -20,6 +24,7 @@ export class PlayerService {
   constructor(
     firebase: FirebaseService,
     private readonly equipment: EquipmentService,
+    private readonly engine: EngineConfigService,
   ) {
     this.db = firebase.firestore;
   }
@@ -30,31 +35,71 @@ export class PlayerService {
       return null;
     }
 
-    return this.applyHeatDecay(normalizePlayer(snapshot.data() as Player));
+    return this.applyIdleRecovery(normalizePlayer(snapshot.data() as Player));
   }
 
   /**
-   * Laying low pays: heat bleeds off with idle time (shared/heat.ts).
-   * Persisted on read so the next transaction sees the cooled value.
+   * Everything idle time repairs, applied lazily on read and persisted so
+   * the next transaction sees it: heat decays (shared/heat.ts), stamina
+   * regenerates (shared/stamina.ts), and a served-out prison sentence is
+   * lifted — doing the full time also shaves off some heat.
    */
-  private applyHeatDecay(player: Player): Player {
+  private applyIdleRecovery(player: Player): Player {
     const nowIso = new Date().toISOString();
-    const cooled = decayedHeat(player.resources.heat, player.updatedAt, nowIso);
-    if (cooled >= player.resources.heat) {
+    const prison = this.engine.config.prison;
+
+    let heat = decayedHeat(player.resources.heat, player.updatedAt, nowIso);
+    const stamina = regeneratedStamina(
+      player.resources.stamina,
+      player.updatedAt,
+      nowIso,
+    );
+    const high = soberedIntoxication(
+      player.resources.high,
+      player.updatedAt,
+      nowIso,
+    );
+    const drunk = soberedIntoxication(
+      player.resources.drunk,
+      player.updatedAt,
+      nowIso,
+    );
+
+    let released = false;
+    if (player.prison && Date.parse(player.prison.releaseAt) <= Date.now()) {
+      released = true;
+      heat = Math.max(0, heat - prison.serveHeatRelief);
+    }
+
+    if (
+      heat === player.resources.heat &&
+      stamina === player.resources.stamina &&
+      high === player.resources.high &&
+      drunk === player.resources.drunk &&
+      !released
+    ) {
       return player;
     }
 
     const updated: Player = {
       ...player,
-      resources: { ...player.resources, heat: cooled },
+      prison: released ? null : player.prison,
+      resources: { ...player.resources, drunk, heat, high, stamina },
       updatedAt: nowIso,
     };
 
     this.players
       .doc(player.id)
-      .update({ "resources.heat": cooled, updatedAt: nowIso })
+      .update({
+        "resources.drunk": drunk,
+        "resources.heat": heat,
+        "resources.high": high,
+        "resources.stamina": stamina,
+        ...(released && { prison: null }),
+        updatedAt: nowIso,
+      })
       .catch((err) => {
-        console.error(`Failed to persist heat decay for ${player.id}:`, err);
+        console.error(`Failed to persist idle recovery for ${player.id}:`, err);
       });
 
     return updated;
@@ -85,6 +130,63 @@ export class PlayerService {
     });
 
     return player;
+  }
+
+  /**
+   * What the precinct charges to make `chunk` heat disappear. Corruption
+   * skill talks the price down (capped discount).
+   */
+  precinctQuote(player: Player): { chunk: number; cost: number } {
+    const { precinct } = this.engine.config;
+    const discount = Math.min(
+      precinct.maxDiscount,
+      player.progression.skills.corruption * precinct.discountPerCorruption,
+    );
+    const cost = roundToFive(
+      (precinct.baseCost +
+        precinct.costPerLevel * player.progression.level) *
+        (1 - discount),
+    );
+
+    return { chunk: precinct.chunk, cost };
+  }
+
+  /** Pays off the precinct: cash down, heat down. */
+  async bribeHeat(uid: string): Promise<Player> {
+    const playerRef = this.players.doc(uid);
+
+    return this.db.runTransaction(async (tx) => {
+      const snapshot = await tx.get(playerRef);
+      if (!snapshot.exists) {
+        throw new HttpError(404, "Player not found.");
+      }
+
+      const player = normalizePlayer(snapshot.data() as Player);
+      if (player.prison) {
+        throw new HttpError(403, "The precinct doesn't take calls from a cell.");
+      }
+      if (player.resources.heat <= 0) {
+        throw new HttpError(400, "You're already cold — nothing to pay for.");
+      }
+
+      const quote = this.precinctQuote(player);
+      if (player.resources.cash < quote.cost) {
+        throw new HttpError(402, "You can't afford the envelope.");
+      }
+
+      const updated: Player = {
+        ...player,
+        resources: {
+          ...player.resources,
+          cash: player.resources.cash - quote.cost,
+          heat: Math.max(0, player.resources.heat - quote.chunk),
+        },
+        updatedAt: new Date().toISOString(),
+      };
+
+      tx.set(playerRef, updated);
+      return updated;
+    });
   }
 
   private async starterLoadout(): Promise<PlayerLoadout> {

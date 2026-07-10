@@ -8,6 +8,14 @@ import { EngineConfigService } from "./EngineConfigService";
 import { FirebaseService } from "./FirebaseService";
 import { MissionTemplateService } from "./MissionTemplateService";
 
+/**
+ * Bump when the OFFER SHAPE changes (new fields like staminaCost/gear),
+ * so boards stored with the old shape regenerate on next fetch. Template
+ * content changes are covered separately by the template-id part of the
+ * key.
+ */
+const BOARD_FORMAT_VERSION = 2;
+
 export class JobBoardService {
   private readonly db: Firestore;
 
@@ -51,11 +59,12 @@ export class JobBoardService {
   }
 
   private templatesKey(): string {
-    return this.templates
+    const ids = this.templates
       .all()
       .map((template) => template.id)
       .sort()
       .join(",");
+    return `v${BOARD_FORMAT_VERSION}:${ids}`;
   }
 
   boardRef(uid: string): DocumentReference {

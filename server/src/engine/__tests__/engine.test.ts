@@ -7,6 +7,10 @@ import {
   OutcomeTier,
 } from "../../../../shared/job";
 import {
+  intoxicationPenalty,
+  toleranceMultiplier,
+} from "../../../../shared/intoxication";
+import {
   applyPlayerExperience,
   applySkillExperience,
   rankForLevel,
@@ -49,12 +53,15 @@ function contextWith(
   return {
     armor: 0,
     bonuses: { approachBonus: {}, heatReduction: 0, skillBonus: {} },
+    drunk: 0,
     effectivePower: 0,
     gearTags: {},
     heat: 0,
+    high: 0,
     level: 1,
     rankTier: 0,
     skills: {
+      charisma: 0,
       corruption: 0,
       leadership: 0,
       muscle: 0,
@@ -175,6 +182,21 @@ describe("leveling (shared/leveling.ts)", () => {
   });
 });
 
+describe("intoxication (shared/intoxication.ts)", () => {
+  it("tolerance scales dose effectiveness down to 40% at max buzz", () => {
+    expect(toleranceMultiplier(0)).toBe(1);
+    expect(toleranceMultiplier(50)).toBeCloseTo(0.7);
+    expect(toleranceMultiplier(100)).toBeCloseTo(0.4);
+    expect(toleranceMultiplier(500)).toBeCloseTo(0.4); // clamped
+  });
+
+  it("penalty stacks high and drunk, 1% per 10 points each", () => {
+    expect(intoxicationPenalty(0, 0)).toBe(0);
+    expect(intoxicationPenalty(9, 9)).toBe(0);
+    expect(intoxicationPenalty(100, 100)).toBe(20);
+  });
+});
+
 describe("MomentumService", () => {
   it("clamps pass chance to 5-95", () => {
     expect(
@@ -222,6 +244,25 @@ describe("MomentumService", () => {
       TEST_ENGINE,
     );
     expect(boosted).toBe(base + 10);
+  });
+
+  it("debuffs checks while high or drunk", () => {
+    const sober = MomentumService.passChance(
+      contextWith({}),
+      "stealth",
+      "quiet",
+      20,
+      TEST_ENGINE,
+    );
+    const wasted = MomentumService.passChance(
+      contextWith({ drunk: 45, high: 60 }),
+      "stealth",
+      "quiet",
+      20,
+      TEST_ENGINE,
+    );
+    expect(wasted).toBe(sober - intoxicationPenalty(60, 45));
+    expect(intoxicationPenalty(60, 45)).toBe(10); // 6 + 4
   });
 
   it("counts armor only on force checks", () => {
@@ -324,6 +365,22 @@ describe("JobCalculatorService", () => {
     });
   });
 
+  it("charges more stamina for deeper and harder jobs", () => {
+    // round(8 + 4×(depth−3) + 0.18×difficulty)
+    expect(JobCalculatorService.staminaCost(TEST_TEMPLATE, 5, TEST_ENGINE)).toBe(9);
+    expect(
+      JobCalculatorService.staminaCost({ ...TEST_TEMPLATE, depth: 5 }, 90, TEST_ENGINE),
+    ).toBe(32);
+    // A template's own staminaCost wins (lay-low).
+    expect(
+      JobCalculatorService.staminaCost(
+        { ...TEST_TEMPLATE, staminaCost: 5 },
+        90,
+        TEST_ENGINE,
+      ),
+    ).toBe(5);
+  });
+
   it("stretches difficulty and pay as the player outlevels the band floor", () => {
     const calculations = JobCalculatorService.calculate(
       contextWith({ level: 8, skills: freshContext().skills }),
@@ -399,6 +456,23 @@ describe("JobOfferBuilder", () => {
       TEST_ENGINE,
     );
     expect(offers.every((o) => o.templateId === "test-high")).toBe(true);
+  });
+
+  it("always adds an eligible lay-low template as an extra offer", () => {
+    const layLow = {
+      ...TEST_TEMPLATE,
+      id: "lay-low",
+      levels: { max: 100, min: 1 },
+      type: "lay_low",
+    };
+    const offers = JobOfferBuilder.buildOffers(
+      freshContext(),
+      SEED,
+      [TEST_TEMPLATE, layLow],
+      TEST_ENGINE,
+    );
+    expect(offers.filter((o) => o.templateId === "lay-low")).toHaveLength(1);
+    expect(offers).toHaveLength(TEST_ENGINE.board.size + 1);
   });
 
   it("falls back to the nearest bands when nothing matches", () => {

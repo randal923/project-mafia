@@ -1,10 +1,17 @@
 import { Firestore } from "firebase-admin/firestore";
 import {
+  MAX_INTOXICATION,
+  toleranceMultiplier,
+} from "../../../shared/intoxication";
+import {
   EquipmentSlotId,
+  MAX_HEAT,
+  MAX_STAMINA,
   Player,
   PlayerItem,
   normalizePlayer,
 } from "../../../shared/player";
+import { clamp } from "../engine/math";
 import { HttpError } from "../middleware/errorHandler";
 import { FirebaseService } from "./FirebaseService";
 
@@ -70,6 +77,70 @@ export class LoadoutService {
         ...player,
         loadout,
         stash: [...player.stash, item],
+      };
+    });
+  }
+
+  /**
+   * Uses one consumable with a `use` effect (drugs, liquor): stamina back,
+   * heat ±, and the buzz climbs. Tolerance bites — the higher (or drunker)
+   * you already are, the less stamina the dose actually restores.
+   */
+  async useItem(uid: string, itemId: string): Promise<Player> {
+    return this.mutate(uid, (player) => {
+      const index = player.stash.findIndex((entry) => entry.id === itemId);
+      if (index === -1) {
+        throw new HttpError(404, "That item isn't in your stash.");
+      }
+
+      const item = player.stash[index]!;
+      const use = item.use;
+      if (!use || (!use.stamina && !use.heat && !use.high && !use.drunk)) {
+        throw new HttpError(400, "That item can't be used — it's gear, not a fix.");
+      }
+      if (
+        item.levelRequirement !== undefined &&
+        player.progression.level < item.levelRequirement
+      ) {
+        throw new HttpError(
+          403,
+          `You need to be level ${item.levelRequirement} to handle that.`,
+        );
+      }
+
+      // Tolerance runs on the meter the dose feeds: drugs check how high
+      // you are, liquor checks how drunk.
+      const toleranceLevel = use.high
+        ? player.resources.high
+        : use.drunk
+          ? player.resources.drunk
+          : 0;
+      const restored = Math.round(
+        (use.stamina ?? 0) * toleranceMultiplier(toleranceLevel),
+      );
+
+      return {
+        ...player,
+        resources: {
+          ...player.resources,
+          drunk: clamp(
+            player.resources.drunk + (use.drunk ?? 0),
+            0,
+            MAX_INTOXICATION,
+          ),
+          heat: clamp(player.resources.heat + (use.heat ?? 0), 0, MAX_HEAT),
+          high: clamp(
+            player.resources.high + (use.high ?? 0),
+            0,
+            MAX_INTOXICATION,
+          ),
+          stamina: clamp(
+            player.resources.stamina + restored,
+            0,
+            MAX_STAMINA,
+          ),
+        },
+        stash: this.removeOne(player.stash, index),
       };
     });
   }
