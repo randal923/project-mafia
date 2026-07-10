@@ -39,7 +39,7 @@ export function CharacterStats({
   );
 
   const panels: Record<CharacterStatsTabId, ReactNode> = {
-    overview: <CharacterStatsOverview resources={profile.resources} />,
+    overview: <CharacterStatsOverview player={profile} />,
     skills: <CharacterStatsSkills progression={profile.progression} />
   };
 

@@ -3,7 +3,12 @@ import {
   STARTER_EQUIPMENT_ID,
   equipmentToPlayerItem,
 } from "../../../shared/equipment";
-import { Player, PlayerLoadout, createNewPlayer } from "../../../shared/player";
+import {
+  Player,
+  PlayerLoadout,
+  createNewPlayer,
+  normalizePlayer,
+} from "../../../shared/player";
 import { HttpError } from "../middleware/errorHandler";
 import { EquipmentService } from "./EquipmentService";
 import { FirebaseService } from "./FirebaseService";
@@ -20,7 +25,7 @@ export class PlayerService {
 
   async getPlayer(uid: string): Promise<Player | null> {
     const snapshot = await this.players.doc(uid).get();
-    return snapshot.exists ? (snapshot.data() as Player) : null;
+    return snapshot.exists ? normalizePlayer(snapshot.data() as Player) : null;
   }
 
   async createPlayer(uid: string, name: string): Promise<Player> {

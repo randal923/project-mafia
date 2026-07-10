@@ -3,6 +3,7 @@
 @theme {
   --font-sans: var(--font-mafia-sans, "Arial Narrow"), Arial, sans-serif;
   --font-display: var(--font-mafia-display, Impact), "Arial Narrow", sans-serif;
+  --font-narrative: var(--font-mafia-narrative, Georgia), Georgia, serif;
   --color-ink: #f7f2e8;
   --color-title: #d8d1c4;
   --color-muted: #b9b4aa;

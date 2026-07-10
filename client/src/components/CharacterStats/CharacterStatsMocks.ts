@@ -8,7 +8,15 @@ export const ricoVale: Player = {
   rank: "nobody",
   resources: {
     cash: 500,
+    heat: 0,
     power: 3
+  },
+  narrative: {
+    storySummary: "",
+    llmMemory: {
+      importantFacts: [],
+      unresolvedConflicts: []
+    }
   },
   progression: {
     level: 1,
@@ -21,6 +29,14 @@ export const ricoVale: Player = {
       stealth: 1,
       business: 0,
       leadership: 1
+    },
+    skillExperience: {
+      muscle: 0,
+      strategy: 0,
+      corruption: 0,
+      stealth: 0,
+      business: 0,
+      leadership: 0
     }
   },
   loadout: {},
@@ -37,7 +53,16 @@ export const soniaMarchetti: Player = {
   rank: "district_boss",
   resources: {
     cash: 48200,
+    heat: 34,
     power: 18
+  },
+  narrative: {
+    storySummary:
+      "Took over the Riverside protection racket after outmaneuvering the Falcone crew.",
+    llmMemory: {
+      importantFacts: ["Owes a favor to Detective Marsh"],
+      unresolvedConflicts: ["The Falcone crew wants Riverside back"]
+    }
   },
   progression: {
     level: 12,
@@ -50,6 +75,14 @@ export const soniaMarchetti: Player = {
       stealth: 4,
       business: 8,
       leadership: 7
+    },
+    skillExperience: {
+      muscle: 310,
+      strategy: 445,
+      corruption: 180,
+      stealth: 95,
+      business: 520,
+      leadership: 260
     }
   },
   loadout: {

@@ -1,0 +1,88 @@
+# Downtown convenience store — quick, dirty cash for a crew starting out.
+# Pays a little less than dock work and draws a little more heat: stores
+# have cameras, regulars, and cops on the corner.
+#
+# Knob reference: see docks-robbery.yml.
+
+id: downtown-convenience-store
+name: Convenience Store Job
+type: robbery
+district: Downtown
+
+depth: 3
+
+difficulty:
+  base: 1
+  perRankTier: 1
+  perPowerTier: 1
+
+rewards:
+  cashBase: 15
+  cashPerRankTier: 35
+  cashPerPowerTier: 20
+  spreadBase: 10
+  spreadPerRankTier: 20
+  spreadPerPowerTier: 10
+  xpPerDifficulty: 10
+
+heat:
+  base: 2
+  perDifficulty: 0.5
+  max: 12
+
+skillExperience:
+  basePerSuccess: 2
+  perCheckDifficulty: 2
+  criticalMultiplier: 2
+
+outcomes:
+  jackpot:
+    cashFactor: 1.5
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.8
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.25
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 4
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 8
+    xpFactor: 0.1
+
+storySeeds:
+  - location: Kwon's 24-hour mart
+    premise: The night clerk leaves the register drawer full until the 4 a.m. pickup, and the back door's lock has been broken for a week.
+    pressure: A patrol car parks across the street on its coffee break, most nights around three.
+  - location: Lucky Star corner store
+    premise: A week of lottery payout cash sits in a shoebox under the counter because the owner doesn't trust banks.
+    pressure: The owner's nephew watches the aisles from a stool by the door, and he knows every face in the neighborhood.
+  - location: Delgado's Grocery & Smoke
+    premise: A wholesale cigarette delivery landed this evening and the cartons are still stacked in the storeroom, unlogged.
+    pressure: The delivery driver comes back at dawn for his paperwork, and he counts boxes.
+  - location: The Night Owl minimart
+    premise: The store's ATM gets refilled every Friday, and the man with the key does it alone with the door propped open.
+    pressure: The refill takes eleven minutes, and the camera above the machine works — the one over the door does not.
+  - location: Rossi's Deli-Mart
+    premise: The register takes in protection money for a local crew every month, and tonight the envelope is sitting in the office drawer.
+    pressure: If the wrong people learn who took their envelope, the police will be the least of your problems.
+  - location: Sunrise Convenience
+    premise: The morning-shift girl sells you the safe combination for a cut, because the owner shorted her pay all summer.
+    pressure: She clocks in at six, and it has to look like a break-in, not an inside job.

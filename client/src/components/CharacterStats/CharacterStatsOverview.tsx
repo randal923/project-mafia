@@ -1,15 +1,16 @@
+import { calculatePlayerPower } from "@shared/playerPower";
 import { moneyFormatter, numberFormatter } from "./CharacterStatsFormat";
 import { CharacterStatsGroup } from "./CharacterStatsGroup";
 import { CharacterStatsTile } from "./CharacterStatsTile";
-import type { PlayerResources } from "./CharacterStatsTypes";
+import type { Player } from "./CharacterStatsTypes";
 
 type CharacterStatsOverviewProps = {
-  resources: PlayerResources;
+  player: Player;
 };
 
-export function CharacterStatsOverview({
-  resources
-}: CharacterStatsOverviewProps) {
+export function CharacterStatsOverview({ player }: CharacterStatsOverviewProps) {
+  const { resources } = player;
+
   return (
     <div className="flex flex-col gap-6">
       <CharacterStatsGroup label="Resources">
@@ -22,7 +23,12 @@ export function CharacterStatsOverview({
           <CharacterStatsTile
             label="Power"
             tone="brass"
-            value={numberFormatter.format(resources.power)}
+            value={numberFormatter.format(calculatePlayerPower(player))}
+          />
+          <CharacterStatsTile
+            label="Heat"
+            tone="danger"
+            value={`${numberFormatter.format(resources.heat)} / 100`}
           />
         </div>
       </CharacterStatsGroup>

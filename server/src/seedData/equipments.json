@@ -6,7 +6,7 @@
       "src": "/images/items/stiletto-knife.png"
     },
     "name": "Stiletto Knife",
-    "power": 2,
+    "power": 3,
     "slot": "hand"
   }
 ]

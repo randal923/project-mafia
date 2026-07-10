@@ -19,7 +19,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
-      className={`${mafiaFonts.sans.variable} ${mafiaFonts.display.variable}`}
+      className={`${mafiaFonts.sans.variable} ${mafiaFonts.display.variable} ${mafiaFonts.narrative.variable}`}
     >
       <body>
         <AuthProvider>

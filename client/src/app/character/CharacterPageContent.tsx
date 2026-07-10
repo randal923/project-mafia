@@ -19,6 +19,8 @@ type CharacterPageTabId = "loadout" | "overview" | "stash";
 
 const idPrefix = "character-page";
 
+const defaultPortraitSrc = "/images/characters/gangster-portrait.png";
+
 const tabs: readonly TabDefinition<CharacterPageTabId>[] = [
   { id: "overview", label: "Overview" },
   { id: "loadout", label: "Loadout" },
@@ -78,7 +80,7 @@ export function CharacterPageContent() {
         fit="fill"
         image={{
           alt: `${player.name} character portrait`,
-          src: "",
+          src: player.avatar ?? defaultPortraitSrc,
         }}
         name={player.name}
       />

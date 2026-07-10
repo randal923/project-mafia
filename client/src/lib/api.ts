@@ -1,3 +1,4 @@
+import type { JobBoard, MissionView } from "@shared/job";
 import type { Player } from "@shared/player";
 import type { User } from "firebase/auth";
 
@@ -53,4 +54,45 @@ export function createPlayer(user: User, name: string): Promise<Player> {
     body: JSON.stringify({ name }),
     method: "POST"
   });
+}
+
+export function fetchJobBoard(user: User): Promise<JobBoard> {
+  return apiFetch<JobBoard>(user, "/jobs/board");
+}
+
+export function regenerateJobBoard(user: User): Promise<JobBoard> {
+  return apiFetch<JobBoard>(user, "/jobs/board/regenerate", {
+    method: "POST"
+  });
+}
+
+export function acceptJob(
+  user: User,
+  offerId: string
+): Promise<{ mission: MissionView }> {
+  return apiFetch<{ mission: MissionView }>(user, "/jobs/accept", {
+    body: JSON.stringify({ offerId }),
+    method: "POST"
+  });
+}
+
+export function fetchActiveMission(
+  user: User
+): Promise<{ mission: MissionView }> {
+  return apiFetch<{ mission: MissionView }>(user, "/jobs/missions/active");
+}
+
+export function chooseMissionOption(
+  user: User,
+  missionId: string,
+  choiceId: string
+): Promise<{ mission: MissionView; player: Player | null }> {
+  return apiFetch<{ mission: MissionView; player: Player | null }>(
+    user,
+    `/jobs/missions/${missionId}/choose`,
+    {
+      body: JSON.stringify({ choiceId }),
+      method: "POST"
+    }
+  );
 }

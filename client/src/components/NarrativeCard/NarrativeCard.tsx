@@ -42,15 +42,13 @@ export function NarrativeCard({
       withHeader
     >
       <h2
-        className={`mt-2 mb-5 max-w-3xl ${displayText} text-4xl text-title md:text-5xl`}
+        className={`mt-2 mb-5 ${displayText} text-4xl text-title md:text-5xl`}
       >
         {title}
       </h2>
       <OrnamentDivider className="mb-5" />
       <Tag label={district} />
-      <div className={`mt-8 max-w-3xl ${typography.narrativeBody}`}>
-        {children}
-      </div>
+      <div className={`mt-8 ${typography.narrativeBody}`}>{children}</div>
       {action ? <div className="mt-8 flex justify-end">{action}</div> : null}
     </Frame>
   );

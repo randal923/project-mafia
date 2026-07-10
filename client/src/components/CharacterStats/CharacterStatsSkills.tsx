@@ -50,7 +50,7 @@ export function CharacterStatsSkills({
               max={skillMax}
               tone="brass"
               value={progression.skills[skill.key]}
-              valueLabel={`${progression.skills[skill.key]} / ${skillMax}`}
+              valueLabel={`${progression.skills[skill.key]} / ${skillMax} · ${numberFormatter.format(progression.skillExperience[skill.key])} xp`}
             />
           ))}
         </div>

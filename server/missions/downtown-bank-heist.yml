@@ -1,0 +1,91 @@
+# Downtown bank heist — the hard score. Five decisions deep, brutal checks,
+# serious money, serious heat. Failure here ends in a prison transport, not
+# a slap on the wrist.
+#
+# depth 5 = 31 beats + 32 endings (63 narrations per accepted job), so the
+# LLM cost per accept is ~4× a depth-3 mission.
+#
+# Knob reference: see docks-robbery.yml.
+
+id: downtown-bank-heist
+name: Bank Heist
+type: robbery
+district: Downtown
+
+depth: 5
+
+difficulty:
+  base: 4
+  perRankTier: 1
+  perPowerTier: 1
+
+rewards:
+  cashBase: 150
+  cashPerRankTier: 120
+  cashPerPowerTier: 60
+  spreadBase: 100
+  spreadPerRankTier: 60
+  spreadPerPowerTier: 30
+  xpPerDifficulty: 15
+
+heat:
+  base: 4
+  perDifficulty: 0.5
+  max: 12
+
+skillExperience:
+  basePerSuccess: 3
+  perCheckDifficulty: 2
+  criticalMultiplier: 2
+
+outcomes:
+  jackpot:
+    cashFactor: 1.75
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 1
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 3
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 6
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 10
+    xpFactor: 0.1
+
+storySeeds:
+  - location: First Meridian Bank, Main Street branch
+    premise: A locksmith who serviced the vault's day gate owes your crew money, and he'd rather pay with the service schedule than cash.
+    pressure: The vault timer releases at five for the cash-transit pickup, and the guards change shift twenty minutes before it.
+  - location: Union Savings & Trust
+    premise: The Friday payroll for three factories sits in the counting room overnight, banded and bagged for morning pickup.
+    pressure: The counting room shares a wall with the manager's office, and the manager has been sleeping there since his wife left.
+  - location: The Merchants Bank armored transfer
+    premise: Twice a month an armored car takes the branch's overflow cash across town, and the crew inside has gotten lazy on the loading dock.
+    pressure: The dock is exposed for exactly four minutes, in full view of a tram stop.
+  - location: Coastal National, safe-deposit floor
+    premise: A fence wants one specific deposit box emptied and will pay triple its contents; whatever else you pull from the floor is yours.
+    pressure: The floor's vibration sensors go to a private security desk, not the police — they respond faster and ask fewer questions.
+  - location: First Meridian Bank, harbor branch
+    premise: A teller with gambling debts can leave the side door's alarm contact taped over, one night only.
+    pressure: If the audit on Monday finds the till short, the teller will talk before the first coffee.
+  - location: City Provident Bank
+    premise: The bank president keeps off-book money for half the council in a private vault below the records room.
+    pressure: Nobody in that building can call the police — but the men they will call instead don't make arrests.

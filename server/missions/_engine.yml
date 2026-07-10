@@ -1,0 +1,50 @@
+# Global engine constants — one source of truth for what a skill point,
+# a critical, or a momentum point means across ALL missions.
+# Per-mission personality (difficulty, rewards, heat, story) belongs in
+# the mission files, not here.
+#
+# Full parameter reference: see README.md in this folder.
+
+board:
+  # How many offers the job board shows.
+  size: 3
+
+power:
+  # Effective power above tierBase counts toward power tiers,
+  # one tier per tierStep. Power tiers raise difficulty and rewards.
+  tierBase: 8
+  tierStep: 6
+
+checks:
+  # passChance = clamp(baseChance
+  #                    + perSkillPoint × skillValue
+  #                    + perDifficulty × checkDifficulty
+  #                    + floor(power / powerDivisor)
+  #                    − floor(heat / heatChanceDivisor),
+  #                    minChance, maxChance)
+  baseChance: 50
+  perSkillPoint: 7
+  perDifficulty: -6
+  powerDivisor: 10
+  heatChanceDivisor: 20
+  minChance: 5
+  maxChance: 95
+
+  # Beating/missing the chance by this margin makes the check critical.
+  criticalMargin: 40
+
+  # checkDifficulty = clamp(jobDifficulty
+  #                         + floor(heat / heatPressureDivisor)
+  #                         + beatDepth × perBeatDepth
+  #                         ± saferBolderGap,  1, 10)
+  perBeatDepth: 1
+  saferBolderGap: 1
+  heatPressureDivisor: 25
+
+momentum:
+  # Passed check: +pass momentum. Failed: +fail. Criticals add ±criticalBonus.
+  # Outcome tier bands are derived from pass × depth (a "perfect run"),
+  # so momentum.pass also defines what jackpot/successful mean.
+  pass: 2
+  fail: -2
+  criticalBonus: 1
