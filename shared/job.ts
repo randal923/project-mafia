@@ -169,8 +169,24 @@ export type MissionResolution = {
   /** Player levels gained when the job resolved; absent on older docs. */
   levelsGained?: number;
   narrativeEventId: string;
+  /** Exact skill XP awarded along the selected path; absent on older docs. */
+  skillExperienceGained?: SkillExperienceSummary;
   tier: OutcomeTier;
   xpChange: number;
+};
+
+export type SkillExperiencePreview = {
+  criticalSuccess: number;
+  success: number;
+};
+
+export type SkillExperienceSummary = Partial<
+  Record<keyof PlayerSkills, number>
+>;
+
+export type MissionChoiceOdds = {
+  failure: number;
+  success: number;
 };
 
 export type Mission = {
@@ -213,7 +229,10 @@ export type MissionViewChoice = {
   id: string;
   intent: string | null;
   label: string | null;
+  odds: MissionChoiceOdds;
   riskHint: string | null;
+  /** Null only for missions stored before skill-XP settings were snapshotted. */
+  skillExperience: SkillExperiencePreview | null;
 };
 
 export type MissionViewStep = {

@@ -26,7 +26,9 @@ export const midMission: MissionView = {
       id: "00",
       intent: "Reach the cage without waking the dock.",
       label: "Cut through the dark side of the pier",
-      riskHint: "One dropped crowbar and the night watchman starts walking."
+      odds: { failure: 28, success: 72 },
+      riskHint: "One dropped crowbar and the night watchman starts walking.",
+      skillExperience: { criticalSuccess: 62, success: 31 }
     },
     {
       approach: "force",
@@ -40,7 +42,9 @@ export const midMission: MissionView = {
       id: "01",
       intent: "Make the lock the only obstacle.",
       label: "Force the cage shutter",
-      riskHint: "Loud, fast, and no way to take it back."
+      odds: { failure: 62, success: 38 },
+      riskHint: "Loud, fast, and no way to take it back.",
+      skillExperience: { criticalSuccess: 64, success: 32 }
     }
   ],
   createdAt: "2026-07-09T12:00:00.000Z",
@@ -89,6 +93,24 @@ export const midMission: MissionView = {
   updatedAt: "2026-07-09T12:05:00.000Z"
 };
 
+export const equippedMission: MissionView = {
+  ...midMission,
+  choices: midMission.choices?.map((choice, index) =>
+    index === 0
+      ? {
+          ...choice,
+          gear: {
+            consumes: true,
+            label: "Flashbang",
+            satisfied: true,
+            tags: ["flashbang"]
+          },
+          odds: { failure: 20, success: 80 }
+        }
+      : choice
+  ) ?? null
+};
+
 export const resolvedMission: MissionView = {
   ...midMission,
   choices: null,
@@ -96,6 +118,10 @@ export const resolvedMission: MissionView = {
     cashChange: 90,
     heatChange: 1,
     narrativeEventId: "mock-event-1",
+    skillExperienceGained: {
+      leadership: 31,
+      stealth: 62
+    },
     tier: "successful",
     xpChange: 30
   },
@@ -125,6 +151,16 @@ export const resolvedMission: MissionView = {
       outcomeTier: "successful"
     }
   ]
+};
+
+export const zeroSkillExperienceMission: MissionView = {
+  ...resolvedMission,
+  resolution: resolvedMission.resolution
+    ? {
+        ...resolvedMission.resolution,
+        skillExperienceGained: {}
+      }
+    : null
 };
 
 export const generatingMission: MissionView = {

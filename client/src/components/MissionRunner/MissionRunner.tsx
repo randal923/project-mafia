@@ -1,9 +1,8 @@
 import type { MissionView } from "@shared/job";
 import { typography } from "../../design-system/typography";
-import { cx } from "../../lib/cx";
-import { Button } from "../Button/Button";
 import { NarrativeCard } from "../NarrativeCard/NarrativeCard";
 import { MissionCheckBadge } from "./MissionCheckBadge";
+import { MissionChoiceCard } from "./MissionChoiceCard";
 import { MissionOutcomePanel } from "./MissionOutcomePanel";
 import {
   currentStep,
@@ -77,36 +76,12 @@ export function MissionRunner({
           {mission.choices ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {mission.choices.map((choice) => (
-                <div className="flex flex-col gap-2" key={choice.id}>
-                  <Button
-                    className="w-full"
-                    disabled={isChoosing}
-                    font="narrative"
-                    onClick={() => onChoose(choice.id)}
-                    size="small"
-                    variant="secondary"
-                  >
-                    {choice.label ?? choice.approach}
-                  </Button>
-                  {choice.gear ? (
-                    <span
-                      className={cx(
-                        "inline-flex w-fit items-center rounded-control border px-2 py-1 text-sm font-medium leading-none",
-                        choice.gear.satisfied
-                          ? "border-profit/60 text-profit"
-                          : "border-danger/60 text-danger-strong"
-                      )}
-                    >
-                      {choice.gear.satisfied
-                        ? `Gear ready: ${choice.gear.label}${choice.gear.consumes ? " (will be used)" : ""}`
-                        : `No ${choice.gear.label.toLowerCase()} — improvising, harder odds`}
-                    </span>
-                  ) : null}
-                  <p className={`m-0 ${typography.narrativeCaption}`}>
-                    {choice.riskHint ??
-                      `Tests your ${choice.check.skill} (difficulty ${choice.check.difficulty}).`}
-                  </p>
-                </div>
+                <MissionChoiceCard
+                  choice={choice}
+                  disabled={isChoosing}
+                  key={choice.id}
+                  onChoose={onChoose}
+                />
               ))}
             </div>
           ) : null}

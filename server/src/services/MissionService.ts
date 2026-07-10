@@ -318,6 +318,11 @@ export class MissionService {
       heatChange: rewards.heatChange,
       levelsGained: applied.levelsGained,
       narrativeEventId: eventId,
+      skillExperienceGained: SkillExperienceService.summarize(
+        this.selectedEdges(mission),
+        template.skillExperience,
+        this.engine.config,
+      ),
       tier,
       xpChange: rewards.xpChange,
     };
@@ -526,6 +531,27 @@ export class MissionService {
     return (
       mission.nodes[parentId]?.choices?.find((c) => c.id === nodeId) ?? null
     );
+  }
+
+  private selectedEdges(mission: Mission): ChoiceEdge[] {
+    const edges: ChoiceEdge[] = [];
+    let parentId = ROOT_NODE_ID;
+
+    for (const nodeId of mission.choicePath) {
+      const edge = mission.nodes[parentId]?.choices?.find(
+        (choice) => choice.id === nodeId,
+      );
+      if (!edge) {
+        throw new Error(
+          `Mission ${mission.id} has no selected edge ${parentId}→${nodeId}`,
+        );
+      }
+
+      edges.push(edge);
+      parentId = nodeId;
+    }
+
+    return edges;
   }
 
   private activeMissionQuery(uid: string) {

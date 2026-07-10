@@ -4,6 +4,7 @@ import { toneTextClasses } from "../../design-system/tones";
 import { Button } from "../Button/Button";
 import { OrnamentDivider } from "../OrnamentDivider/OrnamentDivider";
 import { outcomeTierLabels, outcomeTierTones } from "./MissionRunnerHelpers";
+import { MissionSkillExperienceSummary } from "./MissionSkillExperienceSummary";
 
 type MissionOutcomePanelProps = {
   onFinish: () => void;
@@ -64,6 +65,11 @@ export function MissionOutcomePanel({
           </dd>
         </div>
       </dl>
+      {resolution.skillExperienceGained ? (
+        <MissionSkillExperienceSummary
+          summary={resolution.skillExperienceGained}
+        />
+      ) : null}
       <div className="flex justify-end">
         <Button onClick={onFinish}>Back to the board</Button>
       </div>

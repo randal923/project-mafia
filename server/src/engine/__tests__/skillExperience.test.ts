@@ -62,6 +62,15 @@ describe("EngineConfigService", () => {
 });
 
 describe("SkillExperienceService", () => {
+  it("previews normal and critical-success XP from one calculation", () => {
+    expect(
+      SkillExperienceService.previewForCheck(
+        { difficulty: 3, skill: "stealth" },
+        settings,
+      ),
+    ).toEqual({ criticalSuccess: 16, success: 8 });
+  });
+
   it("awards nothing for a failed check", () => {
     expect(SkillExperienceService.xpForCheck(edgeWith(5, 90, 60), settings, TEST_ENGINE)).toBe(0);
   });
@@ -76,6 +85,27 @@ describe("SkillExperienceService", () => {
   it("doubles XP on a critical pass", () => {
     // margin 50 >= CRITICAL_MARGIN
     expect(SkillExperienceService.xpForCheck(edgeWith(3, 10, 60), settings, TEST_ENGINE)).toBe(16);
+  });
+
+  it("groups exact selected-path gains and excludes failed checks", () => {
+    const normalStealth = edgeWith(3, 50, 60);
+    const criticalStealth = edgeWith(3, 10, 60);
+    const failedMuscle: ChoiceEdge = {
+      ...edgeWith(3, 90, 60),
+      check: { difficulty: 3, skill: "muscle" },
+    };
+    const normalTech: ChoiceEdge = {
+      ...edgeWith(1, 50, 60),
+      check: { difficulty: 1, skill: "tech" },
+    };
+
+    expect(
+      SkillExperienceService.summarize(
+        [normalStealth, failedMuscle, criticalStealth, normalTech],
+        settings,
+        TEST_ENGINE,
+      ),
+    ).toEqual({ stealth: 24, tech: 4 });
   });
 
   it("applies XP to the checked skill only", () => {

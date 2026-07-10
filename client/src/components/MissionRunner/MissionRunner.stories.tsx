@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import { MissionRunner } from "./MissionRunner";
 import {
+  equippedMission,
   generatingMission,
   midMission,
-  resolvedMission
+  resolvedMission,
+  zeroSkillExperienceMission
 } from "./MissionRunnerMocks";
 
 const meta = {
@@ -26,6 +28,12 @@ export const MidMission: Story = {
   }
 };
 
+export const EquippedChoice: Story = {
+  args: {
+    mission: equippedMission
+  }
+};
+
 export const Generating: Story = {
   args: {
     mission: generatingMission
@@ -35,5 +43,11 @@ export const Generating: Story = {
 export const Resolved: Story = {
   args: {
     mission: resolvedMission
+  }
+};
+
+export const ResolvedWithoutSkillExperience: Story = {
+  args: {
+    mission: zeroSkillExperienceMission
   }
 };

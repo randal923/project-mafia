@@ -5,6 +5,7 @@ import {
   MissionViewStep,
   RevealedEdge,
 } from "../../../shared/job";
+import { SkillExperienceService } from "../engine/SkillExperienceService";
 import { ROOT_NODE_ID } from "../engine/SkeletonBuilder";
 
 /**
@@ -34,6 +35,7 @@ export class MissionViewService {
     });
 
     const current = mission.nodes[mission.currentNodeId];
+    const skillExperienceSettings = mission.template?.skillExperience;
     const choices: MissionViewChoice[] | null =
       current?.kind === "beat" && current.choices
         ? current.choices.map((edge) => ({
@@ -43,7 +45,17 @@ export class MissionViewService {
             id: edge.id,
             intent: edge.intent,
             label: edge.label,
+            odds: {
+              failure: 100 - edge.roll.passChance,
+              success: edge.roll.passChance,
+            },
             riskHint: edge.riskHint,
+            skillExperience: skillExperienceSettings
+              ? SkillExperienceService.previewForCheck(
+                  edge.check,
+                  skillExperienceSettings,
+                )
+              : null,
           }))
         : null;
 
