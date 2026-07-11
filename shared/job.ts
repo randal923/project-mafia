@@ -93,6 +93,32 @@ export type JobBoard = {
   templatesKey?: string;
 };
 
+/**
+ * Every beat pairs a safer choice with a bolder one. Bolder plays swing
+ * momentum harder both ways: they reach jackpot and risk disaster, while
+ * safe play caps the run at "successful" and floors it above prison.
+ */
+export type EdgeStakes = "safer" | "bolder";
+
+/** Momentum an edge will add on pass/fail — safe to show before rolling. */
+export type MomentumPreview = {
+  fail: number;
+  pass: number;
+};
+
+/**
+ * Minimum momentum to land each tier at this mission's depth (jackpot is
+ * exclusive: momentum must EXCEED jackpotAbove). Snapshotted at accept so
+ * later engine tuning never re-grades a run in flight.
+ */
+export type MomentumBands = {
+  failureAtLeast: number;
+  jackpotAbove: number;
+  partialFailureAtLeast: number;
+  partiallySuccessfulAtLeast: number;
+  successfulAtLeast: number;
+};
+
 export type SkillCheck = {
   difficulty: number;
   skill: keyof PlayerSkills;
@@ -169,10 +195,18 @@ export type EdgeDamage = {
  */
 export type ChoiceEdge = {
   approach: JobApproach;
+  /** Cash the approach demands up front, paid win or lose. */
+  cashCost?: number;
+  /** Cash actually paid when the edge was taken (a broke player pays less). */
+  cashSpent?: number;
   check: SkillCheck;
   checkBreakdown?: CheckModifierBreakdown;
   damage?: EdgeDamage | null;
   gear: EdgeGear | null;
+  /** Heat actually gained when the edge was taken and its check failed. */
+  heatGained?: number;
+  /** Heat this edge inflicts if its check fails — going loud has a price. */
+  heatOnFail?: number;
   /** Whether a failure on this edge carries health risk. */
   healthRisk?: boolean;
   /** Equals the child node id, e.g. "01". */
@@ -180,8 +214,12 @@ export type ChoiceEdge = {
   intent: string | null;
   label: string | null;
   momentumDelta: number;
+  /** Pass/fail swing preview; absent on missions built before stakes. */
+  momentumPreview?: MomentumPreview;
   riskHint: string | null;
   roll: CheckRoll;
+  /** Absent on missions built before stakes existed. */
+  stakes?: EdgeStakes;
 };
 
 export type MissionNodeKind = "beat" | "outcome";
@@ -257,6 +295,8 @@ export type Mission = {
   depth: number;
   generationStartedAt: string | null;
   id: string;
+  /** Tier thresholds at this depth; absent on pre-stakes missions. */
+  momentumBands?: MomentumBands;
   nodes: Record<string, MissionNode>;
   /** Snapshot of the accepted offer. */
   offer: JobOffer;
@@ -274,30 +314,45 @@ export type Mission = {
 /** A past edge whose check result has been revealed by taking it. */
 export type RevealedEdge = {
   approach: JobApproach;
+  /** Cash paid up front when this edge was taken. */
+  cashSpent?: number;
   check: SkillCheck;
   checkBreakdown?: CheckModifierBreakdown;
   damage?: EdgeDamage | null;
   gear: EdgeGear | null;
+  /** Heat gained because the check failed loudly. */
+  heatGained?: number;
   id: string;
   label: string | null;
   margin: number;
+  /** The momentum this edge actually moved, criticals included. */
+  momentumDelta?: number;
   passed: boolean;
+  stakes?: EdgeStakes;
 };
 
 /** An outgoing choice as shown to the client — check specs, never rolls. */
 export type MissionViewChoice = {
   approach: JobApproach;
+  /** Cash demanded up front if this choice is taken, win or lose. */
+  cashCost?: number;
   check: SkillCheck;
   checkBreakdown?: CheckModifierBreakdown;
   gear: EdgeGear | null;
+  /** Heat this choice inflicts if its check fails. */
+  heatOnFail?: number;
   healthRisk?: boolean;
   id: string;
   intent: string | null;
   label: string | null;
+  /** True when required gear is missing: the path cannot be taken. */
+  locked: boolean;
+  momentumPreview?: MomentumPreview;
   odds: MissionChoiceOdds;
   riskHint: string | null;
   /** Null only for missions stored before skill-XP settings were snapshotted. */
   skillExperience: SkillExperiencePreview | null;
+  stakes?: EdgeStakes;
 };
 
 export type MissionViewStep = {
@@ -319,6 +374,11 @@ export type MissionView = {
   createdAt: string;
   depth: number;
   id: string;
+  /** Where the run stands; absent on pre-stakes missions. */
+  momentum?: {
+    bands: MomentumBands;
+    current: number;
+  };
   narrativeProgress: {
     ready: number;
     total: number;

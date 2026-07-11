@@ -28,9 +28,9 @@ rewards:
   xpPerDifficulty: 7.5
 
 heat:
-  base: 3.5
-  perDifficulty: 0.1
-  max: 12
+  base: 7
+  perDifficulty: 0.2
+  max: 24
 
 skillExperience:
   basePerSuccess: 30
@@ -66,22 +66,22 @@ outcomes:
   partially_successful:
     cashFactor: 0.7
     heatFactor: 1
-    heatBonus: 1
+    heatBonus: 2
     xpFactor: 1
   partial_failure:
     cashFactor: 0.2
     heatFactor: 1
-    heatBonus: 3
+    heatBonus: 6
     xpFactor: 0.5
   failure:
     cashFactor: 0
     heatFactor: 1
-    heatBonus: 5
+    heatBonus: 10
     xpFactor: 0.25
   disaster:
     cashFactor: 0
     heatFactor: 1.5
-    heatBonus: 9
+    heatBonus: 18
     xpFactor: 0.1
 
 storySeeds:
@@ -90,9 +90,7 @@ storySeeds:
     pressure: Ninety seconds — after that the driver's check-in is overdue and the dispatcher starts making calls.
   - location: Mill Street rail crossing
     premise: >-
-      A retired Garrison driver sold you the schedule and one more thing: the
-      rear door's lock has a factory flaw, if you know where to drill and have
-      the tool to do it.
+      A retired Garrison driver sold you the schedule and one more thing: the rear door's lock has a factory flaw, if you know where to drill and have the tool to do it.
     pressure: The crossing holds the truck for four minutes when the freight passes — and the freight is sometimes early.
   - location: The Cathedral Hill switchback
     premise: The mint-run truck grinds up the hill in first gear every second Tuesday, slow as a funeral, with the month's worn-bill exchange for the federal furnace.

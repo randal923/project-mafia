@@ -65,7 +65,7 @@ export class MissionPrompts {
                   playerHasIt: choice.gear.satisfied,
                   noteForWriting: choice.gear.satisfied
                     ? "The player is carrying this — the label/intent may lean on using it."
-                    : "The player does NOT have this — the label/intent must read as improvising without it, and the riskHint should reflect the extra danger.",
+                    : "The player does NOT have this, so this path is LOCKED to them — write the label/intent as a move that plainly needs that gear, and a riskHint that makes them wish they'd bought it.",
                 }
               : null,
             healthRisk: choice.healthRisk ?? false,

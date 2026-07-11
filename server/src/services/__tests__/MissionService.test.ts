@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Mission } from "../../../../shared/job";
+import type { ChoiceEdge, Mission } from "../../../../shared/job";
 import { createNewPlayer, type Player } from "../../../../shared/player";
 import { TEST_ENGINE, TEST_TEMPLATE } from "../../engine/__tests__/fixtures";
 import { ROOT_NODE_ID } from "../../engine/SkeletonBuilder";
@@ -327,5 +327,133 @@ describe("MissionService choice application", () => {
       { consumable: true, id: "lockpick-set", quantity: 1 },
     ]);
     expect(result.player.reservedEquipment).toBeNull();
+  });
+
+  function createStakesMission(
+    player: Player,
+    edge: Partial<ChoiceEdge>,
+  ): Mission {
+    const base = createLegacyToolMission(player);
+    return {
+      ...base,
+      depth: 2,
+      id: "stakes-mission",
+      momentumBands: {
+        failureAtLeast: -4,
+        jackpotAbove: 4,
+        partialFailureAtLeast: -2,
+        partiallySuccessfulAtLeast: 1,
+        successfulAtLeast: 2,
+      },
+      nodes: {
+        ...base.nodes,
+        [ROOT_NODE_ID]: {
+          ...base.nodes[ROOT_NODE_ID]!,
+          choices: [
+            {
+              ...base.nodes[ROOT_NODE_ID]!.choices![0]!,
+              gear: null,
+              momentumPreview: { fail: -3, pass: 3 },
+              stakes: "bolder",
+              ...edge,
+            },
+          ],
+        },
+        "0": {
+          ...base.nodes["0"]!,
+          kind: "beat",
+          outcomeTier: null,
+        },
+      },
+    };
+  }
+
+  it("rejects a stakes-era choice whose gear the player does not own", async () => {
+    const player = createNewPlayer("gated-player", "Gated Player", NOW);
+    const mission = createStakesMission(player, {
+      gear: {
+        consumes: true,
+        item: null,
+        label: "Lockpick Set",
+        satisfied: false,
+        tags: ["lockpick"],
+      },
+    });
+    const harness = createMissionHarness(player, mission);
+    const service = new MissionService(
+      harness.firebase,
+      {} as JobBoardService,
+      {} as MissionNarrator,
+      {} as MissionTemplateService,
+      { config: TEST_ENGINE } as EngineConfigService,
+      {} as PrisonService,
+    );
+
+    await expect(
+      service.choose(player, mission.id, "0"),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    const stored = harness.documents.get(
+      `players/${player.id}/missions/${mission.id}`,
+    ) as Mission;
+    expect(stored.choicePath).toEqual([]);
+  });
+
+  it("charges the approach's cash up front and adds heat on a failed check", async () => {
+    const player = createNewPlayer("costed-player", "Costed Player", NOW);
+    player.resources.cash = 25;
+    player.resources.heat = 10;
+    const mission = createStakesMission(player, {
+      cashCost: 40,
+      heatOnFail: 3,
+      momentumDelta: -3,
+      roll: { margin: -20, passChance: 60, passed: false, value: 80 },
+    });
+    const harness = createMissionHarness(player, mission);
+    const service = new MissionService(
+      harness.firebase,
+      {} as JobBoardService,
+      {} as MissionNarrator,
+      {} as MissionTemplateService,
+      { config: TEST_ENGINE } as EngineConfigService,
+      {} as PrisonService,
+    );
+
+    const result = await service.choose(player, mission.id, "0");
+
+    // A broke player pays what they have; the failed roll marks them.
+    expect(result.player.resources.cash).toBe(0);
+    expect(result.player.resources.heat).toBe(13);
+    const storedEdge = result.mission.nodes[ROOT_NODE_ID]!.choices![0]!;
+    expect(storedEdge.cashSpent).toBe(25);
+    expect(storedEdge.heatGained).toBe(3);
+  });
+
+  it("adds no heat when the costed check passes", async () => {
+    const player = createNewPlayer("lucky-player", "Lucky Player", NOW);
+    player.resources.cash = 100;
+    player.resources.heat = 10;
+    const mission = createStakesMission(player, {
+      cashCost: 40,
+      heatOnFail: 3,
+      momentumDelta: 3,
+      roll: { margin: 20, passChance: 60, passed: true, value: 40 },
+    });
+    const harness = createMissionHarness(player, mission);
+    const service = new MissionService(
+      harness.firebase,
+      {} as JobBoardService,
+      {} as MissionNarrator,
+      {} as MissionTemplateService,
+      { config: TEST_ENGINE } as EngineConfigService,
+      {} as PrisonService,
+    );
+
+    const result = await service.choose(player, mission.id, "0");
+
+    expect(result.player.resources.cash).toBe(60);
+    expect(result.player.resources.heat).toBe(10);
+    const storedEdge = result.mission.nodes[ROOT_NODE_ID]!.choices![0]!;
+    expect(storedEdge.cashSpent).toBe(40);
+    expect(storedEdge.heatGained).toBe(0);
   });
 });

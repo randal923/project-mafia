@@ -45,29 +45,63 @@ checks:
 
 gear:
   # A choice that demands gear the player is carrying gets easier by
-  # satisfiedBonus; improvising without it costs missingPenalty.
-  missingPenalty: 15
+  # satisfiedBonus. A demand the player CANNOT cover locks that choice —
+  # the other option on the beat is always playable.
   satisfiedBonus: 5
 
 momentum:
-  # Passed check: +pass momentum. Failed: +fail. Criticals add ±criticalBonus.
-  # Outcome tier bands are derived from pass × depth (a "perfect run"),
-  # so momentum.pass also defines what jackpot/successful mean.
-  pass: 2
-  fail: -2
+  # Every beat pairs a safer option with a bolder one, and they swing
+  # momentum differently: safe play protects a lead but caps the ceiling,
+  # bold play reaches for jackpot and risks disaster. Criticals add
+  # ±criticalBonus on top.
+  #
+  # Outcome tier bands derive from these swings and mission depth d:
+  #   jackpot              momentum >  midline           (midline = avg(pass) × d)
+  #   successful           momentum >= safer.pass × d    (a perfect safe run)
+  #   partially_successful momentum >= 1
+  #   partial_failure      momentum >= −(safer.pass × d) (all-safe fails land here)
+  #   failure              momentum >= −midline
+  #   disaster             below — only reachable by failing bold plays.
+  safer:
+    pass: 1
+    fail: -1
+  bolder:
+    pass: 3
+    fail: -3
   criticalBonus: 1
+
+approaches:
+  # What playing an approach costs beyond the roll. cashCostFactor is paid
+  # UP FRONT as a fraction of the offer's rewardMax — bribes and cover
+  # stories cost money whether they work or not (a broke player pays what
+  # they have). heatOnFail lands only when the check fails and the move
+  # goes loud. Quiet and technical trade these costs for gear demands and
+  # per-template health risk instead.
+  charm:
+    cashCostFactor: 0.1
+  social:
+    cashCostFactor: 0.08
+  force:
+    heatOnFail: 3
+  opportunistic:
+    heatOnFail: 2
+  deception:
+    heatOnFail: 2
+  quiet: {}
+  technical: {}
 
 stamina:
   # Accepting a job costs
   #   round(baseCost + costPerDepth × (depth − 3) + perDifficulty × difficulty)
-  # so harder jobs burn more energy: a level-5 street job ≈ 9, a mid-game
-  # depth-4 score ≈ 22, an endgame depth-5 heist ≈ 33 — roughly 3 top-shelf
-  # jobs on a full tank. Templates can override with their own staminaCost
-  # (lay-low does). Regen is 25/hour idle (shared/stamina.ts); drugs and
-  # liquor from the store refill it instantly.
-  baseCost: 8
-  costPerDepth: 4
-  perDifficulty: 0.18
+  # so harder jobs burn more energy: a level-5 street job ≈ 18, a mid-game
+  # depth-4 score ≈ 44, an endgame depth-5 heist ≈ 66 — one top-shelf job
+  # per tank, two or three smaller ones. Templates can override with their
+  # own staminaCost (lay-low does). Regen is 25/hour idle
+  # (shared/stamina.ts); drugs and liquor from the store refill it
+  # instantly.
+  baseCost: 16
+  costPerDepth: 8
+  perDifficulty: 0.36
 
 prison:
   # A disaster outcome means you were arrested. One game day behind bars

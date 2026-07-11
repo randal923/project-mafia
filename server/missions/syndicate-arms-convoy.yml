@@ -22,9 +22,9 @@ rewards:
   xpPerDifficulty: 9
 
 heat:
-  base: 5
-  perDifficulty: 0.11
-  max: 15
+  base: 10
+  perDifficulty: 0.22
+  max: 30
 
 skillExperience:
   basePerSuccess: 30
@@ -52,12 +52,12 @@ gear:
     tags: [explosive]
 
 outcomes:
-  jackpot: { cashFactor: 1.8, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
-  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
-  partially_successful: { cashFactor: 0.68, heatFactor: 1, heatBonus: 2, xpFactor: 1 }
-  partial_failure: { cashFactor: 0.18, heatFactor: 1, heatBonus: 4, xpFactor: 0.5 }
-  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 7, xpFactor: 0.25 }
-  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 11, xpFactor: 0.1 }
+  jackpot: {cashFactor: 1.8, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.68, heatFactor: 1, heatBonus: 4, xpFactor: 1}
+  partial_failure: {cashFactor: 0.18, heatFactor: 1, heatBonus: 8, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 14, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 22, xpFactor: 0.1}
 
 storySeeds:
   - location: Harbor expressway viaduct

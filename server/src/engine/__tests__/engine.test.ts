@@ -19,6 +19,7 @@ import {
 import { PlayerItem, createNewPlayer } from "../../../../shared/player";
 import { HealthService } from "../HealthService";
 import { JobCalculatorService } from "../JobCalculatorService";
+import { roundToFive } from "../math";
 import { JobOfferBuilder } from "../JobOfferBuilder";
 import { MissionRng } from "../MissionRng";
 import { MomentumService } from "../MomentumService";
@@ -294,16 +295,24 @@ describe("MomentumService", () => {
     expect(MomentumService.resolveCheck(90, 60).passed).toBe(false);
   });
 
-  it("awards ±2 momentum, ±3 on criticals", () => {
-    expect(MomentumService.momentumDelta(MomentumService.resolveCheck(30, 60), TEST_ENGINE)).toBe(2);
-    expect(MomentumService.momentumDelta(MomentumService.resolveCheck(10, 60), TEST_ENGINE)).toBe(3);
-    expect(MomentumService.momentumDelta(MomentumService.resolveCheck(70, 60), TEST_ENGINE)).toBe(-2);
-    expect(MomentumService.momentumDelta(MomentumService.resolveCheck(100, 60), TEST_ENGINE)).toBe(-3);
+  it("awards stakes-scaled momentum, criticals adding ±1", () => {
+    const pass = MomentumService.resolveCheck(30, 60);
+    const critPass = MomentumService.resolveCheck(10, 60);
+    const fail = MomentumService.resolveCheck(70, 60);
+    const critFail = MomentumService.resolveCheck(100, 60);
+    expect(MomentumService.momentumDelta(pass, "safer", TEST_ENGINE)).toBe(1);
+    expect(MomentumService.momentumDelta(critPass, "safer", TEST_ENGINE)).toBe(2);
+    expect(MomentumService.momentumDelta(fail, "safer", TEST_ENGINE)).toBe(-1);
+    expect(MomentumService.momentumDelta(critFail, "safer", TEST_ENGINE)).toBe(-2);
+    expect(MomentumService.momentumDelta(pass, "bolder", TEST_ENGINE)).toBe(3);
+    expect(MomentumService.momentumDelta(critPass, "bolder", TEST_ENGINE)).toBe(4);
+    expect(MomentumService.momentumDelta(fail, "bolder", TEST_ENGINE)).toBe(-3);
+    expect(MomentumService.momentumDelta(critFail, "bolder", TEST_ENGINE)).toBe(-4);
   });
 
   it("partitions every reachable momentum into exactly one tier (depth 3-5)", () => {
     for (let depth = 3; depth <= 5; depth += 1) {
-      const max = 3 * depth;
+      const max = 4 * depth;
       for (let m = -max; m <= max; m += 1) {
         const tier = MomentumService.tierForMomentum(m, depth, TEST_ENGINE);
         expect(OUTCOME_TIERS).toContain(tier);
@@ -312,22 +321,68 @@ describe("MomentumService", () => {
   });
 
   it("matches the depth-3 tier bands", () => {
+    // safer.pass=1, bolder.pass=3 → perfectSafe=3, midline=6 at depth 3.
     const bands: Array<[number, OutcomeTier]> = [
       [9, "jackpot"],
       [7, "jackpot"],
       [6, "successful"],
-      [5, "successful"],
-      [4, "partially_successful"],
+      [3, "successful"],
+      [2, "partially_successful"],
       [1, "partially_successful"],
       [0, "partial_failure"],
-      [-4, "partial_failure"],
-      [-5, "failure"],
-      [-7, "failure"],
-      [-8, "disaster"],
+      [-3, "partial_failure"],
+      [-4, "failure"],
+      [-6, "failure"],
+      [-7, "disaster"],
       [-9, "disaster"],
     ];
     for (const [momentum, tier] of bands) {
       expect(MomentumService.tierForMomentum(momentum, 3, TEST_ENGINE)).toBe(tier);
+    }
+  });
+
+  it("caps a perfect all-safe run at successful and floors all-safe fails above prison", () => {
+    for (let depth = 3; depth <= 5; depth += 1) {
+      const allSafePass = TEST_ENGINE.momentum.safer.pass * depth;
+      const allSafeFail = TEST_ENGINE.momentum.safer.fail * depth;
+      expect(
+        MomentumService.tierForMomentum(allSafePass, depth, TEST_ENGINE),
+      ).toBe("successful");
+      // Even with a critical on every beat, safe play cannot jackpot…
+      expect(
+        MomentumService.tierForMomentum(
+          allSafePass + TEST_ENGINE.momentum.criticalBonus * depth,
+          depth,
+          TEST_ENGINE,
+        ),
+      ).not.toBe("jackpot");
+      // …and cannot end in disaster.
+      expect(
+        MomentumService.tierForMomentum(
+          allSafeFail - TEST_ENGINE.momentum.criticalBonus * depth,
+          depth,
+          TEST_ENGINE,
+        ),
+      ).not.toBe("disaster");
+    }
+  });
+
+  it("lets all-bold runs reach jackpot and disaster", () => {
+    for (let depth = 3; depth <= 5; depth += 1) {
+      expect(
+        MomentumService.tierForMomentum(
+          TEST_ENGINE.momentum.bolder.pass * depth,
+          depth,
+          TEST_ENGINE,
+        ),
+      ).toBe("jackpot");
+      expect(
+        MomentumService.tierForMomentum(
+          TEST_ENGINE.momentum.bolder.fail * depth,
+          depth,
+          TEST_ENGINE,
+        ),
+      ).toBe("disaster");
     }
   });
 });
@@ -594,15 +649,29 @@ describe("SkeletonBuilder", () => {
       const safer = node.choices![0]!;
       const bolder = node.choices![1]!;
       expect(safer.approach).not.toBe(bolder.approach);
+      expect(safer.stakes).toBe("safer");
+      expect(bolder.stakes).toBe("bolder");
       expect(bolder.check.difficulty).toBeGreaterThanOrEqual(
         safer.check.difficulty,
       );
 
       for (const edge of node.choices!) {
         const child = nodes[edge.id]!;
+        const swing = TEST_ENGINE.momentum[edge.stakes!];
+        const costs = TEST_ENGINE.approaches[edge.approach];
         expect(child.depth).toBe(node.depth + 1);
         expect(child.momentum).toBe(node.momentum + edge.momentumDelta);
-        expect(edge.momentumDelta).toBe(MomentumService.momentumDelta(edge.roll, TEST_ENGINE));
+        expect(edge.momentumDelta).toBe(
+          MomentumService.momentumDelta(edge.roll, edge.stakes!, TEST_ENGINE),
+        );
+        expect(edge.momentumPreview).toEqual({
+          fail: swing.fail,
+          pass: swing.pass,
+        });
+        expect(edge.cashCost).toBe(
+          roundToFive((costs.cashCostFactor ?? 0) * goldenOffer().rewardMax),
+        );
+        expect(edge.heatOnFail).toBe(costs.heatOnFail ?? 0);
         expect(edge.check.difficulty).toBeGreaterThanOrEqual(1);
         expect(edge.check.difficulty).toBeLessThanOrEqual(100);
         expect(edge.gear).toBeNull();
@@ -631,23 +700,40 @@ describe("SkeletonBuilder", () => {
       return Object.values(nodes).flatMap((n) => n.choices ?? []);
     }
 
-    it("marks every demanded edge unsatisfied without the item", () => {
-      const all = edges(gearSkeleton([]));
-      expect(all.length).toBeGreaterThan(0);
-      expect(all.every((e) => e.gear !== null)).toBe(true);
-      expect(all.every((e) => e.gear!.satisfied === false)).toBe(true);
+    it("keeps at most one unsatisfiable demand per beat so a path stays open", () => {
+      const nodes = gearSkeleton([]);
+      const beats = Object.values(nodes).filter((n) => n.kind === "beat");
+      expect(beats.length).toBeGreaterThan(0);
+      for (const beat of beats) {
+        const locked = beat.choices!.filter(
+          (edge) => edge.gear && !edge.gear.satisfied,
+        );
+        expect(locked.length).toBeLessThanOrEqual(1);
+        // The waived edge carries no demand at all.
+        expect(
+          beat.choices!.some((edge) => edge.gear === null),
+        ).toBe(true);
+      }
     });
 
-    it("improvising is harder than carrying the gear", () => {
-      const without = edges(gearSkeleton([]));
-      const withGear = edges(
-        gearSkeleton([{ ...FLASHBANG, quantity: 99 }]),
+    it("carrying the gear eases the check by satisfiedBonus", () => {
+      const withGear = edges(gearSkeleton([{ ...FLASHBANG, quantity: 99 }]));
+      const bare = edges(
+        new SkeletonBuilder({
+          context: PlayerContextService.fromPlayer(
+            createNewPlayer("uid-1", "Test Player", NOW),
+          ),
+          depth: 3,
+          engine: TEST_ENGINE,
+          missionId: MISSION_ID,
+          offer: { ...goldenOffer(), difficulty: 50 },
+          seed: SEED,
+          template: { ...TEST_TEMPLATE_WITH_GEAR, gear: undefined },
+        }).build(),
       );
-      for (let i = 0; i < without.length; i += 1) {
-        expect(
-          without[i]!.check.difficulty - withGear[i]!.check.difficulty,
-        ).toBe(
-          TEST_ENGINE.gear.missingPenalty + TEST_ENGINE.gear.satisfiedBonus,
+      for (let i = 0; i < withGear.length; i += 1) {
+        expect(bare[i]!.check.difficulty - withGear[i]!.check.difficulty).toBe(
+          TEST_ENGINE.gear.satisfiedBonus,
         );
       }
     });
@@ -657,9 +743,10 @@ describe("SkeletonBuilder", () => {
       // Root edges can spend the one flashbang…
       for (const edge of nodes[ROOT_NODE_ID]!.choices!) {
         expect(edge.gear!.satisfied).toBe(true);
-        // …but every choice on the node it leads to finds it already spent.
+        // …and further demands along the path find it spent: they either
+        // lock one choice or are waived so the beat stays playable.
         for (const child of nodes[edge.id]!.choices!) {
-          expect(child.gear!.satisfied).toBe(false);
+          expect(child.gear?.satisfied ?? false).toBe(false);
         }
       }
     });

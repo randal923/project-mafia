@@ -185,8 +185,10 @@ describe("mission equipment and health", () => {
       item: null,
       satisfied: false,
     });
+    // Missing gear no longer hardens the check — it locks the path —
+    // so the only difficulty difference is the preparedness bonus.
     expect(missingEdge.check.difficulty - preparedEdge.check.difficulty).toBe(
-      TEST_ENGINE.gear.missingPenalty + TEST_ENGINE.gear.satisfiedBonus,
+      TEST_ENGINE.gear.satisfiedBonus,
     );
 
     const used = consumeMissionGear(prepared, preparedEdge, NOW);

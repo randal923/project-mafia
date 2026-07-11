@@ -1,4 +1,27 @@
 import { z } from "zod";
+import { JOB_APPROACHES } from "./job";
+
+/** Momentum swing of one stakes level: what a pass or fail is worth. */
+const momentumStakesSchema = z
+  .object({
+    pass: z.number().min(0),
+    fail: z.number().max(0),
+  })
+  .strict();
+
+/**
+ * What playing an approach costs beyond the roll itself. Cash is paid up
+ * front when the choice is taken (win or lose); heat lands only when the
+ * check fails and the move goes loud.
+ */
+const approachCostSchema = z
+  .object({
+    /** Upfront cash cost as a fraction of the offer's rewardMax. */
+    cashCostFactor: z.number().min(0).max(1).optional(),
+    /** Heat gained on this edge when its check fails. */
+    heatOnFail: z.number().min(0).optional(),
+  })
+  .strict();
 
 /**
  * Global engine constants, loaded from server/missions/_engine.yml.
@@ -41,18 +64,29 @@ export const engineConfigSchema = z
       .strict(),
     gear: z
       .object({
-        /** Check difficulty added when required gear is missing. */
-        missingPenalty: z.number().min(0),
         /** Check difficulty removed when required gear is carried. */
         satisfiedBonus: z.number().min(0),
       })
       .strict(),
     momentum: z
       .object({
-        pass: z.number(),
-        fail: z.number(),
+        /** Low swing: the cautious option on every beat. */
+        safer: momentumStakesSchema,
+        /** High swing: the bold option. Bigger pass, uglier fail. */
+        bolder: momentumStakesSchema,
         criticalBonus: z.number().min(0),
       })
+      .strict(),
+    /** Per-approach edge costs; every approach must be listed. */
+    approaches: z
+      .object(
+        Object.fromEntries(
+          JOB_APPROACHES.map((approach) => [approach, approachCostSchema]),
+        ) as Record<
+          (typeof JOB_APPROACHES)[number],
+          typeof approachCostSchema
+        >,
+      )
       .strict(),
     stamina: z
       .object({
@@ -106,3 +140,5 @@ export const engineConfigSchema = z
   .strict();
 
 export type EngineConfig = z.infer<typeof engineConfigSchema>;
+export type MomentumStakesConfig = z.infer<typeof momentumStakesSchema>;
+export type ApproachCostConfig = z.infer<typeof approachCostSchema>;

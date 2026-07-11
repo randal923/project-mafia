@@ -13,9 +13,10 @@ import {
 } from "../../../shared/job";
 import { MissionTemplate } from "../../../shared/missionTemplate";
 import { NarrativeEvent, appendStorySummary } from "../../../shared/narrative";
-import { Player, normalizePlayer } from "../../../shared/player";
+import { MAX_HEAT, Player, normalizePlayer } from "../../../shared/player";
 import { JobCalculatorService } from "../engine/JobCalculatorService";
 import { HealthService } from "../engine/HealthService";
+import { MomentumService } from "../engine/MomentumService";
 import { PlayerContextService } from "../engine/PlayerContextService";
 import { RewardService } from "../engine/RewardService";
 import { SkillExperienceService } from "../engine/SkillExperienceService";
@@ -122,6 +123,10 @@ export class MissionService {
         depth: template.depth,
         generationStartedAt: null,
         id: missionId,
+        momentumBands: MomentumService.bands(
+          template.depth,
+          this.engine.config,
+        ),
         nodes,
         offer,
         promptVersion: MISSION_PROMPT_VERSION,
@@ -218,6 +223,14 @@ export class MissionService {
       if (!current || current.kind !== "beat" || !edge) {
         throw new HttpError(400, "That is not one of your options.");
       }
+      // Missing gear hard-locks a path on stakes-era missions; older
+      // active missions keep their improvise behavior.
+      if (edge.stakes && edge.gear && !edge.gear.satisfied) {
+        throw new HttpError(
+          400,
+          `You don't have the ${edge.gear.label} that move needs.`,
+        );
+      }
 
       const target = mission.nodes[edge.id];
       if (!target) {
@@ -265,8 +278,26 @@ export class MissionService {
         edge.damage,
         nowIso,
       );
+      // The approach's own price: bribes are paid win or lose (a broke
+      // player scrapes together what they have) and a botched loud move
+      // marks you. Recorded on the edge so the step recap can show it.
+      edge.cashSpent = Math.min(
+        afterDamage.resources.cash,
+        edge.cashCost ?? 0,
+      );
+      edge.heatGained = edge.roll.passed
+        ? 0
+        : Math.min(
+            edge.heatOnFail ?? 0,
+            Math.max(0, MAX_HEAT - afterDamage.resources.heat),
+          );
       let updatedPlayer: Player = {
         ...afterDamage,
+        resources: {
+          ...afterDamage.resources,
+          cash: afterDamage.resources.cash - edge.cashSpent,
+          heat: afterDamage.resources.heat + edge.heatGained,
+        },
         reservedEquipment: {
           items: SkeletonBuilder.reservationsForSubtree(
             mission.nodes,

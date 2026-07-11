@@ -197,4 +197,101 @@ describe("MissionViewService", () => {
     });
     expect(choice?.checkBreakdown).not.toHaveProperty("powerDivisor");
   });
+
+  it("exposes stakes, costs, bands and locks without leaking the roll", () => {
+    const boldEdge: ChoiceEdge = {
+      ...futureEdge,
+      cashCost: 10,
+      gear: { ...futureEdge.gear!, item: null, satisfied: false },
+      heatOnFail: 3,
+      momentumPreview: { fail: -3, pass: 3 },
+      stakes: "bolder",
+    };
+    const stakesMission: Mission = {
+      ...mission,
+      momentumBands: {
+        failureAtLeast: -2,
+        jackpotAbove: 2,
+        partialFailureAtLeast: -1,
+        partiallySuccessfulAtLeast: 1,
+        successfulAtLeast: 1,
+      },
+      nodes: {
+        ...mission.nodes,
+        [ROOT_NODE_ID]: {
+          ...mission.nodes[ROOT_NODE_ID]!,
+          choices: [boldEdge],
+        },
+      },
+    };
+
+    const view = MissionViewService.toView(stakesMission);
+    expect(view.momentum).toEqual({
+      bands: stakesMission.momentumBands,
+      current: 0,
+    });
+    expect(view.choices?.[0]).toMatchObject({
+      cashCost: 10,
+      heatOnFail: 3,
+      locked: true,
+      momentumPreview: { fail: -3, pass: 3 },
+      stakes: "bolder",
+    });
+    expect(view.choices?.[0]).not.toHaveProperty("momentumDelta");
+    expect(view.choices?.[0]).not.toHaveProperty("roll");
+  });
+
+  it("never locks pre-stakes missions and omits their momentum view", () => {
+    const legacyUnsatisfied: Mission = {
+      ...mission,
+      nodes: {
+        ...mission.nodes,
+        [ROOT_NODE_ID]: {
+          ...mission.nodes[ROOT_NODE_ID]!,
+          choices: [
+            {
+              ...futureEdge,
+              gear: { ...futureEdge.gear!, item: null, satisfied: false },
+            },
+          ],
+        },
+      },
+    };
+
+    const view = MissionViewService.toView(legacyUnsatisfied);
+    expect(view.momentum).toBeUndefined();
+    expect(view.choices?.[0]?.locked).toBe(false);
+  });
+
+  it("reveals the actual swing and costs on a taken edge", () => {
+    const takenEdge: ChoiceEdge = {
+      ...futureEdge,
+      cashSpent: 10,
+      heatGained: 3,
+      momentumDelta: -3,
+      stakes: "bolder",
+    };
+    const advanced: Mission = {
+      ...mission,
+      choicePath: ["0"],
+      currentNodeId: "0",
+      nodes: {
+        ...mission.nodes,
+        [ROOT_NODE_ID]: {
+          ...mission.nodes[ROOT_NODE_ID]!,
+          choices: [takenEdge],
+        },
+      },
+    };
+
+    expect(MissionViewService.toView(advanced).steps[1]?.edgeTaken).toMatchObject(
+      {
+        cashSpent: 10,
+        heatGained: 3,
+        momentumDelta: -3,
+        passed: false,
+        stakes: "bolder",
+      },
+    );
+  });
 });

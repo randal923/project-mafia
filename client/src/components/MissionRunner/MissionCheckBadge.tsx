@@ -48,6 +48,28 @@ export function MissionCheckBadge({ edge }: MissionCheckBadgeProps) {
           {edge.gear.consumes ? " was consumed" : " covered the move"}
         </span>
       ) : null}
+      {typeof edge.momentumDelta === "number" ? (
+        <span
+          className={cx(
+            "text-sm font-medium",
+            edge.momentumDelta >= 0 ? "text-profit" : "text-danger-strong"
+          )}
+        >
+          Momentum {edge.momentumDelta >= 0 ? "+" : ""}
+          {edge.momentumDelta}
+          {edge.stakes ? ` — ${edge.stakes === "bolder" ? "bold" : "safe"} play` : ""}
+        </span>
+      ) : null}
+      {edge.cashSpent ? (
+        <span className="text-sm font-medium text-danger-strong">
+          Paid ${edge.cashSpent.toLocaleString("en-US")} up front
+        </span>
+      ) : null}
+      {edge.heatGained ? (
+        <span className="text-sm font-medium text-danger-strong">
+          +{edge.heatGained} heat — the move went loud
+        </span>
+      ) : null}
     </div>
   );
 }

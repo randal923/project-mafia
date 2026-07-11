@@ -455,6 +455,7 @@ describe("production mission and equipment contract", () => {
           );
           const expectedDelta = MomentumService.momentumDelta(
             expectedRoll,
+            edge.stakes!,
             engine,
           );
 

@@ -22,9 +22,9 @@ rewards:
   xpPerDifficulty: 7.5
 
 heat:
-  base: 3
-  perDifficulty: 0.09
-  max: 11
+  base: 6
+  perDifficulty: 0.18
+  max: 22
 
 skillExperience:
   basePerSuccess: 30
@@ -47,12 +47,12 @@ gear:
     tags: [disguise]
 
 outcomes:
-  jackpot: { cashFactor: 1.7, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
-  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
-  partially_successful: { cashFactor: 0.72, heatFactor: 1, heatBonus: 1, xpFactor: 1 }
-  partial_failure: { cashFactor: 0.22, heatFactor: 1, heatBonus: 3, xpFactor: 0.5 }
-  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 5, xpFactor: 0.25 }
-  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 9, xpFactor: 0.1 }
+  jackpot: {cashFactor: 1.7, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.72, heatFactor: 1, heatBonus: 2, xpFactor: 1}
+  partial_failure: {cashFactor: 0.22, heatFactor: 1, heatBonus: 6, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 10, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 18, xpFactor: 0.1}
 
 storySeeds:
   - location: The Gilded Lily

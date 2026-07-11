@@ -29,9 +29,9 @@ rewards:
   xpPerDifficulty: 9
 
 heat:
-  base: 5
-  perDifficulty: 0.12
-  max: 18
+  base: 10
+  perDifficulty: 0.24
+  max: 36
 
 skillExperience:
   basePerSuccess: 30
@@ -77,22 +77,22 @@ outcomes:
   partially_successful:
     cashFactor: 0.7
     heatFactor: 1
-    heatBonus: 2
+    heatBonus: 4
     xpFactor: 1
   partial_failure:
     cashFactor: 0.2
     heatFactor: 1
-    heatBonus: 4
+    heatBonus: 8
     xpFactor: 0.5
   failure:
     cashFactor: 0
     heatFactor: 1.25
-    heatBonus: 7
+    heatBonus: 14
     xpFactor: 0.25
   disaster:
     cashFactor: 0
     heatFactor: 1.5
-    heatBonus: 12
+    heatBonus: 24
     xpFactor: 0.1
 
 storySeeds:

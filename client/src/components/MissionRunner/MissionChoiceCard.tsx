@@ -11,6 +11,12 @@ type MissionChoiceCardProps = {
   onChoose: (choiceId: string) => void;
 };
 
+const moneyFormatter = new Intl.NumberFormat("en-US", {
+  currency: "USD",
+  maximumFractionDigits: 0,
+  style: "currency"
+});
+
 export function MissionChoiceCard({
   choice,
   disabled,
@@ -19,23 +25,44 @@ export function MissionChoiceCard({
   const matchedItem = choice.gear?.item?.name ?? choice.gear?.label;
   const equipmentStatus = !choice.gear
     ? "No equipment required — odds shown as-is"
-    : !choice.gear.satisfied
-      ? `Missing: ${choice.gear.label} — penalty included in odds`
-      : choice.gear.consumes
-        ? `Ready: ${matchedItem} — single-use; one is consumed if chosen, and readiness is included in the odds`
-        : `Ready: ${matchedItem} — reusable; readiness is included in the odds`;
+    : choice.locked
+      ? `Locked: this move needs a ${choice.gear.label} and you don't have one`
+      : !choice.gear.satisfied
+        ? `Missing: ${choice.gear.label} — penalty included in odds`
+        : choice.gear.consumes
+          ? `Ready: ${matchedItem} — single-use; one is consumed if chosen, and readiness is included in the odds`
+          : `Ready: ${matchedItem} — reusable; readiness is included in the odds`;
 
   return (
-    <article className="flex flex-col gap-3 rounded-panel border border-line bg-black/30 p-4">
+    <article
+      className={cx(
+        "flex flex-col gap-3 rounded-panel border border-line bg-black/30 p-4",
+        choice.locked && "opacity-70"
+      )}
+    >
+      {choice.stakes ? (
+        <span
+          className={cx(
+            `inline-flex w-fit items-center rounded-control border px-2 py-0.5 ${displayText} text-sm`,
+            choice.stakes === "safer"
+              ? "border-teal text-teal"
+              : "border-brass-bright text-brass-bright"
+          )}
+        >
+          {choice.stakes === "safer" ? "Safer play" : "Bolder play"}
+        </span>
+      ) : null}
       <Button
         className="w-full"
-        disabled={disabled}
+        disabled={disabled || choice.locked}
         font="narrative"
         onClick={() => onChoose(choice.id)}
         size="small"
         variant="secondary"
       >
-        {choice.label ?? choice.approach}
+        {choice.locked
+          ? `Locked — needs ${choice.gear?.label ?? "equipment"}`
+          : (choice.label ?? choice.approach)}
       </Button>
       <p className={`m-0 ${typography.narrativeCaption}`}>
         {choice.riskHint ??
@@ -67,6 +94,35 @@ export function MissionChoiceCard({
             {choice.odds.failure}%
           </dd>
         </div>
+        {choice.momentumPreview ? (
+          <div>
+            <dt className={typography.metadata}>Momentum</dt>
+            <dd className={`m-0 ${displayText} text-xl text-ink`}>
+              <span className="text-profit">
+                +{choice.momentumPreview.pass}
+              </span>
+              {" / "}
+              <span className="text-danger-strong">
+                {choice.momentumPreview.fail}
+              </span>
+            </dd>
+          </div>
+        ) : null}
+        {choice.cashCost || choice.heatOnFail ? (
+          <div className="text-right">
+            <dt className={typography.metadata}>Price of the move</dt>
+            <dd className={`m-0 ${displayText} text-xl text-danger-strong`}>
+              {[
+                choice.cashCost
+                  ? `−${moneyFormatter.format(choice.cashCost)} up front`
+                  : null,
+                choice.heatOnFail ? `+${choice.heatOnFail} heat on a miss` : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </dd>
+          </div>
+        ) : null}
         <div className="col-span-2">
           <dt className={typography.metadata}>Skill XP on success</dt>
           <dd className={`m-0 ${displayText} text-xl text-brass-bright`}>
@@ -94,6 +150,12 @@ export function MissionChoiceCard({
       >
         Equipment: {equipmentStatus}
       </p>
+      {choice.cashCost ? (
+        <p className={`m-0 ${typography.metadata} text-danger-strong`}>
+          Upfront cost: {moneyFormatter.format(choice.cashCost)} is paid the
+          moment you commit — win or lose.
+        </p>
+      ) : null}
       {choice.healthRisk ? (
         <p className={`m-0 ${typography.metadata} text-danger-strong`}>
           Health risk: failure can cause damage; accepted armor is already

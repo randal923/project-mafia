@@ -3,7 +3,9 @@ import { intoxicationPenalty } from "../../../shared/intoxication";
 import {
   CheckModifierBreakdown,
   CheckRoll,
+  EdgeStakes,
   JobApproach,
+  MomentumBands,
   OutcomeTier,
 } from "../../../shared/job";
 import { PlayerSkills } from "../../../shared/player";
@@ -113,33 +115,54 @@ export class MomentumService {
     return Math.abs(roll.margin) >= engine.checks.criticalMargin;
   }
 
-  static momentumDelta(roll: CheckRoll, engine: EngineConfig): number {
+  static momentumDelta(
+    roll: CheckRoll,
+    stakes: EdgeStakes,
+    engine: EngineConfig,
+  ): number {
+    const swing = engine.momentum[stakes];
     const bonus = this.isCritical(roll, engine)
       ? engine.momentum.criticalBonus
       : 0;
-    return roll.passed
-      ? engine.momentum.pass + bonus
-      : engine.momentum.fail - bonus;
+    return roll.passed ? swing.pass + bonus : swing.fail - bonus;
   }
 
   /**
-   * Maps a leaf's cumulative momentum to an outcome tier. Bands derive
-   * from a "perfect run" (momentum.pass × depth), so they scale with both
-   * depth and the configured momentum values: jackpot needs a perfect run
-   * plus a critical, disaster needs a failed run with multiple criticals.
+   * Tier thresholds for a mission of this depth. A perfect safe run lands
+   * exactly on "successful" — safe play never reaches jackpot — while the
+   * bands past the safe perfect run (midline in either direction) are only
+   * reachable by winning or losing bold plays.
    */
+  static bands(depth: number, engine: EngineConfig): MomentumBands {
+    const { safer, bolder } = engine.momentum;
+    const perfectSafe = Math.round(safer.pass * depth);
+    const midline = Math.round(((safer.pass + bolder.pass) / 2) * depth);
+
+    return {
+      failureAtLeast: -midline,
+      jackpotAbove: midline,
+      partialFailureAtLeast: -perfectSafe,
+      partiallySuccessfulAtLeast: 1,
+      successfulAtLeast: perfectSafe,
+    };
+  }
+
+  /** Maps a leaf's cumulative momentum to an outcome tier. */
   static tierForMomentum(
     momentum: number,
     depth: number,
     engine: EngineConfig,
   ): OutcomeTier {
-    const perfect = engine.momentum.pass * depth;
+    return this.tierForBands(momentum, this.bands(depth, engine));
+  }
 
-    if (momentum > perfect) return "jackpot";
-    if (momentum >= perfect - 1) return "successful";
-    if (momentum >= 1) return "partially_successful";
-    if (momentum >= -(perfect - 2)) return "partial_failure";
-    if (momentum >= -(perfect + 1)) return "failure";
+  static tierForBands(momentum: number, bands: MomentumBands): OutcomeTier {
+    if (momentum > bands.jackpotAbove) return "jackpot";
+    if (momentum >= bands.successfulAtLeast) return "successful";
+    if (momentum >= bands.partiallySuccessfulAtLeast)
+      return "partially_successful";
+    if (momentum >= bands.partialFailureAtLeast) return "partial_failure";
+    if (momentum >= bands.failureAtLeast) return "failure";
     return "disaster";
   }
 }

@@ -22,9 +22,9 @@ rewards:
   xpPerDifficulty: 6
 
 heat:
-  base: 2
-  perDifficulty: 0.08
-  max: 9
+  base: 4
+  perDifficulty: 0.16
+  max: 18
 
 skillExperience:
   basePerSuccess: 30
@@ -42,12 +42,12 @@ gear:
     tags: [explosive]
 
 outcomes:
-  jackpot: { cashFactor: 1.65, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
-  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
-  partially_successful: { cashFactor: 0.75, heatFactor: 1, heatBonus: 1, xpFactor: 1 }
-  partial_failure: { cashFactor: 0.25, heatFactor: 1, heatBonus: 2, xpFactor: 0.5 }
-  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 4, xpFactor: 0.25 }
-  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 8, xpFactor: 0.1 }
+  jackpot: {cashFactor: 1.65, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.75, heatFactor: 1, heatBonus: 2, xpFactor: 1}
+  partial_failure: {cashFactor: 0.25, heatFactor: 1, heatBonus: 4, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 8, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 16, xpFactor: 0.1}
 
 storySeeds:
   - location: River Queen back room

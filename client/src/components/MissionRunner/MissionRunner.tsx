@@ -5,6 +5,7 @@ import { NarrativeCard } from "../NarrativeCard/NarrativeCard";
 import { MissionCheckBadge } from "./MissionCheckBadge";
 import { MissionAcceptedEquipment } from "./MissionAcceptedEquipment";
 import { MissionChoiceCard } from "./MissionChoiceCard";
+import { MissionMomentumMeter } from "./MissionMomentumMeter";
 import { MissionOutcomePanel } from "./MissionOutcomePanel";
 import { MissionHealthPanel } from "./MissionHealthPanel";
 import {
@@ -74,6 +75,11 @@ export function MissionRunner({
         />
         <MissionAcceptedEquipment acceptedState={mission.acceptedState} />
       </div>
+      {mission.momentum && !isWaitingOnNarration(mission) ? (
+        <div className="mb-6">
+          <MissionMomentumMeter momentum={mission.momentum} />
+        </div>
+      ) : null}
       {mission.status === "resolved" && mission.resolution ? (
         <div className="flex flex-col gap-5">
           {step.edgeTaken ? <MissionCheckBadge edge={step.edgeTaken} /> : null}

@@ -29,9 +29,9 @@ rewards:
   xpPerDifficulty: 9
 
 heat:
-  base: 5
-  perDifficulty: 0.12
-  max: 17
+  base: 10
+  perDifficulty: 0.24
+  max: 34
 
 skillExperience:
   basePerSuccess: 30
@@ -67,22 +67,22 @@ outcomes:
   partially_successful:
     cashFactor: 0.7
     heatFactor: 1
-    heatBonus: 2
+    heatBonus: 4
     xpFactor: 1
   partial_failure:
     cashFactor: 0.2
     heatFactor: 1
-    heatBonus: 4
+    heatBonus: 8
     xpFactor: 0.5
   failure:
     cashFactor: 0
     heatFactor: 1.25
-    heatBonus: 7
+    heatBonus: 14
     xpFactor: 0.25
   disaster:
     cashFactor: 0
     heatFactor: 1.5
-    heatBonus: 12
+    heatBonus: 24
     xpFactor: 0.1
 
 storySeeds:
@@ -91,23 +91,15 @@ storySeeds:
     pressure: The cartel's counting crew travels with the trucks, and the stockyard's kill floor works all night — screams down there are just Tuesday.
   - location: The drowned quarry at Miller's Bend
     premise: >-
-      Exchange point: a flooded quarry outside city limits, one road in, divers
-      lifting sealed product from the water while the money waits in a car on
-      the rim. Their perfect security is one road out — for them too.
+      Exchange point: a flooded quarry outside city limits, one road in, divers lifting sealed product from the water while the money waits in a car on the rim. Their perfect security is one road out — for them too.
     pressure: Both sides post spotters on the quarry rim an hour before, and the only cover worth having is the cover they'll want.
   - location: The San Rafael funeral home
     premise: >-
-      The cartel's northern franchise launders its exchange through funerals —
-      cash in the casket going in, product in the casket coming out, mourners
-      on the payroll. Thursday's funeral is their biggest ever, and the
-      deceased was real: their own accountant.
+      The cartel's northern franchise launders its exchange through funerals — cash in the casket going in, product in the casket coming out, mourners on the payroll. Thursday's funeral is their biggest ever, and the deceased was real: their own accountant.
     pressure: Half the mourners are armed, the widow is federal, and neither side of that aisle knows about the other.
   - location: The Palisade rail spur, refrigerated cars
     premise: >-
-      A cartel money train — literal: a leased refrigerator car of
-      vacuum-packed bills — waits on a dead spur for the northbound freight to
-      couple it in at dawn. The bill of lading says frozen shrimp, and the rail
-      bull who wrote it wants out of the arrangement.
+      A cartel money train — literal: a leased refrigerator car of vacuum-packed bills — waits on a dead spur for the northbound freight to couple it in at dawn. The bill of lading says frozen shrimp, and the rail bull who wrote it wants out of the arrangement.
     pressure: The couple-in is at five-forty; after that the car is moving at forty miles an hour with the cartel's escort riding two cars back.
   - location: The Hotel Meridian penthouse, the summit
     premise: The cartel and the city's commission meet to set territory and price — protocol says no weapons above the lobby, and the elevator man they trust to enforce it has a brother in your crew and a price of his own.

@@ -83,9 +83,12 @@ export const midMission: MissionView = {
       id: "00",
       intent: "Reach the cage without waking the dock.",
       label: "Cut through the dark side of the pier",
+      locked: false,
+      momentumPreview: { fail: -1, pass: 1 },
       odds: { failure: 28, success: 72 },
       riskHint: "One dropped crowbar and the night watchman starts walking.",
-      skillExperience: { criticalSuccess: 62, success: 31 }
+      skillExperience: { criticalSuccess: 62, success: 31 },
+      stakes: "safer"
     },
     {
       approach: "force",
@@ -96,17 +99,31 @@ export const midMission: MissionView = {
         satisfied: false,
         tags: ["crowbar"]
       },
+      heatOnFail: 3,
       id: "01",
       intent: "Make the lock the only obstacle.",
       label: "Force the cage shutter",
+      locked: true,
+      momentumPreview: { fail: -3, pass: 3 },
       odds: { failure: 62, success: 38 },
       riskHint: "Loud, fast, and no way to take it back.",
-      skillExperience: { criticalSuccess: 64, success: 32 }
+      skillExperience: { criticalSuccess: 64, success: 32 },
+      stakes: "bolder"
     }
   ],
   createdAt: "2026-07-09T12:00:00.000Z",
   depth: 3,
   id: "mock-mission-1",
+  momentum: {
+    bands: {
+      failureAtLeast: -6,
+      jackpotAbove: 6,
+      partialFailureAtLeast: -3,
+      partiallySuccessfulAtLeast: 1,
+      successfulAtLeast: 3
+    },
+    current: 1
+  },
   narrativeProgress: { ready: 15, total: 15 },
   offer: docksOffer,
   resolution: null,
@@ -128,12 +145,15 @@ export const midMission: MissionView = {
     {
       edgeTaken: {
         approach: "social",
+        cashSpent: 5,
         check: { difficulty: 10, skill: "leadership" },
         gear: null,
         id: "0",
         label: "Talk your way past the gate",
         margin: 22,
-        passed: true
+        momentumDelta: 1,
+        passed: true,
+        stakes: "safer"
       },
       kind: "beat",
       narrative: {
@@ -187,6 +207,9 @@ export const injuredMission: MissionView = {
 export const resolvedMission: MissionView = {
   ...midMission,
   choices: null,
+  momentum: midMission.momentum
+    ? { ...midMission.momentum, current: 3 }
+    : undefined,
   resolution: {
     cashChange: 90,
     heatChange: 1,
@@ -209,7 +232,9 @@ export const resolvedMission: MissionView = {
         id: "00",
         label: "Cut through the dark side of the pier",
         margin: 41,
-        passed: true
+        momentumDelta: 2,
+        passed: true,
+        stakes: "safer"
       },
       kind: "outcome",
       narrative: {

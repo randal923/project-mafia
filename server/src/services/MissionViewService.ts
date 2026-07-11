@@ -40,20 +40,30 @@ export class MissionViewService {
       current?.kind === "beat" && current.choices
         ? current.choices.map((edge) => ({
             approach: edge.approach,
+            ...(edge.cashCost !== undefined && { cashCost: edge.cashCost }),
             check: edge.check,
             ...(edge.checkBreakdown && {
               checkBreakdown: edge.checkBreakdown,
             }),
             gear: edge.gear ?? null,
             healthRisk: edge.healthRisk ?? false,
+            ...(edge.heatOnFail !== undefined && {
+              heatOnFail: edge.heatOnFail,
+            }),
             id: edge.id,
             intent: edge.intent,
             label: edge.label,
+            // Gear you don't own locks the path on stakes-era missions.
+            locked: Boolean(edge.stakes && edge.gear && !edge.gear.satisfied),
+            ...(edge.momentumPreview && {
+              momentumPreview: edge.momentumPreview,
+            }),
             odds: {
               failure: 100 - edge.roll.passChance,
               success: edge.roll.passChance,
             },
             riskHint: edge.riskHint,
+            ...(edge.stakes && { stakes: edge.stakes }),
             skillExperience: skillExperienceSettings
               ? SkillExperienceService.previewForCheck(
                   edge.check,
@@ -71,6 +81,13 @@ export class MissionViewService {
       createdAt: mission.createdAt,
       depth: mission.depth,
       id: mission.id,
+      ...(mission.momentumBands &&
+        current && {
+          momentum: {
+            bands: mission.momentumBands,
+            current: current.momentum,
+          },
+        }),
       narrativeProgress: {
         ready: nodes.filter((n) => n.narrativeStatus !== "pending").length,
         total: nodes.length,
@@ -95,14 +112,19 @@ export class MissionViewService {
 
     return {
       approach: edge.approach,
+      ...(edge.cashSpent !== undefined && { cashSpent: edge.cashSpent }),
       check: edge.check,
       ...(edge.checkBreakdown && { checkBreakdown: edge.checkBreakdown }),
       damage: edge.damage ?? null,
       gear: edge.gear ?? null,
+      ...(edge.heatGained !== undefined && { heatGained: edge.heatGained }),
       id: edge.id,
       label: edge.label,
       margin: edge.roll.margin,
+      // Taking the edge revealed the roll, so the real swing is fair game.
+      momentumDelta: edge.momentumDelta,
       passed: edge.roll.passed,
+      ...(edge.stakes && { stakes: edge.stakes }),
     };
   }
 }

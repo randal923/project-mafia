@@ -57,7 +57,9 @@ describe("EngineConfigService", () => {
     expect(service.config.checks.maxChance).toBeGreaterThan(
       service.config.checks.minChance,
     );
-    expect(service.config.momentum.pass).toBeGreaterThan(0);
+    expect(service.config.momentum.bolder.pass).toBeGreaterThan(
+      service.config.momentum.safer.pass,
+    );
   });
 });
 

@@ -22,9 +22,9 @@ rewards:
   xpPerDifficulty: 9
 
 heat:
-  base: 5
-  perDifficulty: 0.12
-  max: 18
+  base: 10
+  perDifficulty: 0.24
+  max: 36
 
 skillExperience:
   basePerSuccess: 30
@@ -57,12 +57,12 @@ gear:
     tags: [jammer]
 
 outcomes:
-  jackpot: { cashFactor: 1.88, heatFactor: 1, heatBonus: 0, xpFactor: 2 }
-  successful: { cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5 }
-  partially_successful: { cashFactor: 0.65, heatFactor: 1, heatBonus: 3, xpFactor: 1 }
-  partial_failure: { cashFactor: 0.15, heatFactor: 1, heatBonus: 5, xpFactor: 0.5 }
-  failure: { cashFactor: 0, heatFactor: 1, heatBonus: 8, xpFactor: 0.25 }
-  disaster: { cashFactor: 0, heatFactor: 1, heatBonus: 12, xpFactor: 0.1 }
+  jackpot: {cashFactor: 1.88, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.65, heatFactor: 1, heatBonus: 6, xpFactor: 1}
+  partial_failure: {cashFactor: 0.15, heatFactor: 1, heatBonus: 10, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 16, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 24, xpFactor: 0.1}
 
 storySeeds:
   - location: Treasury annex loading court

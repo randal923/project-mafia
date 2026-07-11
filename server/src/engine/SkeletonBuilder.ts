@@ -2,6 +2,7 @@ import { EngineConfig } from "../../../shared/engineConfig";
 import {
   APPROACH_SKILLS,
   EdgeGear,
+  EdgeStakes,
   JOB_APPROACHES,
   JobApproach,
   JobOffer,
@@ -11,7 +12,7 @@ import {
   GearRequirement,
   MissionTemplate,
 } from "../../../shared/missionTemplate";
-import { clamp } from "./math";
+import { clamp, roundToFive } from "./math";
 import { HealthService } from "./HealthService";
 import { MissionRng } from "./MissionRng";
 import { MomentumService } from "./MomentumService";
@@ -50,8 +51,8 @@ type SkeletonPlan = {
  * first choice on each beat is the safer one, the second the bolder one.
  *
  * Gear works here too: template gear requirements attach to matching
- * edges, and whether the player owned the gear at accept time decides if
- * the check is eased (prepared) or hardened (improvising).
+ * edges. Owning the gear at accept time eases the check; NOT owning it
+ * locks the edge (at most one per beat, so a path always stays open).
  * Consumables are counted along each path, so one grenade can only
  * satisfy one demand per run.
  */
@@ -154,25 +155,37 @@ export class SkeletonBuilder {
     };
     this.nodes[id] = node;
 
-    approaches.forEach((approach, index) => {
-      const { engine } = this.input;
+    // Missing gear locks its edge, so a beat must always keep one path
+    // open: when both edges land unsatisfiable demands, the demand that
+    // wasn't reserved by the template plan is waived.
+    const gearByIndex = approaches.map((approach, index) => {
       const edgeId = SkeletonBuilder.childNodeId(id, index);
-      const variance =
-        index === 0
-          ? -engine.checks.saferBolderGap
-          : engine.checks.saferBolderGap;
-
-      const gear = this.rollGear(
+      return this.rollGear(
         edgeId,
         approach,
         consumed,
         plan.guaranteedGearByEdge[edgeId],
       );
-      const gearModifier = gear
-        ? gear.satisfied
-          ? -engine.gear.satisfiedBonus
-          : engine.gear.missingPenalty
-        : 0;
+    });
+    if (gearByIndex.every((gear) => gear && !gear.satisfied)) {
+      const guaranteedIndex = approaches.findIndex(
+        (_, index) =>
+          plan.guaranteedGearByEdge[SkeletonBuilder.childNodeId(id, index)],
+      );
+      gearByIndex[guaranteedIndex === 1 ? 0 : 1] = null;
+    }
+
+    approaches.forEach((approach, index) => {
+      const { engine } = this.input;
+      const edgeId = SkeletonBuilder.childNodeId(id, index);
+      const stakes: EdgeStakes = index === 0 ? "safer" : "bolder";
+      const variance =
+        index === 0
+          ? -engine.checks.saferBolderGap
+          : engine.checks.saferBolderGap;
+
+      const gear = gearByIndex[index] ?? null;
+      const gearModifier = gear?.satisfied ? -engine.gear.satisfiedBonus : 0;
 
       const checkDifficulty = clamp(
         this.input.offer.difficulty +
@@ -198,7 +211,7 @@ export class SkeletonBuilder {
         this.rng.rollD100(`edge:${edgeId}`),
         checkBreakdown.finalChance,
       );
-      const delta = MomentumService.momentumDelta(roll, engine);
+      const delta = MomentumService.momentumDelta(roll, stakes, engine);
       const healthRisk =
         this.input.template.healthRisk?.approaches.includes(approach) ?? false;
       const damage =
@@ -208,20 +221,30 @@ export class SkeletonBuilder {
               this.input.context.armor,
             )
           : null;
+      const costs = engine.approaches[approach];
 
       node.choices!.push({
         approach,
+        cashCost: roundToFive(
+          (costs.cashCostFactor ?? 0) * this.input.offer.rewardMax,
+        ),
         check: { difficulty: checkDifficulty, skill },
         checkBreakdown,
         damage,
         gear,
         healthRisk,
+        heatOnFail: costs.heatOnFail ?? 0,
         id: edgeId,
         intent: null,
         label: null,
         momentumDelta: delta,
+        momentumPreview: {
+          fail: engine.momentum[stakes].fail,
+          pass: engine.momentum[stakes].pass,
+        },
         riskHint: null,
         roll,
+        stakes,
       });
 
       this.buildNode(

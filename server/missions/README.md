@@ -112,7 +112,10 @@ Global half of the gear system (per-mission half: the `gear` array below).
 | Key | Meaning |
 |---|---|
 | `satisfiedBonus` | Check gets this much *easier* when the player carries demanded gear. |
-| `missingPenalty` | Check gets this much *harder* when they improvise without it. |
+
+A demand the player cannot cover **locks that choice** — the edge cannot be
+taken. The skeleton guarantees at most one locked choice per beat, so a
+path always stays open.
 
 ### Health and armor
 
@@ -127,15 +130,28 @@ Healing never changes the mission's stored rolls, tree, or narration.
 
 | Key | Meaning |
 |---|---|
-| `pass` | Momentum gained on a passed check. |
-| `fail` | Momentum on a failed check — keep negative. |
+| `safer.pass` / `safer.fail` | Momentum swing of a beat's *safer* choice (first option). |
+| `bolder.pass` / `bolder.fail` | Momentum swing of the *bolder* choice — keep it larger. |
 | `criticalBonus` | Extra ± momentum when the check was critical. |
 
-Outcome tier bands are **derived** from `pass × depth` (a "perfect run"):
-jackpot = perfect run + a critical, successful = perfect run,
-partially_successful = net positive, partial_failure = net ≤ 0,
-failure = every check failed, disaster = failed with multiple criticals.
-Changing `pass`/`fail` reshapes what every tier means — tune carefully.
+Outcome tier bands are **derived** from the swings and mission depth `d`
+(`perfectSafe = safer.pass × d`, `midline = avg(pass) × d`):
+jackpot > midline, successful ≥ perfectSafe, partially_successful ≥ 1,
+partial_failure ≥ −perfectSafe, failure ≥ −midline, disaster below.
+The intent: a perfect all-safe run lands exactly on *successful* — safe play
+never jackpots and never lands in prison; both extremes belong to bold play.
+Bands are snapshotted per mission at accept, so tuning never re-grades runs
+in flight.
+
+### `approaches`
+
+Per-approach costs that make two same-odds choices feel different. Every
+approach must be listed (use `{}` for no costs).
+
+| Key | Meaning |
+|---|---|
+| `cashCostFactor` | Fraction of the offer's `rewardMax` paid up front when the choice is taken — win or lose. A broke player pays what they have. |
+| `heatOnFail` | Heat gained on that edge when its check fails and the move goes loud. |
 
 ---
 
@@ -247,7 +263,8 @@ gear:
 
 When an edge demands gear: carrying a tagged item in loadout or stash makes
 that check *easier* by `gear.satisfiedBonus` (and consumables get spent on
-use); going in without one means improvising, `gear.missingPenalty` harder.
+use); going in without one **locks the choice** — the offer's gear list
+tells the player what to buy before accepting.
 When several items match, the engine deterministically selects the strongest
 one, snapshots its identity and power, and reserves enough exact quantity for
 every still-possible path. Stash-only tools and explosives are spent once on

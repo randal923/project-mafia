@@ -20,8 +20,21 @@ export const TEST_ENGINE: EngineConfig = {
     saferBolderGap: 5,
     heatPressureDivisor: 5,
   },
-  gear: { missingPenalty: 15, satisfiedBonus: 5 },
-  momentum: { pass: 2, fail: -2, criticalBonus: 1 },
+  gear: { satisfiedBonus: 5 },
+  momentum: {
+    safer: { pass: 1, fail: -1 },
+    bolder: { pass: 3, fail: -3 },
+    criticalBonus: 1,
+  },
+  approaches: {
+    charm: { cashCostFactor: 0.1 },
+    social: { cashCostFactor: 0.08 },
+    force: { heatOnFail: 3 },
+    opportunistic: { heatOnFail: 2 },
+    deception: { heatOnFail: 2 },
+    quiet: {},
+    technical: {},
+  },
   stamina: { baseCost: 8, costPerDepth: 4, perDifficulty: 0.18 },
   prison: {
     sentenceGameDays: 1,
