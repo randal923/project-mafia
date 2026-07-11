@@ -37,12 +37,12 @@ healthRisk:
 gear:
   - approaches: [quiet]
     chance: 0.4
-    consumes: false
+    consumes: true
     label: Climbing Gear
     tags: [climbing]
   - approaches: [deception]
     chance: 0.4
-    consumes: false
+    consumes: true
     label: Disguise
     tags: [disguise]
 

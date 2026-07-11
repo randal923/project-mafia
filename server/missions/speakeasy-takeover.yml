@@ -42,7 +42,7 @@ gear:
     tags: [flashbang]
   - approaches: [deception, social]
     chance: 0.35
-    consumes: false
+    consumes: true
     label: Disguise
     tags: [disguise]
 

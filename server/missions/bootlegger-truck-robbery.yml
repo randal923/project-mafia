@@ -37,7 +37,7 @@ healthRisk:
 gear:
   - approaches: [quiet, technical]
     chance: 0.3
-    consumes: false
+    consumes: true
     label: Lockpick Set
     tags: [lockpick]
 

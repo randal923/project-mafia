@@ -103,14 +103,14 @@ describe("mission equipment and health", () => {
     );
   });
 
-  it("guarantees the known missing Lockpick path and keeps the exact tool reusable", () => {
+  it("guarantees the known missing Lockpick path and consumes the exact tool", () => {
     const template: MissionTemplate = {
       ...TEST_TEMPLATE,
       gear: [
         {
           approaches: ["quiet", "technical"],
           chance: 0.3,
-          consumes: false,
+          consumes: true,
           label: "Lockpick Set",
           tags: ["lockpick"],
         },
@@ -120,15 +120,19 @@ describe("mission equipment and health", () => {
     const prepared = createNewPlayer("prepared", "Prepared", NOW);
     prepared.stash = [
       {
+        consumable: true,
         id: "bent-picks",
         name: "Bent Picks",
         power: 1,
+        quantity: 1,
         tags: ["lockpick"],
       },
       {
+        consumable: true,
         id: "lockpick-set",
         name: "Lockpick Set",
         power: 7,
+        quantity: 1,
         tags: ["lockpick"],
       },
     ];
@@ -167,9 +171,9 @@ describe("mission equipment and health", () => {
     const missingEdge = missingEdges.find((edge) => edge.id === preparedEdge.id)!;
     expect(template.gear![0]!.approaches).toContain(preparedEdge.approach);
     expect(preparedEdge.gear).toMatchObject({
-      consumes: false,
+      consumes: true,
       item: {
-        consumable: false,
+        consumable: true,
         id: "lockpick-set",
         name: "Lockpick Set",
         power: 7,
@@ -177,7 +181,7 @@ describe("mission equipment and health", () => {
       satisfied: true,
     });
     expect(missingEdge.gear).toMatchObject({
-      consumes: false,
+      consumes: true,
       item: null,
       satisfied: false,
     });
@@ -186,8 +190,78 @@ describe("mission equipment and health", () => {
     );
 
     const used = consumeMissionGear(prepared, preparedEdge, NOW);
-    expect(used.consumed).toBe(false);
-    expect(used.player.stash).toEqual(prepared.stash);
+    expect(used.consumed).toBe(true);
+    expect(used.player.stash).toMatchObject([
+      { id: "bent-picks", quantity: 1 },
+    ]);
+  });
+
+  it("reserves and spends each Lockpick Set once along a chosen path", () => {
+    const player = createNewPlayer("lockpick-quantity", "Prepared", NOW);
+    player.stash = [
+      {
+        consumable: true,
+        id: "lockpick-set",
+        name: "Lockpick Set",
+        power: 0,
+        quantity: 2,
+        tags: ["lockpick"],
+      },
+    ];
+    const template: MissionTemplate = {
+      ...TEST_TEMPLATE,
+      gear: [
+        {
+          approaches: [...JOB_APPROACHES],
+          chance: 1,
+          consumes: true,
+          label: "Lockpick Set",
+          tags: ["lockpick"],
+        },
+      ],
+      id: "lockpick-quantity",
+    };
+    const context = PlayerContextService.fromPlayer(player);
+    const offer = JobOfferBuilder.buildOffers(
+      context,
+      "lockpick-quantity-board",
+      [template],
+      TEST_ENGINE,
+    )[0]!;
+    const nodes = new SkeletonBuilder({
+      context,
+      depth: template.depth,
+      engine: TEST_ENGINE,
+      missionId: "lockpick-quantity-mission",
+      offer,
+      seed: "lockpick-quantity-seed",
+      template,
+    }).build();
+    const first = nodes[ROOT_NODE_ID]!.choices![0]!;
+    const second = nodes[first.id]!.choices![0]!;
+    const third = nodes[second.id]!.choices![0]!;
+
+    expect([first, second, third].map((edge) => edge.gear?.satisfied)).toEqual([
+      true,
+      true,
+      false,
+    ]);
+    expect(SkeletonBuilder.reservationsForSubtree(nodes)).toEqual({
+      "lockpick-set": 2,
+    });
+    expect(SkeletonBuilder.reservationsForSubtree(nodes, first.id)).toEqual({
+      "lockpick-set": 1,
+    });
+
+    const afterFirst = consumeMissionGear(player, first, NOW);
+    const afterSecond = consumeMissionGear(afterFirst.player, second, NOW);
+    const afterThird = consumeMissionGear(afterSecond.player, third, NOW);
+
+    expect(afterFirst.player.stash).toMatchObject([
+      { id: "lockpick-set", quantity: 1 },
+    ]);
+    expect(afterSecond.player.stash).toEqual([]);
+    expect(afterThird).toEqual({ consumed: false, player: afterSecond.player });
   });
 
   it("keeps partial-chance gear occurrences beyond the guaranteed edge", () => {
@@ -197,7 +271,7 @@ describe("mission equipment and health", () => {
         {
           approaches: ["quiet", "technical"],
           chance: 0.3,
-          consumes: false,
+          consumes: true,
           label: "Lockpick Set",
           tags: ["lockpick"],
         },
@@ -241,7 +315,7 @@ describe("mission equipment and health", () => {
         (label) => ({
           approaches: ["technical"],
           chance: 0.01,
-          consumes: false,
+          consumes: true,
           label,
           tags: [label],
         }),
@@ -287,7 +361,7 @@ describe("mission equipment and health", () => {
     const requirement = {
       approaches: ["technical" as const],
       chance: 0.5,
-      consumes: false,
+      consumes: true,
       label: "Tool",
       tags: ["tool"],
     };
@@ -622,11 +696,26 @@ describe("mission equipment and health", () => {
       { id: "buckshot-shells", name: "Buckshot Shells" },
       { id: "crowbar", name: "Crowbar" },
       {
-        consumable: true,
+        category: "tool",
+        id: "crowbar",
+        name: "Crowbar",
+        price: 125,
+        quantity: 2,
+        tags: ["crowbar"],
+      },
+      {
         id: "first-aid-tin",
         name: "First-Aid Tin",
         tags: ["medkit"],
       },
+      {
+        category: "tool",
+        id: "future-stash-tool",
+        name: "Future Stash Tool",
+        slot: null as never,
+        tags: ["hacking"],
+      },
+      { id: "getaway-car-keys", name: "Getaway Car Keys" },
     ];
     const legacy = structuredClone(player);
     delete (legacy.resources as Partial<typeof legacy.resources>).health;
@@ -640,10 +729,47 @@ describe("mission equipment and health", () => {
     expect(normalized.loadout.hand).not.toHaveProperty("effects");
     expect(normalized.loadout.hand).not.toHaveProperty("tags");
     expect(normalized.loadout.waist?.armor).toBe(2);
+    expect(normalized.stash).toHaveLength(4);
     expect(normalized.stash).toMatchObject([
-      { id: "crowbar" },
-      { id: "first-aid-tin", use: { health: 25 } },
+      {
+        category: "tool",
+        consumable: true,
+        id: "crowbar",
+        price: 125,
+        quantity: 3,
+        tags: ["crowbar"],
+      },
+      {
+        consumable: true,
+        id: "first-aid-tin",
+        quantity: 1,
+        use: { health: 25 },
+      },
+      { consumable: true, id: "future-stash-tool", quantity: 1 },
+      { consumable: true, id: "getaway-car-keys", quantity: 1 },
     ]);
     expect(normalized.stash[1]).not.toHaveProperty("tags");
+    expect(normalized.stash[2]).toMatchObject({
+      consumable: true,
+      id: "future-stash-tool",
+      quantity: 1,
+    });
+  });
+
+  it("repairs invalid consumable quantities while merging legacy stacks", () => {
+    const player = createNewPlayer("invalid-quantity", "Invalid Quantity", NOW);
+    player.stash = [
+      { id: "lockpick-set", name: "Lockpick Set", quantity: -2 },
+      { id: "lockpick-set", name: "Lockpick Set", quantity: 1.5 },
+      {
+        id: "lockpick-set",
+        name: "Lockpick Set",
+        quantity: Number.POSITIVE_INFINITY,
+      },
+    ];
+
+    expect(normalizePlayer(player).stash).toMatchObject([
+      { consumable: true, id: "lockpick-set", quantity: 3 },
+    ]);
   });
 });

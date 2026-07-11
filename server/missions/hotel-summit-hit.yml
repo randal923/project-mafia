@@ -37,17 +37,17 @@ healthRisk:
 gear:
   - approaches: [technical]
     chance: 0.5
-    consumes: false
+    consumes: true
     label: Signal Jammer
     tags: [jammer]
   - approaches: [deception, social]
     chance: 0.5
-    consumes: false
+    consumes: true
     label: Staff Disguise
     tags: [disguise]
   - approaches: [opportunistic]
     chance: 0.5
-    consumes: false
+    consumes: true
     label: Police Scanner
     tags: [scanner]
 

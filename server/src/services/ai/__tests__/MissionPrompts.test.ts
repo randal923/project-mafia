@@ -87,6 +87,7 @@ describe("MissionPrompts equipment facts", () => {
 
     expect(prompt).toContain("Door-Buster Charge");
     expect(prompt).toContain("exact matched item, Door-Buster Charge");
+    expect(prompt).toContain("and it is now spent");
     expect(prompt).toContain("5 incoming damage");
     expect(prompt).toContain("armor absorbed 1");
     expect(prompt).toContain("do not state a live Health total or exact Health loss");
@@ -109,6 +110,7 @@ describe("MissionPrompts equipment facts", () => {
     });
     expect(outcomePrompt).toContain("FINAL CHOICE");
     expect(outcomePrompt).toContain("exact matched item, Door-Buster Charge");
+    expect(outcomePrompt).toContain("and it is now spent");
     expect(outcomePrompt).toContain("5 incoming damage");
     expect(outcomePrompt).toContain("armor absorbed 1");
   });

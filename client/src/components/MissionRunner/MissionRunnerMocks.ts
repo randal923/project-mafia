@@ -24,6 +24,7 @@ export const midMission: MissionView = {
     equipmentPower: 30,
     gear: [
       {
+        consumable: true,
         id: "lockpick-set",
         name: "Lockpick Set",
         quantity: 1,
@@ -67,9 +68,9 @@ export const midMission: MissionView = {
         unclampedChance: 72
       },
       gear: {
-        consumes: false,
+        consumes: true,
         item: {
-          consumable: false,
+          consumable: true,
           id: "lockpick-set",
           name: "Lockpick Set",
           power: 0,
@@ -90,7 +91,7 @@ export const midMission: MissionView = {
       approach: "force",
       check: { difficulty: 30, skill: "muscle" },
       gear: {
-        consumes: false,
+        consumes: true,
         label: "Crowbar",
         satisfied: false,
         tags: ["crowbar"]

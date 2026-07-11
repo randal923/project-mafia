@@ -42,17 +42,17 @@ gear:
     tags: [breaching, explosive]
   - approaches: [technical]
     chance: 0.6
-    consumes: false
+    consumes: true
     label: Hacking Rig
     tags: [hacking]
   - approaches: [quiet]
     chance: 0.55
-    consumes: false
+    consumes: true
     label: Climbing Gear
     tags: [climbing]
   - approaches: [opportunistic]
     chance: 0.5
-    consumes: false
+    consumes: true
     label: Signal Jammer
     tags: [jammer]
 

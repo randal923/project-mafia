@@ -60,7 +60,7 @@ export type JobStorySeed = {
 
 /** Gear a job may call for, listed on the offer so the player can shop. */
 export type JobOfferGear = {
-  /** Whether using it spends one (grenades yes, crowbars no). */
+  /** Default spending behavior when no exact owned item overrides it. */
   consumes: boolean;
   label: string;
   /** Owning ANY item with one of these tags covers the demand. */

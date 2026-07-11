@@ -22,7 +22,7 @@ export function MissionChoiceCard({
     : !choice.gear.satisfied
       ? `Missing: ${choice.gear.label} — penalty included in odds`
       : choice.gear.consumes
-        ? `Ready: ${matchedItem} — consumed on use; its power is included in this choice only`
+        ? `Ready: ${matchedItem} — single-use; one is consumed if chosen, and readiness is included in the odds`
         : `Ready: ${matchedItem} — reusable; readiness is included in the odds`;
 
   return (

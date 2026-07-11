@@ -96,8 +96,10 @@ export function MissionAcceptedEquipment({
                 {item.name} ×{item.quantity ?? 1}
                 <span className={`block ${typography.metadata}`}>
                   {item.consumable
-                    ? `Power ${item.power ?? 0} only when a choice consumes it`
-                    : "Reusable mission tool · no check-power bonus"}
+                    ? item.power
+                      ? `Single-use · Power ${item.power} on a matching choice`
+                      : "Single-use · one consumed on a matching choice"
+                    : "Reusable exact match · no consumed-item power"}
                 </span>
               </li>
             ))}

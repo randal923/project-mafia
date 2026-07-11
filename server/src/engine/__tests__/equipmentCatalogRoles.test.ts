@@ -297,6 +297,78 @@ describe("every catalog item's mechanical role", () => {
     ).toBe(false);
   });
 
+  it("rejects a stash-only tool that is not consumable", () => {
+    const item = catalog.find(({ id }) => id === "lockpick-set")!;
+
+    expect(
+      equipmentSchema.safeParse({ ...item, consumable: false }).success,
+    ).toBe(false);
+  });
+
+  it("keeps an exact equippable scanner reusable over the consuming fallback", () => {
+    const item = catalog.find(({ id }) => id === "radio-scanner-belt")!;
+    const stashScanner = catalog.find(({ id }) => id === "radio-scanner")!;
+    const player = createNewPlayer("scanner-belt", "Scanner Belt", NOW, {
+      waist: equipmentToPlayerItem(item),
+    });
+    player.stash = [equipmentToPlayerItem(stashScanner, 2)];
+    const template: MissionTemplate = {
+      ...TEST_TEMPLATE,
+      gear: [
+        {
+          approaches: [...JOB_APPROACHES],
+          chance: 1,
+          consumes: true,
+          label: "Police Scanner",
+          tags: ["scanner"],
+        },
+      ],
+      id: "equippable-scanner",
+    };
+    const context = PlayerContextService.fromPlayer(player);
+    const offer = JobOfferBuilder.buildOffers(
+      context,
+      "scanner-board",
+      [template],
+      TEST_ENGINE,
+    )[0]!;
+    const nodes = new SkeletonBuilder({
+      context,
+      depth: template.depth,
+      engine: TEST_ENGINE,
+      missionId: "scanner-mission",
+      offer,
+      seed: "scanner-seed",
+      template,
+    }).build();
+    const edges = Object.values(nodes).flatMap((node) => node.choices ?? []);
+
+    expect(offer.gear?.[0]?.consumes).toBe(false);
+    expect(
+      edges.every(
+        (edge) =>
+          edge.gear?.consumes === false &&
+          edge.gear.item?.id === item.id &&
+          edge.gear.item.consumable === false,
+      ),
+    ).toBe(true);
+    expect(SkeletonBuilder.reservationsForSubtree(nodes)).toEqual({
+      [item.id]: 1,
+    });
+    expect(player.loadout.waist?.id).toBe(item.id);
+    expect(player.stash).toMatchObject([
+      { consumable: true, id: stashScanner.id, quantity: 2 },
+    ]);
+  });
+
+  it("rejects consumable equippable gear", () => {
+    const item = catalog.find(({ id }) => id === "radio-scanner-belt")!;
+
+    expect(
+      equipmentSchema.safeParse({ ...item, consumable: true }).success,
+    ).toBe(false);
+  });
+
   it("applies accrued Health before deciding whether a kit can be used", async () => {
     const item = catalog.find(({ id }) => id === "first-aid-tin")!;
     const player = createNewPlayer(item.id, item.name, NOW);
@@ -380,6 +452,31 @@ describe("every catalog item's mechanical role", () => {
     expect(updated.stash).toMatchObject([{ id: item.id, quantity: 1 }]);
   });
 
+  it("stacks a bulk stash-tool purchase onto normalized legacy copies", async () => {
+    const item = catalog.find(({ id }) => id === "lockpick-set")!;
+    const player = createNewPlayer(item.id, item.name, NOW);
+    player.progression.level = item.levelRequirement;
+    player.resources.cash = item.price * 10;
+    player.stash = [
+      { id: item.id, name: item.name, tags: item.tags },
+      { id: item.id, name: item.name, tags: item.tags },
+    ];
+    const equipment = {
+      getEquipment: async () => item,
+    } as unknown as EquipmentService;
+    const service = new StoreService(
+      createFirebaseHarness(player),
+      equipment,
+    );
+
+    const updated = await service.buy(player.id, item.id, 5);
+
+    expect(updated.resources.cash).toBe(player.resources.cash - item.price * 5);
+    expect(updated.stash).toMatchObject([
+      { consumable: true, id: item.id, quantity: 7 },
+    ]);
+  });
+
   it("applies accrued Health before a store mutation resets activity time", async () => {
     const item = catalog.find(({ id }) => id === "crowbar")!;
     const player = createNewPlayer(item.id, item.name, NOW);
@@ -396,7 +493,7 @@ describe("every catalog item's mechanical role", () => {
     expect(updated.resources.health).toBe(100);
   });
 
-  it("keeps an exact reusable mission tool from being sold", async () => {
+  it("keeps an exact reserved mission-tool quantity from being sold", async () => {
     const item = catalog.find(({ id }) => id === "crowbar")!;
     const player = createNewPlayer(item.id, item.name, NOW);
     player.stash = [equipmentToPlayerItem(item)];

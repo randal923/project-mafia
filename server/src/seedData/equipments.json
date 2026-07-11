@@ -1306,6 +1306,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "Sings through a padlock like it was never there.",
     "id": "lockpick-set",
     "image": {
@@ -1323,6 +1324,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "The universal key for everything the picks can't charm.",
     "id": "crowbar",
     "image": {
@@ -1358,6 +1360,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "Chain-link fences and padlocks give up on sight.",
     "id": "bolt-cutters",
     "image": {
@@ -1375,6 +1378,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "Forty feet of the quiet way in.",
     "id": "climbing-rope",
     "image": {
@@ -1392,6 +1396,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "A new face for every job and a moustache to spare.",
     "id": "disguise-kit",
     "image": {
@@ -1409,6 +1414,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "Lets you sit in on conversations you weren't invited to.",
     "id": "wiretap-kit",
     "image": {
@@ -1444,6 +1450,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "Every police call in the city, delivered to your ear.",
     "id": "radio-scanner",
     "image": {
@@ -1479,6 +1486,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "Bores through a vault door while the city sleeps.",
     "id": "safecracker-drill",
     "image": {
@@ -1496,6 +1504,7 @@
   },
   {
     "category": "tool",
+    "consumable": true,
     "description": "Turns every alarm and radio for a block into dead air.",
     "id": "signal-jammer",
     "image": {

@@ -45,17 +45,17 @@ healthRisk:
 gear:
   - approaches: [technical]
     chance: 0.6
-    consumes: false
+    consumes: true
     label: Hacking Rig
     tags: [hacking]
   - approaches: [quiet]
     chance: 0.45
-    consumes: false
+    consumes: true
     label: Lockpick Set
     tags: [lockpick]
   - approaches: [opportunistic]
     chance: 0.4
-    consumes: false
+    consumes: true
     label: Police Scanner
     tags: [scanner]
 

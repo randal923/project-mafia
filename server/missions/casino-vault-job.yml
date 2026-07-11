@@ -49,12 +49,12 @@ gear:
     tags: [breaching, explosive]
   - approaches: [technical]
     chance: 0.55
-    consumes: false
+    consumes: true
     label: Hacking Rig
     tags: [hacking]
   - approaches: [deception, social]
     chance: 0.45
-    consumes: false
+    consumes: true
     label: Staff Disguise
     tags: [disguise]
 

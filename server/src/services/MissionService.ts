@@ -79,8 +79,11 @@ export class MissionService {
       }
 
       const boardData = boardSnap.exists ? (boardSnap.data() as JobBoard) : null;
-      const offer = boardData?.offers.find((o) => o.id === offerId);
-      if (!boardData || !offer) {
+      if (!boardData || !this.board.isCurrent(boardData)) {
+        throw new HttpError(409, "The job board changed. Refresh and choose again.");
+      }
+      const offer = boardData.offers.find((o) => o.id === offerId);
+      if (!offer) {
         throw new HttpError(404, "That job is no longer on the board.");
       }
 

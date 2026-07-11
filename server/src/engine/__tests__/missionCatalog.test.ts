@@ -255,6 +255,15 @@ describe("production mission and equipment contract", () => {
     ).toBe(true);
   });
 
+  it("makes every stash-only catalog tool consumable", () => {
+    const stashTools = catalog.filter(
+      (item) => item.category === "tool" && item.slot === null,
+    );
+
+    expect(stashTools.length).toBeGreaterThan(0);
+    expect(stashTools.every((item) => item.consumable === true)).toBe(true);
+  });
+
   it("keeps hand weapons power-only and every wearable armored", () => {
     for (const item of catalog) {
       if (item.slot === "hand") {
@@ -302,6 +311,11 @@ describe("production mission and equipment contract", () => {
     );
     const catalogTags = new Set(catalog.flatMap((item) => item.tags ?? []));
     expect(usedTags).toEqual(catalogTags);
+    expect(
+      templates
+        .flatMap((template) => template.gear ?? [])
+        .every((requirement) => requirement.consumes),
+    ).toBe(true);
 
     for (const tag of catalogTags) {
       const missionCount = templates.filter((template) =>

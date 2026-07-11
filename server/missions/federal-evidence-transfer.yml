@@ -37,7 +37,7 @@ healthRisk:
 gear:
   - approaches: [opportunistic]
     chance: 0.5
-    consumes: false
+    consumes: true
     label: Police Scanner
     tags: [scanner]
   - approaches: [quiet]

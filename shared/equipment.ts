@@ -114,6 +114,18 @@ export const equipmentSchema = z
   })
   .strict()
   .superRefine((equipment, context) => {
+    if (
+      equipment.category === "tool" &&
+      equipment.slot === null &&
+      equipment.consumable !== true
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Stash-only tools must be consumable.",
+        path: ["consumable"],
+      });
+    }
+
     if (equipment.use && equipment.tags?.length) {
       context.addIssue({
         code: "custom",
@@ -133,6 +145,18 @@ export const equipmentSchema = z
         code: "custom",
         message: `${equipment.slot} equipment must define positive power and armor.`,
         path: ["armor"],
+      });
+    }
+
+    if (
+      equipment.slot !== null &&
+      equipment.slot !== "hand" &&
+      equipment.consumable === true
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Equippable gear cannot be consumable.",
+        path: ["consumable"],
       });
     }
 

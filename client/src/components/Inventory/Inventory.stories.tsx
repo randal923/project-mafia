@@ -59,6 +59,7 @@ const stashItems = [
     tone: "profit"
   },
   {
+    consumable: true,
     detail: "Opens cheap locks without raising the street alarm.",
     id: "lockpick-roll",
     name: "Lockpick Roll",

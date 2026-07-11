@@ -186,6 +186,22 @@ const RETIRED_EQUIPMENT_IDS = new Set([
   "tranquilizer-darts",
 ]);
 
+const STASH_TOOL_IDS = new Set([
+  "black-market-trauma-kit",
+  "bolt-cutters",
+  "climbing-rope",
+  "crowbar",
+  "disguise-kit",
+  "field-surgeon-kit",
+  "first-aid-tin",
+  "getaway-car-keys",
+  "lockpick-set",
+  "radio-scanner",
+  "safecracker-drill",
+  "signal-jammer",
+  "wiretap-kit",
+]);
+
 const WAIST_ARMOR_BY_ITEM_ID: Readonly<Record<string, number>> = {
   "ammo-bandolier": 12,
   "canvas-tool-belt": 4,
@@ -235,17 +251,74 @@ export function normalizePlayer(player: Player): Player {
       ]),
     ),
     reservedEquipment: player.reservedEquipment ?? null,
-    stash: (player.stash ?? [])
-      .filter((item) => !RETIRED_EQUIPMENT_IDS.has(item.id))
-      .map(normalizePlayerItem),
+    stash: normalizeStash(player.stash ?? []),
   };
 }
 
-function normalizePlayerItem(item: PlayerItem): PlayerItem {
+function normalizeStash(stash: PlayerItem[]): PlayerItem[] {
+  const normalized: PlayerItem[] = [];
+  const consumableIndexes = new Map<string, number>();
+
+  for (const storedItem of stash) {
+    if (RETIRED_EQUIPMENT_IDS.has(storedItem.id)) {
+      continue;
+    }
+
+    const item = normalizePlayerItem(storedItem, true);
+    if (!item.consumable) {
+      normalized.push(item);
+      continue;
+    }
+
+    const existingIndex = consumableIndexes.get(item.id);
+    if (existingIndex === undefined) {
+      consumableIndexes.set(item.id, normalized.length);
+      normalized.push({
+        ...item,
+        quantity: normalizeItemQuantity(item.quantity),
+      });
+      continue;
+    }
+
+    const existing = normalized[existingIndex]!;
+    const existingQuantity = normalizeItemQuantity(existing.quantity);
+    const itemQuantity = normalizeItemQuantity(item.quantity);
+    normalized[existingIndex] = {
+      ...existing,
+      ...item,
+      quantity:
+        existingQuantity > Number.MAX_SAFE_INTEGER - itemQuantity
+          ? Number.MAX_SAFE_INTEGER
+          : existingQuantity + itemQuantity,
+    };
+  }
+
+  return normalized;
+}
+
+function normalizeItemQuantity(quantity: number | undefined): number {
+  return typeof quantity === "number" &&
+    Number.isSafeInteger(quantity) &&
+    quantity > 0
+    ? quantity
+    : 1;
+}
+
+function normalizePlayerItem(item: PlayerItem, fromStash = false): PlayerItem {
   const normalized = { ...item };
   const healing = HEALING_BY_ITEM_ID[item.id];
   const waistArmor = WAIST_ARMOR_BY_ITEM_ID[item.id];
 
+  if ((normalized.slot as EquipmentSlotId | null | undefined) === null) {
+    delete normalized.slot;
+  }
+  if (
+    fromStash &&
+    (STASH_TOOL_IDS.has(item.id) ||
+      (item.category === "tool" && !item.slot))
+  ) {
+    normalized.consumable = true;
+  }
   if (healing !== undefined) {
     normalized.use = { ...normalized.use, health: healing };
     delete normalized.tags;

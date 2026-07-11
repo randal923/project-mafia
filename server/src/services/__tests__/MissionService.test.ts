@@ -37,6 +37,9 @@ function createMissionHarness(player: Player, mission: Mission) {
     path,
   });
   const transaction = {
+    create: (reference: DocumentDouble, value: StoredDocument) => {
+      documents.set(reference.path, structuredClone(value));
+    },
     get: async (reference: DocumentDouble) => {
       const stored = documents.get(reference.path);
       return {
@@ -61,6 +64,91 @@ function createMissionHarness(player: Player, mission: Mission) {
   };
 }
 
+function createLegacyToolMission(player: Player): Mission {
+  return {
+    choicePath: [],
+    createdAt: NOW,
+    currentNodeId: ROOT_NODE_ID,
+    depth: 1,
+    generationStartedAt: NOW,
+    id: "legacy-mission",
+    nodes: {
+      [ROOT_NODE_ID]: {
+        choices: [
+          {
+            approach: "quiet",
+            check: { difficulty: 20, skill: "stealth" },
+            damage: null,
+            gear: {
+              consumes: false,
+              item: {
+                consumable: false,
+                id: "lockpick-set",
+                name: "Lockpick Set",
+                power: 0,
+              },
+              label: "Lockpick Set",
+              satisfied: true,
+              tags: ["lockpick"],
+            },
+            healthRisk: false,
+            id: "0",
+            intent: "Open the lock quietly.",
+            label: "Pick the lock",
+            momentumDelta: 2,
+            riskHint: "A guard may hear the tumblers.",
+            roll: {
+              margin: 20,
+              passChance: 60,
+              passed: true,
+              value: 40,
+            },
+          },
+        ],
+        depth: 0,
+        id: ROOT_NODE_ID,
+        kind: "beat",
+        momentum: 0,
+        narrative: null,
+        narrativeStatus: "ready",
+        outcomeTier: null,
+      },
+      "0": {
+        choices: null,
+        depth: 1,
+        id: "0",
+        kind: "outcome",
+        momentum: 2,
+        narrative: null,
+        narrativeStatus: "ready",
+        outcomeTier: "successful",
+      },
+    },
+    offer: {
+      difficulty: 20,
+      district: "Docks",
+      heatIncrease: 2,
+      id: "legacy-offer",
+      rewardMax: 100,
+      rewardMin: 50,
+      storySeed: {
+        location: "Warehouse",
+        premise: "Take the ledger.",
+        pressure: "The guards are close.",
+      },
+      templateId: TEST_TEMPLATE.id,
+      type: TEST_TEMPLATE.type,
+    },
+    promptVersion: "legacy",
+    resolution: null,
+    seed: "legacy-seed",
+    status: "active",
+    template: TEST_TEMPLATE,
+    uid: player.id,
+    updatedAt: NOW,
+  };
+}
+
 describe("MissionService choice application", () => {
   it("spends gear and applies Health loss exactly once for a repeated choice", async () => {
     const player = createNewPlayer("player-1", "Test Player", NOW);
@@ -68,15 +156,15 @@ describe("MissionService choice application", () => {
     player.stash = [
       {
         consumable: true,
-        id: "door-buster-charge",
-        name: "Door-Buster Charge",
-        power: 38,
+        id: "crowbar",
+        name: "Crowbar",
+        power: 0,
         quantity: 1,
-        tags: ["breaching"],
+        tags: ["crowbar"],
       },
     ];
     player.reservedEquipment = {
-      items: { "door-buster-charge": 1 },
+      items: { crowbar: 1 },
       missionId: "mission-1",
     };
     const mission: Mission = {
@@ -97,18 +185,18 @@ describe("MissionService choice application", () => {
                 consumes: true,
                 item: {
                   consumable: true,
-                  id: "door-buster-charge",
-                  name: "Door-Buster Charge",
-                  power: 38,
+                  id: "crowbar",
+                  name: "Crowbar",
+                  power: 0,
                 },
-                label: "Breaching charge",
+                label: "Crowbar",
                 satisfied: true,
-                tags: ["breaching"],
+                tags: ["crowbar"],
               },
               healthRisk: true,
               id: "0",
-              intent: "Blow the hinges.",
-              label: "Set the charge",
+              intent: "Pry the hinges before the guards arrive.",
+              label: "Lever the door open",
               momentumDelta: -2,
               riskHint: "The blast may bring the ceiling down.",
               roll: {
@@ -198,5 +286,46 @@ describe("MissionService choice application", () => {
     const stored = harness.documents.get(playerPath) as Player;
     expect(stored.resources.health).toBe(1);
     expect(stored.stash).toEqual([]);
+  });
+
+  it("grandfathers a stored reusable tool edge on an active mission", async () => {
+    const player = createNewPlayer("legacy-player", "Legacy Player", NOW);
+    player.stash = [
+      {
+        id: "lockpick-set",
+        name: "Lockpick Set",
+        power: 0,
+        tags: ["lockpick"],
+      },
+    ];
+    player.reservedEquipment = {
+      items: { "lockpick-set": 1 },
+      missionId: "legacy-mission",
+    };
+    const mission = createLegacyToolMission(player);
+    const harness = createMissionHarness(player, mission);
+    const service = new MissionService(
+      harness.firebase,
+      {} as JobBoardService,
+      {} as MissionNarrator,
+      {} as MissionTemplateService,
+      { config: TEST_ENGINE } as EngineConfigService,
+      {} as PrisonService,
+    );
+
+    const result = await service.choose(player, mission.id, "0");
+
+    expect(result.mission.choicePath).toEqual(["0"]);
+    expect(result.mission.status).toBe("resolved");
+    expect(result.mission.nodes[ROOT_NODE_ID]?.choices?.[0]?.gear).toMatchObject(
+      {
+        consumes: false,
+        item: { consumable: false, id: "lockpick-set" },
+      },
+    );
+    expect(result.player.stash).toMatchObject([
+      { consumable: true, id: "lockpick-set", quantity: 1 },
+    ]);
+    expect(result.player.reservedEquipment).toBeNull();
   });
 });

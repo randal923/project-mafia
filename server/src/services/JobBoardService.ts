@@ -10,11 +10,10 @@ import { MissionTemplateService } from "./MissionTemplateService";
 
 /**
  * Bump when the OFFER SHAPE changes (new fields like staminaCost/gear),
- * so boards stored with the old shape regenerate on next fetch. Template
- * content changes are covered separately by the template-id part of the
- * key.
+ * so boards stored with old offer metadata regenerate on next fetch. The
+ * template-id key separately catches mission additions and removals.
  */
-const BOARD_FORMAT_VERSION = 3;
+const BOARD_FORMAT_VERSION = 4;
 
 export class JobBoardService {
   private readonly db: Firestore;
@@ -34,12 +33,16 @@ export class JobBoardService {
       const board = snapshot.data() as JobBoard;
       // A stale board (mission files added/removed since it was built)
       // regenerates so new mission lines show up without a manual refresh.
-      if (board.templatesKey === this.templatesKey()) {
+      if (this.isCurrent(board)) {
         return board;
       }
     }
 
     return this.regenerate(player);
+  }
+
+  isCurrent(board: JobBoard): boolean {
+    return board.templatesKey === this.templatesKey();
   }
 
   async regenerate(player: Player): Promise<JobBoard> {

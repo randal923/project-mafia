@@ -51,7 +51,7 @@ type SkeletonPlan = {
  *
  * Gear works here too: template gear requirements attach to matching
  * edges, and whether the player owned the gear at accept time decides if
- * the check is eased (equipped professional) or hardened (improvising).
+ * the check is eased (prepared) or hardened (improvising).
  * Consumables are counted along each path, so one grenade can only
  * satisfy one demand per run.
  */

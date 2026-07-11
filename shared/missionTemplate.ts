@@ -29,7 +29,7 @@ const gearRequirementSchema = z
     approaches: z.array(z.enum(JOB_APPROACHES)).min(1),
     /** Probability an additional eligible edge demands the gear. */
     chance: z.number().min(0.01).max(1),
-    /** Whether using the gear spends one (grenades yes, crowbars no). */
+    /** Default spending behavior when no exact owned item overrides it. */
     consumes: z.boolean(),
     /** Display name, e.g. "Flashbang". */
     label: z.string().min(1),

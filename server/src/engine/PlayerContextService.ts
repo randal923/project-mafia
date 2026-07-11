@@ -18,7 +18,7 @@ import {
 export type GearAvailability = {
   /** Total quantity across consumable stash items with this tag. */
   consumables: number;
-  /** True if a non-consumable item (tool, equipped gear) carries the tag. */
+  /** True if an exact reusable item, such as equippable gear, carries the tag. */
   permanent: boolean;
 };
 

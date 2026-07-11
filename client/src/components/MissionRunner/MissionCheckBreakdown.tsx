@@ -53,7 +53,10 @@ export function MissionCheckBreakdown({
             </dd>
           </>
         ) : null}
-        {gear?.satisfied && gear.consumes && gear.item ? (
+        {gear?.satisfied &&
+        gear.consumes &&
+        gear.item &&
+        breakdown.consumablePower > 0 ? (
           <>
             <dt>
               On use: {gear.item.name} (Power {breakdown.consumablePower})

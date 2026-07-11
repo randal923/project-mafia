@@ -47,9 +47,9 @@ const futureEdge: ChoiceEdge = {
   },
   damage: { absorbed: 1, healthLost: 3, incoming: 4 },
   gear: {
-    consumes: false,
+    consumes: true,
     item: {
-      consumable: false,
+      consumable: true,
       id: "lockpick-set",
       name: "Lockpick Set",
       power: 0,
@@ -128,7 +128,7 @@ describe("MissionViewService", () => {
         powerDivisor: 25,
       },
       gear: {
-        consumes: false,
+        consumes: true,
         item: {
           id: "lockpick-set",
           name: "Lockpick Set",
@@ -162,16 +162,25 @@ describe("MissionViewService", () => {
     });
   });
 
-  it("keeps older missions readable when XP settings are absent", () => {
-    const legacyBreakdown = { ...futureEdge.checkBreakdown };
+  it("keeps an older reusable edge readable when XP settings are absent", () => {
+    const legacyBreakdown = { ...futureEdge.checkBreakdown! };
     delete legacyBreakdown.powerDivisor;
+    const legacyEdge: ChoiceEdge = {
+      ...futureEdge,
+      checkBreakdown: legacyBreakdown,
+      gear: {
+        ...futureEdge.gear!,
+        consumes: false,
+        item: { ...futureEdge.gear!.item!, consumable: false },
+      },
+    };
     const legacyMission = {
       ...mission,
       nodes: {
         ...mission.nodes,
         [ROOT_NODE_ID]: {
           ...mission.nodes[ROOT_NODE_ID]!,
-          choices: [{ ...futureEdge, checkBreakdown: legacyBreakdown }],
+          choices: [legacyEdge],
         },
       },
       template: undefined,
@@ -179,6 +188,10 @@ describe("MissionViewService", () => {
 
     const choice = MissionViewService.toView(legacyMission).choices?.[0];
     expect(choice).toMatchObject({
+      gear: {
+        consumes: false,
+        item: { consumable: false, id: "lockpick-set" },
+      },
       odds: { failure: 37, success: 63 },
       skillExperience: null,
     });

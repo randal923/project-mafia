@@ -37,7 +37,7 @@ healthRisk:
 gear:
   - approaches: [force]
     chance: 0.35
-    consumes: false
+    consumes: true
     label: Crowbar
     tags: [crowbar]
   - approaches: [technical]

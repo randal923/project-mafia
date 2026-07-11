@@ -240,7 +240,7 @@ does generation replace one approach with an authored eligible approach.
 gear:
   - approaches: [technical, force]   # edges with one of these approaches can roll it
     chance: 0.55                     # probability an additional eligible edge demands it
-    consumes: true                   # spent on use (grenades yes, crowbars no)
+    consumes: true                   # default when no exact owned match overrides it
     label: Breaching Charge          # shown to the player
     tags: [breaching, explosive]     # any owned item with one of these tags satisfies it
 ```
@@ -250,14 +250,16 @@ that check *easier* by `gear.satisfiedBonus` (and consumables get spent on
 use); going in without one means improvising, `gear.missingPenalty` harder.
 When several items match, the engine deterministically selects the strongest
 one, snapshots its identity and power, and reserves enough exact quantity for
-every still-possible path. Reusable tools are never spent. Consumables add
+every still-possible path. Stash-only tools and explosives are spent once on
+the matching chosen edge. An exact equippable match, such as the Radio Scanner
+Belt, remains reusable and overrides the template default. Consumables add
 their power step only to the edge that uses them.
 
 | Field | Meaning |
 |---|---|
 | `approaches` | Which of `deception` / `force` / `opportunistic` / `quiet` / `social` / `technical` edges may roll this. |
 | `chance` | From 0.01 to 1, matching d100 precision; probability on non-guaranteed eligible edges. |
-| `consumes` | `true` for explosives, smoke, flashbangs, and one-use getaway keys; `false` for tools (crowbar, lockpick, disguise, scanner, getaway equipment…). Healing kits are never mission gear. |
+| `consumes` | Default behavior when no exact owned match exists. Use `true` for mission demands: stash-only tools, explosives, smoke, flashbangs, and getaway keys are single-use. An exact equippable tagged match remains reusable. Healing kits are never mission gear. |
 | `label` | Display name on the demand. |
 | `tags` | Item tags that satisfy it. Current roles: `flashbang`, `smoke`, `explosive`, `breaching`, `lockpick`, `hacking`, `disguise`, `climbing`, `getaway`, `scanner`, `jammer`, `crowbar`. |
 

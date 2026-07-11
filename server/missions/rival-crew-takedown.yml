@@ -48,7 +48,7 @@ gear:
     tags: [flashbang]
   - approaches: [opportunistic]
     chance: 0.4
-    consumes: false
+    consumes: true
     label: Police Scanner
     tags: [scanner]
 

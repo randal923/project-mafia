@@ -97,6 +97,11 @@ export function ItemHoverCard({
                 Lv {item.levelRequirement}
               </p>
             ) : null}
+            {item.consumable ? (
+              <p className="m-0 text-sm font-medium leading-normal text-faint">
+                Single use
+              </p>
+            ) : null}
             {item.use?.stamina ? (
               <p className="m-0 text-sm font-medium leading-normal text-profit">
                 +{item.use.stamina} stamina

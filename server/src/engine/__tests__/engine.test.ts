@@ -356,12 +356,18 @@ describe("PlayerContextService", () => {
     });
     player.stash = [
       { ...FLASHBANG, quantity: 3 },
-      { id: "crowbar", name: "Crowbar", tags: ["crowbar"] },
+      {
+        consumable: true,
+        id: "crowbar",
+        name: "Crowbar",
+        quantity: 1,
+        tags: ["crowbar"],
+      },
     ];
     const { gearTags } = PlayerContextService.fromPlayer(player);
     expect(gearTags.scanner).toEqual({ consumables: 0, permanent: true });
     expect(gearTags.flashbang).toEqual({ consumables: 3, permanent: false });
-    expect(gearTags.crowbar).toEqual({ consumables: 0, permanent: true });
+    expect(gearTags.crowbar).toEqual({ consumables: 1, permanent: false });
   });
 });
 
@@ -658,9 +664,14 @@ describe("SkeletonBuilder", () => {
       }
     });
 
-    it("a non-consumable tool satisfies every demand on the run", () => {
+    it("an equippable reusable match satisfies every demand on the run", () => {
       const nodes = gearSkeleton([
-        { id: "crowbar", name: "Crowbar", tags: ["flashbang"] },
+        {
+          id: "scanner-belt",
+          name: "Scanner Belt",
+          slot: "waist",
+          tags: ["flashbang"],
+        },
       ]);
       expect(edges(nodes).every((e) => e.gear!.satisfied)).toBe(true);
     });

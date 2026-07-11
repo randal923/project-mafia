@@ -43,12 +43,12 @@ healthRisk:
 gear:
   - approaches: [deception, social]
     chance: 0.45
-    consumes: false
+    consumes: true
     label: Staff Disguise
     tags: [disguise]
   - approaches: [technical]
     chance: 0.4
-    consumes: false
+    consumes: true
     label: Hacking Rig
     tags: [hacking]
 
