@@ -39,6 +39,11 @@ export type SkeletonInput = {
 /** How many units of each exact item a root→node path has spent. */
 type ConsumedByItem = Record<string, number>;
 
+type SkeletonPlan = {
+  approachesByNode: Record<string, JobApproach[]>;
+  guaranteedGearByEdge: Record<string, GearRequirement>;
+};
+
 /**
  * Builds the complete mission tree: every edge's check is pre-rolled and
  * every leaf's outcome tier is known before the LLM writes a word. The
@@ -102,7 +107,8 @@ export class SkeletonBuilder {
   }
 
   build(): Record<string, MissionNode> {
-    this.buildNode(ROOT_NODE_ID, 0, 0, {});
+    const plan = this.planSkeleton();
+    this.buildNode(ROOT_NODE_ID, 0, 0, {}, plan);
     return this.nodes;
   }
 
@@ -111,6 +117,7 @@ export class SkeletonBuilder {
     depth: number,
     momentum: number,
     consumed: ConsumedByItem,
+    plan: SkeletonPlan,
   ): void {
     if (depth === this.input.depth) {
       this.nodes[id] = {
@@ -130,11 +137,10 @@ export class SkeletonBuilder {
       return;
     }
 
-    const approaches = this.rng.pickDistinct(
-      JOB_APPROACHES,
-      2,
-      `${id}:approaches`,
-    );
+    const approaches = plan.approachesByNode[id];
+    if (!approaches) {
+      throw new Error(`Mission skeleton plan is missing beat node ${id}.`);
+    }
 
     const node: MissionNode = {
       choices: [],
@@ -156,7 +162,12 @@ export class SkeletonBuilder {
           ? -engine.checks.saferBolderGap
           : engine.checks.saferBolderGap;
 
-      const gear = this.rollGear(edgeId, approach, consumed);
+      const gear = this.rollGear(
+        edgeId,
+        approach,
+        consumed,
+        plan.guaranteedGearByEdge[edgeId],
+      );
       const gearModifier = gear
         ? gear.satisfied
           ? -engine.gear.satisfiedBonus
@@ -218,8 +229,96 @@ export class SkeletonBuilder {
         depth + 1,
         momentum + delta,
         this.consumeAlongPath(gear, consumed),
+        plan,
       );
     });
+  }
+
+  /**
+   * Selects every beat's approaches and reserves one distinct beat for each
+   * advertised gear requirement before any dependent check math is built.
+   */
+  private planSkeleton(): SkeletonPlan {
+    const beatNodeIds = this.beatNodeIds();
+    const requirements = this.input.template.gear ?? [];
+    if (requirements.length > beatNodeIds.length) {
+      throw new Error(
+        `Mission ${this.input.template.id} has more gear requirements than beat nodes.`,
+      );
+    }
+
+    const approachesByNode = Object.fromEntries(
+      beatNodeIds.map((nodeId) => [
+        nodeId,
+        this.rng.pickDistinct(JOB_APPROACHES, 2, `${nodeId}:approaches`),
+      ]),
+    );
+    const guaranteedGearByEdge: Record<string, GearRequirement> = {};
+    const availableNodes = new Set(beatNodeIds);
+    const orderedRequirements = requirements
+      .map((requirement, requirementIndex) => ({
+        requirement,
+        requirementIndex,
+      }))
+      .sort(
+        (a, b) =>
+          a.requirement.approaches.length - b.requirement.approaches.length ||
+          a.requirementIndex - b.requirementIndex,
+      );
+
+    orderedRequirements.forEach(({ requirement, requirementIndex }) => {
+      const compatibleNodes = [...availableNodes].filter((nodeId) =>
+        approachesByNode[nodeId]!.some((approach) =>
+          requirement.approaches.includes(approach),
+        ),
+      );
+      const nodeId = this.rng.pickDistinct(
+        compatibleNodes.length > 0 ? compatibleNodes : [...availableNodes],
+        1,
+        `gear:guaranteed:${requirementIndex}:node`,
+      )[0]!;
+      availableNodes.delete(nodeId);
+      const approaches = approachesByNode[nodeId]!;
+      const matchingEdgeIndexes = approaches
+        .map((approach, edgeIndex) =>
+          requirement.approaches.includes(approach) ? edgeIndex : null,
+        )
+        .filter((edgeIndex): edgeIndex is number => edgeIndex !== null);
+      let edgeIndex = this.rng.pickDistinct(
+        matchingEdgeIndexes,
+        1,
+        `gear:guaranteed:${requirementIndex}:matching-edge`,
+      )[0];
+
+      if (edgeIndex === undefined) {
+        edgeIndex =
+          this.rng.hashValue(`gear:guaranteed:${requirementIndex}:edge`) % 2;
+        approaches[edgeIndex] = this.rng.pickDistinct(
+          requirement.approaches,
+          1,
+          `gear:guaranteed:${requirementIndex}:approach`,
+        )[0]!;
+      }
+
+      const edgeId = SkeletonBuilder.childNodeId(nodeId, edgeIndex);
+      guaranteedGearByEdge[edgeId] = requirement;
+    });
+
+    return { approachesByNode, guaranteedGearByEdge };
+  }
+
+  private beatNodeIds(): string[] {
+    const ids = [ROOT_NODE_ID];
+
+    for (let depth = 1; depth < this.input.depth; depth += 1) {
+      ids.push(
+        ...Array.from({ length: 2 ** depth }, (_, index) =>
+          index.toString(2).padStart(depth, "0"),
+        ),
+      );
+    }
+
+    return ids;
   }
 
   /**
@@ -231,7 +330,12 @@ export class SkeletonBuilder {
     edgeId: string,
     approach: JobApproach,
     consumed: ConsumedByItem,
+    guaranteedRequirement?: GearRequirement,
   ): EdgeGear | null {
+    if (guaranteedRequirement) {
+      return this.gearForRequirement(guaranteedRequirement, consumed);
+    }
+
     const requirements = this.input.template.gear ?? [];
 
     for (let i = 0; i < requirements.length; i += 1) {
@@ -241,24 +345,32 @@ export class SkeletonBuilder {
       const roll = this.rng.rollD100(`gear:${edgeId}:${i}`);
       if (roll > requirement.chance * 100) continue;
 
-      const item = this.selectItem(requirement, consumed);
-      return {
-        consumes: item?.consumable ?? requirement.consumes,
-        label: requirement.label,
-        item: item
-          ? {
-              consumable: item.consumable,
-              id: item.id,
-              name: item.name,
-              power: item.power,
-            }
-          : null,
-        satisfied: item !== null,
-        tags: requirement.tags,
-      };
+      return this.gearForRequirement(requirement, consumed);
     }
 
     return null;
+  }
+
+  private gearForRequirement(
+    requirement: GearRequirement,
+    consumed: ConsumedByItem,
+  ): EdgeGear {
+    const item = this.selectItem(requirement, consumed);
+
+    return {
+      consumes: item?.consumable ?? requirement.consumes,
+      label: requirement.label,
+      item: item
+        ? {
+            consumable: item.consumable,
+            id: item.id,
+            name: item.name,
+            power: item.power,
+          }
+        : null,
+      satisfied: item !== null,
+      tags: requirement.tags,
+    };
   }
 
   private selectItem(

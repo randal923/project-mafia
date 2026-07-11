@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { MAX_HEALTH, recoveredHealth } from "../../../../shared/health";
 import { JOB_APPROACHES } from "../../../../shared/job";
-import { MissionTemplate } from "../../../../shared/missionTemplate";
+import {
+  MissionTemplate,
+  missionTemplateSchema,
+} from "../../../../shared/missionTemplate";
 import { createNewPlayer, normalizePlayer } from "../../../../shared/player";
 import { HealthService } from "../HealthService";
 import { JobOfferBuilder } from "../JobOfferBuilder";
@@ -14,6 +17,47 @@ import { TEST_ENGINE, TEST_TEMPLATE } from "./fixtures";
 const NOW = "2026-07-10T12:00:00.000Z";
 
 describe("mission equipment and health", () => {
+  it("shows starter power accumulating toward the unchanged combined threshold", () => {
+    const starter = createNewPlayer("starter", "Starter", NOW, {
+      torso: { id: "starter-coat", name: "Starter Coat", power: 3 },
+    });
+    const threshold = createNewPlayer("threshold", "Threshold", NOW, {
+      torso: { id: "threshold-coat", name: "Threshold Coat", power: 23 },
+    });
+    const starterBreakdown = MomentumService.checkBreakdown(
+      PlayerContextService.fromPlayer(starter),
+      "stealth",
+      "quiet",
+      20,
+      TEST_ENGINE,
+    );
+    const thresholdBreakdown = MomentumService.checkBreakdown(
+      PlayerContextService.fromPlayer(threshold),
+      "stealth",
+      "quiet",
+      20,
+      TEST_ENGINE,
+    );
+
+    expect(starterBreakdown).toMatchObject({
+      characterPower: 2,
+      characterPowerBonus: 0,
+      equipmentPower: 3,
+      equipmentPowerBonus: 0,
+      powerDivisor: 25,
+    });
+    expect(thresholdBreakdown).toMatchObject({
+      characterPower: 2,
+      characterPowerBonus: 0,
+      equipmentPower: 23,
+      equipmentPowerBonus: 1,
+      powerDivisor: 25,
+    });
+    expect(thresholdBreakdown.finalChance).toBe(
+      starterBreakdown.finalChance + 1,
+    );
+  });
+
   it("attributes character and equipped power while ignoring ordinary stash power", () => {
     const player = createNewPlayer("uid-1", "Test Player", NOW, {
       hand: { id: "weapon", name: "Weapon", power: 30, slot: "hand" },
@@ -42,6 +86,7 @@ describe("mission equipment and health", () => {
     expect(breakdown.characterPowerBonus).toBe(0);
     expect(breakdown.equipmentPowerBonus).toBe(1);
     expect(breakdown.consumablePowerBonus).toBe(0);
+    expect(breakdown.powerDivisor).toBe(TEST_ENGINE.checks.powerDivisor);
     expect(breakdown.unclampedChance).toBe(
       breakdown.baseChance +
         breakdown.skillChance +
@@ -56,6 +101,225 @@ describe("mission equipment and health", () => {
     expect(breakdown.unclampedChance + breakdown.finalAdjustment).toBe(
       breakdown.finalChance,
     );
+  });
+
+  it("guarantees the known missing Lockpick path and keeps the exact tool reusable", () => {
+    const template: MissionTemplate = {
+      ...TEST_TEMPLATE,
+      gear: [
+        {
+          approaches: ["quiet", "technical"],
+          chance: 0.3,
+          consumes: false,
+          label: "Lockpick Set",
+          tags: ["lockpick"],
+        },
+      ],
+      id: "lockpick-path",
+    };
+    const prepared = createNewPlayer("prepared", "Prepared", NOW);
+    prepared.stash = [
+      {
+        id: "bent-picks",
+        name: "Bent Picks",
+        power: 1,
+        tags: ["lockpick"],
+      },
+      {
+        id: "lockpick-set",
+        name: "Lockpick Set",
+        power: 7,
+        tags: ["lockpick"],
+      },
+    ];
+    const missing = createNewPlayer("missing", "Missing", NOW);
+    const build = (player: typeof prepared) => {
+      const context = PlayerContextService.fromPlayer(player);
+      const offer = JobOfferBuilder.buildOffers(
+        context,
+        "lockpick-board",
+        [template],
+        TEST_ENGINE,
+      )[0]!;
+
+      return new SkeletonBuilder({
+        context,
+        depth: template.depth,
+        engine: TEST_ENGINE,
+        missionId: "no-lockpick-mission",
+        offer: { ...offer, difficulty: 50 },
+        seed: "known-no-lockpick-2",
+        template,
+      }).build();
+    };
+    const preparedEdges = Object.values(build(prepared)).flatMap(
+      (node) => node.choices ?? [],
+    );
+    const missingEdges = Object.values(build(missing)).flatMap(
+      (node) => node.choices ?? [],
+    );
+    const preparedLockpickEdges = preparedEdges.filter(
+      (edge) => edge.gear?.label === "Lockpick Set",
+    );
+
+    expect(preparedLockpickEdges).toHaveLength(1);
+    const preparedEdge = preparedLockpickEdges[0]!;
+    const missingEdge = missingEdges.find((edge) => edge.id === preparedEdge.id)!;
+    expect(template.gear![0]!.approaches).toContain(preparedEdge.approach);
+    expect(preparedEdge.gear).toMatchObject({
+      consumes: false,
+      item: {
+        consumable: false,
+        id: "lockpick-set",
+        name: "Lockpick Set",
+        power: 7,
+      },
+      satisfied: true,
+    });
+    expect(missingEdge.gear).toMatchObject({
+      consumes: false,
+      item: null,
+      satisfied: false,
+    });
+    expect(missingEdge.check.difficulty - preparedEdge.check.difficulty).toBe(
+      TEST_ENGINE.gear.missingPenalty + TEST_ENGINE.gear.satisfiedBonus,
+    );
+
+    const used = consumeMissionGear(prepared, preparedEdge, NOW);
+    expect(used.consumed).toBe(false);
+    expect(used.player.stash).toEqual(prepared.stash);
+  });
+
+  it("keeps partial-chance gear occurrences beyond the guaranteed edge", () => {
+    const template: MissionTemplate = {
+      ...TEST_TEMPLATE,
+      gear: [
+        {
+          approaches: ["quiet", "technical"],
+          chance: 0.3,
+          consumes: false,
+          label: "Lockpick Set",
+          tags: ["lockpick"],
+        },
+      ],
+      id: "partial-extra-gear",
+    };
+    const context = PlayerContextService.fromPlayer(
+      createNewPlayer("partial-extra", "Partial Extra", NOW),
+    );
+    const offer = JobOfferBuilder.buildOffers(
+      context,
+      "partial-board",
+      [template],
+      TEST_ENGINE,
+    )[0]!;
+    const nodes = new SkeletonBuilder({
+      context,
+      depth: template.depth,
+      engine: TEST_ENGINE,
+      missionId: "mission-0",
+      offer,
+      seed: "seed-0",
+      template,
+    }).build();
+    const lockpickEdges = Object.values(nodes)
+      .flatMap((node) => node.choices ?? [])
+      .filter((edge) => edge.gear?.label === "Lockpick Set");
+
+    expect(lockpickEdges.length).toBeGreaterThan(1);
+    expect(
+      lockpickEdges.every((edge) =>
+        template.gear![0]!.approaches.includes(edge.approach),
+      ),
+    ).toBe(true);
+  });
+
+  it("gives overlapping requirements distinct guaranteed beat nodes", () => {
+    const template: MissionTemplate = {
+      ...TEST_TEMPLATE,
+      gear: ["Hacking Kit", "Lockpick Set", "Signal Scanner"].map(
+        (label) => ({
+          approaches: ["technical"],
+          chance: 0.01,
+          consumes: false,
+          label,
+          tags: [label],
+        }),
+      ),
+      id: "overlapping-gear",
+    };
+    const player = createNewPlayer("overlapping", "Overlapping", NOW);
+    const context = PlayerContextService.fromPlayer(player);
+    const offer = JobOfferBuilder.buildOffers(
+      context,
+      "overlapping-board",
+      [template],
+      TEST_ENGINE,
+    )[0]!;
+    const nodes = new SkeletonBuilder({
+      context,
+      depth: template.depth,
+      engine: TEST_ENGINE,
+      missionId: "overlapping-mission",
+      offer,
+      seed: "overlapping-seed",
+      template,
+    }).build();
+    const guaranteedEdges = Object.values(nodes)
+      .flatMap((node) => node.choices ?? [])
+      .filter((edge) => edge.gear !== null);
+
+    expect(guaranteedEdges).toHaveLength(template.gear!.length);
+    expect(guaranteedEdges.map((edge) => edge.gear!.label).sort()).toEqual(
+      template.gear!.map((requirement) => requirement.label).sort(),
+    );
+    expect(guaranteedEdges.every((edge) => edge.approach === "technical")).toBe(
+      true,
+    );
+    expect(
+      new Set(
+        guaranteedEdges.map((edge) => SkeletonBuilder.parentNodeId(edge.id)),
+      ).size,
+    ).toBe(template.gear!.length);
+  });
+
+  it("rejects unrollable and over-capacity advertised gear", () => {
+    const requirement = {
+      approaches: ["technical" as const],
+      chance: 0.5,
+      consumes: false,
+      label: "Tool",
+      tags: ["tool"],
+    };
+    const zeroChance = missionTemplateSchema.safeParse({
+      ...TEST_TEMPLATE,
+      gear: [{ ...requirement, chance: 0 }],
+    });
+    const belowD100Precision = missionTemplateSchema.safeParse({
+      ...TEST_TEMPLATE,
+      gear: [{ ...requirement, chance: 0.009 }],
+    });
+    const overCapacity = missionTemplateSchema.safeParse({
+      ...TEST_TEMPLATE,
+      gear: Array.from({ length: 8 }, (_, index) => ({
+        ...requirement,
+        label: `Tool ${index}`,
+      })),
+    });
+
+    expect(zeroChance.success).toBe(false);
+    expect(belowD100Precision.success).toBe(false);
+    expect(overCapacity.success).toBe(false);
+    if (!overCapacity.success) {
+      expect(overCapacity.error.issues).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            message: "Mission gear cannot exceed its 7 beat nodes.",
+            path: ["gear"],
+          }),
+        ]),
+      );
+    }
   });
 
   it("adds the strongest exact consumed item's one-edge power and reserves it", () => {

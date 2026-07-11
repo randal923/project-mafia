@@ -122,6 +122,8 @@ export type CheckModifierBreakdown = {
   finalChance: number;
   heatPenalty: number;
   intoxicationPenalty: number;
+  /** Power required for each cumulative +1%; absent on legacy missions. */
+  powerDivisor?: number;
   skillChance: number;
   skillLevel: number;
   unclampedChance: number;

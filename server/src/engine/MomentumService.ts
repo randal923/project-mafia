@@ -93,6 +93,7 @@ export class MomentumService {
       finalChance,
       heatPenalty,
       intoxicationPenalty: impairment,
+      powerDivisor: c.powerDivisor,
       skillChance,
       skillLevel,
       unclampedChance,

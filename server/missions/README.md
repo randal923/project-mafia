@@ -228,12 +228,18 @@ until the choice is taken, and then narrated from engine facts.
 
 ### `gear` (optional)
 
-A list of equipment demands the mission can spring on the player:
+A list of equipment demands the mission can spring on the player. Every
+entry is guaranteed on one deterministic, approach-valid edge somewhere in
+each newly accepted mission tree; additional eligible edges still use the
+authored `chance`. The guarantee is for the complete tree, not the opening
+choices or every route a player might select. Placement prefers a beat whose
+random approaches already match; only when no unused compatible beat exists
+does generation replace one approach with an authored eligible approach.
 
 ```
 gear:
   - approaches: [technical, force]   # edges with one of these approaches can roll it
-    chance: 0.55                     # probability an eligible edge demands it
+    chance: 0.55                     # probability an additional eligible edge demands it
     consumes: true                   # spent on use (grenades yes, crowbars no)
     label: Breaching Charge          # shown to the player
     tags: [breaching, explosive]     # any owned item with one of these tags satisfies it
@@ -250,7 +256,7 @@ their power step only to the edge that uses them.
 | Field | Meaning |
 |---|---|
 | `approaches` | Which of `deception` / `force` / `opportunistic` / `quiet` / `social` / `technical` edges may roll this. |
-| `chance` | 0–1 probability per eligible edge. |
+| `chance` | From 0.01 to 1, matching d100 precision; probability on non-guaranteed eligible edges. |
 | `consumes` | `true` for explosives, smoke, flashbangs, and one-use getaway keys; `false` for tools (crowbar, lockpick, disguise, scanner, getaway equipment…). Healing kits are never mission gear. |
 | `label` | Display name on the demand. |
 | `tags` | Item tags that satisfy it. Current roles: `flashbang`, `smoke`, `explosive`, `breaching`, `lockpick`, `hacking`, `disguise`, `climbing`, `getaway`, `scanner`, `jammer`, `crowbar`. |
@@ -263,6 +269,10 @@ theme: vaults → breaching/explosive/hacking, stealth → smoke/
 climbing/lockpick, social → disguise, vehicles → getaway/crowbar,
 firefights → explosive/flashbang/scanner. Healing kits are live inventory,
 not mission gear.
+
+Each entry needs its own beat node for deterministic placement, so the
+number of `gear` entries cannot exceed `2^depth - 1`. Invalid zero-chance or
+over-capacity templates fail validation at server startup.
 
 ### `outcomes`
 

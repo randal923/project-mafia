@@ -27,8 +27,8 @@ const gearRequirementSchema = z
   .object({
     /** Edges with one of these approaches can roll this requirement. */
     approaches: z.array(z.enum(JOB_APPROACHES)).min(1),
-    /** Probability an eligible edge actually demands the gear. */
-    chance: z.number().min(0).max(1),
+    /** Probability an additional eligible edge demands the gear. */
+    chance: z.number().min(0.01).max(1),
     /** Whether using the gear spends one (grenades yes, crowbars no). */
     consumes: z.boolean(),
     /** Display name, e.g. "Flashbang". */
@@ -131,6 +131,14 @@ export const missionTemplateSchema = z
         code: "custom",
         message: "Every mission must make force choices a Health risk.",
         path: ["healthRisk", "approaches"],
+      });
+    }
+    const beatNodeCapacity = 2 ** template.depth - 1;
+    if ((template.gear?.length ?? 0) > beatNodeCapacity) {
+      context.addIssue({
+        code: "custom",
+        message: `Mission gear cannot exceed its ${beatNodeCapacity} beat nodes.`,
+        path: ["gear"],
       });
     }
   });

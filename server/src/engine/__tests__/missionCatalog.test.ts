@@ -387,6 +387,19 @@ describe("production mission and equipment contract", () => {
       expect(Object.keys(nodes)).toHaveLength(2 ** (template.depth + 1) - 1);
       const paths = completePaths(nodes);
       expect(paths).toHaveLength(2 ** template.depth);
+      for (const requirement of template.gear ?? []) {
+        expect(
+          paths.some((path) =>
+            path.some(
+              ({ edge }) =>
+                edge.gear?.label === requirement.label &&
+                edge.gear.tags.join("\0") === requirement.tags.join("\0") &&
+                requirement.approaches.includes(edge.approach),
+            ),
+          ),
+          `${template.id}: ${requirement.label} guaranteed path`,
+        ).toBe(true);
+      }
       const reservations = SkeletonBuilder.reservationsForSubtree(nodes);
       for (const [itemId, quantity] of Object.entries(reservations)) {
         expect(quantity).toBeLessThanOrEqual(

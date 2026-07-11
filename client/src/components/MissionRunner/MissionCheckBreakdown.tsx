@@ -15,6 +15,11 @@ export function MissionCheckBreakdown({
   breakdown,
   gear,
 }: MissionCheckBreakdownProps) {
+  const combinedPower = breakdown.characterPower + breakdown.equipmentPower;
+  const powerUntilNextBonus = breakdown.powerDivisor
+    ? breakdown.powerDivisor - (combinedPower % breakdown.powerDivisor)
+    : null;
+
   return (
     <div className="col-span-2 border-t border-line pt-3">
       <p className={`m-0 ${typography.metadata}`}>Authoritative check math</p>
@@ -39,6 +44,15 @@ export function MissionCheckBreakdown({
         <dd className="m-0 text-right">
           +{breakdown.equipmentPowerBonus}%
         </dd>
+        {powerUntilNextBonus !== null ? (
+          <>
+            <dt>Base power progress</dt>
+            <dd className="m-0 text-right">
+              {combinedPower} combined · {powerUntilNextBonus} power to next
+              +1%
+            </dd>
+          </>
+        ) : null}
         {gear?.satisfied && gear.consumes && gear.item ? (
           <>
             <dt>

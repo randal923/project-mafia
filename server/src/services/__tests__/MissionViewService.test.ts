@@ -40,6 +40,7 @@ const futureEdge: ChoiceEdge = {
     finalChance: 63,
     heatPenalty: 0,
     intoxicationPenalty: 0,
+    powerDivisor: 25,
     skillChance: 20,
     skillLevel: 20,
     unclampedChance: 63,
@@ -47,9 +48,15 @@ const futureEdge: ChoiceEdge = {
   damage: { absorbed: 1, healthLost: 3, incoming: 4 },
   gear: {
     consumes: false,
-    label: "Crowbar",
-    satisfied: false,
-    tags: ["crowbar"],
+    item: {
+      consumable: false,
+      id: "lockpick-set",
+      name: "Lockpick Set",
+      power: 0,
+    },
+    label: "Lockpick Set",
+    satisfied: true,
+    tags: ["lockpick"],
   },
   healthRisk: true,
   id: "0",
@@ -115,7 +122,20 @@ describe("MissionViewService", () => {
 
     expect(choice).toMatchObject({
       check: { difficulty: 20, skill: "stealth" },
-      checkBreakdown: { equipmentPowerBonus: 1, finalChance: 63 },
+      checkBreakdown: {
+        equipmentPowerBonus: 1,
+        finalChance: 63,
+        powerDivisor: 25,
+      },
+      gear: {
+        consumes: false,
+        item: {
+          id: "lockpick-set",
+          name: "Lockpick Set",
+          power: 0,
+        },
+        satisfied: true,
+      },
       healthRisk: true,
       odds: { failure: 37, success: 63 },
       skillExperience: { criticalSuccess: 62, success: 31 },
@@ -143,14 +163,25 @@ describe("MissionViewService", () => {
   });
 
   it("keeps older missions readable when XP settings are absent", () => {
+    const legacyBreakdown = { ...futureEdge.checkBreakdown };
+    delete legacyBreakdown.powerDivisor;
     const legacyMission = {
       ...mission,
+      nodes: {
+        ...mission.nodes,
+        [ROOT_NODE_ID]: {
+          ...mission.nodes[ROOT_NODE_ID]!,
+          choices: [{ ...futureEdge, checkBreakdown: legacyBreakdown }],
+        },
+      },
       template: undefined,
     } as unknown as Mission;
 
-    expect(MissionViewService.toView(legacyMission).choices?.[0]).toMatchObject({
+    const choice = MissionViewService.toView(legacyMission).choices?.[0];
+    expect(choice).toMatchObject({
       odds: { failure: 37, success: 63 },
       skillExperience: null,
     });
+    expect(choice?.checkBreakdown).not.toHaveProperty("powerDivisor");
   });
 });
