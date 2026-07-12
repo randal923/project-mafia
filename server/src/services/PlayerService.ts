@@ -136,10 +136,10 @@ export class PlayerService {
       ]);
 
       if (existingPlayer.exists) {
-        throw new HttpError(409, "You already have a player.");
+        throw new HttpError(409, { code: "player_exists" });
       }
       if (!sameName.empty) {
-        throw new HttpError(409, "That name is already taken.");
+        throw new HttpError(409, { code: "player_name_taken" });
       }
 
       tx.create(playerRef, player);
@@ -155,7 +155,7 @@ export class PlayerService {
     return this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(playerRef);
       if (!snapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const player = normalizePlayer(snapshot.data() as Player);
@@ -207,20 +207,23 @@ export class PlayerService {
     return this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(playerRef);
       if (!snapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const player = normalizePlayer(snapshot.data() as Player);
       if (player.prison) {
-        throw new HttpError(403, "The precinct doesn't take calls from a cell.");
+        throw new HttpError(403, { code: "precinct_unavailable_in_prison" });
       }
       if (player.resources.heat <= 0) {
-        throw new HttpError(400, "You're already cold — nothing to pay for.");
+        throw new HttpError(400, { code: "heat_already_zero" });
       }
 
       const quote = this.precinctQuote(player, precinctCostFactor);
       if (player.resources.cash < quote.cost) {
-        throw new HttpError(402, "You can't afford the envelope.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: quote.cost },
+        });
       }
 
       const updated: Player = {
@@ -242,7 +245,11 @@ export class PlayerService {
     const knife = await this.equipment.getEquipment(STARTER_EQUIPMENT_ID);
 
     if (!knife || knife.slot === null) {
-      throw new HttpError(500, "Starter equipment is missing.");
+      throw new HttpError(
+        500,
+        { code: "internal_error" },
+        "Starter equipment is missing.",
+      );
     }
 
     return { [knife.slot]: equipmentToPlayerItem(knife) };

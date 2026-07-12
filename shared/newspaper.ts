@@ -13,6 +13,7 @@ export const WORLD_EVENT_TYPES = [
   "landmark_captured",
   "season_end",
   "stronghold_countdown",
+  "stronghold_countdown_broken",
   "turf_captured",
   "turf_claimed",
 ] as const;
@@ -28,6 +29,7 @@ export const WORLD_EVENT_WEIGHTS: Record<WorldEventType, number> = {
   landmark_captured: 80,
   season_end: 100,
   stronghold_countdown: 100,
+  stronghold_countdown_broken: 100,
   turf_captured: 40,
   turf_claimed: 10,
 };
@@ -62,6 +64,11 @@ export type NewspaperArticle = {
   body: string;
   section: NewspaperSection;
   title: string;
+};
+
+export type NewspaperCopy = {
+  articles: NewspaperArticle[];
+  headline: NewspaperArticle;
 };
 
 /**
@@ -112,6 +119,8 @@ export type NewspaperEdition = {
   id: string;
   /** Reigning champion engraved on the masthead, if any. */
   mastheadChampion: string | null;
+  /** Brazilian Portuguese copy. Absent on editions published before localization. */
+  ptBR?: NewspaperCopy;
   publishedAt: string;
   seasonId: string;
   standings: NewspaperStanding[];

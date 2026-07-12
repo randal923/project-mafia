@@ -8,14 +8,16 @@ import { PlayerContextService } from "../engine/PlayerContextService";
 import { OpenAiProviderService } from "./ai/OpenAiProviderService";
 import { EngineConfigService } from "./EngineConfigService";
 import { FirebaseService } from "./FirebaseService";
+import { isLikelyPortugueseText } from "./isLikelyPortugueseText";
 import { MissionTemplateService } from "./MissionTemplateService";
+import { localizeJobOffersPtBR } from "./localizeJobOffersPtBR";
 
 /**
  * Bump when the OFFER SHAPE changes (new fields like staminaCost/gear),
  * so boards stored with old offer metadata regenerate on next fetch. The
  * template-id key separately catches mission additions and removals.
  */
-const BOARD_FORMAT_VERSION = 4;
+const BOARD_FORMAT_VERSION = 5;
 
 const localizedOffersSchema = z.object({
   offers: z.array(
@@ -60,7 +62,10 @@ export class JobBoardService {
     return board.templatesKey === this.templatesKey();
   }
 
-  private matchesLanguage(board: JobBoard, player: Player): boolean {
+  matchesLanguage(
+    board: JobBoard,
+    player: Pick<Player, "language">,
+  ): boolean {
     return (board.language ?? "en") === (player.language ?? "en");
   }
 
@@ -89,12 +94,14 @@ export class JobBoardService {
   /**
    * One batch LLM call that renders the offers' prose (story seed and gear
    * labels) in Brazilian Portuguese. The board must never fail on prose,
-   * so any provider or shape problem falls back to the English originals.
+   * so any provider or shape problem falls back to authored Portuguese.
    */
   private async localizeOffers(offers: JobOffer[]): Promise<JobOffer[]> {
     if (offers.length === 0) {
       return offers;
     }
+
+    const fallback = localizeJobOffersPtBR(offers);
 
     try {
       const briefs = offers.map((offer) => ({
@@ -113,8 +120,12 @@ export class JobBoardService {
       });
 
       const parsed = localizedOffersSchema.safeParse(raw);
-      if (!parsed.success || parsed.data.offers.length !== offers.length) {
-        return offers;
+      if (
+        !parsed.success ||
+        parsed.data.offers.length !== offers.length ||
+        !isLikelyPortugueseText(parsed.data)
+      ) {
+        return fallback;
       }
 
       return offers.map((offer, index) => {
@@ -130,13 +141,16 @@ export class JobBoardService {
         if (offer.gear) {
           result.gear = offer.gear.map((entry, gearIndex) => ({
             ...entry,
-            label: localized.gearLabels[gearIndex] ?? entry.label,
+            label:
+              localized.gearLabels[gearIndex] ??
+              fallback[index]?.gear?.[gearIndex]?.label ??
+              "equipamento especial",
           }));
         }
         return result;
       });
     } catch {
-      return offers;
+      return fallback;
     }
   }
 

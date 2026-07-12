@@ -331,6 +331,8 @@ export type Mission = {
   depth: number;
   generationStartedAt: string | null;
   id: string;
+  /** Locale used for authored offer and narrative prose; absent legacy = English. */
+  language?: PlayerLanguage;
   /** Tier thresholds at this depth; absent on pre-stakes missions. */
   momentumBands?: MomentumBands;
   nodes: Record<string, MissionNode>;
@@ -418,6 +420,8 @@ export type MissionView = {
   crew?: MissionCrewSnapshot[];
   depth: number;
   id: string;
+  /** Locale used for authored prose; absent legacy = English. */
+  language?: PlayerLanguage;
   /** Where the run stands; absent on pre-stakes missions. */
   momentum?: {
     bands: MomentumBands;

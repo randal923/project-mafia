@@ -1,4 +1,5 @@
 import type { JobDistrict, OutcomeTier } from "./job";
+import type { PlayerLanguage } from "./language";
 
 export type NarrativeEventType = "job_resolved";
 
@@ -9,6 +10,7 @@ export type NarrativeEvent = {
   district: JobDistrict;
   heatChange: number;
   id: string;
+  language?: PlayerLanguage;
   missionId: string;
   outcomeTier: OutcomeTier;
   summary: string;
@@ -25,6 +27,8 @@ export type PlayerNarrative = {
   llmMemory: PlayerLlmMemory;
   /** Rolling recap of the player's story, fed to the game master prompt. */
   storySummary: string;
+  /** Per-locale recaps preserve history when the player changes language. */
+  storySummaries?: Partial<Record<PlayerLanguage, string>>;
 };
 
 export const STORY_SUMMARY_MAX_LENGTH = 1000;

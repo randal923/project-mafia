@@ -1,4 +1,5 @@
 import type { EquipmentSlotId, PlayerItem, PlayerRank } from "./player";
+import type { PlayerLanguage } from "./language";
 import type { SkillId } from "./skills";
 
 /**
@@ -218,6 +219,8 @@ export type CrewMember = {
   archetype: CrewArchetypeId;
   /** One-line backstory, LLM-written at hire time. */
   bio: string;
+  /** Locale used to author `bio`; absent legacy records are English. */
+  bioLanguage?: PlayerLanguage;
   createdAt: string;
   /** Set while status is imprisoned: gear held by the precinct. A bribe
    * release returns it; walking out on time served forfeits it. */
@@ -245,6 +248,7 @@ export type CrewMember = {
 export type CrewCandidate = {
   archetype: CrewArchetypeId;
   bio: string;
+  bioLanguage?: PlayerLanguage;
   hireCost: number;
   id: string;
   name: string;
@@ -257,6 +261,8 @@ export type CrewCandidate = {
 export type CrewRecruitmentPool = {
   candidates: CrewCandidate[];
   generatedAt: string;
+  /** Invalidates the pool after the player changes language. */
+  language?: PlayerLanguage;
 };
 
 export const MAX_CREW_SKILL_LEVEL = 100;
@@ -419,6 +425,7 @@ export function normalizeCrewMember(member: CrewMember): CrewMember {
     ...member,
     assignment: member.assignment ?? null,
     busyUntil: member.busyUntil ?? null,
+    bioLanguage: member.bioLanguage ?? "en",
     confiscatedLoadout: member.confiscatedLoadout ?? null,
     loadout: member.loadout ?? {},
     loyalty: Math.min(

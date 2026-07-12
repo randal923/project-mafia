@@ -2,6 +2,7 @@ import { createEmptyNarrative, type PlayerNarrative } from "./narrative";
 import { MAX_HEALTH, MIN_HEALTH } from "./health";
 import { playerNameKey } from "./playerSchemas";
 import type { PlayerFamily } from "./territory";
+import type { JobApproach } from "./job";
 import {
   SKILL_IDS,
   STARTING_SKILL_LEVEL,
@@ -59,7 +60,7 @@ export type PlayerItem = {
 
 /** Passive bonuses an equipped item grants. Mirrors EquipmentEffect. */
 export type PlayerItemEffect =
-  | { type: "approachBonus"; approach: string; value: number }
+  | { type: "approachBonus"; approach: JobApproach; value: number }
   | { type: "heatReduction"; value: number }
   | { type: "skillBonus"; skill: keyof PlayerSkills; value: number };
 
@@ -121,6 +122,8 @@ export type PlayerPrison = {
   attemptCooldownUntil: string | null;
   /** Narrative context: which job put them here. */
   reason: string;
+  /** Locale used to author `reason`; absent legacy records are English. */
+  reasonLanguage?: PlayerLanguage;
   releaseAt: string;
   sentencedAt: string;
 };

@@ -3,8 +3,6 @@
 import {
   CREW_ARCHETYPES,
   CREW_SLOT_IDS,
-  CREW_TIER_LABELS,
-  CREW_TRAITS,
   crewBribeCost,
   crewCheckBonus,
   crewMemberPower,
@@ -14,20 +12,15 @@ import {
   type CrewSlotId,
 } from "@shared/crew";
 import type { PlayerItem } from "@shared/player";
-import { SKILLS } from "@shared/skills";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { useCatalogText } from "../../lib/useCatalogText";
+import { useCrewText } from "../../lib/useCrewText";
+import { useFormatters } from "../../lib/useFormatters";
 import { Button } from "../Button/Button";
 import { Tag } from "../Tag/Tag";
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency",
-});
 
 type CrewMemberCardProps = {
   isBusy: boolean;
@@ -52,6 +45,17 @@ export function CrewMemberCard({
   onUnequip,
 }: CrewMemberCardProps) {
   const t = useTranslations("crew");
+  const locale = useLocale();
+  const { moneyFormatter } = useFormatters();
+  const { crewBio, crewName } = useCrewText();
+  const timeFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    [locale],
+  );
   const { archetypeName, itemName, skillName, tierName, traitName } =
     useCatalogText();
   const [equippingSlot, setEquippingSlot] = useState<CrewSlotId | null>(null);
@@ -68,7 +72,7 @@ export function CrewMemberCard({
       <header className="flex items-start justify-between gap-3">
         <div>
           <p className={`m-0 ${displayText} text-2xl text-title`}>
-            {member.name}
+            {crewName(member.name)}
           </p>
           <p className={`m-0 ${typography.metadata}`}>
             {tierName(member.tier)} · {archetypeName(member.archetype)}
@@ -84,7 +88,9 @@ export function CrewMemberCard({
         />
       </header>
 
-      <p className={`m-0 ${typography.narrativeCaption}`}>{member.bio}</p>
+      <p className={`m-0 ${typography.narrativeCaption}`}>
+        {crewBio(member)}
+      </p>
 
       <dl className="m-0 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-control border border-brass/50 bg-brass/10 px-2 py-2">
@@ -128,10 +134,7 @@ export function CrewMemberCard({
       {busyUntilMs && busyUntilMs > now ? (
         <p className={`m-0 ${typography.metadata}`}>
           {t("backAround", {
-            time: new Intl.DateTimeFormat("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }).format(busyUntilMs),
+            time: timeFormatter.format(busyUntilMs),
           })}
         </p>
       ) : null}

@@ -13,6 +13,7 @@ import {
 } from "./MissionNarrator";
 import { MissionPrompts } from "./MissionPrompts";
 import { OpenAiProviderService } from "./OpenAiProviderService";
+import { isLikelyPortugueseText } from "../isLikelyPortugueseText";
 
 /**
  * LLM game master. Validates every reply against the shared zod contract
@@ -72,7 +73,16 @@ export class AiNarratorService implements MissionNarrator {
       const parsed = schema.safeParse(raw);
 
       if (parsed.success) {
-        return parsed.data;
+        if (
+          language !== "pt-BR" ||
+          isLikelyPortugueseText(parsed.data)
+        ) {
+          return parsed.data;
+        }
+
+        lastIssues = "The reply was not written in Brazilian Portuguese.";
+        prompt = `${userPrompt}\n\nYour previous reply used the wrong language. Write every player-facing string in natural Brazilian Portuguese and return corrected JSON only.`;
+        continue;
       }
 
       lastIssues = JSON.stringify(parsed.error.issues);

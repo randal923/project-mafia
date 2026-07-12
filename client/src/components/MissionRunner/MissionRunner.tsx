@@ -2,6 +2,8 @@ import type { MissionView } from "@shared/job";
 import type { PlayerItem } from "@shared/player";
 import { useTranslations } from "next-intl";
 import { typography } from "../../design-system/typography";
+import { useCatalogText } from "../../lib/useCatalogText";
+import { useLanguage } from "../LanguageProvider/LanguageProvider";
 import { NarrativeCard } from "../NarrativeCard/NarrativeCard";
 import { MissionCheckBadge } from "./MissionCheckBadge";
 import { MissionAcceptedEquipment } from "./MissionAcceptedEquipment";
@@ -40,15 +42,60 @@ export function MissionRunner({
   onHeal
 }: MissionRunnerProps) {
   const t = useTranslations("mission");
+  const { language } = useLanguage();
+  const { districtNameForLabel } = useCatalogText();
   const step = currentStep(mission);
+  const proseMatchesLanguage = (mission.language ?? "en") === language;
+  const visibleStep = proseMatchesLanguage
+    ? step
+    : {
+        ...step,
+        edgeTaken: step.edgeTaken
+          ? {
+              ...step.edgeTaken,
+              gear: step.edgeTaken.gear
+                ? {
+                    ...step.edgeTaken.gear,
+                    label: t("choice.genericGear"),
+                  }
+                : null,
+              label: null,
+            }
+          : null,
+        narrative: {
+          body: t("runner.legacyBody"),
+          stakes: null,
+          storySummary: null,
+          title: t("runner.legacyTitle"),
+        },
+      };
+  const visibleChoices = proseMatchesLanguage
+    ? mission.choices
+    : mission.choices?.map((choice) => ({
+        ...choice,
+        gear: choice.gear
+          ? { ...choice.gear, label: t("choice.genericGear") }
+          : null,
+        intent: null,
+        label: null,
+        riskHint: null,
+      })) ?? null;
   const beatNumber = mission.steps.length;
   const totalBeats = mission.depth + 1;
 
   return (
     <NarrativeCard
-      district={mission.offer.district}
-      kicker={mission.offer.storySeed.location}
-      priority={step.edgeTaken && !step.edgeTaken.passed ? "urgent" : "standard"}
+      district={districtNameForLabel(mission.offer.district)}
+      kicker={
+        proseMatchesLanguage
+          ? mission.offer.storySeed.location
+          : t("runner.legacyLocation")
+      }
+      priority={
+        visibleStep.edgeTaken && !visibleStep.edgeTaken.passed
+          ? "urgent"
+          : "standard"
+      }
       timeLabel={
         mission.status === "resolved"
           ? t("runner.jobComplete")
@@ -61,7 +108,7 @@ export function MissionRunner({
           ? t("runner.dustSettles")
           : isWaitingOnNarration(mission)
             ? t("runner.settingUp")
-            : (step.narrative?.title ?? t("runner.settingUp"))
+            : (visibleStep.narrative?.title ?? t("runner.settingUp"))
       }
     >
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
@@ -84,11 +131,13 @@ export function MissionRunner({
       ) : null}
       {mission.status === "resolved" && mission.resolution ? (
         <div className="flex flex-col gap-5">
-          {step.edgeTaken ? <MissionCheckBadge edge={step.edgeTaken} /> : null}
+          {visibleStep.edgeTaken ? (
+            <MissionCheckBadge edge={visibleStep.edgeTaken} />
+          ) : null}
           <MissionOutcomePanel
             onFinish={onFinish}
             resolution={mission.resolution}
-            step={step}
+            step={visibleStep}
           />
         </div>
       ) : isWaitingOnNarration(mission) ? (
@@ -105,18 +154,20 @@ export function MissionRunner({
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          {step.edgeTaken ? <MissionCheckBadge edge={step.edgeTaken} /> : null}
+          {visibleStep.edgeTaken ? (
+            <MissionCheckBadge edge={visibleStep.edgeTaken} />
+          ) : null}
           <p className={`m-0 ${typography.narrativeBody}`}>
-            {step.narrative?.body}
+            {visibleStep.narrative?.body}
           </p>
-          {step.narrative?.stakes ? (
+          {visibleStep.narrative?.stakes ? (
             <p className={`m-0 ${typography.leadBody}`}>
-              {step.narrative.stakes}
+              {visibleStep.narrative.stakes}
             </p>
           ) : null}
-          {mission.choices ? (
+          {visibleChoices ? (
             <div className="grid gap-4 sm:grid-cols-2">
-              {mission.choices.map((choice) => (
+              {visibleChoices.map((choice) => (
                 <MissionChoiceCard
                   choice={choice}
                   disabled={isChoosing}

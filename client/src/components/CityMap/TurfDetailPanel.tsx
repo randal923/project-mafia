@@ -7,22 +7,18 @@ import {
 } from "@shared/building";
 import { buildingDefinition, buildingsOfClass } from "@shared/buildingCatalog";
 import { attackStake } from "@shared/battle";
-import { CREW_ARCHETYPES, type CrewMember } from "@shared/crew";
+import type { CrewMember } from "@shared/crew";
 import { DISTRICTS } from "@shared/district";
 import { PLAYER_RANKS, type Player } from "@shared/player";
 import { turfDefense, type TurfState } from "@shared/territory";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { useCatalogText } from "../../lib/useCatalogText";
+import { useCrewText } from "../../lib/useCrewText";
+import { useFormatters } from "../../lib/useFormatters";
 import { Button } from "../Button/Button";
 import { Tag } from "../Tag/Tag";
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency",
-});
 
 type TurfDetailPanelProps = {
   crew: CrewMember[];
@@ -52,8 +48,24 @@ export function TurfDetailPanel({
   turf,
 }: TurfDetailPanelProps) {
   const t = useTranslations("map");
-  const { archetypeName, buildingDescription, buildingName, districtName } =
-    useCatalogText();
+  const locale = useLocale();
+  const { moneyFormatter } = useFormatters();
+  const { crewName } = useCrewText();
+  const timeFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    [locale],
+  );
+  const {
+    archetypeName,
+    buildingDescription,
+    buildingName,
+    districtName,
+    turfName,
+  } = useCatalogText();
   const [buildSelection, setBuildSelection] = useState("");
   const [staffingBuildingId, setStaffingBuildingId] = useState<string | null>(
     null,
@@ -68,7 +80,9 @@ export function TurfDetailPanel({
   const shieldMs = turf.shieldUntil ? Date.parse(turf.shieldUntil) : 0;
   const shielded = shieldMs > now;
   const defenderNames = turf.assignedCrew
-    .map((id) => crew.find((member) => member.id === id)?.name)
+    .map((id) => crew.find((member) => member.id === id))
+    .filter((member): member is CrewMember => Boolean(member))
+    .map((member) => crewName(member.name))
     .filter(Boolean);
   const visibleDefense = turfDefense(turf, 0);
   const rackets = buildingsOfClass("racket").filter(
@@ -85,7 +99,7 @@ export function TurfDetailPanel({
           {districtName(turf.district)}
         </p>
         <h2 className={`m-0 ${displayText} text-3xl text-title`}>
-          {turf.name}
+          {turfName(turf.id)}
         </h2>
         <div className="mt-2 flex flex-wrap gap-2">
           {landmark ? (
@@ -98,10 +112,7 @@ export function TurfDetailPanel({
             <Tag
               className="border-teal text-teal"
               label={t("turf.shieldedUntil", {
-                time: new Intl.DateTimeFormat("en-US", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }).format(shieldMs),
+                time: timeFormatter.format(shieldMs),
               })}
             />
           ) : null}
@@ -113,7 +124,9 @@ export function TurfDetailPanel({
               label={
                 isOwn
                   ? t("turf.flagYours")
-                  : t("turf.flagOther", { name: turf.ownerName ?? "" })
+                  : t("turf.flagOther", {
+                      name: turf.ownerName || t("unknownFamily"),
+                    })
               }
             />
           )}
@@ -288,7 +301,7 @@ export function TurfDetailPanel({
                               <option value="">{t("turf.clearStaff")}</option>
                               {idleCrew.map((member) => (
                                 <option key={member.id} value={member.id}>
-                                  {member.name} (
+                                  {crewName(member.name)} (
                                   {archetypeName(member.archetype)})
                                 </option>
                               ))}

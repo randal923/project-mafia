@@ -13,7 +13,7 @@ type NavigationItem = {
 type NavigationBarProps = {
   actions?: ReactNode;
   activeItemId?: string;
-  ariaLabel?: string;
+  ariaLabel: string;
   brand: string;
   items: readonly NavigationItem[];
 };
@@ -21,7 +21,7 @@ type NavigationBarProps = {
 export function NavigationBar({
   actions,
   activeItemId,
-  ariaLabel = "Primary",
+  ariaLabel,
   brand,
   items,
 }: NavigationBarProps) {

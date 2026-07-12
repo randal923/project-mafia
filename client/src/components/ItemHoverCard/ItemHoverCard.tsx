@@ -75,7 +75,7 @@ export function ItemHoverCard({
         >
           {item.image ? (
             <Image
-              alt={item.image.alt}
+              alt={itemName(item)}
               className="mx-auto h-20 w-20 object-contain drop-shadow"
               height={80}
               src={item.image.src}

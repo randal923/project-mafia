@@ -22,7 +22,7 @@ export class NotificationsController {
 
   private requireUid(req: Request): string {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
     return req.uid;
   }

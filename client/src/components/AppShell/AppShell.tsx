@@ -74,6 +74,7 @@ export function AppShell({ children }: AppShellProps) {
             </div>
           }
           activeItemId={activeItemId}
+          ariaLabel={t("nav.ariaLabel")}
           brand="Project Mafia"
           items={navigationItems}
         />

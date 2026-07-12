@@ -36,7 +36,7 @@ export class StoreService {
   async buy(uid: string, equipmentId: string): Promise<Player> {
     const item = await this.equipment.getEquipment(equipmentId);
     if (!item) {
-      throw new HttpError(404, "The store doesn't carry that.");
+      throw new HttpError(404, { code: "store_item_not_found" });
     }
 
     // Every purchase is a single piece; consumables stack in the stash.
@@ -48,7 +48,7 @@ export class StoreService {
     return this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(playerRef);
       if (!snapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const nowIso = new Date().toISOString();
@@ -65,13 +65,16 @@ export class StoreService {
         },
       };
       if (!meetsLevelRequirement(player.progression.level, item)) {
-        throw new HttpError(
-          403,
-          `You need to be level ${item.levelRequirement} to buy that.`,
-        );
+        throw new HttpError(403, {
+          code: "level_required",
+          params: { required: item.levelRequirement ?? 1 },
+        });
       }
       if (player.resources.cash < cost) {
-        throw new HttpError(402, "You can't afford that.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: cost },
+        });
       }
 
       const updated: Player = {
@@ -96,7 +99,7 @@ export class StoreService {
     return this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(playerRef);
       if (!snapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const nowIso = new Date().toISOString();
@@ -114,7 +117,7 @@ export class StoreService {
       };
       const index = player.stash.findIndex((entry) => entry.id === itemId);
       if (index === -1) {
-        throw new HttpError(404, "That item isn't in your stash.");
+        throw new HttpError(404, { code: "item_not_in_stash" });
       }
 
       const item = player.stash[index]!;
@@ -122,10 +125,7 @@ export class StoreService {
       const reserved = player.reservedEquipment?.items[item.id] ?? 0;
       const available = Math.max(0, owned - reserved);
       if (available === 0) {
-        throw new HttpError(
-          409,
-          "That quantity is packed for your active job and can't be sold.",
-        );
+        throw new HttpError(409, { code: "item_reserved" });
       }
       const amount = Math.min(available, quantity);
       const payout =

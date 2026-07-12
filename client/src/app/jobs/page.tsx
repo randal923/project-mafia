@@ -1,9 +1,7 @@
-import type { Metadata } from "next";
+import { getLocalizedMetadata } from "../../lib/getLocalizedMetadata";
 import { JobsPageContent } from "./JobsPageContent";
 
-export const metadata: Metadata = {
-  title: "Jobs — Project Mafia"
-};
+export const generateMetadata = () => getLocalizedMetadata("jobs");
 
 export default function JobsPage() {
   return <JobsPageContent />;

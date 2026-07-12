@@ -1,4 +1,38 @@
 {
+  "framework": {
+    "error": {
+      "body": "Não foi possível concluir a operação. Tente novamente.",
+      "retry": "Tentar novamente",
+      "title": "Algo deu errado"
+    },
+    "globalError": {
+      "body": "Não foi possível carregar o Project Mafia. Tente novamente.",
+      "retry": "Recarregar",
+      "title": "A operação falhou"
+    },
+    "notFound": {
+      "body": "Essa página não existe ou foi movida.",
+      "home": "Voltar para a cidade",
+      "title": "Página não encontrada"
+    }
+  },
+  "metadata": {
+    "description": "Console de operações narrativas para um jogo de estratégia criminal no navegador.",
+    "pages": {
+      "character": "Personagem — Project Mafia",
+      "crew": "Equipe — Project Mafia",
+      "empire": "Império — Project Mafia",
+      "home": "Notícias — Project Mafia",
+      "jobs": "Trabalhos — Project Mafia",
+      "loadout": "Equipamento — Project Mafia",
+      "login": "Entrar — Project Mafia",
+      "map": "A Cidade — Project Mafia",
+      "newspaper": "Diário da Cidade — Project Mafia",
+      "rankings": "Classificação — Project Mafia",
+      "store": "Loja — Project Mafia"
+    },
+    "title": "Project Mafia"
+  },
   "authGuard": {
     "verifying": "Verificando credenciais…"
   },
@@ -87,6 +121,10 @@
       "warehouse": {
         "description": "Fileiras de caixotes que ninguém inventaria. Cada caixa sua acumula mais quatro horas de parte.",
         "name": "Armazém"
+      },
+      "unknown": {
+        "description": "Os detalhes do negócio não estão disponíveis.",
+        "name": "Negócio desconhecido"
       }
     },
     "items": {
@@ -533,7 +571,278 @@
       "worn-oxfords": {
         "description": "Surrados o bastante para se misturar em qualquer lugar ao sul da rua principal.",
         "name": "Oxfords Surrados"
+      },
+      "unknown": {
+        "description": "Os detalhes do item não estão disponíveis.",
+        "name": "Item desconhecido"
       }
+    },
+    "approaches": {
+      "charm": "Charme",
+      "deception": "Enganação",
+      "force": "Força",
+      "opportunistic": "Oportunismo",
+      "quiet": "Discrição",
+      "social": "Influência",
+      "technical": "Técnica"
+    },
+    "archetypes": {
+      "enforcer": {
+        "description": "Bate pesado e não recua. Melhora testes de força nos trabalhos e segura território como uma muralha.",
+        "name": "Brutamontes"
+      },
+      "face": {
+        "description": "Conquista tanto uma sala quanto um alvo. Melhora testes de charme e mantém os clubes cheios.",
+        "name": "Lábia"
+      },
+      "fixer": {
+        "description": "Sabe quem aceita envelopes. Melhora testes de enganação e faz a lei olhar para o outro lado.",
+        "name": "Intermediário"
+      },
+      "ghost": {
+        "description": "Entra e sai sem ser visto. Melhora testes discretos e movimenta mercadoria sem deixar rastro.",
+        "name": "Fantasma"
+      },
+      "mastermind": {
+        "description": "Enxerga os ângulos antes de todo mundo. Melhora testes de oportunismo e cuida dos números.",
+        "name": "Estrategista"
+      },
+      "underboss": {
+        "description": "Comanda equipes para você não precisar. Melhora testes sociais e mantém os soldados na linha.",
+        "name": "Subchefe"
+      },
+      "wirehead": {
+        "description": "Fechaduras, fios e mesas adulteradas. Melhora testes técnicos e mantém as máquinas pagando.",
+        "name": "Especialista"
+      }
+    },
+    "crewBios": {
+      "enforcer": "Quebrou ossos para três famílias diferentes e nunca precisou levantar a voz.",
+      "face": "Escapou de duas acusações na conversa e entrou em todos os clubes da cidade.",
+      "fixer": "Sabe qual mesa da prefeitura faz um processo sumir por cem dólares.",
+      "ghost": "Três acusações de invasão, nenhuma condenação e nenhuma foto conhecida.",
+      "mastermind": "Planeja golpes em papel de açougue e queima tudo antes do café esfriar.",
+      "underboss": "Comandou seis pessoas durante a última guerra sem perder um soldado.",
+      "wirehead": "Faz uma ponte nos fios antes que a central de alarme consiga discar."
+    },
+    "districts": {
+      "downtown": {
+        "description": "Bancos, torres e a delegacia central. Os quarteirões mais disputados da cidade.",
+        "name": "Centro"
+      },
+      "hillcrest": {
+        "description": "Dinheiro antigo nas colinas. Ruas quietas, bolsos fundos e memória longa.",
+        "name": "Hillcrest"
+      },
+      "ironworks": {
+        "description": "Fundição e carga. O sindicato tem força e tudo está à venda.",
+        "name": "Distrito Industrial"
+      },
+      "neon_strip": {
+        "description": "Clubes, mesas e neon. O dinheiro corre rápido, assim como as reputações.",
+        "name": "Faixa de Neon"
+      },
+      "old_quarter": {
+        "description": "As primeiras ruas da cidade. Becos apertados, famílias antigas e dívidas ainda mais velhas.",
+        "name": "Bairro Antigo"
+      },
+      "riverside": {
+        "description": "Armazéns e salas de jogo à beira d'água. Carga entra, mercadoria sai.",
+        "name": "Beira-Rio"
+      },
+      "the_docks": {
+        "description": "Guindastes, contêineres e fiscais que desviam o olhar. A porta dos fundos da cidade.",
+        "name": "As Docas"
+      },
+      "unknown": {
+        "description": "Os detalhes do bairro não estão disponíveis.",
+        "name": "Bairro desconhecido"
+      }
+    },
+    "ranks": {
+      "city_kingpin": "Chefão da Cidade",
+      "crew_leader": "Líder de Equipe",
+      "crime_lord": "Senhor do Crime",
+      "district_boss": "Chefe de Distrito",
+      "local_boss": "Chefe Local",
+      "nobody": "Zé-Ninguém",
+      "street_hustler": "Malandro de Rua"
+    },
+    "nicknames": {
+      "banker": "o Banqueiro",
+      "baron": "o Barão",
+      "book": "o Livro",
+      "bricks": "Tijolos",
+      "bull": "o Touro",
+      "doctor": "o Doutor",
+      "echo": "Eco",
+      "fingers": "Dedos",
+      "fox": "a Raposa",
+      "ghost": "o Fantasma",
+      "hammer": "o Martelo",
+      "ice": "Gelo",
+      "judge": "o Juiz",
+      "knuckles": "Soqueira",
+      "locksmith": "o Chaveiro",
+      "lucky": "Sortudo",
+      "matches": "Fósforos",
+      "owl": "a Coruja",
+      "pockets": "Bolsos",
+      "razor": "Navalha",
+      "saint": "o Santo",
+      "shadows": "Sombras",
+      "smiles": "Sorrisos",
+      "snake_eyes": "Olhos de Cobra",
+      "static": "Estática",
+      "tailor": "o Alfaiate",
+      "trigger": "Gatilho",
+      "two_times": "Duas Vezes",
+      "whisper": "o Sussurro",
+      "wire": "o Fio"
+    },
+    "skills": {
+      "charisma": {
+        "description": "Magnetismo pessoal puro. Usado em ações de charme e para convencer guardas da prisão.",
+        "name": "Carisma"
+      },
+      "corruption": {
+        "description": "Saber quem aceita envelopes e quanto colocar dentro. Usado em ações de enganação.",
+        "name": "Corrupção"
+      },
+      "leadership": {
+        "description": "Comandar uma equipe e dominar uma sala. Usado em ações de influência.",
+        "name": "Liderança"
+      },
+      "muscle": {
+        "description": "Bater pesado e não recuar. Usado em ações de força.",
+        "name": "Força Bruta"
+      },
+      "stealth": {
+        "description": "Mover-se sem ser visto e não deixar rastros. Usado em ações discretas.",
+        "name": "Furtividade"
+      },
+      "strategy": {
+        "description": "Ler a situação e atacar quando surge uma brecha. Usado em ações oportunistas.",
+        "name": "Estratégia"
+      },
+      "tech": {
+        "description": "Fechaduras, fios, alarmes e explosivos. Usado em ações técnicas.",
+        "name": "Técnica"
+      }
+    },
+    "tiers": {
+      "1": "Associado",
+      "2": "Soldado",
+      "3": "Veterano",
+      "4": "Capo",
+      "5": "Lenda"
+    },
+    "traits": {
+      "connected": {
+        "description": "Veio bem recomendado — contratá-lo custa menos de entrada.",
+        "name": "Bem Relacionado"
+      },
+      "coward": {
+        "description": "É o primeiro a correr quando tudo dá errado. Piora nos trabalhos, mas não morre — foge.",
+        "name": "Covarde"
+      },
+      "discreet": {
+        "description": "Não deixa rastros. Desastres com ele na equipe atraem menos pressão.",
+        "name": "Discreto"
+      },
+      "greedy": {
+        "description": "Tira uma parte de tudo — custa mais, mas extrai mais dos negócios.",
+        "name": "Ganancioso"
+      },
+      "hothead": {
+        "description": "Bate primeiro. Tem mais poder, mas faz mais barulho quando o trabalho vira desastre.",
+        "name": "Cabeça-Quente"
+      },
+      "loyal_dog": {
+        "description": "Fica quando o dinheiro acaba. Perde lealdade pela metade da velocidade.",
+        "name": "Cão Fiel"
+      },
+      "veteran_instincts": {
+        "description": "Já viu tudo duas vezes. É um pouco mais afiado em qualquer teste.",
+        "name": "Instinto de Veterano"
+      },
+      "workhorse": {
+        "description": "Nunca encerra o expediente. Os negócios em que trabalha produzem mais.",
+        "name": "Incansável"
+      }
+    },
+    "turfs": {
+      "downtown-01": "Praça da Bolsa",
+      "downtown-02": "Quarteirões do Meridiano",
+      "downtown-03": "Alameda do Granito",
+      "downtown-04": "Praça do Fórum",
+      "downtown-05": "Quarteirões do Edifício Trust",
+      "downtown-06": "Esquina do Pináculo",
+      "downtown-07": "Distrito da Imprensa",
+      "downtown-08": "Galeria de Mármore",
+      "downtown-09": "Quarteirões Standard",
+      "downtown-10": "Praça da União",
+      "hillcrest-01": "Terraço Crestview",
+      "hillcrest-02": "Alameda das Magnólias",
+      "hillcrest-03": "Quarteirões do Conservatório",
+      "hillcrest-04": "Portão do Bispo",
+      "hillcrest-05": "Colinas Laurel",
+      "hillcrest-06": "Propriedade Pemberton",
+      "hillcrest-07": "Pátio dos Jardins",
+      "hillcrest-08": "Passeio da Viúva",
+      "hillcrest-09": "Mirante",
+      "hillcrest-10": "Círculo das Heras",
+      "ironworks-01": "Fileiras da Fundição",
+      "ironworks-02": "Pátio do Cadinho",
+      "ironworks-03": "Vila da Escória",
+      "ironworks-04": "Oficinas de Correntes",
+      "ironworks-05": "Quarteirão dos Caldeireiros",
+      "ironworks-06": "Oficinas de Moldes",
+      "ironworks-07": "Pátio da Bigorna",
+      "ironworks-08": "Fornos de Coque",
+      "ironworks-09": "Beco dos Pistões",
+      "ironworks-10": "Linha dos Guindastes",
+      "neon-strip-01": "Milha dos Letreiros",
+      "neon-strip-02": "Alameda de Veludo",
+      "neon-strip-03": "Quarteirões do Palace",
+      "neon-strip-04": "Esquina da Sorte Grande",
+      "neon-strip-05": "Avenida dos Ases",
+      "neon-strip-06": "Pátio da Luz das Estrelas",
+      "neon-strip-07": "Quarteirões do Revue",
+      "neon-strip-08": "Alameda da Roleta",
+      "neon-strip-09": "Milha da Meia-Noite",
+      "neon-strip-10": "Esquina do Champanhe",
+      "old-quarter-01": "Travessa dos Sapateiros",
+      "old-quarter-02": "Escadaria de Santo Amaro",
+      "old-quarter-03": "Quarteirões da Torre do Relógio",
+      "old-quarter-04": "Alameda dos Curtidores",
+      "old-quarter-05": "Praça do Mercado Antigo",
+      "old-quarter-06": "Quarteirão dos Arquivos",
+      "old-quarter-07": "Cruzamento Chandler",
+      "old-quarter-08": "Passeio do Priorado",
+      "old-quarter-09": "Pátio dos Abandonados",
+      "old-quarter-10": "Beco Bellhaven",
+      "riverside-01": "Salas de Jogo",
+      "riverside-02": "Cais do Barqueiro",
+      "riverside-03": "Quarteirões da Fábrica de Conservas",
+      "riverside-04": "Alameda das Barcaças",
+      "riverside-05": "Quarteirões da Casa de Gelo",
+      "riverside-06": "Rua da Correnteza",
+      "riverside-07": "Canais do Moinho",
+      "riverside-08": "Pátio da Madeira à Deriva",
+      "riverside-09": "Fileiras dos Empacotadores",
+      "riverside-10": "Beco da Ressaca",
+      "the-docks-01": "Cais Treze",
+      "the-docks-02": "Galpões da Alfândega",
+      "the-docks-03": "Alameda dos Estivadores",
+      "the-docks-04": "Quarteirões do Quebra-Mar",
+      "the-docks-05": "Pátio da Âncora",
+      "the-docks-06": "Fileiras de Contêineres",
+      "the-docks-07": "Passeio do Carregador",
+      "the-docks-08": "Linha da Neblina",
+      "the-docks-09": "Quarteirão do Capitão do Porto",
+      "the-docks-10": "Pilhas de Sal",
+      "unknown": "Território desconhecido"
     }
   },
   "character": {
@@ -634,6 +943,7 @@
     }
   },
   "clock": {
+    "label": "Dia {day} · {hour}:{minute}",
     "tooltip": "Hora da cidade — um dia se passa a cada hora real"
   },
   "common": {
@@ -934,7 +1244,7 @@
     "title": "Trabalhos"
   },
   "languageSwitcher": {
-    "english": "English",
+    "english": "Inglês",
     "label": "Idioma",
     "portuguese": "Português (Brasil)"
   },
@@ -983,6 +1293,7 @@
       "title": "A Cidade"
     },
     "loading": "Desdobrando o mapa…",
+    "unknownFamily": "Família sem nome",
     "locked": {
       "afterRank": "(nível 40). Continue trabalhando — a cidade ainda vai estar aqui.",
       "beforeRank": "O mapa se abre quando você vira",
@@ -1097,7 +1408,7 @@
       "momentum": "Impulso {delta}",
       "momentumBold": "Impulso {delta} — jogada ousada",
       "momentumSafe": "Impulso {delta} — jogada segura",
-      "paidUpFront": "Pagou ${amount} adiantado",
+      "paidUpFront": "Pagou {amount} adiantado",
       "passed": "Teste de {skill} passou",
       "passedCritical": "Teste de {skill} passou — crítico"
     },
@@ -1154,7 +1465,7 @@
       "using": "Usando…"
     },
     "momentum": {
-      "bandsSummary": "Termine com {successAt}+ para um sucesso limpo · acima de {jackpotAbove} é jackpot · abaixo de {failureBelow} termina em prisão",
+      "bandsSummary": "Termine com {successAt}+ para um sucesso limpo · acima de {jackpotAbove} é bolada · abaixo de {failureBelow} termina em prisão",
       "onPaceFor": "a caminho de {tier}",
       "title": "Impulso"
     },
@@ -1169,7 +1480,7 @@
     "outcomeTiers": {
       "disaster": "Desastre",
       "failure": "Fracasso",
-      "jackpot": "Jackpot",
+      "jackpot": "Bolada",
       "partialFailure": "Fracasso parcial",
       "partialSuccess": "Sucesso parcial",
       "success": "Sucesso"
@@ -1180,6 +1491,9 @@
       "dustSettles": "A poeira baixa",
       "fixerWorking": "O intermediário está acertando os detalhes…",
       "jobComplete": "Trabalho concluído",
+      "legacyBody": "Este trabalho começou em outro idioma. As escolhas mecânicas continuam disponíveis, mas o texto anterior foi ocultado.",
+      "legacyLocation": "Um trabalho em andamento",
+      "legacyTitle": "O trabalho continua",
       "scenesReady": "{ready} de {total} cenas prontas",
       "settingUp": "Preparando o trabalho…"
     },
@@ -1190,6 +1504,7 @@
     }
   },
   "nav": {
+    "ariaLabel": "Navegação principal",
     "character": "Personagem",
     "crew": "Equipe",
     "empire": "Império",
@@ -1200,11 +1515,23 @@
     "store": "Loja"
   },
   "newspaper": {
-    "bounty": "(Tome um quarteirão da família {family} e os {amount} são seus.)",
+    "bounty": "Cidadãos preocupados oferecem {amount} a quem tomar um quarteirão da família {family}. Discrição garantida.",
+    "classifiedFallback": {
+      "missionModifier": "Trabalhos em {district}: pagamentos ×{payout}, pressão ×{heat} até {until}.",
+      "storeDrop": "{item}: {discount}% de desconto até {until}."
+    },
     "classifieds": "Classificados",
     "day": "Dia {day}",
     "empty": "Nenhuma edição chegou às bancas ainda. As rotativas rodam uma vez por dia — dê tempo à cidade para fazer notícia.",
     "loading": "Esperando as rotativas…",
+    "unknownFamily": "Família sem nome",
+    "legacy": {
+      "articleBody": "Os detalhes arquivados do dia {day} não estão disponíveis em português.",
+      "articleTitle": "Edição arquivada",
+      "headlineBody": "Esta edição antiga foi preservada sem uma cópia em português. A reportagem original continua no arquivo da cidade.",
+      "headlineTitle": "Do arquivo do dia {day}"
+    },
+    "name": "Diário da Cidade",
     "reign": "Sob o reinado da família {family}",
     "sections": {
       "business": "Negócios",
@@ -1220,6 +1547,100 @@
     },
     "standingsHeading": "A Temporada — Classificação",
     "tagline": "Todo crime que merece ser impresso"
+  },
+  "notificationContent": {
+    "legacy": {
+      "bounty_posted": {
+        "body": "Uma recompensa que afeta a cidade foi publicada.",
+        "title": "Atualização de recompensa"
+      },
+      "building_raided": {
+        "body": "A polícia invadiu um dos seus negócios.",
+        "title": "Negócio invadido"
+      },
+      "crew_deserted": {
+        "body": "Um membro deixou sua equipe.",
+        "title": "Membro desertou"
+      },
+      "crew_died": {
+        "body": "Um membro da sua equipe morreu.",
+        "title": "Baixa na equipe"
+      },
+      "crew_rat": {
+        "body": "Um membro da equipe entregou informações à polícia.",
+        "title": "Traição na equipe"
+      },
+      "crew_recovered": {
+        "body": "A condição de um membro da equipe mudou.",
+        "title": "Atualização da equipe"
+      },
+      "crew_released": {
+        "body": "A situação prisional de um membro da equipe mudou.",
+        "title": "Atualização da prisão"
+      },
+      "season": {
+        "body": "Um evento da temporada afetou sua família.",
+        "title": "Atualização da temporada"
+      },
+      "turf_attacked": {
+        "body": "Outra família atacou seu território.",
+        "title": "Território atacado"
+      },
+      "turf_defended": {
+        "body": "Sua família defendeu o território.",
+        "title": "Relatório de defesa"
+      },
+      "turf_lost": {
+        "body": "Sua família perdeu parte do território.",
+        "title": "Território perdido"
+      }
+    },
+    "messages": {
+      "building_raided": {
+        "body": "A polícia invadiu seu negócio, {building}. O caixa foi levado e o local ficará fechado até ser consertado.",
+        "title": "A polícia arrombou uma porta"
+      },
+      "crew_deserted": {
+        "body": "Sem receber por tempo demais, {name} foi embora e levou todo o equipamento que usava.",
+        "title": "{name} desertou"
+      },
+      "crew_died_on_job": {
+        "body": "{name} morreu durante um trabalho. Todo o equipamento que usava foi perdido.",
+        "title": "{name} não sobreviveu"
+      },
+      "crew_imprisoned_on_job": {
+        "body": "A polícia prendeu {name} durante um trabalho e confiscou todo o equipamento. Um suborno pode trazer ambos de volta.",
+        "title": "{name} foi preso"
+      },
+      "crew_injured_on_job": {
+        "body": "{name} se feriu durante um trabalho e precisa de tempo para se recuperar.",
+        "title": "{name} se machucou"
+      },
+      "crew_ratted": {
+        "body": "Sem dinheiro e ressentido, {name} vendeu informações à polícia. Sua pressão aumentou.",
+        "title": "{name} falou com a polícia"
+      },
+      "crew_recovered": {
+        "body": "{name} se recuperou dos ferimentos e está pronto para trabalhar.",
+        "title": "{name} está de pé novamente"
+      },
+      "crew_released": {
+        "body": "{name} cumpriu a pena e saiu da delegacia sem o equipamento confiscado.",
+        "title": "{name} cumpriu a pena"
+      },
+      "season_crackdown": {
+        "body": "Uma semana de guerra aberta tornou sua família o principal alvo da delegacia. A pressão aumentou em {heat}.",
+        "title": "A cidade está reprimindo sua família"
+      },
+      "turf_defended": {
+        "body": "{attackerName} atacou {turf}, mas suas defesas impediram a invasão.",
+        "title": "{turf} resistiu"
+      },
+      "turf_lost": {
+        "body": "{attackerName} tomou {turf}. Você tem 24 horas de revanche para atacar qualquer território dessa família.",
+        "title": "Você perdeu {turf}"
+      }
+    }
   },
   "notifications": {
     "bell": "Boatos",
@@ -1240,6 +1661,7 @@
     "title": "Escolha seu nome"
   },
   "prison": {
+    "reason": "A polícia pegou você depois que um trabalho deu errado.",
     "bribe": {
       "action": "Passar o envelope",
       "body": "{cost} muda de mãos, ele aceitando ou não. Quem fala é o seu carisma — {chance}% de chance.",
@@ -1261,6 +1683,7 @@
     "countdown": "CONTAGEM DA CONQUISTA — a família {family} domina todos os sete distritos. Restam cerca de {hours} horas para quebrar esse domínio.",
     "description": "O respeito vem de território dominado (ponderado por distrito), batalhas vencidas, marcos controlados e trabalhos de jackpot. Conquiste o reduto de cada distrito e segure todos por {hours} horas para tomar a cidade de uma vez — caso contrário, a família mais respeitada vence quando a temporada terminar em {date}.",
     "loading": "Contabilizando respeito…",
+    "unknownFamily": "Família sem nome",
     "table": {
       "blocks": "Quarteirões",
       "caption": "Classificação da temporada",
@@ -1284,6 +1707,9 @@
       "stayLabel": "Ficar",
       "title": "Tem certeza de que quer sair?"
     }
+  },
+  "season": {
+    "name": "Temporada {number}"
   },
   "store": {
     "catalogError": "A loja está de portas fechadas. Atualize para tentar de novo.",

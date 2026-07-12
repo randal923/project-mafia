@@ -2,6 +2,7 @@
 
 import type { PlayerLanguage } from "@shared/language";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useLanguage } from "../LanguageProvider/LanguageProvider";
 
 /* Placeholder flags drawn inline; swap for real artwork later. */
@@ -51,6 +52,16 @@ const OPTIONS: ReadonlyArray<{
 export function LanguageSwitcher() {
   const t = useTranslations("languageSwitcher");
   const { language, setLanguage } = useLanguage();
+  const router = useRouter();
+
+  const selectLanguage = (nextLanguage: PlayerLanguage) => {
+    if (nextLanguage === language) {
+      return;
+    }
+
+    setLanguage(nextLanguage);
+    router.refresh();
+  };
 
   return (
     <div aria-label={t("label")} className="flex items-center gap-1" role="group">
@@ -67,7 +78,7 @@ export function LanguageSwitcher() {
                 : "border-transparent opacity-50 hover:border-line hover:opacity-100"
             }`}
             key={id}
-            onClick={() => setLanguage(id)}
+            onClick={() => selectLanguage(id)}
             title={t(labelKey)}
             type="button"
           >

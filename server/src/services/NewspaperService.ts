@@ -2,13 +2,14 @@ import { CollectionReference, Firestore } from "firebase-admin/firestore";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { gameTime } from "../../../shared/gameTime";
+import type { PlayerLanguage } from "../../../shared/language";
 import {
   EDITION_INTERVAL_HOURS,
   MAX_ARTICLES_PER_EDITION,
   NEWSPAPER_NAME,
   NEWSPAPER_SECTIONS,
-  NewspaperArticle,
   NewspaperClassified,
+  NewspaperCopy,
   NewspaperEdition,
   NewspaperStanding,
   WorldEvent,
@@ -16,6 +17,8 @@ import {
 import { RespectStanding, Season } from "../../../shared/season";
 import { FirebaseService } from "./FirebaseService";
 import { OpenAiProviderService } from "./ai/OpenAiProviderService";
+import { getNewspaperFallbackCopy } from "./getNewspaperFallbackCopy";
+import { isLikelyPortugueseText } from "./isLikelyPortugueseText";
 import { WorldEventService } from "./WorldEventService";
 
 const editionCopySchema = z.object({
@@ -79,14 +82,18 @@ export class NewspaperService {
       .sort((a, b) => b.weight - a.weight || b.createdAt.localeCompare(a.createdAt))
       .slice(0, MAX_ARTICLES_PER_EDITION);
 
-    const copy = await this.writeCopy(season, topStories, standings);
+    const [copy, portugueseCopy] = await Promise.all([
+      this.writeCopy(topStories, standings, "en"),
+      this.writeCopy(topStories, standings, "pt-BR"),
+    ]);
     const edition: NewspaperEdition = {
       articles: copy.articles,
       classifieds: this.classifieds(respectStandings),
       gameDay: gameTime(Date.now()).day,
-      headline: { ...copy.headline, section: "front_page" },
+      headline: copy.headline,
       id: randomUUID(),
       mastheadChampion: season.champion,
+      ptBR: portugueseCopy,
       publishedAt: nowIso,
       seasonId: season.id,
       standings,
@@ -154,7 +161,7 @@ export class NewspaperService {
     const classifieds: NewspaperClassified[] = [];
     const leader = standings[0];
 
-    if (leader && leader.respect > 0) {
+    if (leader && leader.respect > 0 && leader.familyName) {
       const bounty = Math.min(
         50_000,
         Math.max(500, Math.round(leader.respect / 2 / 5) * 5),
@@ -172,11 +179,11 @@ export class NewspaperService {
   }
 
   private async writeCopy(
-    season: Season,
     stories: WorldEvent[],
     standings: NewspaperStanding[],
-  ): Promise<{ articles: NewspaperArticle[]; headline: { body: string; title: string } }> {
-    const fallback = this.fallbackCopy(stories);
+    language: PlayerLanguage,
+  ): Promise<NewspaperCopy> {
+    const fallback = getNewspaperFallbackCopy(stories, language);
     if (stories.length === 0) {
       return fallback;
     }
@@ -189,48 +196,36 @@ export class NewspaperService {
       .join("\n");
 
     try {
+      const portugueseInstruction =
+        language === "pt-BR"
+          ? " Write every headline and article in natural Brazilian Portuguese (português do Brasil)."
+          : " Write every headline and article in English.";
       const raw = await this.provider.generateJson({
         systemPrompt:
           `You are the night editor of "${NEWSPAPER_NAME}", a 1970s big-city broadsheet that covers organized crime with a straight face and a dry wit. ` +
-          "You write prose around the facts you are given and NEVER invent events, names, or numbers. Reply with JSON only.",
+          "You write prose around the facts you are given and NEVER invent events, names, or numbers." +
+          portugueseInstruction +
+          " Reply with JSON only.",
         userPrompt:
-          `Write tonight's edition from these facts. Return JSON: {"headline": {"title", "body"}, "articles": [{"section", "title", "body"}]}. ` +
+          `Write tonight's edition from these facts.${portugueseInstruction} Return JSON: {"headline": {"title", "body"}, "articles": [{"section", "title", "body"}]}. ` +
           `Sections must be among: ${NEWSPAPER_SECTIONS.join(", ")}. The biggest story becomes the headline; write up to ${Math.min(stories.length, MAX_ARTICLES_PER_EDITION)} shorter articles for the rest. ` +
           `Bodies under 120 words, period voice, no emoji.\n\nFACTS:\n${facts}\n\nSTANDINGS:\n${table}`,
       });
 
       const parsed = editionCopySchema.safeParse(raw);
-      if (parsed.success) {
+      if (
+        parsed.success &&
+        (language !== "pt-BR" || isLikelyPortugueseText(parsed.data))
+      ) {
         return {
           articles: parsed.data.articles,
-          headline: parsed.data.headline,
+          headline: { ...parsed.data.headline, section: "front_page" },
         };
       }
     } catch {
       // fall through to the factual fallback
     }
     return fallback;
-  }
-
-  /** Plain factual edition when the LLM is unavailable. */
-  private fallbackCopy(stories: WorldEvent[]): {
-    articles: NewspaperArticle[];
-    headline: { body: string; title: string };
-  } {
-    const [first, ...rest] = stories;
-    return {
-      articles: rest.slice(0, MAX_ARTICLES_PER_EDITION - 1).map((event) => ({
-        body: event.summary,
-        section: "crime_blotter",
-        title: event.summary.slice(0, 80),
-      })),
-      headline: first
-        ? { body: first.summary, title: first.summary.slice(0, 80) }
-        : {
-            body: "Sources report an unusual calm across the city's districts. Nobody believes it will last.",
-            title: "A quiet night in the city",
-          },
-    };
   }
 
   private get editions(): CollectionReference {

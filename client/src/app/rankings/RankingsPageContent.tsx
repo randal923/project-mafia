@@ -16,6 +16,7 @@ export function RankingsPageContent() {
   const [standings, setStandings] = useState<RespectStanding[] | null>(null);
   const [now] = useState(() => Date.now());
   const t = useTranslations("rankings");
+  const tSeason = useTranslations("season");
   const locale = useLocale();
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export function RankingsPageContent() {
     <div className="flex flex-col gap-6 pb-6">
       <header className="rounded-panel border border-line bg-surface px-6 py-5 shadow-panel">
         <p className={`m-0 ${displayText} text-xl text-faint`}>
-          {season.name}
+          {tSeason("name", { number: season.number })}
         </p>
         <h1 className={`mt-1 mb-0 ${displayText} text-5xl text-title`}>
           {t("title")}
@@ -77,7 +78,7 @@ export function RankingsPageContent() {
         <div className="rounded-panel border border-danger bg-danger/10 px-6 py-4">
           <p className={`m-0 ${displayText} text-xl text-danger-strong`}>
             {t("countdown", {
-              family: countdown.familyName,
+              family: countdown.familyName || t("unknownFamily"),
               hours: Math.ceil(countdownHoursLeft ?? 0),
             })}
           </p>
@@ -110,7 +111,7 @@ export function RankingsPageContent() {
                     className="inline-block h-3 w-3 rounded-sm"
                     style={{ backgroundColor: standing.familyColor }}
                   />
-                  {standing.familyName}
+                  {standing.familyName || t("unknownFamily")}
                   {player && standing.uid === player.id
                     ? ` ${t("you")}`
                     : ""}

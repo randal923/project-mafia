@@ -18,12 +18,36 @@ describe("JobBoardService", () => {
     const board: JobBoard = {
       generatedAt: "2026-07-11T00:00:00.000Z",
       offers: [],
-      templatesKey: `v4:${TEST_TEMPLATE.id}`,
+      templatesKey: `v5:${TEST_TEMPLATE.id}`,
     };
 
     expect(service.isCurrent(board)).toBe(true);
     expect(
-      service.isCurrent({ ...board, templatesKey: `v3:${TEST_TEMPLATE.id}` }),
+      service.isCurrent({ ...board, templatesKey: `v4:${TEST_TEMPLATE.id}` }),
+    ).toBe(false);
+  });
+
+  it("invalidates cached prose after the player changes language", () => {
+    const service = new JobBoardService(
+      { firestore: {} } as FirebaseService,
+      { all: () => [TEST_TEMPLATE] } as MissionTemplateService,
+      {} as EngineConfigService,
+      {} as OpenAiProviderService,
+    );
+    const board: JobBoard = {
+      generatedAt: "2026-07-11T00:00:00.000Z",
+      language: "pt-BR",
+      offers: [],
+      templatesKey: `v5:${TEST_TEMPLATE.id}`,
+    };
+
+    expect(service.matchesLanguage(board, { language: "pt-BR" })).toBe(true);
+    expect(service.matchesLanguage(board, { language: "en" })).toBe(false);
+    expect(
+      service.matchesLanguage(
+        { ...board, language: undefined },
+        { language: "pt-BR" },
+      ),
     ).toBe(false);
   });
 });

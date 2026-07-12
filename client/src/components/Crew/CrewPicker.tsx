@@ -2,7 +2,6 @@
 
 import {
   CREW_ARCHETYPES,
-  CREW_TIER_LABELS,
   crewCheckBonus,
   crewMemberPower,
   type CrewMember,
@@ -12,6 +11,7 @@ import { useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { useCatalogText } from "../../lib/useCatalogText";
+import { useCrewText } from "../../lib/useCrewText";
 import { Button } from "../Button/Button";
 
 type CrewPickerProps = {
@@ -43,6 +43,7 @@ export function CrewPicker({
 }: CrewPickerProps) {
   const t = useTranslations("crew");
   const { archetypeName, skillName, tierName } = useCatalogText();
+  const { crewName } = useCrewText();
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggle = (memberId: string) => {
@@ -93,7 +94,7 @@ export function CrewPicker({
                   >
                     <span>
                       <span className={`${displayText} text-lg text-title`}>
-                        {member.name}
+                        {crewName(member.name)}
                       </span>
                       <span className={`ml-2 ${typography.metadata}`}>
                         {tierName(member.tier)} ·{" "}

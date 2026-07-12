@@ -1,6 +1,6 @@
 "use client";
 
-import { NEWSPAPER_NAME, type NewspaperEdition } from "@shared/newspaper";
+import type { NewspaperEdition } from "@shared/newspaper";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
@@ -8,12 +8,10 @@ import { Button } from "../../components/Button/Button";
 import { typography } from "../../design-system/typography";
 import { fetchEditionArchive } from "../../lib/api";
 import { cx } from "../../lib/cx";
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency",
-});
+import { formatNewspaperClassified } from "../../lib/formatNewspaperClassified";
+import { selectNewspaperCopy } from "../../lib/selectNewspaperCopy";
+import { useCatalogText } from "../../lib/useCatalogText";
+import { useFormatters } from "../../lib/useFormatters";
 
 /** Serif newsprint styling — the one page that leaves the display face. */
 const newsprint = "font-serif text-neutral-200";
@@ -23,6 +21,8 @@ export function NewspaperPageContent() {
   const [editions, setEditions] = useState<NewspaperEdition[] | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const t = useTranslations("newspaper");
+  const { districtName, itemNameById } = useCatalogText();
+  const { dateFormatter, moneyFormatter, numberFormatter } = useFormatters();
   const locale = useLocale();
 
   useEffect(() => {
@@ -61,13 +61,19 @@ export function NewspaperPageContent() {
       <div className="flex h-full items-center justify-center">
         <div className="max-w-lg text-center">
           <h1 className={`m-0 ${typography.panelHeading}`}>
-            {NEWSPAPER_NAME}
+            {t("name")}
           </h1>
           <p className={`mt-3 ${typography.paragraph}`}>{t("empty")}</p>
         </div>
       </div>
     );
   }
+
+  const copy = selectNewspaperCopy(
+    edition,
+    locale === "pt-BR" ? "pt-BR" : "en",
+    t,
+  );
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6 pb-6">
@@ -98,15 +104,11 @@ export function NewspaperPageContent() {
             {t("tagline")}
           </p>
           <h1 className="m-0 font-serif text-5xl font-black tracking-tight text-neutral-100">
-            {NEWSPAPER_NAME}
+            {t("name")}
           </h1>
           <p className="m-0 mt-2 text-sm text-neutral-500">
             {t("day", { day: edition.gameDay })} ·{" "}
-            {new Intl.DateTimeFormat(locale, {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            }).format(Date.parse(edition.publishedAt))}
+            {dateFormatter.format(Date.parse(edition.publishedAt))}
             {edition.mastheadChampion
               ? ` · ${t("reign", { family: edition.mastheadChampion })}`
               : ""}
@@ -116,16 +118,16 @@ export function NewspaperPageContent() {
         {/* headline */}
         <section className="border-b border-neutral-700 py-6">
           <h2 className="m-0 font-serif text-4xl leading-tight font-bold text-neutral-100">
-            {edition.headline.title}
+            {copy.headline.title}
           </h2>
           <p className="mt-3 mb-0 text-lg leading-relaxed text-neutral-300">
-            {edition.headline.body}
+            {copy.headline.body}
           </p>
         </section>
 
         {/* articles */}
         <section className="grid gap-x-8 gap-y-6 py-6 md:grid-cols-2">
-          {edition.articles.map((article, index) => (
+          {copy.articles.map((article, index) => (
             <div className="break-inside-avoid" key={index}>
               <p className="m-0 text-xs tracking-[0.2em] text-neutral-500 uppercase">
                 {t(`sections.${article.section}`)}
@@ -167,18 +169,22 @@ export function NewspaperPageContent() {
                     className="border-b border-neutral-800 text-neutral-300"
                     key={standing.familyName}
                   >
-                    <td className="py-1 pr-4">{index + 1}</td>
+                    <td className="py-1 pr-4">
+                      {numberFormatter.format(index + 1)}
+                    </td>
                     <td className="py-1 pr-4">
                       <span
                         className="mr-2 inline-block h-3 w-3 rounded-sm align-middle"
                         style={{ backgroundColor: standing.familyColor }}
                       />
-                      {standing.familyName}
+                      {standing.familyName || t("unknownFamily")}
                     </td>
                     <td className="py-1 pr-4 text-right">
-                      {standing.turfCount}
+                      {numberFormatter.format(standing.turfCount)}
                     </td>
-                    <td className="py-1 text-right">{standing.respect}</td>
+                    <td className="py-1 text-right">
+                      {numberFormatter.format(standing.respect)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -198,13 +204,18 @@ export function NewspaperPageContent() {
                   className="m-0 border border-dashed border-neutral-600 p-3 text-sm leading-relaxed text-neutral-300 italic"
                   key={index}
                 >
-                  {classified.text}
-                  {classified.type === "bounty"
-                    ? ` ${t("bounty", {
-                        amount: moneyFormatter.format(classified.bounty),
-                        family: classified.targetName,
-                      })}`
-                    : ""}
+                  {formatNewspaperClassified(
+                    classified,
+                    {
+                      date: (value) =>
+                        dateFormatter.format(Date.parse(value)),
+                      district: districtName,
+                      item: itemNameById,
+                      money: (amount) => moneyFormatter.format(amount),
+                      number: (amount) => numberFormatter.format(amount),
+                    },
+                    t,
+                  )}
                 </p>
               ))}
             </div>

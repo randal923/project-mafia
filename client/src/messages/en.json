@@ -1,4 +1,38 @@
 {
+  "framework": {
+    "error": {
+      "body": "The operation could not be completed. Try again.",
+      "retry": "Try again",
+      "title": "Something went wrong"
+    },
+    "globalError": {
+      "body": "Project Mafia could not finish loading. Try again.",
+      "retry": "Reload",
+      "title": "The operation failed"
+    },
+    "notFound": {
+      "body": "That page does not exist or has moved.",
+      "home": "Return to the city",
+      "title": "Page not found"
+    }
+  },
+  "metadata": {
+    "description": "Narrative operations console for a browser crime strategy game.",
+    "pages": {
+      "character": "Character — Project Mafia",
+      "crew": "Crew — Project Mafia",
+      "empire": "Empire — Project Mafia",
+      "home": "News — Project Mafia",
+      "jobs": "Jobs — Project Mafia",
+      "loadout": "Loadout — Project Mafia",
+      "login": "Sign in — Project Mafia",
+      "map": "The City — Project Mafia",
+      "newspaper": "The City Ledger — Project Mafia",
+      "rankings": "Rankings — Project Mafia",
+      "store": "Store — Project Mafia"
+    },
+    "title": "Project Mafia"
+  },
   "authGuard": {
     "verifying": "Verifying credentials…"
   },
@@ -87,6 +121,10 @@
       "warehouse": {
         "description": "Rows of crates nobody inventories. Every till you own holds four more hours of take.",
         "name": "Warehouse"
+      },
+      "unknown": {
+        "description": "Business details are unavailable.",
+        "name": "Unknown business"
       }
     },
     "items": {
@@ -533,7 +571,278 @@
       "worn-oxfords": {
         "description": "Scuffed enough to blend in anywhere south of Main.",
         "name": "Worn Oxfords"
+      },
+      "unknown": {
+        "description": "Item details are unavailable.",
+        "name": "Unknown item"
       }
+    },
+    "approaches": {
+      "charm": "Charm",
+      "deception": "Deception",
+      "force": "Force",
+      "opportunistic": "Opportunistic",
+      "quiet": "Quiet",
+      "social": "Social",
+      "technical": "Technical"
+    },
+    "archetypes": {
+      "enforcer": {
+        "description": "Hits hard and stands his ground. Boosts force checks on jobs and holds turf like a wall.",
+        "name": "Enforcer"
+      },
+      "face": {
+        "description": "Charms rooms and marks alike. Boosts charm checks and keeps club floors full.",
+        "name": "Face"
+      },
+      "fixer": {
+        "description": "Knows who takes envelopes. Boosts deception checks and keeps the law looking away.",
+        "name": "Fixer"
+      },
+      "ghost": {
+        "description": "Comes and goes unseen. Boosts quiet checks and moves product without a ripple.",
+        "name": "Ghost"
+      },
+      "mastermind": {
+        "description": "Reads the angles before anyone else. Boosts opportunistic checks and runs the numbers.",
+        "name": "Mastermind"
+      },
+      "underboss": {
+        "description": "Runs crews so you don't have to. Boosts social checks and keeps soldiers in line.",
+        "name": "Underboss"
+      },
+      "wirehead": {
+        "description": "Locks, wires, and rigged tables. Boosts technical checks and keeps the machines paying.",
+        "name": "Wirehead"
+      }
+    },
+    "crewBios": {
+      "enforcer": "Broke knuckles for three different families and never once raised his voice.",
+      "face": "Talked his way out of two indictments and into every club in town.",
+      "fixer": "Knows which desk at city hall loses paperwork for a hundred.",
+      "ghost": "Three burglary charges, zero convictions, and no known photographs.",
+      "mastermind": "Plans jobs on butcher paper and burns it before the coffee cools.",
+      "underboss": "Ran a six-person crew through the last war without losing a soldier.",
+      "wirehead": "Can wire a bypass faster than the alarm company can dial."
+    },
+    "districts": {
+      "downtown": {
+        "description": "Banks, towers, and the precinct HQ. The most contested blocks in the city.",
+        "name": "Downtown"
+      },
+      "hillcrest": {
+        "description": "Old money on the heights. Quiet streets, deep pockets, long memories.",
+        "name": "Hillcrest"
+      },
+      "ironworks": {
+        "description": "Foundries and freight. Union muscle runs deep and everything is for sale.",
+        "name": "Ironworks"
+      },
+      "neon_strip": {
+        "description": "Clubs, tables, and neon. Cash moves fast and so do reputations.",
+        "name": "Neon Strip"
+      },
+      "old_quarter": {
+        "description": "The city's first streets. Tight alleys, old families, older debts.",
+        "name": "Old Quarter"
+      },
+      "riverside": {
+        "description": "Warehouses and card rooms along the water. Freight in, product out.",
+        "name": "Riverside"
+      },
+      "the_docks": {
+        "description": "Cranes, containers, and customs men who look away. The city's back door.",
+        "name": "The Docks"
+      },
+      "unknown": {
+        "description": "District details are unavailable.",
+        "name": "Unknown district"
+      }
+    },
+    "ranks": {
+      "city_kingpin": "City Kingpin",
+      "crew_leader": "Crew Leader",
+      "crime_lord": "Crime Lord",
+      "district_boss": "District Boss",
+      "local_boss": "Local Boss",
+      "nobody": "Nobody",
+      "street_hustler": "Street Hustler"
+    },
+    "nicknames": {
+      "banker": "the Banker",
+      "baron": "the Baron",
+      "book": "the Book",
+      "bricks": "Bricks",
+      "bull": "the Bull",
+      "doctor": "the Doctor",
+      "echo": "Echo",
+      "fingers": "Fingers",
+      "fox": "the Fox",
+      "ghost": "the Ghost",
+      "hammer": "the Hammer",
+      "ice": "Ice",
+      "judge": "the Judge",
+      "knuckles": "Knuckles",
+      "locksmith": "the Locksmith",
+      "lucky": "Lucky",
+      "matches": "Matches",
+      "owl": "the Owl",
+      "pockets": "Pockets",
+      "razor": "Razor",
+      "saint": "the Saint",
+      "shadows": "Shadows",
+      "smiles": "Smiles",
+      "snake_eyes": "Snake Eyes",
+      "static": "Static",
+      "tailor": "the Tailor",
+      "trigger": "Trigger",
+      "two_times": "Two-Times",
+      "whisper": "the Whisper",
+      "wire": "the Wire"
+    },
+    "skills": {
+      "charisma": {
+        "description": "Raw personal magnetism. Rolled by charm choices on jobs and used to sway prison guards.",
+        "name": "Charisma"
+      },
+      "corruption": {
+        "description": "Knowing who takes envelopes and how thick they need to be. Rolled by deception choices on jobs.",
+        "name": "Corruption"
+      },
+      "leadership": {
+        "description": "Running a crew and working a room. Rolled by social choices on jobs.",
+        "name": "Leadership"
+      },
+      "muscle": {
+        "description": "Hitting hard and holding your ground. Rolled by force choices on jobs.",
+        "name": "Muscle"
+      },
+      "stealth": {
+        "description": "Moving unseen and leaving no trace. Rolled by quiet choices on jobs.",
+        "name": "Stealth"
+      },
+      "strategy": {
+        "description": "Reading a situation and striking when the gap opens. Rolled by opportunistic choices on jobs.",
+        "name": "Strategy"
+      },
+      "tech": {
+        "description": "Locks, wires, alarms, and explosives. Rolled by technical choices on jobs.",
+        "name": "Tech"
+      }
+    },
+    "tiers": {
+      "1": "Associate",
+      "2": "Soldier",
+      "3": "Veteran",
+      "4": "Capo",
+      "5": "Legend"
+    },
+    "traits": {
+      "connected": {
+        "description": "Comes recommended — hiring him costs less up front.",
+        "name": "Connected"
+      },
+      "coward": {
+        "description": "First out the door when it goes wrong. Weaker on jobs, but never dies — he runs.",
+        "name": "Coward"
+      },
+      "discreet": {
+        "description": "Leaves no trace. Disasters with him aboard draw less heat.",
+        "name": "Discreet"
+      },
+      "greedy": {
+        "description": "Skims everything he touches — costs more, but squeezes buildings harder.",
+        "name": "Greedy"
+      },
+      "hothead": {
+        "description": "Swings first. Extra power, but disasters with him aboard run louder.",
+        "name": "Hothead"
+      },
+      "loyal_dog": {
+        "description": "Stays when the money stops. Loyalty bleeds half as fast.",
+        "name": "Loyal Dog"
+      },
+      "veteran_instincts": {
+        "description": "Seen everything twice. A little sharper on every check.",
+        "name": "Veteran Instincts"
+      },
+      "workhorse": {
+        "description": "Never clocks out. Buildings he staffs simply produce more.",
+        "name": "Workhorse"
+      }
+    },
+    "turfs": {
+      "downtown-01": "Exchange Plaza",
+      "downtown-02": "The Meridian Blocks",
+      "downtown-03": "Granite Row",
+      "downtown-04": "Courthouse Square",
+      "downtown-05": "The Trust Building Blocks",
+      "downtown-06": "Pinnacle Corner",
+      "downtown-07": "The Press District",
+      "downtown-08": "Marble Arcade",
+      "downtown-09": "The Standard Blocks",
+      "downtown-10": "Union Square",
+      "hillcrest-01": "Crestview Terrace",
+      "hillcrest-02": "Magnolia Row",
+      "hillcrest-03": "The Conservatory Blocks",
+      "hillcrest-04": "Bishop's Gate",
+      "hillcrest-05": "Laurel Heights",
+      "hillcrest-06": "The Pemberton Estate",
+      "hillcrest-07": "Garden Court",
+      "hillcrest-08": "Widow's Walk",
+      "hillcrest-09": "The Overlook",
+      "hillcrest-10": "Ivy Circle",
+      "ironworks-01": "The Blast Rows",
+      "ironworks-02": "Crucible Yard",
+      "ironworks-03": "Slagtown",
+      "ironworks-04": "The Chain Works",
+      "ironworks-05": "Boilermaker's Block",
+      "ironworks-06": "The Pattern Shops",
+      "ironworks-07": "Anvil Court",
+      "ironworks-08": "The Coke Ovens",
+      "ironworks-09": "Piston Alley",
+      "ironworks-10": "The Gantry Line",
+      "neon-strip-01": "The Marquee Mile",
+      "neon-strip-02": "Velvet Row",
+      "neon-strip-03": "The Palace Blocks",
+      "neon-strip-04": "Jackpot Corner",
+      "neon-strip-05": "The Boulevard of Aces",
+      "neon-strip-06": "Starlight Court",
+      "neon-strip-07": "The Revue Blocks",
+      "neon-strip-08": "Roulette Row",
+      "neon-strip-09": "The Midnight Mile",
+      "neon-strip-10": "Champagne Corner",
+      "old-quarter-01": "Cobbler's Lane",
+      "old-quarter-02": "Saint Amaro's Steps",
+      "old-quarter-03": "The Clock Tower Blocks",
+      "old-quarter-04": "Tanner's Row",
+      "old-quarter-05": "Old Market Square",
+      "old-quarter-06": "The Archives Block",
+      "old-quarter-07": "Chandler's Cross",
+      "old-quarter-08": "Priory Walk",
+      "old-quarter-09": "The Foundling Yard",
+      "old-quarter-10": "Bellhaven Alley",
+      "riverside-01": "The Card Rooms",
+      "riverside-02": "Ferryman's Landing",
+      "riverside-03": "The Cannery Blocks",
+      "riverside-04": "Barge Row",
+      "riverside-05": "The Icehouse Blocks",
+      "riverside-06": "Current Street",
+      "riverside-07": "The Mill Races",
+      "riverside-08": "Driftwood Court",
+      "riverside-09": "The Packing Rows",
+      "riverside-10": "Undertow Alley",
+      "the-docks-01": "Pier Thirteen",
+      "the-docks-02": "The Customs Sheds",
+      "the-docks-03": "Longshore Row",
+      "the-docks-04": "The Breakwater Blocks",
+      "the-docks-05": "Anchor Yard",
+      "the-docks-06": "The Container Rows",
+      "the-docks-07": "Stevedore's Walk",
+      "the-docks-08": "The Fog Line",
+      "the-docks-09": "Harbormaster's Block",
+      "the-docks-10": "The Salt Stacks",
+      "unknown": "Unknown territory"
     }
   },
   "character": {
@@ -634,6 +943,7 @@
     }
   },
   "clock": {
+    "label": "Day {day} · {hour}:{minute}",
     "tooltip": "City time — one day passes every real hour"
   },
   "common": {
@@ -983,6 +1293,7 @@
       "title": "The City"
     },
     "loading": "Unfolding the map…",
+    "unknownFamily": "Unnamed family",
     "locked": {
       "afterRank": "(level 40). Keep working — the city will still be here.",
       "beforeRank": "The map opens when you make",
@@ -1097,7 +1408,7 @@
       "momentum": "Momentum {delta}",
       "momentumBold": "Momentum {delta} — bold play",
       "momentumSafe": "Momentum {delta} — safe play",
-      "paidUpFront": "Paid ${amount} up front",
+      "paidUpFront": "Paid {amount} up front",
       "passed": "{skill} check passed",
       "passedCritical": "{skill} check passed — critical"
     },
@@ -1180,6 +1491,9 @@
       "dustSettles": "The dust settles",
       "fixerWorking": "The fixer is working out the details…",
       "jobComplete": "Job complete",
+      "legacyBody": "This job began in another language. Its mechanical choices remain available here, but the earlier prose is hidden.",
+      "legacyLocation": "An ongoing job",
+      "legacyTitle": "The job continues",
       "scenesReady": "{ready} of {total} scenes ready",
       "settingUp": "Setting up the job…"
     },
@@ -1190,6 +1504,7 @@
     }
   },
   "nav": {
+    "ariaLabel": "Primary navigation",
     "character": "Character",
     "crew": "Crew",
     "empire": "Empire",
@@ -1200,11 +1515,23 @@
     "store": "Store"
   },
   "newspaper": {
-    "bounty": "(Take a block from the {family} family and the {amount} is yours.)",
+    "bounty": "Concerned citizens offer {amount} to anyone who takes a block from the {family} family. Discretion guaranteed.",
+    "classifiedFallback": {
+      "missionModifier": "Jobs in {district}: payouts ×{payout}, heat ×{heat} until {until}.",
+      "storeDrop": "{item}: {discount}% off until {until}."
+    },
     "classifieds": "Classifieds",
     "day": "Day {day}",
     "empty": "No edition has hit the stands yet. The presses run once a day — give the city time to make some news.",
     "loading": "Waiting on the presses…",
+    "unknownFamily": "Unnamed family",
+    "legacy": {
+      "articleBody": "The archived details from day {day} are not available in this language.",
+      "articleTitle": "Archived edition",
+      "headlineBody": "This older edition was preserved without a translated copy. Its original reporting remains in the city archive.",
+      "headlineTitle": "From the day {day} archive"
+    },
+    "name": "The City Ledger",
     "reign": "Under the reign of the {family} family",
     "sections": {
       "business": "Business",
@@ -1220,6 +1547,100 @@
     },
     "standingsHeading": "The Season — Standings",
     "tagline": "All the crime that’s fit to print"
+  },
+  "notificationContent": {
+    "legacy": {
+      "bounty_posted": {
+        "body": "A bounty affecting the city has been posted.",
+        "title": "Bounty update"
+      },
+      "building_raided": {
+        "body": "Police raided one of your businesses.",
+        "title": "Business raided"
+      },
+      "crew_deserted": {
+        "body": "A crew member left your operation.",
+        "title": "Crew member left"
+      },
+      "crew_died": {
+        "body": "A crew member was killed.",
+        "title": "Crew loss"
+      },
+      "crew_rat": {
+        "body": "A crew member gave information to the police.",
+        "title": "Crew betrayal"
+      },
+      "crew_recovered": {
+        "body": "A crew member's condition changed.",
+        "title": "Crew update"
+      },
+      "crew_released": {
+        "body": "A crew member's prison status changed.",
+        "title": "Prison update"
+      },
+      "season": {
+        "body": "A season event affected your family.",
+        "title": "Season update"
+      },
+      "turf_attacked": {
+        "body": "Another family attacked your territory.",
+        "title": "Territory attacked"
+      },
+      "turf_defended": {
+        "body": "Your family defended its territory.",
+        "title": "Defense report"
+      },
+      "turf_lost": {
+        "body": "Your family lost a piece of territory.",
+        "title": "Territory lost"
+      }
+    },
+    "messages": {
+      "building_raided": {
+        "body": "Police raided your {building}. The till is gone and the business is closed until you repair it.",
+        "title": "The precinct kicked in a door"
+      },
+      "crew_deserted": {
+        "body": "Unpaid too long, {name} left and took all equipped gear.",
+        "title": "{name} walked"
+      },
+      "crew_died_on_job": {
+        "body": "{name} died during a job. All equipped gear was lost.",
+        "title": "{name} did not make it"
+      },
+      "crew_imprisoned_on_job": {
+        "body": "Police arrested {name} during a job and confiscated all equipped gear. A bribe can bring both back.",
+        "title": "{name} got pinched"
+      },
+      "crew_injured_on_job": {
+        "body": "{name} was injured during a job and needs time to recover.",
+        "title": "{name} got hurt"
+      },
+      "crew_ratted": {
+        "body": "Broke and bitter, {name} traded information for money. Your heat increased.",
+        "title": "{name} talked to the precinct"
+      },
+      "crew_recovered": {
+        "body": "{name} recovered from their injuries and is ready to work.",
+        "title": "{name} is back on their feet"
+      },
+      "crew_released": {
+        "body": "{name} served their sentence and left the precinct without the confiscated gear.",
+        "title": "{name} served their time"
+      },
+      "season_crackdown": {
+        "body": "A week of open warfare made your family the precinct's main target. Heat increased by {heat}.",
+        "title": "The city is cracking down on you"
+      },
+      "turf_defended": {
+        "body": "{attackerName} attacked {turf}, but your defenses turned them away.",
+        "title": "{turf} held"
+      },
+      "turf_lost": {
+        "body": "{attackerName} took {turf}. You have 24 hours of revenge to strike anywhere on their map.",
+        "title": "You lost {turf}"
+      }
+    }
   },
   "notifications": {
     "bell": "Word",
@@ -1240,6 +1661,7 @@
     "title": "Choose your name"
   },
   "prison": {
+    "reason": "The police caught you after a job went bad.",
     "bribe": {
       "action": "Slip the envelope",
       "body": "{cost} changes hands whether he bites or not. Your charisma does the talking — {chance}% odds.",
@@ -1261,6 +1683,7 @@
     "countdown": "CONQUEST COUNTDOWN — the {family} family holds all seven districts. About {hours} hours remain to break their grip.",
     "description": "Respect accrues from held turf (weighted by district), battles won, landmarks controlled, and jackpot jobs. Conquer every district stronghold and hold it {hours} hours to take the city outright — otherwise the most respected family wins when the season ends on {date}.",
     "loading": "Tallying respect…",
+    "unknownFamily": "Unnamed family",
     "table": {
       "blocks": "Blocks",
       "caption": "Season standings",
@@ -1284,6 +1707,9 @@
       "stayLabel": "Stay",
       "title": "Sure you want out?"
     }
+  },
+  "season": {
+    "name": "Season {number}"
   },
   "store": {
     "catalogError": "The store is shuttered. Refresh to try again.",

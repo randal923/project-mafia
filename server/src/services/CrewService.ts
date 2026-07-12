@@ -78,7 +78,7 @@ export class CrewService {
       ]);
 
       if (!playerSnapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const nowIso = new Date().toISOString();
@@ -104,9 +104,13 @@ export class CrewService {
           events.push(() =>
             this.notifications.push(
               uid,
-              "crew_deserted",
-              `${member.name} walked`,
-              `Unpaid too long, ${member.name} cleared out — and took the gear on his back with him.`,
+              {
+                content: {
+                  messageId: "crew_deserted",
+                  params: { name: member.name },
+                },
+                type: "crew_deserted",
+              },
               member.id,
             ),
           );
@@ -119,9 +123,13 @@ export class CrewService {
           events.push(() =>
             this.notifications.push(
               uid,
-              "crew_rat",
-              `${member.name} talked to the precinct`,
-              `Broke and bitter, ${member.name} traded what he knew for walking money. The heat is on.`,
+              {
+                content: {
+                  messageId: "crew_ratted",
+                  params: { name: member.name },
+                },
+                type: "crew_rat",
+              },
               member.id,
             ),
           );
@@ -155,7 +163,7 @@ export class CrewService {
   async fire(uid: string, memberId: string): Promise<CrewMember[]> {
     await this.mutateMember(uid, memberId, (member) => {
       if (member.status === "on_job") {
-        throw new HttpError(409, "You can't cut someone loose mid-job.");
+        throw new HttpError(409, { code: "crew_cannot_fire_on_job" });
       }
       return null;
     });
@@ -167,15 +175,24 @@ export class CrewService {
   async train(uid: string, memberId: string): Promise<CrewSettleResult> {
     await this.mutateMemberWithPlayer(uid, memberId, (member, player) => {
       if (member.status !== "idle") {
-        throw new HttpError(409, `${member.name} isn't free to train right now.`);
+        throw new HttpError(409, {
+          code: "crew_not_free_to_train",
+          params: { name: member.name },
+        });
       }
       if (member.skillLevel >= MAX_CREW_SKILL_LEVEL) {
-        throw new HttpError(400, `${member.name} has nothing left to learn.`);
+        throw new HttpError(400, {
+          code: "crew_skill_max",
+          params: { name: member.name },
+        });
       }
 
       const cost = crewTrainingCost(member.skillLevel);
       if (player.resources.cash < cost) {
-        throw new HttpError(402, "You can't cover the training.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: cost },
+        });
       }
 
       const busyUntil = new Date(
@@ -195,12 +212,18 @@ export class CrewService {
   async bribe(uid: string, memberId: string): Promise<CrewSettleResult> {
     await this.mutateMemberWithPlayer(uid, memberId, (member, player) => {
       if (member.status !== "imprisoned") {
-        throw new HttpError(409, `${member.name} isn't in a cell.`);
+        throw new HttpError(409, {
+          code: "crew_not_imprisoned",
+          params: { name: member.name },
+        });
       }
 
       const cost = crewBribeCost(member);
       if (player.resources.cash < cost) {
-        throw new HttpError(402, "You can't afford this envelope.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: cost },
+        });
       }
 
       return {
@@ -225,29 +248,32 @@ export class CrewService {
 
       const index = player.stash.findIndex((entry) => entry.id === itemId);
       if (index === -1) {
-        throw new HttpError(404, "That item isn't in your stash.");
+        throw new HttpError(404, { code: "item_not_in_stash" });
       }
 
       const item = player.stash[index]!;
       const slot = item.slot as EquipmentSlotId | undefined;
       if (!slot || !isCrewSlot(slot)) {
-        throw new HttpError(400, "Crew carry a weapon, a vest, and a belt — nothing else.");
+        throw new HttpError(400, { code: "invalid_crew_equipment_slot" });
       }
       if (item.consumable) {
-        throw new HttpError(400, "Crew don't carry consumables.");
+        throw new HttpError(400, { code: "crew_consumable_forbidden" });
       }
       if (
         item.levelRequirement !== undefined &&
         member.skillLevel < item.levelRequirement
       ) {
-        throw new HttpError(
-          403,
-          `${member.name} needs skill ${item.levelRequirement} to handle that.`,
-        );
+        throw new HttpError(403, {
+          code: "crew_skill_required",
+          params: {
+            name: member.name,
+            required: item.levelRequirement,
+          },
+        });
       }
       const reserved = player.reservedEquipment?.items[item.id] ?? 0;
       if ((item.quantity ?? 1) <= reserved) {
-        throw new HttpError(409, "That item is packed for your active job.");
+        throw new HttpError(409, { code: "item_reserved" });
       }
 
       const stash = this.removeOne(player, index);
@@ -275,7 +301,7 @@ export class CrewService {
 
       const item = member.loadout[slot];
       if (!item) {
-        throw new HttpError(404, "That slot is already empty.");
+        throw new HttpError(404, { code: "slot_empty" });
       }
 
       const loadout: CrewLoadout = { ...member.loadout };
@@ -301,7 +327,10 @@ export class CrewService {
 
     return snapshots.map((snapshot, i) => {
       if (!snapshot.exists) {
-        throw new HttpError(404, `No such crew member: ${memberIds[i]}.`);
+        throw new HttpError(404, {
+          code: "crew_member_not_found",
+          params: { id: memberIds[i] },
+        });
       }
       return normalizeCrewMember(snapshot.data() as CrewMember);
     });
@@ -330,9 +359,13 @@ export class CrewService {
       events.push(() =>
         this.notifications.push(
           uid,
-          "crew_recovered",
-          `${member.name} is back on his feet`,
-          `${member.name} shook off his injuries and is ready to work.`,
+          {
+            content: {
+              messageId: "crew_recovered",
+              params: { name: member.name },
+            },
+            type: "crew_recovered",
+          },
           member.id,
         ),
       );
@@ -344,9 +377,13 @@ export class CrewService {
       events.push(() =>
         this.notifications.push(
           uid,
-          "crew_released",
-          `${member.name} served his time`,
-          `${member.name} walked out of the precinct — without his gear. Evidence lockers are one-way.`,
+          {
+            content: {
+              messageId: "crew_released",
+              params: { name: member.name },
+            },
+            type: "crew_released",
+          },
           member.id,
         ),
       );
@@ -455,10 +492,16 @@ export class CrewService {
 
   private assertGearAccess(member: CrewMember): void {
     if (member.status === "on_job") {
-      throw new HttpError(409, `${member.name} is out on a job.`);
+      throw new HttpError(409, {
+        code: "crew_on_job",
+        params: { name: member.name },
+      });
     }
     if (member.status === "imprisoned") {
-      throw new HttpError(409, `${member.name}'s gear is in an evidence locker.`);
+      throw new HttpError(409, {
+        code: "crew_gear_confiscated",
+        params: { name: member.name },
+      });
     }
   }
 
@@ -483,7 +526,10 @@ export class CrewService {
     await this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(memberRef);
       if (!snapshot.exists) {
-        throw new HttpError(404, "No such crew member.");
+        throw new HttpError(404, {
+          code: "crew_member_not_found",
+          params: { id: memberId },
+        });
       }
 
       const updated = change(
@@ -520,10 +566,13 @@ export class CrewService {
       ]);
 
       if (!playerSnapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
       if (!memberSnapshot.exists) {
-        throw new HttpError(404, "No such crew member.");
+        throw new HttpError(404, {
+          code: "crew_member_not_found",
+          params: { id: memberId },
+        });
       }
 
       const nowIso = new Date().toISOString();

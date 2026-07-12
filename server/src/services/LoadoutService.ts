@@ -33,22 +33,22 @@ export class LoadoutService {
     return this.mutate(uid, (player) => {
       const index = player.stash.findIndex((entry) => entry.id === itemId);
       if (index === -1) {
-        throw new HttpError(404, "That item isn't in your stash.");
+        throw new HttpError(404, { code: "item_not_in_stash" });
       }
 
       const item = player.stash[index]!;
       const slot = item.slot as EquipmentSlotId | undefined;
       if (!slot) {
-        throw new HttpError(400, "That item can't be equipped — it's used from the stash.");
+        throw new HttpError(400, { code: "item_not_equippable" });
       }
       if (
         item.levelRequirement !== undefined &&
         player.progression.level < item.levelRequirement
       ) {
-        throw new HttpError(
-          403,
-          `You need to be level ${item.levelRequirement} to use that.`,
-        );
+        throw new HttpError(403, {
+          code: "level_required",
+          params: { required: item.levelRequirement },
+        });
       }
 
       const stash = this.removeOne(player.stash, index);
@@ -69,7 +69,7 @@ export class LoadoutService {
     return this.mutate(uid, (player) => {
       const item = player.loadout[slot];
       if (!item) {
-        throw new HttpError(404, "That slot is already empty.");
+        throw new HttpError(404, { code: "slot_empty" });
       }
 
       const loadout = { ...player.loadout };
@@ -92,7 +92,7 @@ export class LoadoutService {
     return this.mutate(uid, (player) => {
       const index = player.stash.findIndex((entry) => entry.id === itemId);
       if (index === -1) {
-        throw new HttpError(404, "That item isn't in your stash.");
+        throw new HttpError(404, { code: "item_not_in_stash" });
       }
 
       const item = player.stash[index]!;
@@ -101,26 +101,23 @@ export class LoadoutService {
         !use ||
         (!use.stamina && !use.health && !use.heat && !use.high && !use.drunk)
       ) {
-        throw new HttpError(400, "That item can't be used — it's gear, not a fix.");
+        throw new HttpError(400, { code: "item_not_usable" });
       }
       if (
         item.levelRequirement !== undefined &&
         player.progression.level < item.levelRequirement
       ) {
-        throw new HttpError(
-          403,
-          `You need to be level ${item.levelRequirement} to handle that.`,
-        );
+        throw new HttpError(403, {
+          code: "level_required",
+          params: { required: item.levelRequirement },
+        });
       }
       const reserved = player.reservedEquipment?.items[item.id] ?? 0;
       if ((item.quantity ?? 1) <= reserved) {
-        throw new HttpError(
-          409,
-          "That item is packed for your active job and can't be used right now.",
-        );
+        throw new HttpError(409, { code: "item_reserved" });
       }
       if (use.health && player.resources.health >= MAX_HEALTH) {
-        throw new HttpError(400, "You're already at full health.");
+        throw new HttpError(400, { code: "full_health" });
       }
 
       // Tolerance runs on the meter the dose feeds: drugs check how high
@@ -183,7 +180,7 @@ export class LoadoutService {
     return this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(playerRef);
       if (!snapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const nowIso = new Date().toISOString();

@@ -34,7 +34,7 @@ export class PlayerController {
     const player = await this.players.getPlayer(this.requireUid(req));
 
     if (!player) {
-      throw new HttpError(404, "Player not found");
+      throw new HttpError(404, { code: "player_not_found" });
     }
 
     res.json(player);
@@ -44,7 +44,7 @@ export class PlayerController {
     const parsed = createPlayerRequestSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.players.createPlayer(
@@ -58,7 +58,7 @@ export class PlayerController {
   private setLanguage = async (req: Request, res: Response): Promise<void> => {
     const parsed = updatePlayerLanguageRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.players.setLanguage(
@@ -71,7 +71,7 @@ export class PlayerController {
   private equip = async (req: Request, res: Response): Promise<void> => {
     const parsed = equipItemRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.loadout.equip(this.requireUid(req), parsed.data.itemId);
@@ -81,7 +81,7 @@ export class PlayerController {
   private unequip = async (req: Request, res: Response): Promise<void> => {
     const parsed = unequipSlotRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.loadout.unequip(this.requireUid(req), parsed.data.slot);
@@ -91,7 +91,7 @@ export class PlayerController {
   private use = async (req: Request, res: Response): Promise<void> => {
     const parsed = useItemRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.loadout.useItem(this.requireUid(req), parsed.data.itemId);
@@ -101,7 +101,7 @@ export class PlayerController {
   private precinctQuote = async (req: Request, res: Response): Promise<void> => {
     const player = await this.players.getPlayer(this.requireUid(req));
     if (!player) {
-      throw new HttpError(404, "Player not found");
+      throw new HttpError(404, { code: "player_not_found" });
     }
 
     res.json(await this.players.precinctQuoteWithPerks(player));
@@ -114,7 +114,7 @@ export class PlayerController {
 
   private requireUid(req: Request): string {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
     return req.uid;
   }

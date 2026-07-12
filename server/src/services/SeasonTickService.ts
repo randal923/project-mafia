@@ -120,7 +120,7 @@ export class SeasonTickService {
       const entry = byOwner.get(turf.ownerUid) ?? {
         color: turf.ownerColor ?? "#888888",
         landmarks: 0,
-        name: turf.ownerName ?? "Unknown",
+        name: turf.ownerName ?? "",
         respect: 0,
         turfs: 0,
       };
@@ -196,7 +196,7 @@ export class SeasonTickService {
       this.seasons.invalidateCache();
       await this.worldEvents.emit(
         season.id,
-        "stronghold_countdown",
+        "stronghold_countdown_broken",
         `The ${countdown.familyName} family's grip on the city has been broken. The conquest clock stops.`,
         { actorName: countdown.familyName, actorUid: countdown.uid },
       );
@@ -221,7 +221,7 @@ export class SeasonTickService {
         return null;
       }
       holder = {
-        name: districtTurfs[0]!.ownerName ?? "Unknown",
+        name: districtTurfs[0]!.ownerName ?? "",
         uid: owner,
       };
     }
@@ -345,9 +345,13 @@ export class SeasonTickService {
       ),
       this.notifications.push(
         uid,
-        "season",
-        "The city is cracking down on you",
-        `A week of open warfare made your family the precinct's favorite target. Heat is up ${CRACKDOWN_HEAT}.`,
+        {
+          content: {
+            messageId: "season_crackdown",
+            params: { heat: CRACKDOWN_HEAT },
+          },
+          type: "season",
+        },
       ),
     ]);
 

@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { playerLanguageFromHeader } from "../../../shared/playerLanguageFromHeader";
 import {
   acceptJobRequestSchema,
   chooseRequestSchema,
@@ -39,7 +40,7 @@ export class JobsController {
     const player = await this.requirePlayer(req);
 
     if (await this.missions.hasActiveMission(player.id)) {
-      throw new HttpError(409, "Finish your current job first.");
+      throw new HttpError(409, { code: "active_job_exists" });
     }
 
     res.json(await this.board.regenerate(player));
@@ -48,10 +49,7 @@ export class JobsController {
   private accept = async (req: Request, res: Response): Promise<void> => {
     const parsed = acceptJobRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(
-        400,
-        parsed.error.issues[0]?.message ?? "Invalid request body",
-      );
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.requirePlayer(req);
@@ -71,7 +69,7 @@ export class JobsController {
     const mission = await this.missions.getActiveMission(player);
 
     if (!mission) {
-      throw new HttpError(404, "No job in progress.");
+      throw new HttpError(404, { code: "no_active_job" });
     }
 
     res.json({ mission: MissionViewService.toView(mission) });
@@ -89,10 +87,7 @@ export class JobsController {
   private choose = async (req: Request, res: Response): Promise<void> => {
     const parsed = chooseRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(
-        400,
-        parsed.error.issues[0]?.message ?? "Invalid request body",
-      );
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.requirePlayer(req);
@@ -110,14 +105,20 @@ export class JobsController {
 
   private async requirePlayer(req: Request): Promise<Player> {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
 
     const player = await this.players.getPlayer(req.uid);
     if (!player) {
-      throw new HttpError(404, "Player not found");
+      throw new HttpError(404, { code: "player_not_found" });
     }
 
-    return player;
+    return {
+      ...player,
+      language: playerLanguageFromHeader(
+        req.header("accept-language"),
+        player.language ?? "en",
+      ),
+    };
   }
 }

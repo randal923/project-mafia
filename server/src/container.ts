@@ -192,6 +192,6 @@ export class Container {
       },
     ];
 
-    this.errorHandler = new ErrorHandler(config);
+    this.errorHandler = new ErrorHandler();
   }
 }

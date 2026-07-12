@@ -48,6 +48,7 @@ import { MissionTemplateService } from "./MissionTemplateService";
 import { NotificationService } from "./NotificationService";
 import { SeasonService } from "./SeasonService";
 import { WorldEventService } from "./WorldEventService";
+import { localizeJobOffersPtBR } from "./localizeJobOffersPtBR";
 
 const TAKEOVER_TEMPLATE_ID = "turf-takeover";
 
@@ -98,7 +99,7 @@ export class TerritoryService {
       }
       const family = familiesByUid.get(turf.ownerUid) ?? {
         color: turf.ownerColor ?? "#888888",
-        name: turf.ownerName ?? "Unknown family",
+        name: turf.ownerName ?? "",
         turfCount: 0,
         uid: turf.ownerUid,
       };
@@ -131,16 +132,16 @@ export class TerritoryService {
         tx.get(sameNameQuery),
       ]);
       if (!snapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
       if (!sameName.empty) {
-        throw new HttpError(409, "A family already runs under that name.");
+        throw new HttpError(409, { code: "family_name_taken" });
       }
 
       const player = normalizePlayer(snapshot.data() as Player);
       this.assertUnlocked(player);
       if (player.family) {
-        throw new HttpError(409, "Your family already flies its colors.");
+        throw new HttpError(409, { code: "family_exists" });
       }
 
       const nowIso = new Date().toISOString();
@@ -166,37 +167,35 @@ export class TerritoryService {
   ): Promise<Mission> {
     this.assertUnlocked(player);
     if (!player.family) {
-      throw new HttpError(403, "Found your family before you paint the map.");
+      throw new HttpError(403, { code: "family_required" });
     }
 
     const season = await this.seasons.getActiveSeason();
     const turfSnap = await this.seasons.turfsRef(season.id).doc(turfId).get();
     if (!turfSnap.exists) {
-      throw new HttpError(404, "That turf doesn't exist.");
+      throw new HttpError(404, { code: "turf_not_found" });
     }
 
     const turf = turfSnap.data() as TurfState;
     if (turf.ownerUid !== null) {
-      throw new HttpError(409, "That block already flies a flag.");
+      throw new HttpError(409, { code: "turf_claimed" });
     }
     if (turf.landmarkId) {
-      throw new HttpError(
-        409,
-        "Landmarks aren't claimed with a handshake — they're taken by force.",
-      );
+      throw new HttpError(409, { code: "landmark_requires_attack" });
     }
 
     const owned = await this.ownedTurfs(season.id, player.id);
     if (owned.length > 0 && !canReachTurf(turf, owned)) {
-      throw new HttpError(
-        409,
-        "Too far from your ground. Expand block by block, or through the district.",
-      );
+      throw new HttpError(409, { code: "turf_not_adjacent" });
     }
 
     const template = this.templates.find(TAKEOVER_TEMPLATE_ID);
     if (!template) {
-      throw new HttpError(500, "Takeover mission template is missing.");
+      throw new HttpError(
+        500,
+        { code: "internal_error" },
+        "Takeover mission template is missing.",
+      );
     }
 
     const context = PlayerContextService.fromPlayer(player);
@@ -233,9 +232,14 @@ export class TerritoryService {
       type: template.type,
     };
 
+    const localizedOffer =
+      player.language === "pt-BR"
+        ? localizeJobOffersPtBR([offer])[0]!
+        : offer;
+
     return this.missions.acceptTakeover(
       player,
-      offer,
+      localizedOffer,
       template,
       { seasonId: season.id, turfId, turfName: turf.name },
       crewIds,
@@ -263,12 +267,18 @@ export class TerritoryService {
       for (const id of crewIds) {
         const member = crewById.get(id);
         if (!member) {
-          throw new HttpError(404, `No such crew member: ${id}.`);
+          throw new HttpError(404, {
+            code: "crew_member_not_found",
+            params: { id },
+          });
         }
         const alreadyHere =
           member.status === "assigned_turf" && member.assignment === turfId;
         if (member.status !== "idle" && !alreadyHere) {
-          throw new HttpError(409, `${member.name} isn't free to stand guard.`);
+          throw new HttpError(409, {
+            code: "crew_not_free_to_guard",
+            params: { name: member.name },
+          });
         }
       }
 
@@ -310,7 +320,7 @@ export class TerritoryService {
   ): Promise<TurfState> {
     const definition = buildingDefinition(definitionId);
     if (!definition || definition.class !== "racket") {
-      throw new HttpError(404, "That isn't something you can build on turf.");
+      throw new HttpError(404, { code: "racket_not_available" });
     }
 
     const season = await this.seasons.getActiveSeason();
@@ -324,7 +334,7 @@ export class TerritoryService {
       ]);
       const turf = this.requireOwnedTurf(turfSnap, uid);
       if (!playerSnap.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
       const player = normalizePlayer(playerSnap.data() as Player);
 
@@ -332,13 +342,16 @@ export class TerritoryService {
         PLAYER_RANKS.indexOf(player.rank) <
         PLAYER_RANKS.indexOf(definition.rankRequirement)
       ) {
-        throw new HttpError(403, "You're not established enough to run that.");
+        throw new HttpError(403, { code: "rank_too_low" });
       }
       if (turf.buildings.length >= turf.buildingSlots) {
-        throw new HttpError(409, "No room left on that block.");
+        throw new HttpError(409, { code: "turf_full" });
       }
       if (player.resources.cash < definition.cost) {
-        throw new HttpError(402, "You can't cover the construction.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: definition.cost },
+        });
       }
 
       const nowIso = new Date().toISOString();
@@ -383,18 +396,25 @@ export class TerritoryService {
     return this.mutateRacket(uid, turfId, buildingId, (building, player) => {
       const definition = buildingDefinition(building.definitionId);
       if (!definition) {
-        throw new HttpError(500, "Unknown building definition.");
+        throw new HttpError(
+          500,
+          { code: "internal_error" },
+          "Unknown building definition.",
+        );
       }
       if (building.level >= MAX_BUILDING_LEVEL) {
-        throw new HttpError(400, "It's already the best on the block.");
+        throw new HttpError(400, { code: "building_max_level" });
       }
       if (building.damaged) {
-        throw new HttpError(409, "Repair it before you expand it.");
+        throw new HttpError(409, { code: "building_damaged" });
       }
 
       const cost = buildingUpgradeCost(definition, building.level + 1);
       if (player.resources.cash < cost) {
-        throw new HttpError(402, "You can't cover the works.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: cost },
+        });
       }
 
       return {
@@ -415,16 +435,23 @@ export class TerritoryService {
       buildingId,
       (building, player) => {
         if (!building.damaged) {
-          throw new HttpError(400, "Nothing needs fixing.");
+          throw new HttpError(400, { code: "building_not_damaged" });
         }
         const definition = buildingDefinition(building.definitionId);
         if (!definition) {
-          throw new HttpError(500, "Unknown building definition.");
+          throw new HttpError(
+            500,
+            { code: "internal_error" },
+            "Unknown building definition.",
+          );
         }
 
         const cost = buildingRepairCost(definition, building.level);
         if (player.resources.cash < cost) {
-          throw new HttpError(402, "You can't cover the repairs.");
+          throw new HttpError(402, {
+            code: "insufficient_cash",
+            params: { amount: cost },
+          });
         }
 
         return {
@@ -462,31 +489,41 @@ export class TerritoryService {
 
       const index = turf.buildings.findIndex((b) => b.id === buildingId);
       if (index === -1) {
-        throw new HttpError(404, "No such building on that turf.");
+        throw new HttpError(404, { code: "building_not_owned" });
       }
       const building = turf.buildings[index]!;
       const definition = buildingDefinition(building.definitionId);
       if (!definition) {
-        throw new HttpError(500, "Unknown building definition.");
+        throw new HttpError(
+          500,
+          { code: "internal_error" },
+          "Unknown building definition.",
+        );
       }
       if (crewIds.length > definition.staffSlots) {
-        throw new HttpError(
-          400,
-          `${definition.name} has ${definition.staffSlots} position${definition.staffSlots === 1 ? "" : "s"}.`,
-        );
+        throw new HttpError(400, {
+          code: "building_staff_limit",
+          params: { count: definition.staffSlots },
+        });
       }
 
       const nowIso = new Date().toISOString();
       for (const id of crewIds) {
         const member = crewById.get(id);
         if (!member) {
-          throw new HttpError(404, `No such crew member: ${id}.`);
+          throw new HttpError(404, {
+            code: "crew_member_not_found",
+            params: { id },
+          });
         }
         const alreadyHere =
           member.status === "assigned_building" &&
           member.assignment === buildingId;
         if (member.status !== "idle" && !alreadyHere) {
-          throw new HttpError(409, `${member.name} isn't free to work a floor.`);
+          throw new HttpError(409, {
+            code: "crew_not_free_to_work",
+            params: { name: member.name },
+          });
         }
       }
 
@@ -526,7 +563,11 @@ export class TerritoryService {
    */
   async collectTurfs(
     uid: string,
-  ): Promise<{ collected: number; raided: string | null; upkeep: number }> {
+  ): Promise<{
+    collected: number;
+    raidedBuildingId: string | null;
+    upkeep: number;
+  }> {
     const season = await this.seasons.getActiveSeason();
     const effects = await this.effects.forPlayer(uid);
     const storageHours = INCOME_STORAGE_HOURS + effects.incomeStorageBonusHours;
@@ -540,10 +581,15 @@ export class TerritoryService {
       ]);
 
       if (!playerSnap.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
       if (turfSnap.empty) {
-        return { collected: 0, raided: null as string | null, upkeep: 0 };
+        return {
+          collected: 0,
+          raided: null as string | null,
+          raidedBuildingId: null as string | null,
+          upkeep: 0,
+        };
       }
 
       const player = normalizePlayer(playerSnap.data() as Player);
@@ -633,6 +679,7 @@ export class TerritoryService {
 
       // The precinct kicks a door when a family collects while running hot.
       let raided: string | null = null;
+      let raidedBuildingId: string | null = null;
       if (heatAfter >= RAID_HEAT_THRESHOLD) {
         const roll =
           createHash("sha256")
@@ -642,6 +689,7 @@ export class TerritoryService {
         if (roll < RAID_CHANCE_PER_DAY * 100) {
           const raid = this.applyRaid(settledTurfs, crewById, nowIso);
           raided = raid.name;
+          raidedBuildingId = raid.definitionId;
           for (const member of raid.arrested) {
             tx.set(this.crewRef(uid).doc(member.id), member);
           }
@@ -663,16 +711,20 @@ export class TerritoryService {
         updatedAt: nowIso,
       });
 
-      return { collected: net, raided, upkeep: upkeepDue };
+      return { collected: net, raided, raidedBuildingId, upkeep: upkeepDue };
     });
 
-    if (outcome.raided) {
+    if (outcome.raided && outcome.raidedBuildingId) {
       await Promise.all([
         this.notifications.push(
           uid,
-          "building_raided",
-          "The precinct kicked in a door",
-          `Police raided your ${outcome.raided}. The till is gone and the place is dark until you repair it.`,
+          {
+            content: {
+              messageId: "building_raided",
+              params: { buildingId: outcome.raidedBuildingId },
+            },
+            type: "building_raided",
+          },
         ),
         this.worldEvents.emit(
           season.id,
@@ -682,7 +734,11 @@ export class TerritoryService {
       ]);
     }
 
-    return outcome;
+    return {
+      collected: outcome.collected,
+      raidedBuildingId: outcome.raidedBuildingId,
+      upkeep: outcome.upkeep,
+    };
   }
 
   private async ownedTurfs(seasonId: string, uid: string): Promise<TurfState[]> {
@@ -698,7 +754,11 @@ export class TerritoryService {
     turfs: TurfState[],
     crewById: Map<string, CrewMember>,
     nowIso: string,
-  ): { arrested: CrewMember[]; name: string | null } {
+  ): {
+    arrested: CrewMember[];
+    definitionId: string | null;
+    name: string | null;
+  } {
     let loudest: { building: BuildingInstance; heat: number } | null = null;
 
     for (const turf of turfs) {
@@ -714,7 +774,7 @@ export class TerritoryService {
     }
 
     if (!loudest) {
-      return { arrested: [], name: null };
+      return { arrested: [], definitionId: null, name: null };
     }
 
     loudest.building.damaged = true;
@@ -742,6 +802,7 @@ export class TerritoryService {
 
     return {
       arrested,
+      definitionId: loudest.building.definitionId,
       name: buildingDefinition(loudest.building.definitionId)?.name ?? null,
     };
   }
@@ -751,11 +812,11 @@ export class TerritoryService {
     uid: string,
   ): TurfState {
     if (!snapshot.exists) {
-      throw new HttpError(404, "That turf doesn't exist.");
+      throw new HttpError(404, { code: "turf_not_found" });
     }
     const turf = snapshot.data() as TurfState;
     if (turf.ownerUid !== uid) {
-      throw new HttpError(403, "That block doesn't fly your flag.");
+      throw new HttpError(403, { code: "turf_not_owned" });
     }
     return turf;
   }
@@ -780,12 +841,12 @@ export class TerritoryService {
         ]);
         const turf = this.requireOwnedTurf(turfSnap, uid);
         if (!playerSnap.exists) {
-          throw new HttpError(404, "Player not found.");
+          throw new HttpError(404, { code: "player_not_found" });
         }
 
         const index = turf.buildings.findIndex((b) => b.id === buildingId);
         if (index === -1) {
-          throw new HttpError(404, "No such building on that turf.");
+          throw new HttpError(404, { code: "building_not_owned" });
         }
 
         const nowIso = new Date().toISOString();
@@ -826,7 +887,7 @@ export class TerritoryService {
       PLAYER_RANKS.indexOf(player.rank) <
       PLAYER_RANKS.indexOf(TERRITORY_UNLOCK_RANK)
     ) {
-      throw new HttpError(403, "The map opens when you make local boss.");
+      throw new HttpError(403, { code: "territory_locked" });
     }
   }
 

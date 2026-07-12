@@ -117,6 +117,13 @@ const mission: Mission = {
 };
 
 describe("MissionViewService", () => {
+  it("exposes the locale that authored mission prose", () => {
+    expect(
+      MissionViewService.toView({ ...mission, language: "pt-BR" }).language,
+    ).toBe("pt-BR");
+    expect(MissionViewService.toView(mission).language).toBeUndefined();
+  });
+
   it("projects odds and skill XP without exposing a future roll", () => {
     const choice = MissionViewService.toView(mission).choices?.[0];
 

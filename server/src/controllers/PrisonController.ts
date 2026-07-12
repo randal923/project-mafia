@@ -36,12 +36,12 @@ export class PrisonController {
 
   private async requirePlayer(req: Request): Promise<Player> {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
 
     const player = await this.players.getPlayer(req.uid);
     if (!player) {
-      throw new HttpError(404, "Player not found");
+      throw new HttpError(404, { code: "player_not_found" });
     }
 
     return player;

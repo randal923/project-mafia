@@ -9,6 +9,7 @@ import {
   markNotificationsRead,
 } from "../../lib/api";
 import { cx } from "../../lib/cx";
+import { useNotificationText } from "../../lib/useNotificationText";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 const POLL_INTERVAL_MS = 60_000;
@@ -19,6 +20,7 @@ const POLL_INTERVAL_MS = 60_000;
  */
 export function NotificationsBell() {
   const t = useTranslations("notifications");
+  const notificationText = useNotificationText();
   const locale = useLocale();
   const timeFormatter = useMemo(
     () =>
@@ -119,24 +121,27 @@ export function NotificationsBell() {
             <p className={`m-0 p-3 ${typography.metadata}`}>{t("empty")}</p>
           ) : (
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
-              {notifications.map((notification) => (
-                <li
-                  className="rounded-control border border-line bg-black/20 p-3"
-                  key={notification.id}
-                >
-                  <div className="flex items-baseline justify-between gap-2">
-                    <p className={`m-0 ${displayText} text-lg text-title`}>
-                      {notification.title}
+              {notifications.map((notification) => {
+                const text = notificationText(notification);
+                return (
+                  <li
+                    className="rounded-control border border-line bg-black/20 p-3"
+                    key={notification.id}
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className={`m-0 ${displayText} text-lg text-title`}>
+                        {text.title}
+                      </p>
+                      <span className={typography.metadata}>
+                        {timeFormatter.format(Date.parse(notification.createdAt))}
+                      </span>
+                    </div>
+                    <p className={`mt-1 mb-0 ${typography.narrativeCaption}`}>
+                      {text.body}
                     </p>
-                    <span className={typography.metadata}>
-                      {timeFormatter.format(Date.parse(notification.createdAt))}
-                    </span>
-                  </div>
-                  <p className={`mt-1 mb-0 ${typography.narrativeCaption}`}>
-                    {notification.body}
-                  </p>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

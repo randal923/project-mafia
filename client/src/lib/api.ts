@@ -1,4 +1,9 @@
 import type { BattleReport } from "@shared/battle";
+import {
+  isApiErrorCode,
+  type ApiErrorCode,
+  type ApiErrorResponse,
+} from "@shared/apiError";
 import type { BuildingDefinition, BuildingInstance } from "@shared/building";
 import type {
   CrewMember,
@@ -18,12 +23,14 @@ import type { PrisonAttemptResult, PrisonStatus } from "@shared/prison";
 import type { RespectStanding, Season } from "@shared/season";
 import type { TurfState } from "@shared/territory";
 import type { User } from "firebase/auth";
+import { DEFAULT_PLAYER_LANGUAGE, isPlayerLanguage } from "@shared/language";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 export class ApiError extends Error {
   constructor(
     readonly status: number,
+    readonly code: ApiErrorCode,
     message: string
   ) {
     super(message);
@@ -37,26 +44,41 @@ async function apiFetch<T>(
   init?: RequestInit
 ): Promise<T> {
   const token = await user.getIdToken();
+  const documentLanguage =
+    typeof document !== "undefined" &&
+    isPlayerLanguage(document.documentElement.lang)
+      ? document.documentElement.lang
+      : DEFAULT_PLAYER_LANGUAGE;
   const response = await fetch(`${apiBaseUrl}${path}`, {
     ...init,
     headers: {
       ...(init?.body ? { "Content-Type": "application/json" } : {}),
+      "Accept-Language": documentLanguage,
       Authorization: `Bearer ${token}`,
       ...init?.headers
     }
   });
 
   if (!response.ok) {
-    let message = "Request failed";
+    let code: ApiErrorCode = "request_failed";
+    let message =
+      documentLanguage === "pt-BR"
+        ? "Não foi possível concluir a solicitação."
+        : "The request could not be completed.";
 
     try {
-      const body = (await response.json()) as { error?: string };
-      message = body.error ?? message;
+      const body = (await response.json()) as Partial<ApiErrorResponse>;
+      if (isApiErrorCode(body.code)) {
+        code = body.code;
+        if (typeof body.error === "string") {
+          message = body.error;
+        }
+      }
     } catch {
       // Non-JSON error body; keep the generic message.
     }
 
-    throw new ApiError(response.status, message);
+    throw new ApiError(response.status, code, message);
   }
 
   return (await response.json()) as T;
@@ -320,14 +342,14 @@ export function buyPersonalBuilding(
 export function collectAllIncome(user: User): Promise<
   HoldingsResponse & {
     collected: number;
-    raided: string | null;
+    raidedBuildingId: string | null;
     upkeep: number;
   }
 > {
   return apiFetch<
     HoldingsResponse & {
       collected: number;
-      raided: string | null;
+      raidedBuildingId: string | null;
       upkeep: number;
     }
   >(user, "/empire/collect", { method: "POST" });

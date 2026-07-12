@@ -83,6 +83,7 @@ export class MissionViewService {
       ...(mission.crew?.length && { crew: mission.crew }),
       depth: mission.depth,
       id: mission.id,
+      ...(mission.language && { language: mission.language }),
       ...(mission.momentumBands &&
         current && {
           momentum: {

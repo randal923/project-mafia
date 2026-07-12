@@ -3,8 +3,6 @@
 import {
   CREW_ARCHETYPES,
   CREW_ROSTER_CAP_BY_RANK,
-  CREW_TIER_LABELS,
-  CREW_TRAITS,
   CREW_UNLOCK_RANK,
   crewWage,
   isCrewSlot,
@@ -13,7 +11,6 @@ import {
   type CrewSlotId,
 } from "@shared/crew";
 import { PLAYER_RANKS, type PlayerItem } from "@shared/player";
-import { SKILLS } from "@shared/skills";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
@@ -35,12 +32,8 @@ import {
   unequipCrewMember,
 } from "../../lib/api";
 import { useCatalogText } from "../../lib/useCatalogText";
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency",
-});
+import { useCrewText } from "../../lib/useCrewText";
+import { useFormatters } from "../../lib/useFormatters";
 
 type CrewToast = {
   message: string;
@@ -50,6 +43,8 @@ type CrewToast = {
 
 export function CrewPageContent() {
   const t = useTranslations("crew");
+  const { moneyFormatter } = useFormatters();
+  const { crewBio, crewName } = useCrewText();
   const { archetypeName, skillName, tierName, traitName } = useCatalogText();
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
@@ -87,7 +82,7 @@ export function CrewPageContent() {
       isCancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isUnlocked]);
+  }, [user, isUnlocked, player?.language]);
 
   useEffect(() => {
     if (!toast) {
@@ -194,7 +189,7 @@ export function CrewPageContent() {
         return result;
       },
       t("toast.hired.title"),
-      t("toast.hired.message", { name: candidate.name }),
+      t("toast.hired.message", { name: crewName(candidate.name) }),
     );
 
   return (
@@ -313,7 +308,7 @@ export function CrewPageContent() {
                 <header className="flex items-start justify-between gap-2">
                   <div>
                     <p className={`m-0 ${displayText} text-2xl text-title`}>
-                      {candidate.name}
+                      {crewName(candidate.name)}
                     </p>
                     <p className={`m-0 ${typography.metadata}`}>
                       {tierName(candidate.tier)} ·{" "}
@@ -330,7 +325,7 @@ export function CrewPageContent() {
                   </div>
                 </header>
                 <p className={`m-0 ${typography.narrativeCaption}`}>
-                  {candidate.bio}
+                  {crewBio(candidate)}
                 </p>
                 {candidate.traits.length > 0 ? (
                   <div className="flex flex-wrap gap-2">

@@ -1,9 +1,9 @@
 import type { RevealedEdge } from "@shared/job";
-import { SKILLS } from "@shared/skills";
 import { useTranslations } from "next-intl";
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { useCatalogText } from "../../lib/useCatalogText";
+import { useFormatters } from "../../lib/useFormatters";
 
 type MissionCheckBadgeProps = {
   edge: RevealedEdge;
@@ -11,6 +11,7 @@ type MissionCheckBadgeProps = {
 
 export function MissionCheckBadge({ edge }: MissionCheckBadgeProps) {
   const t = useTranslations("mission.checkBadge");
+  const { moneyFormatter } = useFormatters();
   const { itemName, skillName } = useCatalogText();
   const wide = Math.abs(edge.margin) >= 40;
   const floorProtection = edge.damage
@@ -82,7 +83,7 @@ export function MissionCheckBadge({ edge }: MissionCheckBadgeProps) {
       {edge.cashSpent ? (
         <span className="text-sm font-medium text-danger-strong">
           {t("paidUpFront", {
-            amount: edge.cashSpent.toLocaleString("en-US"),
+            amount: moneyFormatter.format(edge.cashSpent),
           })}
         </span>
       ) : null}

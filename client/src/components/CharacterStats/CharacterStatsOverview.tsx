@@ -4,7 +4,7 @@ import { MAX_HEAT, MAX_STAMINA } from "@shared/player";
 import { calculatePlayerPower } from "@shared/playerPower";
 import { useTranslations } from "next-intl";
 import { typography } from "../../design-system/typography";
-import { moneyFormatter, numberFormatter } from "./CharacterStatsFormat";
+import { useFormatters } from "../../lib/useFormatters";
 import { CharacterStatsGroup } from "./CharacterStatsGroup";
 import { CharacterStatsMeter } from "./CharacterStatsMeter";
 import { CharacterStatsTile } from "./CharacterStatsTile";
@@ -18,6 +18,7 @@ export function CharacterStatsOverview({ player }: CharacterStatsOverviewProps) 
   const { resources } = player;
   const impairment = intoxicationPenalty(resources.high, resources.drunk);
   const t = useTranslations("character");
+  const { moneyFormatter, numberFormatter } = useFormatters();
 
   return (
     <div className="flex flex-col gap-6">

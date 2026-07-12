@@ -124,6 +124,10 @@ export class MissionPrompts {
 
   private static playerSection(player: Player): string {
     const context = PlayerContextService.fromPlayer(player);
+    const language = player.language ?? DEFAULT_PLAYER_LANGUAGE;
+    const storySoFar =
+      player.narrative.storySummaries?.[language] ??
+      (language === "en" ? player.narrative.storySummary : "");
 
     return (
       "PLAYER (always call them 'you'):\n" +
@@ -135,7 +139,7 @@ export class MissionPrompts {
           importantFacts: player.narrative.llmMemory.importantFacts,
           level: player.progression.level,
           rank: player.rank,
-          storySoFar: player.narrative.storySummary || "This is their first job.",
+          storySoFar: storySoFar || "This is their first job.",
           unresolvedConflicts: player.narrative.llmMemory.unresolvedConflicts,
         },
         null,

@@ -36,7 +36,7 @@ export class EmpireController {
   private buy = async (req: Request, res: Response): Promise<void> => {
     const parsed = buyPersonalBuildingRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(
@@ -55,7 +55,7 @@ export class EmpireController {
     res.json({
       ...holdings,
       collected: holdings.collected + turfs.collected,
-      raided: turfs.raided,
+      raidedBuildingId: turfs.raidedBuildingId,
       upkeep: turfs.upkeep,
     });
   };
@@ -63,7 +63,7 @@ export class EmpireController {
   private upgrade = async (req: Request, res: Response): Promise<void> => {
     const parsed = buildingTargetRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(
@@ -77,7 +77,7 @@ export class EmpireController {
   private repair = async (req: Request, res: Response): Promise<void> => {
     const parsed = buildingTargetRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(
@@ -91,7 +91,7 @@ export class EmpireController {
   private staff = async (req: Request, res: Response): Promise<void> => {
     const parsed = staffBuildingRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(
@@ -105,7 +105,7 @@ export class EmpireController {
 
   private requireUid(req: Request): string {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
     return req.uid;
   }

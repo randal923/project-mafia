@@ -17,6 +17,7 @@ import { displayText, typography } from "../../design-system/typography";
 import { ApiError, buyEquipment, fetchStoreCatalog } from "../../lib/api";
 import { cx } from "../../lib/cx";
 import { useCatalogText } from "../../lib/useCatalogText";
+import { useFormatters } from "../../lib/useFormatters";
 
 type CategoryFilter = "all" | EquipmentCategory;
 type RequirementLevelFilter = "all" | number;
@@ -27,14 +28,9 @@ type StoreToast = {
   tone: "failure" | "success";
 };
 
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency",
-});
-
 export function StorePageContent() {
   const t = useTranslations("store");
+  const { moneyFormatter } = useFormatters();
   const { itemName } = useCatalogText();
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();

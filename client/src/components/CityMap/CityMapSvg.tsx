@@ -1,7 +1,7 @@
 "use client";
 
 import { CITY_GRID_COLUMNS, CITY_GRID_ROWS } from "@shared/cityMap";
-import { DISTRICTS, type DistrictId } from "@shared/district";
+import type { DistrictId } from "@shared/district";
 import type { TurfState } from "@shared/territory";
 import { useTranslations } from "next-intl";
 import { useState } from "react";

@@ -88,5 +88,15 @@ export function useJobBoard() {
     [isBusy, user]
   );
 
-  return { accept, board, isBusy, reload, regenerate, status };
+  const boardMatchesLanguage =
+    !board || !language || (board.language ?? "en") === language;
+
+  return {
+    accept,
+    board: boardMatchesLanguage ? board : null,
+    isBusy,
+    reload,
+    regenerate,
+    status: boardMatchesLanguage ? status : "loading",
+  };
 }

@@ -58,7 +58,7 @@ export function InventoryItemCard({
     >
       {item.image ? (
         <Image
-          alt={item.image.alt}
+          alt={itemName(item)}
           className="h-full w-full object-contain drop-shadow"
           height={compact ? 160 : 240}
           src={item.image.src}

@@ -103,33 +103,30 @@ export class AttackService {
       ]);
 
       if (!turfSnap.exists) {
-        throw new HttpError(404, "That turf doesn't exist.");
+        throw new HttpError(404, { code: "turf_not_found" });
       }
       if (!playerSnap.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const turf = turfSnap.data() as TurfState;
       const attacker = normalizePlayer(playerSnap.data() as Player);
 
       if (!attacker.family) {
-        throw new HttpError(403, "Found your family before you start a war.");
+        throw new HttpError(403, { code: "family_required" });
       }
       if (attacker.prison) {
-        throw new HttpError(403, "You're in prison. The war can wait.");
+        throw new HttpError(403, { code: "player_imprisoned" });
       }
       if (turf.ownerUid === uid) {
-        throw new HttpError(400, "That block already flies your flag.");
+        throw new HttpError(400, { code: "own_turf" });
       }
       const siege = turf.ownerUid === null;
       if (siege && !turf.landmarkId) {
-        throw new HttpError(
-          409,
-          "Unclaimed ground is taken with a takeover, not an assault.",
-        );
+        throw new HttpError(409, { code: "takeover_required" });
       }
       if (turf.shieldUntil && Date.parse(turf.shieldUntil) > nowMs) {
-        throw new HttpError(409, "That block is lying low — too soon to hit it.");
+        throw new HttpError(409, { code: "turf_shielded" });
       }
 
       if (
@@ -137,7 +134,7 @@ export class AttackService {
         nowMs - Date.parse(attacker.war.lastAttackAt) <
           ATTACK_COOLDOWN_MINUTES * 60_000
       ) {
-        throw new HttpError(429, "Your soldiers are still regrouping.");
+        throw new HttpError(429, { code: "attack_cooldown" });
       }
 
       // Revenge: the token granted when this family lost a defense —
@@ -155,16 +152,10 @@ export class AttackService {
       );
       const owned = ownedSnap.docs.map((doc) => doc.data() as TurfState);
       if (!revenge && owned.length > 0 && !canReachTurf(turf, owned)) {
-        throw new HttpError(
-          409,
-          "Too far from your ground. March through the district, block by block.",
-        );
+        throw new HttpError(409, { code: "turf_not_adjacent" });
       }
       if (!revenge && owned.length === 0 && !siege) {
-        throw new HttpError(
-          409,
-          "Take ground of your own before you take someone else's.",
-        );
+        throw new HttpError(409, { code: "territory_required" });
       }
 
       const crewSnaps = await Promise.all(
@@ -172,11 +163,17 @@ export class AttackService {
       );
       const committed = crewSnaps.map((snap, i) => {
         if (!snap.exists) {
-          throw new HttpError(404, `No such crew member: ${crewIds[i]}.`);
+          throw new HttpError(404, {
+            code: "crew_member_not_found",
+            params: { id: crewIds[i] },
+          });
         }
         const member = normalizeCrewMember(snap.data() as CrewMember);
         if (member.status !== "idle") {
-          throw new HttpError(409, `${member.name} isn't free to fight.`);
+          throw new HttpError(409, {
+            code: "crew_not_free_to_fight",
+            params: { name: member.name },
+          });
         }
         return member;
       });
@@ -209,7 +206,7 @@ export class AttackService {
           nowMs - Date.parse(defender.family.foundedAt) <
             NEW_FAMILY_SHIELD_HOURS * 3_600_000
         ) {
-          throw new HttpError(409, "That family is too green to hit — give it time.");
+          throw new HttpError(409, { code: "family_protected" });
         }
 
         const defenderCrewSnaps = await Promise.all(
@@ -233,10 +230,16 @@ export class AttackService {
 
       const stake = attackStake(defensePower);
       if (attacker.resources.stamina < ATTACK_STAMINA_COST) {
-        throw new HttpError(400, "Your soldiers are willing; you're exhausted.");
+        throw new HttpError(400, {
+          code: "stamina_required",
+          params: { required: ATTACK_STAMINA_COST },
+        });
       }
       if (attacker.resources.cash < stake) {
-        throw new HttpError(402, `War costs money — this one takes $${stake}.`);
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: stake },
+        });
       }
 
       const attackPower =
@@ -567,16 +570,30 @@ export class AttackService {
         report.turfFlipped
           ? this.notifications.push(
               report.defenderUid,
-              "turf_lost",
-              `You lost ${turf.name}`,
-              `${report.attackerName} took ${turf.name} in ${district}. You have 24 hours of revenge — hit back anywhere on their map.`,
+              {
+                content: {
+                  messageId: "turf_lost",
+                  params: {
+                    attackerName: report.attackerName,
+                    turfId: turf.id,
+                  },
+                },
+                type: "turf_lost",
+              },
               report.id,
             )
           : this.notifications.push(
               report.defenderUid,
-              "turf_defended",
-              `${turf.name} held`,
-              `${report.attackerName} came for ${turf.name} and your defenses turned them away.`,
+              {
+                content: {
+                  messageId: "turf_defended",
+                  params: {
+                    attackerName: report.attackerName,
+                    turfId: turf.id,
+                  },
+                },
+                type: "turf_defended",
+              },
               report.id,
             ),
       );

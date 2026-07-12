@@ -1,14 +1,16 @@
 "use client";
 
-import { NEWSPAPER_NAME, type NewspaperEdition } from "@shared/newspaper";
+import type { NewspaperEdition } from "@shared/newspaper";
 import type { PlayerNotification } from "@shared/notification";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/AuthProvider/AuthProvider";
 import { usePlayer } from "../components/PlayerProvider/PlayerProvider";
 import { displayText, typography } from "../design-system/typography";
 import { fetchLatestEdition, fetchNotifications } from "../lib/api";
+import { selectNewspaperCopy } from "../lib/selectNewspaperCopy";
+import { useNotificationText } from "../lib/useNotificationText";
 
 const quickLinkCards = [
   { href: "/jobs", id: "jobs" },
@@ -24,6 +26,9 @@ export function HomePageContent() {
   const [edition, setEdition] = useState<NewspaperEdition | null>(null);
   const [unread, setUnread] = useState<PlayerNotification[]>([]);
   const t = useTranslations("home");
+  const tNewspaper = useTranslations("newspaper");
+  const locale = useLocale();
+  const notificationText = useNotificationText();
 
   useEffect(() => {
     if (!user) {
@@ -57,6 +62,14 @@ export function HomePageContent() {
     );
   }
 
+  const newspaperCopy = edition
+    ? selectNewspaperCopy(
+        edition,
+        locale === "pt-BR" ? "pt-BR" : "en",
+        tNewspaper,
+      )
+    : null;
+
   return (
     <div className="flex flex-col gap-6 pb-6">
       <header>
@@ -72,25 +85,28 @@ export function HomePageContent() {
             {t("whileAway")}
           </h2>
           <ul className="mt-2 mb-0 flex list-none flex-col gap-1 p-0">
-            {unread.slice(0, 5).map((notification) => (
-              <li className={typography.paragraph} key={notification.id}>
-                <strong>{notification.title}.</strong> {notification.body}
-              </li>
-            ))}
+            {unread.slice(0, 5).map((notification) => {
+              const text = notificationText(notification);
+              return (
+                <li className={typography.paragraph} key={notification.id}>
+                  <strong>{text.title}.</strong> {text.body}
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
 
-      {edition ? (
+      {edition && newspaperCopy ? (
         <section className="rounded-panel border border-line bg-neutral-950 px-8 py-6 shadow-panel">
           <p className="m-0 text-center font-serif text-xs tracking-[0.3em] text-neutral-500 uppercase">
-            {t("masthead", { day: edition.gameDay, name: NEWSPAPER_NAME })}
+            {t("masthead", { day: edition.gameDay, name: tNewspaper("name") })}
           </p>
           <h2 className="mt-2 mb-0 text-center font-serif text-4xl leading-tight font-black text-neutral-100">
-            {edition.headline.title}
+            {newspaperCopy.headline.title}
           </h2>
           <p className="mt-3 mb-0 text-center font-serif text-lg leading-relaxed text-neutral-300">
-            {edition.headline.body}
+            {newspaperCopy.headline.body}
           </p>
           <p className="mt-4 mb-0 text-center">
             <Link
@@ -104,7 +120,7 @@ export function HomePageContent() {
       ) : (
         <section className="rounded-panel border border-line bg-surface px-6 py-5 shadow-panel">
           <p className={`m-0 ${typography.narrativeCaption}`}>
-            {t("noEditionYet", { name: NEWSPAPER_NAME })}
+            {t("noEditionYet", { name: tNewspaper("name") })}
           </p>
         </section>
       )}

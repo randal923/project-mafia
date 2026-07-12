@@ -90,7 +90,7 @@ export class BuildingService {
   async buyPersonal(uid: string, definitionId: string): Promise<HoldingsView> {
     const definition = buildingDefinition(definitionId);
     if (!definition || definition.class !== "personal") {
-      throw new HttpError(404, "No such property is on the market.");
+      throw new HttpError(404, { code: "property_not_for_sale" });
     }
 
     await this.db.runTransaction(async (tx) => {
@@ -98,20 +98,23 @@ export class BuildingService {
 
       const rankIndex = PLAYER_RANKS.indexOf(player.rank);
       if (rankIndex < PLAYER_RANKS.indexOf(definition.rankRequirement)) {
-        throw new HttpError(403, "You're not established enough for that deed.");
+        throw new HttpError(403, { code: "rank_too_low" });
       }
       const slots = PERSONAL_BUILDING_SLOTS_BY_RANK[player.rank];
       if (buildings.length >= slots) {
-        throw new HttpError(
-          409,
-          `Your rank holds ${slots} propert${slots === 1 ? "y" : "ies"}. Climb higher.`,
-        );
+        throw new HttpError(409, {
+          code: "property_limit",
+          params: { count: slots },
+        });
       }
       if (buildings.some((b) => b.definitionId === definitionId)) {
-        throw new HttpError(409, "You already run one of those.");
+        throw new HttpError(409, { code: "duplicate_property" });
       }
       if (player.resources.cash < definition.cost) {
-        throw new HttpError(402, "You can't cover the purchase.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: definition.cost },
+        });
       }
 
       const nowIso = new Date().toISOString();
@@ -146,15 +149,18 @@ export class BuildingService {
     await this.mutateBuilding(uid, buildingId, (building, player) => {
       const definition = this.requireDefinition(building);
       if (building.level >= MAX_BUILDING_LEVEL) {
-        throw new HttpError(400, "It's already the best on the block.");
+        throw new HttpError(400, { code: "building_max_level" });
       }
       if (building.damaged) {
-        throw new HttpError(409, "Repair it before you expand it.");
+        throw new HttpError(409, { code: "building_damaged" });
       }
 
       const cost = buildingUpgradeCost(definition, building.level + 1);
       if (player.resources.cash < cost) {
-        throw new HttpError(402, "You can't cover the works.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: cost },
+        });
       }
 
       return {
@@ -169,7 +175,7 @@ export class BuildingService {
   async repairPersonal(uid: string, buildingId: string): Promise<HoldingsView> {
     await this.mutateBuilding(uid, buildingId, (building, player) => {
       if (!building.damaged) {
-        throw new HttpError(400, "Nothing needs fixing.");
+        throw new HttpError(400, { code: "building_not_damaged" });
       }
 
       const cost = buildingRepairCost(
@@ -177,7 +183,10 @@ export class BuildingService {
         building.level,
       );
       if (player.resources.cash < cost) {
-        throw new HttpError(402, "You can't cover the repairs.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: cost },
+        });
       }
 
       const nowIso = new Date().toISOString();
@@ -207,16 +216,16 @@ export class BuildingService {
       const { buildings, docs, crewById } = await this.readAll(tx, uid);
       const index = buildings.findIndex((b) => b.id === buildingId);
       if (index === -1) {
-        throw new HttpError(404, "You don't own that building.");
+        throw new HttpError(404, { code: "building_not_owned" });
       }
 
       const building = buildings[index]!;
       const definition = this.requireDefinition(building);
       if (crewIds.length > definition.staffSlots) {
-        throw new HttpError(
-          400,
-          `${definition.name} has ${definition.staffSlots} position${definition.staffSlots === 1 ? "" : "s"}.`,
-        );
+        throw new HttpError(400, {
+          code: "building_staff_limit",
+          params: { count: definition.staffSlots },
+        });
       }
 
       const nowIso = new Date().toISOString();
@@ -224,13 +233,19 @@ export class BuildingService {
       for (const id of crewIds) {
         const member = crewById.get(id);
         if (!member) {
-          throw new HttpError(404, `No such crew member: ${id}.`);
+          throw new HttpError(404, {
+            code: "crew_member_not_found",
+            params: { id },
+          });
         }
         const alreadyHere =
           member.status === "assigned_building" &&
           member.assignment === buildingId;
         if (member.status !== "idle" && !alreadyHere) {
-          throw new HttpError(409, `${member.name} isn't free to work a floor.`);
+          throw new HttpError(409, {
+            code: "crew_not_free_to_work",
+            params: { name: member.name },
+          });
         }
       }
 
@@ -403,7 +418,7 @@ export class BuildingService {
     ]);
 
     if (!playerSnap.exists) {
-      throw new HttpError(404, "Player not found.");
+      throw new HttpError(404, { code: "player_not_found" });
     }
 
     const crewById = new Map<string, CrewMember>(
@@ -439,10 +454,10 @@ export class BuildingService {
       ]);
 
       if (!buildingSnap.exists) {
-        throw new HttpError(404, "You don't own that building.");
+        throw new HttpError(404, { code: "building_not_owned" });
       }
       if (!playerSnap.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const nowIso = new Date().toISOString();
@@ -464,7 +479,11 @@ export class BuildingService {
   private requireDefinition(building: BuildingInstance) {
     const definition = buildingDefinition(building.definitionId);
     if (!definition) {
-      throw new HttpError(500, "Unknown building definition.");
+      throw new HttpError(
+        500,
+        { code: "internal_error" },
+        "Unknown building definition.",
+      );
     }
     return definition;
   }

@@ -10,7 +10,7 @@ import {
   type BuildingInstance,
 } from "@shared/building";
 import { buildingDefinition, buildingsOfClass } from "@shared/buildingCatalog";
-import { CREW_ARCHETYPES, type CrewMember } from "@shared/crew";
+import type { CrewMember } from "@shared/crew";
 import { PLAYER_RANKS } from "@shared/player";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -32,12 +32,8 @@ import {
   type HoldingsResponse,
 } from "../../lib/api";
 import { useCatalogText } from "../../lib/useCatalogText";
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency",
-});
+import { useCrewText } from "../../lib/useCrewText";
+import { useFormatters } from "../../lib/useFormatters";
 
 type EmpireToast = {
   message: string;
@@ -49,7 +45,13 @@ type Holding = BuildingInstance & { incomeRate: number };
 
 export function EmpirePageContent() {
   const t = useTranslations("empire");
-  const { buildingDescription, buildingName, rankName } = useCatalogText();
+  const { moneyFormatter } = useFormatters();
+  const {
+    buildingDescription,
+    buildingName,
+    buildingNameById,
+    rankName,
+  } = useCatalogText();
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
   const [holdings, setHoldings] = useState<Holding[] | null>(null);
@@ -162,10 +164,10 @@ export function EmpirePageContent() {
         const result = await collectAllIncome(user);
         applyResult(result);
         setToast({
-          message: result.raided
+          message: result.raidedBuildingId
             ? t("toasts.collectedRaided", {
                 amount: moneyFormatter.format(result.collected),
-                building: result.raided,
+                building: buildingNameById(result.raidedBuildingId),
               })
             : result.upkeep > 0
               ? t("toasts.collectedWithUpkeep", {
@@ -175,10 +177,10 @@ export function EmpirePageContent() {
               : t("toasts.collected", {
                   amount: moneyFormatter.format(result.collected),
                 }),
-          title: result.raided
+          title: result.raidedBuildingId
             ? t("toasts.raidedTitle")
             : t("toasts.tillsEmptiedTitle"),
-          tone: result.raided ? "failure" : "success",
+          tone: result.raidedBuildingId ? "failure" : "success",
         });
       } catch (error) {
         setToast({
@@ -417,10 +419,13 @@ function HoldingCard({
   playerCash,
 }: HoldingCardProps) {
   const t = useTranslations("empire");
+  const { moneyFormatter } = useFormatters();
+  const { crewName } = useCrewText();
   const { archetypeName, buildingName } = useCatalogText();
   const staffNames = holding.staff
-    .map((id) => crew.find((member) => member.id === id)?.name)
-    .filter(Boolean);
+    .map((id) => crew.find((member) => member.id === id))
+    .filter((member): member is CrewMember => Boolean(member))
+    .map((member) => crewName(member.name));
   const upgradeCost = buildingUpgradeCost(definition, holding.level + 1);
   const repairCost = buildingRepairCost(definition, holding.level);
   const tillCap = holding.incomeRate * INCOME_STORAGE_HOURS;
@@ -547,6 +552,7 @@ function StaffPicker({
 }: StaffPickerProps) {
   const t = useTranslations("empire");
   const { archetypeName } = useCatalogText();
+  const { crewName } = useCrewText();
   const [selected, setSelected] = useState<string[]>(current);
   const currentMembers = current
     .map((id) => crew.find((member) => member.id === id))
@@ -580,7 +586,7 @@ function StaffPicker({
                 type="checkbox"
               />
               <span className={typography.paragraph}>
-                {member.name} ({archetypeName(member.archetype)})
+                {crewName(member.name)} ({archetypeName(member.archetype)})
               </span>
             </label>
           );

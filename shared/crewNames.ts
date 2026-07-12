@@ -33,6 +33,16 @@ export const CREW_NICKNAMES = [
   "Trigger",
 ] as const;
 
+/** Stable translation keys parallel to `CREW_NICKNAMES`. */
+export const CREW_NICKNAME_IDS = [
+  "none", "saint", "two_times", "ghost", "knuckles", "book",
+  "fingers", "wire", "smiles", "hammer", "lucky", "fox",
+  "ice", "tailor", "bricks", "whisper", "snake_eyes", "doctor",
+  "matches", "owl", "razor", "banker", "shadows", "bull",
+  "pockets", "judge", "static", "baron", "echo", "locksmith",
+  "trigger",
+] as const;
+
 export function formatCrewName(
   firstName: string,
   nickname: string,

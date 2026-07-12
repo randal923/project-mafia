@@ -29,6 +29,7 @@ import {
   MissionNode,
 } from "../../../shared/job";
 import { CAPTURE_SHIELD_HOURS, TurfState } from "../../../shared/territory";
+import type { PlayerLanguage } from "../../../shared/language";
 import { MissionTemplate } from "../../../shared/missionTemplate";
 import { NarrativeEvent, appendStorySummary } from "../../../shared/narrative";
 import { MAX_HEAT, Player, normalizePlayer } from "../../../shared/player";
@@ -52,6 +53,7 @@ import { NotificationService } from "./NotificationService";
 import { PrisonService } from "./PrisonService";
 import { SeasonService } from "./SeasonService";
 import { WorldEventService } from "./WorldEventService";
+import { getMissionNarrativeFallback } from "./getMissionNarrativeFallback";
 
 /** A generation older than this with pending nodes is considered crashed. */
 const STALE_GENERATION_MS = 60_000;
@@ -115,38 +117,44 @@ export class MissionService {
         ]);
 
       if (!activeSnap.empty) {
-        throw new HttpError(409, "You already have a job in progress.");
+        throw new HttpError(409, { code: "active_job_exists" });
       }
       if (!playerSnap.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
       if (!turfSnap.exists) {
-        throw new HttpError(404, "That turf doesn't exist.");
+        throw new HttpError(404, { code: "turf_not_found" });
       }
       const turf = turfSnap.data() as TurfState;
       if (turf.ownerUid !== null) {
-        throw new HttpError(409, "Someone planted a flag there first.");
+        throw new HttpError(409, { code: "turf_claimed" });
       }
 
       const current = normalizePlayer(playerSnap.data() as Player);
       if (current.prison) {
-        throw new HttpError(403, "You're in prison. The map can wait.");
+        throw new HttpError(403, { code: "player_imprisoned" });
       }
 
       const capacity = crewJobCapacity(current.progression.skills.leadership);
       if (crewIds.length > capacity) {
-        throw new HttpError(
-          400,
-          `Your leadership carries ${capacity} on a job — no more.`,
-        );
+        throw new HttpError(400, {
+          code: "crew_capacity",
+          params: { count: capacity },
+        });
       }
       const crewMembers = crewSnaps.map((snap, i) => {
         if (!snap.exists) {
-          throw new HttpError(404, `No such crew member: ${crewIds[i]}.`);
+          throw new HttpError(404, {
+            code: "crew_member_not_found",
+            params: { id: crewIds[i] },
+          });
         }
         const member = normalizeCrewMember(snap.data() as CrewMember);
         if (member.status !== "idle") {
-          throw new HttpError(409, `${member.name} isn't free for a job.`);
+          throw new HttpError(409, {
+            code: "crew_not_free_for_job",
+            params: { name: member.name },
+          });
         }
         return member;
       });
@@ -169,10 +177,10 @@ export class MissionService {
         ) * perks.staminaCostFactor,
       );
       if (current.resources.stamina < staminaCost) {
-        throw new HttpError(
-          400,
-          "You're running on empty. Rest up before you move on a block.",
-        );
+        throw new HttpError(400, {
+          code: "stamina_required",
+          params: { required: staminaCost },
+        });
       }
 
       const context = PlayerContextService.withCrew(
@@ -199,6 +207,7 @@ export class MissionService {
         depth: template.depth,
         generationStartedAt: null,
         id: missionId,
+        language: player.language ?? current.language ?? "en",
         momentumBands: MomentumService.bands(template.depth, this.engine.config),
         nodes,
         offer,
@@ -270,31 +279,37 @@ export class MissionService {
         ]);
 
       if (!activeSnap.empty) {
-        throw new HttpError(409, "You already have a job in progress.");
+        throw new HttpError(409, { code: "active_job_exists" });
       }
       if (!playerSnap.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const current = normalizePlayer(playerSnap.data() as Player);
       if (current.prison) {
-        throw new HttpError(403, "You're in prison. Jobs can wait.");
+        throw new HttpError(403, { code: "player_imprisoned" });
       }
 
       const capacity = crewJobCapacity(current.progression.skills.leadership);
       if (crewIds.length > capacity) {
-        throw new HttpError(
-          400,
-          `Your leadership carries ${capacity} on a job — no more.`,
-        );
+        throw new HttpError(400, {
+          code: "crew_capacity",
+          params: { count: capacity },
+        });
       }
       const crewMembers = crewSnaps.map((snap, i) => {
         if (!snap.exists) {
-          throw new HttpError(404, `No such crew member: ${crewIds[i]}.`);
+          throw new HttpError(404, {
+            code: "crew_member_not_found",
+            params: { id: crewIds[i] },
+          });
         }
         const member = normalizeCrewMember(snap.data() as CrewMember);
         if (member.status !== "idle") {
-          throw new HttpError(409, `${member.name} isn't free for a job.`);
+          throw new HttpError(409, {
+            code: "crew_not_free_for_job",
+            params: { name: member.name },
+          });
         }
         return member;
       });
@@ -310,12 +325,16 @@ export class MissionService {
       );
 
       const boardData = boardSnap.exists ? (boardSnap.data() as JobBoard) : null;
-      if (!boardData || !this.board.isCurrent(boardData)) {
-        throw new HttpError(409, "The job board changed. Refresh and choose again.");
+      if (
+        !boardData ||
+        !this.board.isCurrent(boardData) ||
+        !this.board.matchesLanguage(boardData, player)
+      ) {
+        throw new HttpError(409, { code: "job_board_changed" });
       }
       const offer = boardData.offers.find((o) => o.id === offerId);
       if (!offer) {
-        throw new HttpError(404, "That job is no longer on the board.");
+        throw new HttpError(404, { code: "job_offer_unavailable" });
       }
 
       const template = this.localizedTemplate(
@@ -333,10 +352,10 @@ export class MissionService {
         ) * perks.staminaCostFactor,
       );
       if (current.resources.stamina < staminaCost) {
-        throw new HttpError(
-          400,
-          "You're running on empty. Rest up or find something at the store.",
-        );
+        throw new HttpError(400, {
+          code: "stamina_required",
+          params: { required: staminaCost },
+        });
       }
 
       const context = PlayerContextService.withCrew(
@@ -362,6 +381,7 @@ export class MissionService {
         depth: template.depth,
         generationStartedAt: null,
         id: missionId,
+        language: boardData.language ?? "en",
         momentumBands: MomentumService.bands(
           template.depth,
           this.engine.config,
@@ -447,7 +467,7 @@ export class MissionService {
   async getMission(player: Player, missionId: string): Promise<Mission> {
     const snapshot = await this.missions(player.id).doc(missionId).get();
     if (!snapshot.exists) {
-      throw new HttpError(404, "Mission not found.");
+      throw new HttpError(404, { code: "mission_not_found" });
     }
 
     const mission = snapshot.data() as Mission;
@@ -478,37 +498,41 @@ export class MissionService {
       ]);
 
       if (!missionSnap.exists) {
-        throw new HttpError(404, "Mission not found.");
+        throw new HttpError(404, { code: "mission_not_found" });
       }
       if (!playerSnap.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const mission = missionSnap.data() as Mission;
       if (mission.status === "resolved") {
-        throw new HttpError(409, "This job is already over.");
+        throw new HttpError(409, { code: "mission_resolved" });
       }
 
       const current = mission.nodes[mission.currentNodeId];
       const edge = current?.choices?.find((c) => c.id === choiceId);
       if (!current || current.kind !== "beat" || !edge) {
-        throw new HttpError(400, "That is not one of your options.");
+        throw new HttpError(400, { code: "invalid_mission_choice" });
       }
       // Missing gear hard-locks a path on stakes-era missions; older
       // active missions keep their improvise behavior.
       if (edge.stakes && edge.gear && !edge.gear.satisfied) {
-        throw new HttpError(
-          400,
-          `You don't have the ${edge.gear.label} that move needs.`,
-        );
+        throw new HttpError(400, {
+          code: "mission_gear_required",
+          params: { item: edge.gear.label },
+        });
       }
 
       const target = mission.nodes[edge.id];
       if (!target) {
-        throw new HttpError(500, "Mission tree is corrupted.");
+        throw new HttpError(
+          500,
+          { code: "internal_error" },
+          "Mission tree is corrupted.",
+        );
       }
       if (target.narrativeStatus === "pending") {
-        throw new HttpError(409, "still_generating");
+        throw new HttpError(409, { code: "still_generating" });
       }
 
       // Heading into an outcome with crew aboard: read their docs now —
@@ -557,10 +581,10 @@ export class MissionService {
         edge.gear.item &&
         !afterGear.consumed
       ) {
-        throw new HttpError(
-          409,
-          `${edge.gear.item.name} is no longer available for this choice.`,
-        );
+        throw new HttpError(409, {
+          code: "mission_item_unavailable",
+          params: { item: edge.gear.item.name },
+        });
       }
       edge.damage = HealthService.damageAtCurrentHealth(
         edge.damage,
@@ -694,7 +718,6 @@ export class MissionService {
   /** Post-transaction: tell the player what the job cost the roster. */
   private async notifyCrewFates(uid: string, mission: Mission): Promise<void> {
     const outcomes = mission.resolution?.crewOutcomes ?? [];
-    const location = mission.offer.storySeed.location;
 
     await Promise.all(
       outcomes.map((outcome) => {
@@ -702,25 +725,37 @@ export class MissionService {
           case "killed":
             return this.notifications.push(
               uid,
-              "crew_died",
-              `${outcome.name} didn't make it`,
-              `${outcome.name} went down on the ${location} job. His gear went with him.`,
+              {
+                content: {
+                  messageId: "crew_died_on_job",
+                  params: { name: outcome.name },
+                },
+                type: "crew_died",
+              },
               mission.id,
             );
           case "imprisoned":
             return this.notifications.push(
               uid,
-              "crew_released",
-              `${outcome.name} got pinched`,
-              `The police took ${outcome.name} on the ${location} job — and everything he was carrying. A bribe could bring both back.`,
+              {
+                content: {
+                  messageId: "crew_imprisoned_on_job",
+                  params: { name: outcome.name },
+                },
+                type: "crew_released",
+              },
               mission.id,
             );
           case "injured":
             return this.notifications.push(
               uid,
-              "crew_recovered",
-              `${outcome.name} got hurt`,
-              `${outcome.name} took a beating on the ${location} job. He needs time off his feet.`,
+              {
+                content: {
+                  messageId: "crew_injured_on_job",
+                  params: { name: outcome.name },
+                },
+                type: "crew_recovered",
+              },
               mission.id,
             );
           default:
@@ -767,9 +802,13 @@ export class MissionService {
       RewardService.rewardsForTier(tier, mission.offer, template),
       mission.acceptedState?.loadout ?? player.loadout,
     );
+    const isPortuguese =
+      (mission.language ?? player.language ?? "en") === "pt-BR";
     const summary =
       outcome.narrative?.storySummary ??
-      `The ${mission.offer.storySeed.location} job ended in ${tier.replace(/_/g, " ")}.`;
+      (isPortuguese
+        ? `O trabalho em ${mission.offer.storySeed.location} chegou ao fim.`
+        : `The ${mission.offer.storySeed.location} job ended in ${tier.replace(/_/g, " ")}.`);
 
     const applied = RewardService.applyToPlayer(player, rewards, nowIso);
     if (crewHeatShift !== 0) {
@@ -778,20 +817,34 @@ export class MissionService {
         Math.max(0, applied.player.resources.heat + crewHeatShift),
       );
     }
+    const language: PlayerLanguage = isPortuguese ? "pt-BR" : "en";
+    const storedSummaries: Partial<Record<PlayerLanguage, string>> =
+      applied.player.narrative.storySummaries ??
+      (applied.player.narrative.storySummary
+        ? { en: applied.player.narrative.storySummary }
+        : {});
+    const localizedStorySummary = appendStorySummary(
+      storedSummaries[language] ?? "",
+      summary,
+    );
     const updatedPlayer: Player = {
       ...applied.player,
       narrative: {
         ...applied.player.narrative,
-        storySummary: appendStorySummary(
-          applied.player.narrative.storySummary,
-          summary,
-        ),
+        storySummaries: {
+          ...storedSummaries,
+          [language]: localizedStorySummary,
+        },
+        storySummary: localizedStorySummary,
       },
       // A disaster means the police got you — off to the county lockup.
       ...(tier === "disaster" && {
         prison: this.prison.sentence(
-          `Arrested after the ${mission.offer.storySeed.location} job.`,
+          isPortuguese
+            ? `Preso depois do trabalho em ${mission.offer.storySeed.location}.`
+            : `Arrested after the ${mission.offer.storySeed.location} job.`,
           nowIso,
+          isPortuguese ? "pt-BR" : "en",
         ),
       }),
       reservedEquipment: null,
@@ -803,10 +856,13 @@ export class MissionService {
       district: mission.offer.district,
       heatChange: rewards.heatChange,
       id: eventId,
+      language,
       missionId: mission.id,
       outcomeTier: tier,
       summary,
-      title: outcome.narrative?.title ?? "A job on the Docks",
+      title:
+        outcome.narrative?.title ??
+        (isPortuguese ? "Um trabalho na cidade" : "A job on the Docks"),
       type: "job_resolved",
     };
 
@@ -924,8 +980,12 @@ export class MissionService {
       return;
     }
 
+    const narrationPlayer: Player = {
+      ...player,
+      language: mission.language ?? player.language ?? "en",
+    };
     this.narrating.add(mission.id);
-    this.runNarration(mission, player)
+    this.runNarration(mission, narrationPlayer)
       .catch((err) => {
         console.error(`Narration failed for mission ${mission.id}:`, err);
       })
@@ -995,33 +1055,43 @@ export class MissionService {
       player,
     };
 
-    if (node.kind === "outcome") {
-      const tier = node.outcomeTier ?? "partial_failure";
-      const result = await this.narrator.narrateOutcome({
-        ...input,
-        rewards: RewardService.mitigateHeat(
-          RewardService.rewardsForTier(
-            tier,
-            mission.offer,
-            this.templateOf(mission),
+    try {
+      if (node.kind === "outcome") {
+        const tier = node.outcomeTier ?? "partial_failure";
+        const result = await this.narrator.narrateOutcome({
+          ...input,
+          rewards: RewardService.mitigateHeat(
+            RewardService.rewardsForTier(
+              tier,
+              mission.offer,
+              this.templateOf(mission),
+            ),
+            mission.acceptedState?.loadout ?? player.loadout,
           ),
-          mission.acceptedState?.loadout ?? player.loadout,
-        ),
-      });
-      node.narrative = result.narrative;
+        });
+        node.narrative = result.narrative;
+        node.narrativeStatus = "ready";
+      } else {
+        const result = await this.narrator.narrateBeat(input);
+        node.narrative = result.narrative;
+        node.narrativeStatus = "ready";
+        node.choices?.forEach((edge, index) => {
+          const text = result.choices[index];
+          if (text) {
+            edge.intent = text.intent;
+            edge.label = text.label;
+            edge.riskHint = text.riskHint;
+          }
+        });
+      }
+    } catch (error) {
+      console.error(`Narration fallback for mission ${mission.id}:`, error);
+      node.narrative = getMissionNarrativeFallback(
+        mission.offer,
+        node,
+        mission.language ?? player.language ?? "en",
+      );
       node.narrativeStatus = "ready";
-    } else {
-      const result = await this.narrator.narrateBeat(input);
-      node.narrative = result.narrative;
-      node.narrativeStatus = "ready";
-      node.choices?.forEach((edge, index) => {
-        const text = result.choices[index];
-        if (text) {
-          edge.intent = text.intent;
-          edge.label = text.label;
-          edge.riskHint = text.riskHint;
-        }
-      });
     }
 
     // Node ids like "01" start with a digit, so use an explicit FieldPath.

@@ -6,6 +6,7 @@ import { Button } from "../Button/Button";
 import { OrnamentDivider } from "../OrnamentDivider/OrnamentDivider";
 import { outcomeTierLabelKeys, outcomeTierTones } from "./MissionRunnerHelpers";
 import { MissionSkillExperienceSummary } from "./MissionSkillExperienceSummary";
+import { useFormatters } from "../../lib/useFormatters";
 
 type MissionOutcomePanelProps = {
   onFinish: () => void;
@@ -13,18 +14,13 @@ type MissionOutcomePanelProps = {
   step: MissionViewStep;
 };
 
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency"
-});
-
 export function MissionOutcomePanel({
   onFinish,
   resolution,
   step
 }: MissionOutcomePanelProps) {
   const t = useTranslations("mission");
+  const { moneyFormatter } = useFormatters();
   const tone = outcomeTierTones[resolution.tier];
 
   return (

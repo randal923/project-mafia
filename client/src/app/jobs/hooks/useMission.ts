@@ -116,7 +116,7 @@ export function useMission() {
           setPlayer(result.player);
         }
       } catch (error) {
-        if (error instanceof ApiError && error.message === "still_generating") {
+        if (error instanceof ApiError && error.code === "still_generating") {
           // The next scene is not written yet; polling will pick it up.
           return;
         }

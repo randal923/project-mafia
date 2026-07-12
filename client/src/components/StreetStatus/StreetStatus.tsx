@@ -8,6 +8,7 @@ import { MAX_HEAT, MAX_STAMINA, type Player } from "@shared/player";
 import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useFormatters } from "../../lib/useFormatters";
 import { Button } from "../Button/Button";
 
 type StreetStatusProps = {
@@ -16,12 +17,6 @@ type StreetStatusProps = {
   player: Player;
   precinctQuote: { chunk: number; cost: number } | null;
 };
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency"
-});
 
 const meterToneClasses = {
   brass: "bg-brass",
@@ -68,6 +63,7 @@ export function StreetStatus({
   player,
   precinctQuote
 }: StreetStatusProps) {
+  const { moneyFormatter } = useFormatters();
   const t = useTranslations("street");
   const { drunk, heat, high, stamina } = player.resources;
   const impairment = intoxicationPenalty(high, drunk);

@@ -14,14 +14,14 @@ export class AuthMiddleware {
     const [scheme, token] = header.split(" ");
 
     if (scheme?.toLowerCase() !== "bearer" || !token) {
-      throw new HttpError(401, "Missing bearer token");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
 
     try {
       const decoded = await this.firebase.auth.verifyIdToken(token);
       req.uid = decoded.uid;
     } catch {
-      throw new HttpError(401, "Invalid or expired token");
+      throw new HttpError(401, { code: "invalid_auth_token" });
     }
 
     next();

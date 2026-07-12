@@ -23,10 +23,7 @@ export class StoreController {
   private buy = async (req: Request, res: Response): Promise<void> => {
     const parsed = buyEquipmentRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(
-        400,
-        parsed.error.issues[0]?.message ?? "Invalid request body",
-      );
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.store.buy(
@@ -39,10 +36,7 @@ export class StoreController {
   private sell = async (req: Request, res: Response): Promise<void> => {
     const parsed = sellItemRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(
-        400,
-        parsed.error.issues[0]?.message ?? "Invalid request body",
-      );
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.store.sell(
@@ -55,7 +49,7 @@ export class StoreController {
 
   private requireUid(req: Request): string {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
     return req.uid;
   }

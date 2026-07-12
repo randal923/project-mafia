@@ -30,12 +30,6 @@ export function gameTime(nowMs: number, epochMs = GAME_EPOCH_MS): GameTime {
   };
 }
 
-export function formatGameClock(time: GameTime): string {
-  const hh = String(time.hour).padStart(2, "0");
-  const mm = String(time.minute).padStart(2, "0");
-  return `Day ${time.day} · ${hh}:${mm}`;
-}
-
 /** Real milliseconds a sentence of `gameDays` lasts. */
 export function gameDaysToRealMs(gameDays: number): number {
   return gameDays * REAL_MS_PER_GAME_DAY;

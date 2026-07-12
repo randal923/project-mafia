@@ -50,7 +50,7 @@ export function PlayerNameDialog() {
     const parsed = playerNameSchema.safeParse(name);
 
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? t("invalidName"));
+      setError(t("invalidName"));
       return;
     }
 

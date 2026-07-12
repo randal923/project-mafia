@@ -8,7 +8,7 @@ import {
   TERRITORY_UNLOCK_RANK,
   type TurfState,
 } from "@shared/territory";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
@@ -35,14 +35,10 @@ import {
   upgradeRacket,
   type MapViewResponse,
 } from "../../lib/api";
+import { useCatalogText } from "../../lib/useCatalogText";
+import { useFormatters } from "../../lib/useFormatters";
 
 const POLL_INTERVAL_MS = 45_000;
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency",
-});
 
 type MapToast = {
   message: string;
@@ -57,6 +53,24 @@ type PendingAction =
 
 export function MapPageContent() {
   const t = useTranslations("map");
+  const tSeason = useTranslations("season");
+  const locale = useLocale();
+  const { moneyFormatter } = useFormatters();
+  const seasonDateFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { day: "numeric", month: "long" }),
+    [locale],
+  );
+  const battleDateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        month: "short",
+      }),
+    [locale],
+  );
+  const { turfName } = useCatalogText();
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
   const router = useRouter();
@@ -262,6 +276,7 @@ export function MapPageContent() {
       }
       if (action.kind === "attack") {
         const { battle } = await attackTurf(user, action.turfId, crewIds);
+        const battleTurfName = turfName(battle.turfId);
         setPending(null);
         setToast({
           message: battle.turfFlipped
@@ -277,11 +292,11 @@ export function MapPageContent() {
                         amount: moneyFormatter.format(battle.incomeSkimmed),
                       })
                     : "",
-                turf: battle.turfName,
+                turf: battleTurfName,
               })
             : battle.tier === "partial_failure"
-              ? t("toasts.attackPartial", { turf: battle.turfName })
-              : t("toasts.attackRout", { turf: battle.turfName }),
+              ? t("toasts.attackPartial", { turf: battleTurfName })
+              : t("toasts.attackRout", { turf: battleTurfName }),
           title: battle.turfFlipped
             ? t("toasts.flagPlanted")
             : t("toasts.theyHeld"),
@@ -321,11 +336,8 @@ export function MapPageContent() {
             {t("header.subtitle")}{" "}
             {view
               ? t("header.seasonEnds", {
-                  date: new Intl.DateTimeFormat("en-US", {
-                    day: "numeric",
-                    month: "long",
-                  }).format(Date.parse(view.season.endsAt)),
-                  season: view.season.name,
+                  date: seasonDateFormatter.format(Date.parse(view.season.endsAt)),
+                  season: tSeason("name", { number: view.season.number }),
                 })
               : ""}
           </p>
@@ -339,7 +351,7 @@ export function MapPageContent() {
                   style={{ backgroundColor: family.color }}
                 />
                 <span className={typography.metadata}>
-                  {family.name} ({family.turfCount})
+                  {family.name || t("unknownFamily")} ({family.turfCount})
                 </span>
               </span>
             ))}
@@ -350,7 +362,9 @@ export function MapPageContent() {
       {countdown ? (
         <div className="rounded-panel border border-danger bg-danger/10 px-6 py-4">
           <p className={`m-0 ${displayText} text-xl text-danger-strong`}>
-            {t("conquestClock", { family: countdown.familyName })}
+            {t("conquestClock", {
+              family: countdown.familyName || t("unknownFamily"),
+            })}
           </p>
         </div>
       ) : null}
@@ -439,7 +453,7 @@ export function MapPageContent() {
                     {battle.kind === "landmark_siege"
                       ? t("battles.stormed")
                       : t("battles.hit")}{" "}
-                    <strong>{battle.turfName}</strong>
+                    <strong>{turfName(battle.turfId)}</strong>
                     {battle.defenderName
                       ? ` ${t("battles.heldBy", { name: battle.defenderName })}`
                       : ""}
@@ -457,12 +471,7 @@ export function MapPageContent() {
                   <span
                     className={`${typography.metadata} ${won ? "text-teal" : "text-danger-strong"}`}
                   >
-                    {new Intl.DateTimeFormat("en-US", {
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      month: "short",
-                    }).format(Date.parse(battle.createdAt))}
+                    {battleDateFormatter.format(Date.parse(battle.createdAt))}
                   </span>
                 </li>
               );

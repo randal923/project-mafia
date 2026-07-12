@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { playerLanguageFromHeader } from "../../../shared/playerLanguageFromHeader";
 import {
   bribeCrewRequestSchema,
   equipCrewRequestSchema,
@@ -44,11 +45,11 @@ export class CrewController {
   private hire = async (req: Request, res: Response): Promise<void> => {
     const parsed = hireCrewRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const member = await this.recruitment.hire(
-      this.requireUid(req),
+      await this.requirePlayer(req),
       parsed.data.candidateId,
     );
     const result = await this.crew.settle(this.requireUid(req));
@@ -58,7 +59,7 @@ export class CrewController {
   private fire = async (req: Request, res: Response): Promise<void> => {
     const parsed = fireCrewRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const crew = await this.crew.fire(this.requireUid(req), parsed.data.memberId);
@@ -68,7 +69,7 @@ export class CrewController {
   private train = async (req: Request, res: Response): Promise<void> => {
     const parsed = trainCrewRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(await this.crew.train(this.requireUid(req), parsed.data.memberId));
@@ -77,7 +78,7 @@ export class CrewController {
   private bribe = async (req: Request, res: Response): Promise<void> => {
     const parsed = bribeCrewRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(await this.crew.bribe(this.requireUid(req), parsed.data.memberId));
@@ -86,7 +87,7 @@ export class CrewController {
   private equip = async (req: Request, res: Response): Promise<void> => {
     const parsed = equipCrewRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(
@@ -101,7 +102,7 @@ export class CrewController {
   private unequip = async (req: Request, res: Response): Promise<void> => {
     const parsed = unequipCrewRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     res.json(
@@ -116,14 +117,20 @@ export class CrewController {
   private async requirePlayer(req: Request) {
     const player = await this.players.getPlayer(this.requireUid(req));
     if (!player) {
-      throw new HttpError(404, "Player not found.");
+      throw new HttpError(404, { code: "player_not_found" });
     }
-    return player;
+    return {
+      ...player,
+      language: playerLanguageFromHeader(
+        req.header("accept-language"),
+        player.language ?? "en",
+      ),
+    };
   }
 
   private requireUid(req: Request): string {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
     return req.uid;
   }

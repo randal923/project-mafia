@@ -1,6 +1,5 @@
 import type { MissionAcceptedState } from "@shared/job";
 import type { EquipmentSlotId } from "@shared/player";
-import { SKILLS } from "@shared/skills";
 import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { useCatalogText } from "../../lib/useCatalogText";
@@ -21,7 +20,7 @@ export function MissionAcceptedEquipment({
   acceptedState,
 }: MissionAcceptedEquipmentProps) {
   const t = useTranslations("mission.acceptedEquipment");
-  const { itemName, skillName } = useCatalogText();
+  const { approachName, itemName, skillName } = useCatalogText();
 
   if (!acceptedState) {
     return <p className={`m-0 ${typography.metadata}`}>{t("unavailable")}</p>;
@@ -90,7 +89,7 @@ export function MissionAcceptedEquipment({
                   })
                 : effect.type === "approachBonus"
                   ? t("effects.approachBonus", {
-                      approach: effect.approach,
+                      approach: approachName(effect.approach),
                       value: effect.value,
                     })
                   : t("effects.heatReduction", { value: effect.value })}

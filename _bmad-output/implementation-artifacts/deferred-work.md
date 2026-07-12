@@ -24,3 +24,6 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-consumable-stash-tools.md`
   summary: Enforce consumable behavior for every stash-only explosive at the catalog schema boundary.
   evidence: Current production explosives are consumable, but the pre-existing schema permits a future stash-only explosive to override mission fallbacks as reusable.
+- source_spec: `_bmad-output/implementation-artifacts/spec-complete-portuguese-localization.md`
+  summary: Make map building-action validation errors describe the specific missing or invalid fields.
+  evidence: The pre-existing upgrade, repair, and staff handlers report fixed field counts for every schema failure, so malformed values can produce a localized but imprecise message even though no raw validation text is exposed.

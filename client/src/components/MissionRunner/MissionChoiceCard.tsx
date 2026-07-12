@@ -1,11 +1,11 @@
 import type { MissionViewChoice } from "@shared/job";
-import { SKILLS } from "@shared/skills";
 import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 import { MissionCheckBreakdown } from "./MissionCheckBreakdown";
+import { useFormatters } from "../../lib/useFormatters";
 
 type MissionChoiceCardProps = {
   choice: MissionViewChoice;
@@ -13,19 +13,14 @@ type MissionChoiceCardProps = {
   onChoose: (choiceId: string) => void;
 };
 
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency"
-});
-
 export function MissionChoiceCard({
   choice,
   disabled,
   onChoose,
 }: MissionChoiceCardProps) {
   const t = useTranslations("mission.choice");
-  const { itemName, skillName } = useCatalogText();
+  const { moneyFormatter } = useFormatters();
+  const { approachName, itemName, skillName } = useCatalogText();
   const equipmentStatus = !choice.gear
     ? t("equipment.none")
     : choice.locked
@@ -71,7 +66,7 @@ export function MissionChoiceCard({
           ? t("lockedNeeds", {
               gear: choice.gear?.label ?? t("genericGear"),
             })
-          : (choice.label ?? choice.approach)}
+          : (choice.label ?? approachName(choice.approach))}
       </Button>
       <p className={`m-0 ${typography.narrativeCaption}`}>
         {choice.riskHint ??

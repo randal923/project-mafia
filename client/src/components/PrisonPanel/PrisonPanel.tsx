@@ -1,11 +1,12 @@
 "use client";
 
 import type { PrisonStatus } from "@shared/prison";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { Button } from "../Button/Button";
 import { OrnamentDivider } from "../OrnamentDivider/OrnamentDivider";
+import { useFormatters } from "../../lib/useFormatters";
 
 type PrisonPanelProps = {
   isBusy: boolean;
@@ -15,12 +16,6 @@ type PrisonPanelProps = {
   onServed: () => void;
   status: PrisonStatus;
 };
-
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency"
-});
 
 function formatRemaining(ms: number): string {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -38,6 +33,8 @@ export function PrisonPanel({
   status
 }: PrisonPanelProps) {
   const t = useTranslations("prison");
+  const locale = useLocale();
+  const { moneyFormatter } = useFormatters();
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -50,6 +47,11 @@ export function PrisonPanel({
     ? Date.parse(status.attemptCooldownUntil) - now
     : 0;
   const onCooldown = cooldownMs > 0;
+  const language = locale === "pt-BR" ? "pt-BR" : "en";
+  const reason =
+    (status.prison.reasonLanguage ?? "en") === language
+      ? status.prison.reason
+      : t("reason");
 
   useEffect(() => {
     if (releaseMs <= 0) {
@@ -67,7 +69,7 @@ export function PrisonPanel({
         {t("title")}
       </h1>
       <p className={`mt-3 mb-0 ${typography.narrativeBody}`}>
-        {status.prison.reason} {t("flavor")}
+        {reason} {t("flavor")}
       </p>
 
       <div className="mt-6 flex items-baseline gap-3">

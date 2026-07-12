@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { useCatalogText } from "../../lib/useCatalogText";
+import { useFormatters } from "../../lib/useFormatters";
 import { Button } from "../Button/Button";
 import { Tag } from "../Tag/Tag";
 
@@ -17,12 +18,6 @@ type JobCardProps = {
   playerStamina?: number;
 };
 
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency"
-});
-
 export function JobCard({
   disabled = false,
   offer,
@@ -31,6 +26,7 @@ export function JobCard({
   playerStamina
 }: JobCardProps) {
   const t = useTranslations("jobCard");
+  const { moneyFormatter } = useFormatters();
   const { districtNameForLabel } = useCatalogText();
   const tooTired =
     offer.staminaCost !== undefined &&

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { useCatalogText } from "../../lib/useCatalogText";
+import { useFormatters } from "../../lib/useFormatters";
 import { Button } from "../Button/Button";
 
 type StoreItemCardProps = {
@@ -15,12 +16,6 @@ type StoreItemCardProps = {
   playerCash: number;
 };
 
-const moneyFormatter = new Intl.NumberFormat("en-US", {
-  currency: "USD",
-  maximumFractionDigits: 0,
-  style: "currency"
-});
-
 export function StoreItemCard({
   isBusy,
   isLocked,
@@ -30,6 +25,7 @@ export function StoreItemCard({
   playerCash
 }: StoreItemCardProps) {
   const t = useTranslations("store");
+  const { moneyFormatter } = useFormatters();
   const tItem = useTranslations("itemCard");
   const { itemDescription, itemName } = useCatalogText();
   const canAfford = playerCash >= item.price;
@@ -60,7 +56,7 @@ export function StoreItemCard({
     >
       <div className="relative flex h-32 items-center justify-center border-b border-line bg-black/40 p-3">
         <Image
-          alt={item.image.alt}
+          alt={itemName(item)}
           className={cx(
             "h-full w-full object-contain drop-shadow",
             isLocked && "opacity-30 grayscale"

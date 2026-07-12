@@ -6,7 +6,7 @@ import {
 } from "@shared/leveling";
 import { SKILL_IDS } from "@shared/skills";
 import { useTranslations } from "next-intl";
-import { numberFormatter } from "./CharacterStatsFormat";
+import { useFormatters } from "../../lib/useFormatters";
 import { CharacterStatsGroup } from "./CharacterStatsGroup";
 import { CharacterStatsMeter } from "./CharacterStatsMeter";
 import { CharacterStatsTile } from "./CharacterStatsTile";
@@ -22,6 +22,7 @@ export function CharacterStatsSkills({
   const atLevelCap = progression.level >= MAX_PLAYER_LEVEL;
   const xpNeeded = xpToNextLevel(progression.level);
   const t = useTranslations("character");
+  const { numberFormatter } = useFormatters();
 
   return (
     <div className="flex flex-col gap-6">

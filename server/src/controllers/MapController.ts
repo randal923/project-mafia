@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { playerLanguageFromHeader } from "../../../shared/playerLanguageFromHeader";
 import {
   buildRacketRequestSchema,
   buildingTargetRequestSchema,
@@ -48,7 +49,7 @@ export class MapController {
   private attack = async (req: Request, res: Response): Promise<void> => {
     const parsed = attackTurfRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const battle = await this.attacks.attack(
@@ -66,7 +67,7 @@ export class MapController {
   private foundFamily = async (req: Request, res: Response): Promise<void> => {
     const parsed = foundFamilyRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.territory.foundFamily(
@@ -80,7 +81,7 @@ export class MapController {
   private claim = async (req: Request, res: Response): Promise<void> => {
     const parsed = claimTurfRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const player = await this.requirePlayer(req);
@@ -95,7 +96,7 @@ export class MapController {
   private assignDefense = async (req: Request, res: Response): Promise<void> => {
     const parsed = assignTurfCrewRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const turf = await this.territory.assignDefense(
@@ -109,7 +110,7 @@ export class MapController {
   private build = async (req: Request, res: Response): Promise<void> => {
     const parsed = buildRacketRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+      throw new HttpError(400, { code: "invalid_request" });
     }
 
     const turf = await this.territory.buildRacket(
@@ -123,7 +124,10 @@ export class MapController {
   private upgrade = async (req: Request, res: Response): Promise<void> => {
     const parsed = buildingTargetRequestSchema.safeParse(req.body);
     if (!parsed.success || !parsed.data.turfId) {
-      throw new HttpError(400, "turfId and buildingId are required.");
+      throw new HttpError(400, {
+        code: "required_fields",
+        params: { count: 2 },
+      });
     }
 
     const turf = await this.territory.upgradeRacket(
@@ -137,7 +141,10 @@ export class MapController {
   private repair = async (req: Request, res: Response): Promise<void> => {
     const parsed = buildingTargetRequestSchema.safeParse(req.body);
     if (!parsed.success || !parsed.data.turfId) {
-      throw new HttpError(400, "turfId and buildingId are required.");
+      throw new HttpError(400, {
+        code: "required_fields",
+        params: { count: 2 },
+      });
     }
 
     const turf = await this.territory.repairRacket(
@@ -151,7 +158,10 @@ export class MapController {
   private staff = async (req: Request, res: Response): Promise<void> => {
     const parsed = staffBuildingRequestSchema.safeParse(req.body);
     if (!parsed.success || !parsed.data.turfId) {
-      throw new HttpError(400, "turfId, buildingId, and crewIds are required.");
+      throw new HttpError(400, {
+        code: "required_fields",
+        params: { count: 3 },
+      });
     }
 
     const turf = await this.territory.staffRacket(
@@ -170,14 +180,20 @@ export class MapController {
   private async requirePlayer(req: Request): Promise<Player> {
     const player = await this.players.getPlayer(this.requireUid(req));
     if (!player) {
-      throw new HttpError(404, "Player not found.");
+      throw new HttpError(404, { code: "player_not_found" });
     }
-    return player;
+    return {
+      ...player,
+      language: playerLanguageFromHeader(
+        req.header("accept-language"),
+        player.language ?? "en",
+      ),
+    };
   }
 
   private requireUid(req: Request): string {
     if (!req.uid) {
-      throw new HttpError(401, "Unauthenticated");
+      throw new HttpError(401, { code: "unauthenticated" });
     }
     return req.uid;
   }

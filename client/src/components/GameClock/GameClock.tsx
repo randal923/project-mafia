@@ -1,6 +1,6 @@
 "use client";
 
-import { formatGameClock, gameTime } from "@shared/gameTime";
+import { gameTime, type GameTime } from "@shared/gameTime";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { displayText } from "../../design-system/typography";
@@ -15,7 +15,7 @@ import { usePlayer } from "../PlayerProvider/PlayerProvider";
 export function GameClock() {
   const t = useTranslations("clock");
   const { player } = usePlayer();
-  const [label, setLabel] = useState<string | null>(null);
+  const [time, setTime] = useState<GameTime | null>(null);
   const createdAt = player?.createdAt;
 
   useEffect(() => {
@@ -24,8 +24,7 @@ export function GameClock() {
     }
 
     const epochMs = Date.parse(createdAt);
-    const tick = () =>
-      setLabel(formatGameClock(gameTime(Date.now(), epochMs)));
+    const tick = () => setTime(gameTime(Date.now(), epochMs));
     tick();
     // One game minute passes every 2.5 real seconds.
     const timer = setInterval(tick, 2_500);
@@ -38,7 +37,13 @@ export function GameClock() {
       suppressHydrationWarning
       title={t("tooltip")}
     >
-      {createdAt ? (label ?? "—") : "—"}
+      {createdAt && time
+        ? t("label", {
+            day: time.day,
+            hour: String(time.hour).padStart(2, "0"),
+            minute: String(time.minute).padStart(2, "0"),
+          })
+        : "—"}
     </span>
   );
 }

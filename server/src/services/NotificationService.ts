@@ -2,8 +2,8 @@ import { CollectionReference, Firestore } from "firebase-admin/firestore";
 import { randomUUID } from "node:crypto";
 import {
   NOTIFICATION_PAGE_SIZE,
-  NotificationType,
   PlayerNotification,
+  SemanticNotificationInput,
 } from "../../../shared/notification";
 import { FirebaseService } from "./FirebaseService";
 
@@ -21,19 +21,15 @@ export class NotificationService {
 
   async push(
     uid: string,
-    type: NotificationType,
-    title: string,
-    body: string,
+    input: SemanticNotificationInput,
     refId: string | null = null,
   ): Promise<void> {
     const notification: PlayerNotification = {
-      body,
+      ...input,
       createdAt: new Date().toISOString(),
       id: randomUUID(),
       read: false,
       refId,
-      title,
-      type,
     };
 
     await this.feed(uid).doc(notification.id).set(notification);

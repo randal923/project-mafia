@@ -1,32 +1,43 @@
-import { NextFunction, Request, Response } from 'express';
-import { EnvConfig } from '../config/env';
+import { NextFunction, Request, Response } from "express";
+import { playerLanguageFromHeader } from "../../../shared/playerLanguageFromHeader";
+import { HttpError } from "../errors/HttpError";
+import { formatApiError } from "../errors/formatApiError";
 
-export class HttpError extends Error {
-  constructor(
-    readonly statusCode: number,
-    message: string,
-  ) {
-    super(message);
-    this.name = 'HttpError';
-  }
-}
+export { HttpError } from "../errors/HttpError";
 
 export class ErrorHandler {
-  constructor(private readonly config: EnvConfig) {}
-
   notFound = (req: Request, res: Response): void => {
-    res.status(404).json({ error: `Route not found: ${req.method} ${req.path}` });
+    const language = playerLanguageFromHeader(req.header("accept-language"));
+    const descriptor = { code: "route_not_found" } as const;
+    res.status(404).json({
+      code: descriptor.code,
+      error: formatApiError(descriptor, language),
+    });
   };
 
-  handle = (err: unknown, _req: Request, res: Response, _next: NextFunction): void => {
+  handle = (
+    err: unknown,
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ): void => {
+    const language = playerLanguageFromHeader(req.header("accept-language"));
     if (err instanceof HttpError) {
-      res.status(err.statusCode).json({ error: err.message });
+      if (err.statusCode >= 500) {
+        console.error("Internal HTTP error:", err);
+      }
+      res.status(err.statusCode).json({
+        code: err.descriptor.code,
+        error: formatApiError(err.descriptor, language),
+      });
       return;
     }
 
-    console.error('Unhandled error:', err);
-    const message =
-      !this.config.isProduction && err instanceof Error ? err.message : 'Internal server error';
-    res.status(500).json({ error: message });
+    console.error("Unhandled error:", err);
+    const descriptor = { code: "internal_error" } as const;
+    res.status(500).json({
+      code: descriptor.code,
+      error: formatApiError(descriptor, language),
+    });
   };
 }

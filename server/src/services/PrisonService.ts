@@ -1,5 +1,9 @@
 import { Firestore } from "firebase-admin/firestore";
 import { gameDaysToRealMs } from "../../../shared/gameTime";
+import {
+  DEFAULT_PLAYER_LANGUAGE,
+  type PlayerLanguage,
+} from "../../../shared/language";
 import { MAX_HEAT, Player, PlayerPrison, normalizePlayer } from "../../../shared/player";
 import { clamp, roundToFive } from "../engine/math";
 import { HttpError } from "../middleware/errorHandler";
@@ -29,7 +33,11 @@ export class PrisonService {
   }
 
   /** Builds the sentence written onto the player when a job ends in arrest. */
-  sentence(reason: string, nowIso: string): PlayerPrison {
+  sentence(
+    reason: string,
+    nowIso: string,
+    reasonLanguage: PlayerLanguage = DEFAULT_PLAYER_LANGUAGE,
+  ): PlayerPrison {
     const config = this.engine.config.prison;
     const releaseAt = new Date(
       Date.parse(nowIso) + gameDaysToRealMs(config.sentenceGameDays),
@@ -38,6 +46,7 @@ export class PrisonService {
     return {
       attemptCooldownUntil: null,
       reason,
+      reasonLanguage,
       releaseAt,
       sentencedAt: nowIso,
     };
@@ -45,7 +54,7 @@ export class PrisonService {
 
   status(player: Player): PrisonStatus {
     if (!player.prison) {
-      throw new HttpError(404, "You're not in prison.");
+      throw new HttpError(404, { code: "not_imprisoned" });
     }
 
     return {
@@ -62,7 +71,10 @@ export class PrisonService {
     return this.attempt(uid, (player) => {
       const cost = this.bribeCost(player);
       if (player.resources.cash < cost) {
-        throw new HttpError(402, "You can't afford the guard's price.");
+        throw new HttpError(402, {
+          code: "insufficient_cash",
+          params: { amount: cost },
+        });
       }
 
       const succeeded = this.roll(this.bribeChance(player));
@@ -112,24 +124,24 @@ export class PrisonService {
     return this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(playerRef);
       if (!snapshot.exists) {
-        throw new HttpError(404, "Player not found.");
+        throw new HttpError(404, { code: "player_not_found" });
       }
 
       const player = normalizePlayer(snapshot.data() as Player);
       const prison = player.prison;
       const now = Date.now();
       if (!prison) {
-        throw new HttpError(400, "You're not in prison.");
+        throw new HttpError(400, { code: "not_imprisoned" });
       }
       if (Date.parse(prison.releaseAt) <= now) {
         // Sentence is already served; the next read releases them.
-        throw new HttpError(409, "Your release is being processed — refresh.");
+        throw new HttpError(409, { code: "release_pending" });
       }
       if (
         prison.attemptCooldownUntil &&
         Date.parse(prison.attemptCooldownUntil) > now
       ) {
-        throw new HttpError(429, "The guards are watching you too closely. Wait.");
+        throw new HttpError(429, { code: "prison_attempt_cooldown" });
       }
 
       const { extendOnFail, resources, succeeded } = run(player);

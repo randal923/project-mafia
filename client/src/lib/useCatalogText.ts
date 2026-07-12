@@ -1,17 +1,15 @@
 "use client";
 
 import {
-  CREW_ARCHETYPES,
-  CREW_TIER_LABELS,
-  CREW_TRAITS,
   type CrewArchetypeId,
   type CrewTier,
   type CrewTraitId
 } from "@shared/crew";
-import { DISTRICTS, districtIdForLabel, type DistrictId } from "@shared/district";
+import { districtIdForLabel, type DistrictId } from "@shared/district";
+import type { JobApproach } from "@shared/job";
 import type { PlayerRank } from "@shared/player";
-import { SKILLS, type SkillId } from "@shared/skills";
-import { useTranslations } from "next-intl";
+import type { SkillId } from "@shared/skills";
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 
 type Named = { id: string; name: string };
@@ -19,46 +17,72 @@ type Named = { id: string; name: string };
 /**
  * Translated display text for static catalog content (equipment items and
  * buildings), keyed by id under the "catalog" messages namespace. Entries
- * missing from the messages fall back to the server-provided text, so new
- * catalog content ships before its translation exists.
+ * missing from the messages use localized generic copy in Portuguese while
+ * English preserves the server-provided label when one is available.
  */
 export function useCatalogText() {
   const t = useTranslations("catalog");
+  const locale = useLocale();
 
   return useMemo(
     () => ({
-      archetypeName: (id: CrewArchetypeId) =>
-        t.has(`archetypes.${id}`)
-          ? t(`archetypes.${id}`)
-          : CREW_ARCHETYPES[id].label,
+      approachName: (id: JobApproach) => t(`approaches.${id}`),
+      archetypeDescription: (id: CrewArchetypeId) =>
+        t(`archetypes.${id}.description`),
+      archetypeName: (id: CrewArchetypeId) => t(`archetypes.${id}.name`),
       buildingDescription: (id: string, fallback: string) =>
         t.has(`buildings.${id}.description`)
           ? t(`buildings.${id}.description`)
-          : fallback,
+          : locale === "en"
+            ? fallback
+            : t("buildings.unknown.description"),
       buildingName: ({ id, name }: Named) =>
-        t.has(`buildings.${id}.name`) ? t(`buildings.${id}.name`) : name,
-      districtName: (id: DistrictId) =>
-        t.has(`districts.${id}`) ? t(`districts.${id}`) : DISTRICTS[id].label,
+        t.has(`buildings.${id}.name`)
+          ? t(`buildings.${id}.name`)
+          : locale === "en"
+            ? name
+            : t("buildings.unknown.name"),
+      buildingNameById: (id: string) =>
+        t.has(`buildings.${id}.name`)
+          ? t(`buildings.${id}.name`)
+          : t("buildings.unknown.name"),
+      districtDescription: (id: DistrictId) =>
+        t(`districts.${id}.description`),
+      districtName: (id: DistrictId) => t(`districts.${id}.name`),
       /** For mission templates' free-form district labels ("The Docks"). */
       districtNameForLabel: (label: string) => {
         const id = districtIdForLabel(label);
-        return id && t.has(`districts.${id}`) ? t(`districts.${id}`) : label;
+        return id
+          ? t(`districts.${id}.name`)
+          : locale === "en"
+            ? label
+            : t("districts.unknown.name");
       },
       itemDescription: (id: string, fallback: string) =>
         t.has(`items.${id}.description`)
           ? t(`items.${id}.description`)
-          : fallback,
+          : locale === "en"
+            ? fallback
+            : t("items.unknown.description"),
       itemName: ({ id, name }: Named) =>
-        t.has(`items.${id}.name`) ? t(`items.${id}.name`) : name,
-      rankName: (id: PlayerRank) =>
-        t.has(`ranks.${id}`) ? t(`ranks.${id}`) : id.replace(/_/g, " "),
-      skillName: (id: SkillId) =>
-        t.has(`skills.${id}`) ? t(`skills.${id}`) : SKILLS[id].label,
-      tierName: (tier: CrewTier) =>
-        t.has(`tiers.${tier}`) ? t(`tiers.${tier}`) : CREW_TIER_LABELS[tier],
-      traitName: (id: CrewTraitId) =>
-        t.has(`traits.${id}`) ? t(`traits.${id}`) : CREW_TRAITS[id].label
+        t.has(`items.${id}.name`)
+          ? t(`items.${id}.name`)
+          : locale === "en"
+            ? name
+            : t("items.unknown.name"),
+      itemNameById: (id: string) =>
+        t.has(`items.${id}.name`)
+          ? t(`items.${id}.name`)
+          : t("items.unknown.name"),
+      rankName: (id: PlayerRank) => t(`ranks.${id}`),
+      skillDescription: (id: SkillId) => t(`skills.${id}.description`),
+      skillName: (id: SkillId) => t(`skills.${id}.name`),
+      tierName: (tier: CrewTier) => t(`tiers.${tier}`),
+      traitDescription: (id: CrewTraitId) => t(`traits.${id}.description`),
+      traitName: (id: CrewTraitId) => t(`traits.${id}.name`),
+      turfName: (id: string) =>
+        t.has(`turfs.${id}`) ? t(`turfs.${id}`) : t("turfs.unknown")
     }),
-    [t]
+    [locale, t]
   );
 }
