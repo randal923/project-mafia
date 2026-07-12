@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { Diamond } from "../Diamond/Diamond";
@@ -32,6 +33,7 @@ export function CharacterPortrait({
   name,
   title,
 }: CharacterPortraitProps) {
+  const t = useTranslations("character");
   const classNames = cx(
     "w-full overflow-hidden rounded-panel border border-line bg-surface shadow-panel",
     fit === "fill" && "flex h-full flex-col",
@@ -44,7 +46,7 @@ export function CharacterPortrait({
 
   return (
     <figure
-      aria-label={`Portrait of ${name}`}
+      aria-label={t("portrait.ariaLabel", { name })}
       className={cx("m-0", classNames)}
     >
       <div className={portraitAreaClassNames}>
@@ -62,7 +64,9 @@ export function CharacterPortrait({
             <p className={`m-0 ${displayText} text-7xl text-faint`}>
               {getMonogram(name)}
             </p>
-            <p className={`m-0 ${typography.metadata}`}>No mugshot on file</p>
+            <p className={`m-0 ${typography.metadata}`}>
+              {t("portrait.noMugshot")}
+            </p>
           </div>
         )}
       </div>

@@ -1,5 +1,8 @@
 import { Request, Response, Router } from "express";
-import { createPlayerRequestSchema } from "../../../shared/playerSchemas";
+import {
+  createPlayerRequestSchema,
+  updatePlayerLanguageRequestSchema,
+} from "../../../shared/playerSchemas";
 import {
   equipItemRequestSchema,
   unequipSlotRequestSchema,
@@ -22,6 +25,7 @@ export class PlayerController {
     this.router.post("/me/equip", this.equip);
     this.router.post("/me/unequip", this.unequip);
     this.router.post("/me/use", this.use);
+    this.router.post("/me/language", this.setLanguage);
     this.router.get("/me/precinct-quote", this.precinctQuote);
     this.router.post("/me/bribe-heat", this.bribeHeat);
   }
@@ -43,8 +47,25 @@ export class PlayerController {
       throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
     }
 
-    const player = await this.players.createPlayer(this.requireUid(req), parsed.data.name);
+    const player = await this.players.createPlayer(
+      this.requireUid(req),
+      parsed.data.name,
+      parsed.data.language ?? null,
+    );
     res.status(201).json(player);
+  };
+
+  private setLanguage = async (req: Request, res: Response): Promise<void> => {
+    const parsed = updatePlayerLanguageRequestSchema.safeParse(req.body);
+    if (!parsed.success) {
+      throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid request body");
+    }
+
+    const player = await this.players.setLanguage(
+      this.requireUid(req),
+      parsed.data.language,
+    );
+    res.json(player);
   };
 
   private equip = async (req: Request, res: Response): Promise<void> => {

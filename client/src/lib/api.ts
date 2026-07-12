@@ -9,7 +9,11 @@ import type { Equipment } from "@shared/equipment";
 import type { JobBoard, MissionView } from "@shared/job";
 import type { NewspaperEdition } from "@shared/newspaper";
 import type { PlayerNotification } from "@shared/notification";
-import type { EquipmentSlotId, Player } from "@shared/player";
+import type {
+  EquipmentSlotId,
+  Player,
+  PlayerLanguage,
+} from "@shared/player";
 import type { PrisonAttemptResult, PrisonStatus } from "@shared/prison";
 import type { RespectStanding, Season } from "@shared/season";
 import type { TurfState } from "@shared/territory";
@@ -62,9 +66,23 @@ export function fetchMyPlayer(user: User): Promise<Player> {
   return apiFetch<Player>(user, "/players/me");
 }
 
-export function createPlayer(user: User, name: string): Promise<Player> {
+export function createPlayer(
+  user: User,
+  name: string,
+  language?: PlayerLanguage
+): Promise<Player> {
   return apiFetch<Player>(user, "/players", {
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ language, name }),
+    method: "POST"
+  });
+}
+
+export function updatePlayerLanguage(
+  user: User,
+  language: PlayerLanguage
+): Promise<Player> {
+  return apiFetch<Player>(user, "/players/me/language", {
+    body: JSON.stringify({ language }),
     method: "POST"
   });
 }

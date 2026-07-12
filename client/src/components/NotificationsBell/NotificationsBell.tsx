@@ -1,7 +1,8 @@
 "use client";
 
 import type { PlayerNotification } from "@shared/notification";
-import { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import {
   fetchNotifications,
@@ -12,18 +13,23 @@ import { useAuth } from "../AuthProvider/AuthProvider";
 
 const POLL_INTERVAL_MS = 60_000;
 
-const timeFormatter = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  month: "short",
-});
-
 /**
  * The while-you-were-away feed: attacks, raids, desertions, releases.
  * Polls quietly; the unread count is the loud part.
  */
 export function NotificationsBell() {
+  const t = useTranslations("notifications");
+  const locale = useLocale();
+  const timeFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        month: "short",
+      }),
+    [locale],
+  );
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<PlayerNotification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -86,7 +92,11 @@ export function NotificationsBell() {
     <div className="relative" ref={containerRef}>
       <button
         aria-expanded={isOpen}
-        aria-label={`Word on the street${unreadCount > 0 ? ` — ${unreadCount} new` : ""}`}
+        aria-label={
+          unreadCount > 0
+            ? t("bellLabelUnread", { count: unreadCount })
+            : t("bellLabel")
+        }
         className={cx(
           `inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-control border px-4 py-2 ${displayText} text-lg transition-colors duration-150 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright`,
           unreadCount > 0
@@ -96,7 +106,7 @@ export function NotificationsBell() {
         onClick={handleToggle}
         type="button"
       >
-        Word
+        {t("bell")}
         {unreadCount > 0 ? (
           <span className="rounded-control border border-danger px-2 text-base">
             {unreadCount}
@@ -106,9 +116,7 @@ export function NotificationsBell() {
       {isOpen ? (
         <div className="absolute right-0 z-30 mt-2 max-h-96 w-96 overflow-y-auto rounded-panel border border-line bg-surface p-3 shadow-panel">
           {notifications.length === 0 ? (
-            <p className={`m-0 p-3 ${typography.metadata}`}>
-              The street is quiet. Nothing new.
-            </p>
+            <p className={`m-0 p-3 ${typography.metadata}`}>{t("empty")}</p>
           ) : (
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
               {notifications.map((notification) => (

@@ -1,4 +1,5 @@
 import type { CrewArchetypeId, CrewTier } from "./crew";
+import type { PlayerLanguage } from "./language";
 import type { MissionTemplate } from "./missionTemplate";
 import type {
   PlayerItem,
@@ -88,6 +89,9 @@ export type JobOffer = {
 
 export type JobBoard = {
   generatedAt: string;
+  /** Language the offers' prose was written in; absent = English. A board
+   * in the wrong language for the player regenerates on next fetch. */
+  language?: PlayerLanguage | null;
   offers: JobOffer[];
   /** Sorted template ids the board was built from; a mismatch with the
    * currently loaded mission files triggers a regenerate. */

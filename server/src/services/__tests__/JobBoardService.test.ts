@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { JobBoard } from "../../../../shared/job";
 import { TEST_TEMPLATE } from "../../engine/__tests__/fixtures";
+import type { OpenAiProviderService } from "../ai/OpenAiProviderService";
 import type { EngineConfigService } from "../EngineConfigService";
 import type { FirebaseService } from "../FirebaseService";
 import { JobBoardService } from "../JobBoardService";
@@ -12,6 +13,7 @@ describe("JobBoardService", () => {
       { firestore: {} } as FirebaseService,
       { all: () => [TEST_TEMPLATE] } as MissionTemplateService,
       {} as EngineConfigService,
+      {} as OpenAiProviderService,
     );
     const board: JobBoard = {
       generatedAt: "2026-07-11T00:00:00.000Z",

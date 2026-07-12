@@ -1,7 +1,9 @@
 import type { MissionViewChoice } from "@shared/job";
 import { SKILLS } from "@shared/skills";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 import { MissionCheckBreakdown } from "./MissionCheckBreakdown";
 
@@ -22,16 +24,21 @@ export function MissionChoiceCard({
   disabled,
   onChoose,
 }: MissionChoiceCardProps) {
-  const matchedItem = choice.gear?.item?.name ?? choice.gear?.label;
+  const t = useTranslations("mission.choice");
+  const { itemName, skillName } = useCatalogText();
   const equipmentStatus = !choice.gear
-    ? "No equipment required — odds shown as-is"
+    ? t("equipment.none")
     : choice.locked
-      ? `Locked: this move needs a ${choice.gear.label} and you don't have one`
+      ? t("equipment.locked", { gear: choice.gear.label })
       : !choice.gear.satisfied
-        ? `Missing: ${choice.gear.label} — penalty included in odds`
+        ? t("equipment.missing", { gear: choice.gear.label })
         : choice.gear.consumes
-          ? `Ready: ${matchedItem} — single-use; one is consumed if chosen, and readiness is included in the odds`
-          : `Ready: ${matchedItem} — reusable; readiness is included in the odds`;
+          ? t("equipment.readyConsumable", {
+              item: choice.gear.item ? itemName(choice.gear.item) : choice.gear.label,
+            })
+          : t("equipment.readyReusable", {
+              item: choice.gear.item ? itemName(choice.gear.item) : choice.gear.label,
+            });
 
   return (
     <article
@@ -49,7 +56,7 @@ export function MissionChoiceCard({
               : "border-brass-bright text-brass-bright"
           )}
         >
-          {choice.stakes === "safer" ? "Safer play" : "Bolder play"}
+          {choice.stakes === "safer" ? t("saferPlay") : t("bolderPlay")}
         </span>
       ) : null}
       <Button
@@ -61,42 +68,44 @@ export function MissionChoiceCard({
         variant="secondary"
       >
         {choice.locked
-          ? `Locked — needs ${choice.gear?.label ?? "equipment"}`
+          ? t("lockedNeeds", {
+              gear: choice.gear?.label ?? t("genericGear"),
+            })
           : (choice.label ?? choice.approach)}
       </Button>
       <p className={`m-0 ${typography.narrativeCaption}`}>
         {choice.riskHint ??
           choice.intent ??
-          `Tests ${SKILLS[choice.check.skill].label}.`}
+          t("testsSkill", { skill: skillName(choice.check.skill) })}
       </p>
       <dl className="m-0 grid grid-cols-2 gap-x-4 gap-y-3 border-y border-line py-3">
         <div>
-          <dt className={typography.metadata}>Skill</dt>
+          <dt className={typography.metadata}>{t("skill")}</dt>
           <dd className={`m-0 ${displayText} text-xl text-brass`}>
-            {SKILLS[choice.check.skill].label}
+            {skillName(choice.check.skill)}
           </dd>
         </div>
         <div className="text-right">
-          <dt className={typography.metadata}>Difficulty</dt>
+          <dt className={typography.metadata}>{t("difficulty")}</dt>
           <dd className={`m-0 ${displayText} text-xl text-ink`}>
             {choice.check.difficulty} / 100
           </dd>
         </div>
         <div>
-          <dt className={typography.metadata}>Success</dt>
+          <dt className={typography.metadata}>{t("success")}</dt>
           <dd className={`m-0 ${displayText} text-xl text-profit`}>
             {choice.odds.success}%
           </dd>
         </div>
         <div className="text-right">
-          <dt className={typography.metadata}>Failure</dt>
+          <dt className={typography.metadata}>{t("failure")}</dt>
           <dd className={`m-0 ${displayText} text-xl text-danger-strong`}>
             {choice.odds.failure}%
           </dd>
         </div>
         {choice.momentumPreview ? (
           <div>
-            <dt className={typography.metadata}>Momentum</dt>
+            <dt className={typography.metadata}>{t("momentum")}</dt>
             <dd className={`m-0 ${displayText} text-xl text-ink`}>
               <span className="text-profit">
                 +{choice.momentumPreview.pass}
@@ -110,13 +119,17 @@ export function MissionChoiceCard({
         ) : null}
         {choice.cashCost || choice.heatOnFail ? (
           <div className="text-right">
-            <dt className={typography.metadata}>Price of the move</dt>
+            <dt className={typography.metadata}>{t("priceOfMove")}</dt>
             <dd className={`m-0 ${displayText} text-xl text-danger-strong`}>
               {[
                 choice.cashCost
-                  ? `−${moneyFormatter.format(choice.cashCost)} up front`
+                  ? t("cashUpFront", {
+                      amount: moneyFormatter.format(choice.cashCost),
+                    })
                   : null,
-                choice.heatOnFail ? `+${choice.heatOnFail} heat on a miss` : null,
+                choice.heatOnFail
+                  ? t("heatOnMiss", { heat: choice.heatOnFail })
+                  : null,
               ]
                 .filter(Boolean)
                 .join(" · ")}
@@ -124,11 +137,14 @@ export function MissionChoiceCard({
           </div>
         ) : null}
         <div className="col-span-2">
-          <dt className={typography.metadata}>Skill XP on success</dt>
+          <dt className={typography.metadata}>{t("skillXpOnSuccess")}</dt>
           <dd className={`m-0 ${displayText} text-xl text-brass-bright`}>
             {choice.skillExperience
-              ? `+${choice.skillExperience.success} XP · Critical +${choice.skillExperience.criticalSuccess} XP`
-              : "Unavailable for this older job"}
+              ? t("xpValues", {
+                  critical: choice.skillExperience.criticalSuccess,
+                  success: choice.skillExperience.success,
+                })
+              : t("xpUnavailable")}
           </dd>
         </div>
         {choice.checkBreakdown ? (
@@ -148,18 +164,18 @@ export function MissionChoiceCard({
               : "text-danger-strong",
         )}
       >
-        Equipment: {equipmentStatus}
+        {t("equipmentLabel")} {equipmentStatus}
       </p>
       {choice.cashCost ? (
         <p className={`m-0 ${typography.metadata} text-danger-strong`}>
-          Upfront cost: {moneyFormatter.format(choice.cashCost)} is paid the
-          moment you commit — win or lose.
+          {t("upfrontCost", {
+            amount: moneyFormatter.format(choice.cashCost),
+          })}
         </p>
       ) : null}
       {choice.healthRisk ? (
         <p className={`m-0 ${typography.metadata} text-danger-strong`}>
-          Health risk: failure can cause damage; accepted armor is already
-          included in protection.
+          {t("healthRisk")}
         </p>
       ) : null}
     </article>

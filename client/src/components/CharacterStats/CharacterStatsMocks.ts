@@ -2,6 +2,7 @@ import type { Player } from "./CharacterStatsTypes";
 
 export const ricoVale: Player = {
   id: "user_123",
+  language: null,
   name: "Rico Vale",
   nameKey: "rico vale",
   avatar: null,
@@ -57,6 +58,7 @@ export const ricoVale: Player = {
 
 export const soniaMarchetti: Player = {
   id: "user_456",
+  language: null,
   name: "Sonia Marchetti",
   nameKey: "sonia marchetti",
   avatar: null,

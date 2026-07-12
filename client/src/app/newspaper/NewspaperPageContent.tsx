@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  NEWSPAPER_NAME,
-  type NewspaperEdition,
-  type NewspaperSection,
-} from "@shared/newspaper";
+import { NEWSPAPER_NAME, type NewspaperEdition } from "@shared/newspaper";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Button } from "../../components/Button/Button";
@@ -18,14 +15,6 @@ const moneyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
 });
 
-const SECTION_LABELS: Record<NewspaperSection, string> = {
-  business: "Business",
-  crime_blotter: "Crime Blotter",
-  front_page: "Front Page",
-  season: "The Season",
-  war_report: "War Report",
-};
-
 /** Serif newsprint styling — the one page that leaves the display face. */
 const newsprint = "font-serif text-neutral-200";
 
@@ -33,6 +22,8 @@ export function NewspaperPageContent() {
   const { user } = useAuth();
   const [editions, setEditions] = useState<NewspaperEdition[] | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const t = useTranslations("newspaper");
+  const locale = useLocale();
 
   useEffect(() => {
     if (!user) {
@@ -60,7 +51,7 @@ export function NewspaperPageContent() {
   if (!editions) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Waiting on the presses…</p>
+        <p className={typography.metadata}>{t("loading")}</p>
       </div>
     );
   }
@@ -72,10 +63,7 @@ export function NewspaperPageContent() {
           <h1 className={`m-0 ${typography.panelHeading}`}>
             {NEWSPAPER_NAME}
           </h1>
-          <p className={`mt-3 ${typography.paragraph}`}>
-            No edition has hit the stands yet. The presses run once a day —
-            give the city time to make some news.
-          </p>
+          <p className={`mt-3 ${typography.paragraph}`}>{t("empty")}</p>
         </div>
       </div>
     );
@@ -92,7 +80,7 @@ export function NewspaperPageContent() {
               size="small"
               variant={entry.id === selectedId ? "primary" : "quiet"}
             >
-              Day {entry.gameDay}
+              {t("day", { day: entry.gameDay })}
             </Button>
           ))}
         </div>
@@ -107,20 +95,20 @@ export function NewspaperPageContent() {
         {/* masthead */}
         <header className="border-b-4 border-double border-neutral-500 pb-4 text-center">
           <p className="m-0 text-xs tracking-[0.3em] text-neutral-500 uppercase">
-            All the crime that’s fit to print
+            {t("tagline")}
           </p>
           <h1 className="m-0 font-serif text-5xl font-black tracking-tight text-neutral-100">
             {NEWSPAPER_NAME}
           </h1>
           <p className="m-0 mt-2 text-sm text-neutral-500">
-            Day {edition.gameDay} ·{" "}
-            {new Intl.DateTimeFormat("en-US", {
+            {t("day", { day: edition.gameDay })} ·{" "}
+            {new Intl.DateTimeFormat(locale, {
               day: "numeric",
               month: "long",
               year: "numeric",
             }).format(Date.parse(edition.publishedAt))}
             {edition.mastheadChampion
-              ? ` · Under the reign of the ${edition.mastheadChampion} family`
+              ? ` · ${t("reign", { family: edition.mastheadChampion })}`
               : ""}
           </p>
         </header>
@@ -140,7 +128,7 @@ export function NewspaperPageContent() {
           {edition.articles.map((article, index) => (
             <div className="break-inside-avoid" key={index}>
               <p className="m-0 text-xs tracking-[0.2em] text-neutral-500 uppercase">
-                {SECTION_LABELS[article.section]}
+                {t(`sections.${article.section}`)}
               </p>
               <h3 className="m-0 mt-1 font-serif text-2xl leading-snug font-bold text-neutral-200">
                 {article.title}
@@ -156,15 +144,21 @@ export function NewspaperPageContent() {
         {edition.standings.length > 0 ? (
           <section className="border-t border-neutral-700 py-6">
             <h3 className="m-0 text-xs tracking-[0.2em] text-neutral-500 uppercase">
-              The Season — Standings
+              {t("standingsHeading")}
             </h3>
             <table className="mt-3 w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-neutral-700 text-sm text-neutral-500">
                   <th className="py-1 pr-4 font-normal">#</th>
-                  <th className="py-1 pr-4 font-normal">Family</th>
-                  <th className="py-1 pr-4 text-right font-normal">Blocks</th>
-                  <th className="py-1 text-right font-normal">Respect</th>
+                  <th className="py-1 pr-4 font-normal">
+                    {t("standings.family")}
+                  </th>
+                  <th className="py-1 pr-4 text-right font-normal">
+                    {t("standings.blocks")}
+                  </th>
+                  <th className="py-1 text-right font-normal">
+                    {t("standings.respect")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -196,7 +190,7 @@ export function NewspaperPageContent() {
         {edition.classifieds.length > 0 ? (
           <section className="border-t border-neutral-700 py-6">
             <h3 className="m-0 text-xs tracking-[0.2em] text-neutral-500 uppercase">
-              Classifieds
+              {t("classifieds")}
             </h3>
             <div className="mt-3 flex flex-col gap-3">
               {edition.classifieds.map((classified, index) => (
@@ -206,7 +200,10 @@ export function NewspaperPageContent() {
                 >
                   {classified.text}
                   {classified.type === "bounty"
-                    ? ` (Take a block from the ${classified.targetName} family and the ${moneyFormatter.format(classified.bounty)} is yours.)`
+                    ? ` ${t("bounty", {
+                        amount: moneyFormatter.format(classified.bounty),
+                        family: classified.targetName,
+                      })}`
                     : ""}
                 </p>
               ))}

@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useRef, useState, type ReactNode } from "react";
 import type { PlayerItem } from "@shared/player";
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 type ItemHoverCardProps = {
   children: ReactNode;
@@ -28,6 +30,8 @@ export function ItemHoverCard({
   className,
   item
 }: ItemHoverCardProps) {
+  const t = useTranslations("itemCard");
+  const { itemDescription, itemName } = useCatalogText();
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<TooltipPosition | null>(null);
 
@@ -79,52 +83,57 @@ export function ItemHoverCard({
             />
           ) : null}
           <p className={`m-0 mt-2 text-center ${displayText} text-xl text-ink`}>
-            {item.name}
+            {itemName(item)}
           </p>
           <div className="mt-1 flex flex-wrap justify-center gap-x-3">
             {typeof item.power === "number" && item.power > 0 ? (
               <p className="m-0 text-sm font-medium leading-normal text-brass">
-                Power {item.power}
+                {t("power", { value: item.power })}
               </p>
             ) : null}
             {typeof item.armor === "number" && item.armor > 0 ? (
               <p className="m-0 text-sm font-medium leading-normal text-teal">
-                Armor {item.armor}
+                {t("armor", { value: item.armor })}
               </p>
             ) : null}
             {typeof item.levelRequirement === "number" ? (
               <p className="m-0 text-sm font-medium leading-normal text-faint">
-                Lv {item.levelRequirement}
+                {t("levelShort", { level: item.levelRequirement })}
               </p>
             ) : null}
             {item.consumable ? (
               <p className="m-0 text-sm font-medium leading-normal text-faint">
-                Single use
+                {t("singleUse")}
               </p>
             ) : null}
             {item.use?.stamina ? (
               <p className="m-0 text-sm font-medium leading-normal text-profit">
-                +{item.use.stamina} stamina
+                {t("use.stamina", { value: item.use.stamina })}
               </p>
             ) : null}
             {item.use?.health ? (
               <p className="m-0 text-sm font-medium leading-normal text-teal">
-                +{item.use.health} health
+                {t("use.health", { value: item.use.health })}
               </p>
             ) : null}
             {item.use?.heat ? (
               <p className="m-0 text-sm font-medium leading-normal text-teal">
-                {item.use.heat > 0 ? `+${item.use.heat}` : item.use.heat} heat
+                {t("use.heat", {
+                  value:
+                    item.use.heat > 0
+                      ? `+${item.use.heat}`
+                      : String(item.use.heat)
+                })}
               </p>
             ) : null}
             {item.use?.high ? (
               <p className="m-0 text-sm font-medium leading-normal text-teal">
-                +{item.use.high} high
+                {t("use.high", { value: item.use.high })}
               </p>
             ) : null}
             {item.use?.drunk ? (
               <p className="m-0 text-sm font-medium leading-normal text-teal">
-                +{item.use.drunk} drunk
+                {t("use.drunk", { value: item.use.drunk })}
               </p>
             ) : null}
           </div>
@@ -136,17 +145,23 @@ export function ItemHoverCard({
                   key={index}
                 >
                   {effect.type === "skillBonus"
-                    ? `+${effect.value} ${effect.skill}`
+                    ? t("effects.skillBonus", {
+                        skill: t(`skills.${effect.skill}`),
+                        value: effect.value
+                      })
                     : effect.type === "approachBonus"
-                      ? `+${effect.value}% ${effect.approach} moves`
-                      : `−${effect.value} heat per job`}
+                      ? t("effects.approachBonus", {
+                          approach: t(`approaches.${effect.approach}`),
+                          value: effect.value
+                        })
+                      : t("effects.heatReduction", { value: effect.value })}
                 </li>
               ))}
             </ul>
           ) : null}
           {item.detail ? (
             <p className="m-0 mt-2 text-center text-sm leading-normal text-muted">
-              {item.detail}
+              {itemDescription(item.id, item.detail)}
             </p>
           ) : null}
         </div>

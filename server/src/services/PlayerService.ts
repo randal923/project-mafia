@@ -10,6 +10,7 @@ import { regeneratedStamina } from "../../../shared/stamina";
 import { roundToFive } from "../engine/math";
 import {
   Player,
+  PlayerLanguage,
   PlayerLoadout,
   createNewPlayer,
   normalizePlayer,
@@ -110,9 +111,19 @@ export class PlayerService {
     return updated;
   }
 
-  async createPlayer(uid: string, name: string): Promise<Player> {
+  async createPlayer(
+    uid: string,
+    name: string,
+    language: PlayerLanguage | null = null,
+  ): Promise<Player> {
     const loadout = await this.starterLoadout();
-    const player = createNewPlayer(uid, name, new Date().toISOString(), loadout);
+    const player = createNewPlayer(
+      uid,
+      name,
+      new Date().toISOString(),
+      loadout,
+      language,
+    );
     const playerRef = this.players.doc(uid);
     const sameNameQuery = this.players
       .where("nameKey", "==", player.nameKey)
@@ -135,6 +146,28 @@ export class PlayerService {
     });
 
     return player;
+  }
+
+  /** Sets the player's UI/narration language and returns the updated doc. */
+  async setLanguage(uid: string, language: PlayerLanguage): Promise<Player> {
+    const playerRef = this.players.doc(uid);
+
+    return this.db.runTransaction(async (tx) => {
+      const snapshot = await tx.get(playerRef);
+      if (!snapshot.exists) {
+        throw new HttpError(404, "Player not found.");
+      }
+
+      const player = normalizePlayer(snapshot.data() as Player);
+      const updated: Player = {
+        ...player,
+        language,
+        updatedAt: new Date().toISOString(),
+      };
+
+      tx.set(playerRef, updated);
+      return updated;
+    });
   }
 
   /**

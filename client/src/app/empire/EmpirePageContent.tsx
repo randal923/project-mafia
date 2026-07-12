@@ -12,6 +12,7 @@ import {
 import { buildingDefinition, buildingsOfClass } from "@shared/buildingCatalog";
 import { CREW_ARCHETYPES, type CrewMember } from "@shared/crew";
 import { PLAYER_RANKS } from "@shared/player";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Button } from "../../components/Button/Button";
@@ -30,6 +31,7 @@ import {
   upgradePersonalBuilding,
   type HoldingsResponse,
 } from "../../lib/api";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 const moneyFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
@@ -46,6 +48,8 @@ type EmpireToast = {
 type Holding = BuildingInstance & { incomeRate: number };
 
 export function EmpirePageContent() {
+  const t = useTranslations("empire");
+  const { buildingDescription, buildingName, rankName } = useCatalogText();
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
   const [holdings, setHoldings] = useState<Holding[] | null>(null);
@@ -118,15 +122,15 @@ export function EmpirePageContent() {
           message:
             error instanceof ApiError
               ? error.message
-              : "That didn't work. Try again.",
-          title: "No deal",
+              : t("toasts.genericError"),
+          title: t("toasts.noDealTitle"),
           tone: "failure",
         });
       } finally {
         setIsBusy(false);
       }
     },
-    [applyResult, isBusy, user],
+    [applyResult, isBusy, user, t],
   );
 
   const catalog = useMemo(() => buildingsOfClass("personal"), []);
@@ -138,7 +142,7 @@ export function EmpirePageContent() {
   if (status === "loading" || status === "missing" || !player) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Opening the books…</p>
+        <p className={typography.metadata}>{t("loading")}</p>
       </div>
     );
   }
@@ -159,16 +163,30 @@ export function EmpirePageContent() {
         applyResult(result);
         setToast({
           message: result.raided
-            ? `You banked ${moneyFormatter.format(result.collected)} — but the police raided your ${result.raided}. Repair it to reopen.`
-            : `${moneyFormatter.format(result.collected)} banked${result.upkeep > 0 ? ` after ${moneyFormatter.format(result.upkeep)} in territory upkeep` : ""}.`,
-          title: result.raided ? "Raided" : "Tills emptied",
+            ? t("toasts.collectedRaided", {
+                amount: moneyFormatter.format(result.collected),
+                building: result.raided,
+              })
+            : result.upkeep > 0
+              ? t("toasts.collectedWithUpkeep", {
+                  amount: moneyFormatter.format(result.collected),
+                  upkeep: moneyFormatter.format(result.upkeep),
+                })
+              : t("toasts.collected", {
+                  amount: moneyFormatter.format(result.collected),
+                }),
+          title: result.raided
+            ? t("toasts.raidedTitle")
+            : t("toasts.tillsEmptiedTitle"),
           tone: result.raided ? "failure" : "success",
         });
       } catch (error) {
         setToast({
           message:
-            error instanceof ApiError ? error.message : "Collection failed.",
-          title: "No deal",
+            error instanceof ApiError
+              ? error.message
+              : t("toasts.collectionFailed"),
+          title: t("toasts.noDealTitle"),
           tone: "failure",
         });
       } finally {
@@ -181,45 +199,44 @@ export function EmpirePageContent() {
       <header className="flex flex-wrap items-end justify-between gap-4 rounded-panel border border-line bg-surface px-6 py-5 shadow-panel">
         <div>
           <p className={`m-0 ${displayText} text-xl text-faint`}>
-            Personal holdings
+            {t("header.kicker")}
           </p>
           <h1 className={`mt-1 mb-0 ${displayText} text-5xl text-title`}>
-            Empire
+            {t("header.title")}
           </h1>
           <p className={`mt-2 mb-0 ${typography.narrativeCaption}`}>
-            Fronts and safe property — nobody can take these from you. The big
-            rackets get built on turf, from the Map.
+            {t("header.description")}
           </p>
         </div>
         <div className="flex items-end gap-6">
           <dl className="m-0 flex gap-8 text-right">
             <div>
-              <dt className={typography.metadata}>Holdings</dt>
+              <dt className={typography.metadata}>{t("header.holdings")}</dt>
               <dd className={`m-0 ${displayText} text-3xl text-brass-bright`}>
                 {holdings?.length ?? "—"}/{slots}
               </dd>
             </div>
             <div>
-              <dt className={typography.metadata}>Your cash</dt>
+              <dt className={typography.metadata}>{t("header.yourCash")}</dt>
               <dd className={`m-0 ${displayText} text-3xl text-profit`}>
                 {moneyFormatter.format(player.resources.cash)}
               </dd>
             </div>
           </dl>
           <Button disabled={isBusy} onClick={handleCollect} variant="primary">
-            Collect everything
+            {t("header.collectEverything")}
           </Button>
         </div>
       </header>
 
       <section>
-        <h2 className={`m-0 mb-3 ${typography.panelHeading}`}>Your property</h2>
+        <h2 className={`m-0 mb-3 ${typography.panelHeading}`}>
+          {t("property.title")}
+        </h2>
         {!holdings ? (
-          <p className={typography.metadata}>Counting the tills…</p>
+          <p className={typography.metadata}>{t("property.counting")}</p>
         ) : holdings.length === 0 ? (
-          <p className={typography.metadata}>
-            You own nothing yet. Every empire starts with one clean storefront.
-          </p>
+          <p className={typography.metadata}>{t("property.empty")}</p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {holdings.map((holding) => {
@@ -239,16 +256,16 @@ export function EmpirePageContent() {
                   onRepair={() =>
                     void runAction(
                       () => repairPersonalBuilding(user!, holding.id),
-                      "Back in business",
-                      `${definition.name} is producing again.`,
+                      t("toasts.backInBusinessTitle"),
+                      t("toasts.repairSuccess", { name: buildingName(definition) }),
                     )
                   }
                   onStaff={(crewIds) => {
                     setStaffingId(null);
                     void runAction(
                       () => staffPersonalBuilding(user!, holding.id, crewIds),
-                      "Shift assigned",
-                      `${definition.name} staffing updated.`,
+                      t("toasts.staffTitle"),
+                      t("toasts.staffSuccess", { name: buildingName(definition) }),
                     );
                   }}
                   onToggleStaffing={() =>
@@ -259,8 +276,11 @@ export function EmpirePageContent() {
                   onUpgrade={() =>
                     void runAction(
                       () => upgradePersonalBuilding(user!, holding.id),
-                      "Expanded",
-                      `${definition.name} is now level ${holding.level + 1}.`,
+                      t("toasts.upgradeTitle"),
+                      t("toasts.upgradeSuccess", {
+                        level: holding.level + 1,
+                        name: buildingName(definition),
+                      }),
                     )
                   }
                   playerCash={player.resources.cash}
@@ -273,7 +293,7 @@ export function EmpirePageContent() {
 
       <section>
         <h2 className={`m-0 mb-3 ${typography.panelHeading}`}>
-          On the market
+          {t("market.title")}
         </h2>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {catalog.map((definition) => {
@@ -288,22 +308,31 @@ export function EmpirePageContent() {
               >
                 <header className="flex items-start justify-between gap-2">
                   <p className={`m-0 ${displayText} text-2xl text-title`}>
-                    {definition.name}
+                    {buildingName(definition)}
                   </p>
-                  {owned ? <Tag className="border-brass text-brass" label="Owned" /> : null}
+                  {owned ? (
+                    <Tag
+                      className="border-brass text-brass"
+                      label={t("market.owned")}
+                    />
+                  ) : null}
                 </header>
                 <p className={`m-0 ${typography.narrativeCaption}`}>
-                  {definition.description}
+                  {buildingDescription(definition.id, definition.description)}
                 </p>
                 <dl className="m-0 flex gap-6">
                   <div>
-                    <dt className={typography.metadata}>Income/hr</dt>
+                    <dt className={typography.metadata}>
+                      {t("market.incomePerHour")}
+                    </dt>
                     <dd className={`m-0 ${displayText} text-lg text-profit`}>
                       {moneyFormatter.format(definition.incomePerHour)}
                     </dd>
                   </div>
                   <div>
-                    <dt className={typography.metadata}>Heat/day</dt>
+                    <dt className={typography.metadata}>
+                      {t("market.heatPerDay")}
+                    </dt>
                     <dd
                       className={`m-0 ${displayText} text-lg ${definition.heatPerDay <= 0 ? "text-teal" : "text-danger-strong"}`}
                     >
@@ -324,16 +353,20 @@ export function EmpirePageContent() {
                     onClick={() =>
                       void runAction(
                         () => buyPersonalBuilding(user!, definition.id),
-                        "Deed signed",
-                        `${definition.name} is yours. Staff it and let it earn.`,
+                        t("toasts.buyTitle"),
+                        t("toasts.buySuccess", { name: buildingName(definition) }),
                       )
                     }
                     size="small"
                     variant="primary"
                   >
                     {rankMet
-                      ? `Buy (${moneyFormatter.format(definition.cost)})`
-                      : `Requires ${definition.rankRequirement.replace(/_/g, " ")}`}
+                      ? t("market.buy", {
+                          price: moneyFormatter.format(definition.cost),
+                        })
+                      : t("market.requiresRank", {
+                          rank: rankName(definition.rankRequirement),
+                        })}
                   </Button>
                 </div>
               </article>
@@ -383,6 +416,8 @@ function HoldingCard({
   onUpgrade,
   playerCash,
 }: HoldingCardProps) {
+  const t = useTranslations("empire");
+  const { archetypeName, buildingName } = useCatalogText();
   const staffNames = holding.staff
     .map((id) => crew.find((member) => member.id === id)?.name)
     .filter(Boolean);
@@ -395,22 +430,25 @@ function HoldingCard({
       <header className="flex items-start justify-between gap-2">
         <div>
           <p className={`m-0 ${displayText} text-2xl text-title`}>
-            {definition.name}
+            {buildingName(definition)}
           </p>
           <p className={`m-0 ${typography.metadata}`}>
-            Level {holding.level}/{MAX_BUILDING_LEVEL}
+            {t("card.level", { level: holding.level, max: MAX_BUILDING_LEVEL })}
           </p>
         </div>
         {holding.damaged ? (
-          <Tag className="border-danger text-danger-strong" label="Closed" />
+          <Tag
+            className="border-danger text-danger-strong"
+            label={t("card.closed")}
+          />
         ) : (
-          <Tag className="border-brass text-brass" label="Open" />
+          <Tag className="border-brass text-brass" label={t("card.open")} />
         )}
       </header>
 
       <dl className="m-0 grid grid-cols-2 gap-2 text-center">
         <div className="rounded-control border border-line bg-black/20 px-2 py-2">
-          <dt className={typography.metadata}>In the till</dt>
+          <dt className={typography.metadata}>{t("card.inTheTill")}</dt>
           <dd className={`m-0 ${displayText} text-lg text-profit`}>
             {moneyFormatter.format(Math.floor(holding.storedIncome))}
             {tillCap > 0 ? (
@@ -421,7 +459,7 @@ function HoldingCard({
           </dd>
         </div>
         <div className="rounded-control border border-line bg-black/20 px-2 py-2">
-          <dt className={typography.metadata}>Rate/hr</dt>
+          <dt className={typography.metadata}>{t("card.ratePerHour")}</dt>
           <dd className={`m-0 ${displayText} text-lg text-brass-bright`}>
             {moneyFormatter.format(Math.round(holding.incomeRate))}
           </dd>
@@ -431,11 +469,16 @@ function HoldingCard({
       {definition.staffSlots > 0 ? (
         <div>
           <p className={`m-0 ${typography.metadata}`}>
-            Staff ({holding.staff.length}/{definition.staffSlots}) — best run by
-            a {CREW_ARCHETYPES[definition.staffArchetype].label}
+            {t("card.staffLabel", {
+              archetype: archetypeName(definition.staffArchetype),
+              count: holding.staff.length,
+              slots: definition.staffSlots,
+            })}
           </p>
           <p className={`m-0 ${typography.paragraph}`}>
-            {staffNames.length > 0 ? staffNames.join(", ") : "Unstaffed (40% output)"}
+            {staffNames.length > 0
+              ? staffNames.join(", ")
+              : t("card.unstaffed")}
           </p>
           {isStaffing ? (
             <StaffPicker
@@ -454,7 +497,7 @@ function HoldingCard({
               size="small"
               variant="secondary"
             >
-              Assign staff
+              {t("card.assignStaff")}
             </Button>
           )}
         </div>
@@ -468,7 +511,7 @@ function HoldingCard({
             size="small"
             variant="primary"
           >
-            Repair ({moneyFormatter.format(repairCost)})
+            {t("card.repair", { price: moneyFormatter.format(repairCost) })}
           </Button>
         ) : holding.level < MAX_BUILDING_LEVEL ? (
           <Button
@@ -477,7 +520,7 @@ function HoldingCard({
             size="small"
             variant="secondary"
           >
-            Upgrade ({moneyFormatter.format(upgradeCost)})
+            {t("card.upgrade", { price: moneyFormatter.format(upgradeCost) })}
           </Button>
         ) : null}
       </footer>
@@ -502,6 +545,8 @@ function StaffPicker({
   onConfirm,
   slots,
 }: StaffPickerProps) {
+  const t = useTranslations("empire");
+  const { archetypeName } = useCatalogText();
   const [selected, setSelected] = useState<string[]>(current);
   const currentMembers = current
     .map((id) => crew.find((member) => member.id === id))
@@ -513,7 +558,7 @@ function StaffPicker({
   return (
     <div className="mt-2 flex flex-col gap-2">
       {selectable.length === 0 ? (
-        <p className={`m-0 ${typography.metadata}`}>Nobody is free to work.</p>
+        <p className={`m-0 ${typography.metadata}`}>{t("card.nobodyFree")}</p>
       ) : (
         selectable.map((member) => {
           const isSelected = selected.includes(member.id);
@@ -535,7 +580,7 @@ function StaffPicker({
                 type="checkbox"
               />
               <span className={typography.paragraph}>
-                {member.name} ({CREW_ARCHETYPES[member.archetype].label})
+                {member.name} ({archetypeName(member.archetype)})
               </span>
             </label>
           );
@@ -547,7 +592,7 @@ function StaffPicker({
         size="small"
         variant="primary"
       >
-        Confirm shift
+        {t("card.confirmShift")}
       </Button>
     </div>
   );

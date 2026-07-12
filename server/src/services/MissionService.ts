@@ -318,8 +318,10 @@ export class MissionService {
         throw new HttpError(404, "That job is no longer on the board.");
       }
 
-      const template =
-        this.templates.find(offer.templateId) ?? this.templates.first();
+      const template = this.localizedTemplate(
+        this.templates.find(offer.templateId) ?? this.templates.first(),
+        offer,
+      );
 
       // Every job costs energy; drugs or idle time buy it back. Freight
       // yard holders move light.
@@ -405,6 +407,29 @@ export class MissionService {
 
     this.startNarration(mission, player);
     return mission;
+  }
+
+  /**
+   * Carries the offer's gear labels — written in the player's language at
+   * board time, index-aligned with the template's gear list — into the
+   * template, so in-mission gear text matches the board. Tags and every
+   * mechanical field stay untouched.
+   */
+  private localizedTemplate(
+    template: MissionTemplate,
+    offer: JobOffer,
+  ): MissionTemplate {
+    if (!offer.gear?.length || !template.gear?.length) {
+      return template;
+    }
+
+    return {
+      ...template,
+      gear: template.gear.map((entry, index) => ({
+        ...entry,
+        label: offer.gear?.[index]?.label ?? entry.label,
+      })),
+    };
   }
 
   async getActiveMission(player: Player): Promise<Mission | null> {

@@ -3,12 +3,17 @@
 import type { JobBoard, MissionView } from "@shared/job";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../../components/AuthProvider/AuthProvider";
+import { usePlayer } from "../../../components/PlayerProvider/PlayerProvider";
 import { acceptJob, fetchJobBoard, regenerateJobBoard } from "../../../lib/api";
 
 export type JobBoardStatus = "error" | "loading" | "ready";
 
 export function useJobBoard() {
   const { user } = useAuth();
+  // The server rewrites the board in the player's language; refetch once a
+  // switched language has been persisted to the profile.
+  const { player } = usePlayer();
+  const language = player?.language ?? null;
   const [board, setBoard] = useState<JobBoard | null>(null);
   const [status, setStatus] = useState<JobBoardStatus>("loading");
   const [isBusy, setIsBusy] = useState(false);
@@ -38,7 +43,7 @@ export function useJobBoard() {
     return () => {
       isCancelled = true;
     };
-  }, [reloadKey, user]);
+  }, [language, reloadKey, user]);
 
   const reload = useCallback(() => {
     setReloadKey((key) => key + 1);

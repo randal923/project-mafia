@@ -5,6 +5,7 @@ import {
   intoxicationPenalty
 } from "@shared/intoxication";
 import { MAX_HEAT, MAX_STAMINA, type Player } from "@shared/player";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import { Button } from "../Button/Button";
@@ -67,6 +68,7 @@ export function StreetStatus({
   player,
   precinctQuote
 }: StreetStatusProps) {
+  const t = useTranslations("street");
   const { drunk, heat, high, stamina } = player.resources;
   const impairment = intoxicationPenalty(high, drunk);
   const canBribe =
@@ -76,23 +78,40 @@ export function StreetStatus({
 
   return (
     <div className="flex flex-wrap items-end gap-6 rounded-panel border border-line bg-surface px-5 py-4 shadow-panel">
-      <Meter label="Stamina" max={MAX_STAMINA} tone="brass" value={stamina} />
-      <Meter label="Heat" max={MAX_HEAT} tone="danger" value={heat} />
-      <Meter label="High" max={MAX_INTOXICATION} tone="teal" value={high} />
-      <Meter label="Drunk" max={MAX_INTOXICATION} tone="profit" value={drunk} />
+      <Meter
+        label={t("stamina")}
+        max={MAX_STAMINA}
+        tone="brass"
+        value={stamina}
+      />
+      <Meter label={t("heat")} max={MAX_HEAT} tone="danger" value={heat} />
+      <Meter
+        label={t("high")}
+        max={MAX_INTOXICATION}
+        tone="teal"
+        value={high}
+      />
+      <Meter
+        label={t("drunk")}
+        max={MAX_INTOXICATION}
+        tone="profit"
+        value={drunk}
+      />
       {impairment > 0 ? (
         <span
           className={`inline-flex items-center rounded-control border border-danger px-3 py-2 ${displayText} text-lg text-danger-strong`}
-          title="Being high or drunk lowers the pass chance of every check on jobs you take, and doses restore less stamina. It wears off while you rest."
+          title={t("impairedTip")}
         >
-          Impaired: −{impairment}% on all checks
+          {t("impaired", { penalty: impairment })}
         </span>
       ) : null}
       <div className="flex items-center gap-3">
         {precinctQuote ? (
           <p className={`m-0 ${typography.metadata}`}>
-            −{precinctQuote.chunk} heat for{" "}
-            {moneyFormatter.format(precinctQuote.cost)}
+            {t("bribeQuote", {
+              chunk: precinctQuote.chunk,
+              cost: moneyFormatter.format(precinctQuote.cost)
+            })}
           </p>
         ) : null}
         <Button
@@ -101,7 +120,7 @@ export function StreetStatus({
           size="small"
           variant="secondary"
         >
-          Pay off the precinct
+          {t("payPrecinct")}
         </Button>
       </div>
     </div>

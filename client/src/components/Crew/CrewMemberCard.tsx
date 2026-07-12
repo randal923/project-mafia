@@ -15,9 +15,11 @@ import {
 } from "@shared/crew";
 import type { PlayerItem } from "@shared/player";
 import { SKILLS } from "@shared/skills";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 import { Tag } from "../Tag/Tag";
 
@@ -26,23 +28,6 @@ const moneyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
   style: "currency",
 });
-
-const SLOT_LABELS: Record<CrewSlotId, string> = {
-  hand: "Weapon",
-  torso: "Vest",
-  waist: "Belt",
-};
-
-const STATUS_LABELS: Record<CrewMember["status"], string> = {
-  assigned_building: "Working a floor",
-  assigned_turf: "Standing guard",
-  dead: "Gone",
-  idle: "Ready",
-  imprisoned: "In a cell",
-  injured: "Recovering",
-  on_job: "Out on a job",
-  training: "Training",
-};
 
 type CrewMemberCardProps = {
   isBusy: boolean;
@@ -66,6 +51,9 @@ export function CrewMemberCard({
   onTrain,
   onUnequip,
 }: CrewMemberCardProps) {
+  const t = useTranslations("crew");
+  const { archetypeName, itemName, skillName, tierName, traitName } =
+    useCatalogText();
   const [equippingSlot, setEquippingSlot] = useState<CrewSlotId | null>(null);
   const [now] = useState(() => Date.now());
   const archetype = CREW_ARCHETYPES[member.archetype];
@@ -83,7 +71,7 @@ export function CrewMemberCard({
             {member.name}
           </p>
           <p className={`m-0 ${typography.metadata}`}>
-            {CREW_TIER_LABELS[member.tier]} · {archetype.label}
+            {tierName(member.tier)} · {archetypeName(member.archetype)}
           </p>
         </div>
         <Tag
@@ -92,7 +80,7 @@ export function CrewMemberCard({
             (member.status === "imprisoned" || member.status === "injured") &&
               "border-danger text-danger-strong",
           )}
-          label={STATUS_LABELS[member.status]}
+          label={t(`status.${member.status}`)}
         />
       </header>
 
@@ -101,17 +89,17 @@ export function CrewMemberCard({
       <dl className="m-0 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-control border border-brass/50 bg-brass/10 px-2 py-2">
           <dt className={typography.metadata}>
-            {SKILLS[archetype.skill].label}
+            {skillName(archetype.skill)}
           </dt>
           <dd className={`m-0 ${displayText} text-lg text-brass-bright`}>
             {member.skillLevel}
           </dd>
         </div>
         {[
-          ["Power", String(power)],
-          ["Job bonus", `+${bonus}%`],
-          ["Wage/day", moneyFormatter.format(wage)],
-          ["Loyalty", `${member.loyalty}`],
+          [t("stats.power"), String(power)],
+          [t("stats.jobBonus"), `+${bonus}%`],
+          [t("stats.wagePerDay"), moneyFormatter.format(wage)],
+          [t("stats.loyalty"), `${member.loyalty}`],
         ].map(([label, value]) => (
           <div
             className="rounded-control border border-line bg-black/20 px-2 py-2"
@@ -131,7 +119,7 @@ export function CrewMemberCard({
             <Tag
               className="border-brass/60 text-brass"
               key={trait}
-              label={CREW_TRAITS[trait].label}
+              label={traitName(trait)}
             />
           ))}
         </div>
@@ -139,11 +127,12 @@ export function CrewMemberCard({
 
       {busyUntilMs && busyUntilMs > now ? (
         <p className={`m-0 ${typography.metadata}`}>
-          Back around{" "}
-          {new Intl.DateTimeFormat("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(busyUntilMs)}
+          {t("backAround", {
+            time: new Intl.DateTimeFormat("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }).format(busyUntilMs),
+          })}
         </p>
       ) : null}
 
@@ -154,12 +143,12 @@ export function CrewMemberCard({
           return (
             <div className="flex items-center gap-2" key={slot}>
               <span className={`w-16 shrink-0 ${typography.metadata}`}>
-                {SLOT_LABELS[slot]}
+                {t(`slots.${slot}`)}
               </span>
               {equipped ? (
                 <>
                   <span className={`flex-1 truncate ${typography.paragraph}`}>
-                    {equipped.name}
+                    {itemName(equipped)}
                   </span>
                   <Button
                     disabled={isBusy || member.status === "imprisoned"}
@@ -167,12 +156,12 @@ export function CrewMemberCard({
                     size="small"
                     variant="quiet"
                   >
-                    Remove
+                    {t("removeGear")}
                   </Button>
                 </>
               ) : equippingSlot === slot ? (
                 <select
-                  aria-label={`Equip ${SLOT_LABELS[slot]}`}
+                  aria-label={t("equipSlotAria", { slot: t(`slots.${slot}`) })}
                   className="flex-1 rounded-control border border-line bg-black/30 px-2 py-1 text-ink"
                   disabled={isBusy}
                   onChange={(event) => {
@@ -183,12 +172,12 @@ export function CrewMemberCard({
                   }}
                   value=""
                 >
-                  <option value="">Pick from your stash…</option>
+                  <option value="">{t("pickFromStash")}</option>
                   {options.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.name}
+                      {itemName(item)}
                       {item.levelRequirement
-                        ? ` (skill ${item.levelRequirement})`
+                        ? ` ${t("skillRequirement", { level: item.levelRequirement })}`
                         : ""}
                     </option>
                   ))}
@@ -204,7 +193,7 @@ export function CrewMemberCard({
                   size="small"
                   variant="secondary"
                 >
-                  {options.length === 0 ? "Nothing fits" : "Equip"}
+                  {options.length === 0 ? t("nothingFits") : t("equip")}
                 </Button>
               )}
             </div>
@@ -219,7 +208,9 @@ export function CrewMemberCard({
           size="small"
           variant="secondary"
         >
-          Train ({moneyFormatter.format(crewTrainingCost(member.skillLevel))})
+          {t("train", {
+            cost: moneyFormatter.format(crewTrainingCost(member.skillLevel)),
+          })}
         </Button>
         {member.status === "imprisoned" ? (
           <Button
@@ -228,7 +219,9 @@ export function CrewMemberCard({
             size="small"
             variant="primary"
           >
-            Bribe out ({moneyFormatter.format(crewBribeCost(member))})
+            {t("bribeOut", {
+              cost: moneyFormatter.format(crewBribeCost(member)),
+            })}
           </Button>
         ) : null}
         <Button
@@ -237,7 +230,7 @@ export function CrewMemberCard({
           size="small"
           variant="danger"
         >
-          Cut loose
+          {t("cutLoose")}
         </Button>
       </footer>
     </article>

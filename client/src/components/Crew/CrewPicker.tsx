@@ -7,9 +7,11 @@ import {
   crewMemberPower,
   type CrewMember,
 } from "@shared/crew";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 
 type CrewPickerProps = {
@@ -39,6 +41,8 @@ export function CrewPicker({
   onConfirm,
   title,
 }: CrewPickerProps) {
+  const t = useTranslations("crew");
+  const { archetypeName, skillName, tierName } = useCatalogText();
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggle = (memberId: string) => {
@@ -61,14 +65,14 @@ export function CrewPicker({
         <h2 className={`m-0 ${typography.panelHeading}`}>{title}</h2>
         <p className={`mt-2 mb-4 ${typography.narrativeCaption}`}>{intro}</p>
         <p className={`m-0 mb-3 ${typography.metadata}`}>
-          Bring up to {capacity} — leadership runs the room. ({selected.length}/
-          {capacity} picked)
+          {t("picker.capacity", {
+            capacity,
+            selected: selected.length,
+          })}
         </p>
 
         {crew.length === 0 ? (
-          <p className={typography.metadata}>
-            Nobody is free right now. You go alone.
-          </p>
+          <p className={typography.metadata}>{t("picker.nobodyFree")}</p>
         ) : (
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {crew.map((member) => {
@@ -92,12 +96,16 @@ export function CrewPicker({
                         {member.name}
                       </span>
                       <span className={`ml-2 ${typography.metadata}`}>
-                        {CREW_TIER_LABELS[member.tier]} · {archetype.label}
+                        {tierName(member.tier)} ·{" "}
+                        {archetypeName(member.archetype)}
                       </span>
                     </span>
                     <span className={typography.metadata}>
-                      +{crewCheckBonus(member)}% {archetype.skill} · power{" "}
-                      {crewMemberPower(member)}
+                      {t("picker.memberStats", {
+                        bonus: crewCheckBonus(member),
+                        power: crewMemberPower(member),
+                        skill: skillName(archetype.skill),
+                      })}
                     </span>
                   </button>
                 </li>
@@ -108,15 +116,19 @@ export function CrewPicker({
 
         <div className="mt-5 flex justify-end gap-3">
           <Button disabled={isBusy} onClick={onCancel} variant="quiet">
-            Never mind
+            {t("picker.neverMind")}
           </Button>
           <Button
             disabled={isBusy}
             onClick={() => onConfirm(selected)}
             variant="primary"
           >
-            {confirmLabel}
-            {selected.length > 0 ? ` with ${selected.length}` : " alone"}
+            {selected.length > 0
+              ? t("picker.confirmWith", {
+                  count: selected.length,
+                  label: confirmLabel,
+                })
+              : t("picker.confirmAlone", { label: confirmLabel })}
           </Button>
         </div>
       </div>

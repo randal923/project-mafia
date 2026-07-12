@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useId, useState, type DragEvent } from "react";
 import { cx } from "../../lib/cx";
 import { Button } from "../Button/Button";
@@ -58,21 +59,17 @@ type InventoryDrag =
   | { item: InventoryItem; source: "stash" }
   | { item: InventoryItem; slotId: InventorySlotId; source: "loadout" };
 
-const stashTabs: readonly TabDefinition<StashTabId>[] = [
-  { id: "stash-1", label: "Stash I" },
-  { id: "stash-2", label: "Stash II" },
-  { id: "stash-3", label: "Stash III" }
-];
+const STASH_TAB_IDS: readonly StashTabId[] = ["stash-1", "stash-2", "stash-3"];
 
 export function Inventory({
   actionsDisabled = false,
-  ariaLabel = "Inventory",
+  ariaLabel,
   className,
-  emptySlotLabel = "Empty",
-  emptyStashLabel = "No stash items.",
-  gearSlotsLabel = "Gear slots",
-  loadoutEyebrow = "Profile",
-  loadoutTitle = "Loadout",
+  emptySlotLabel,
+  emptyStashLabel,
+  gearSlotsLabel,
+  loadoutEyebrow,
+  loadoutTitle,
   onEquip,
   onSell,
   onUnequip,
@@ -81,11 +78,24 @@ export function Inventory({
   showLoadout = true,
   showStash = true,
   slots,
-  stashActionLabel = "Drop to unequip",
+  stashActionLabel,
   stashItems,
   stashSlotsPerPage = 12,
-  stashTitle = "Stash"
+  stashTitle
 }: InventoryProps) {
+  const t = useTranslations("inventory");
+  const tItem = useTranslations("itemCard");
+  const resolvedAriaLabel = ariaLabel ?? t("defaultAriaLabel");
+  const resolvedEmptySlotLabel = emptySlotLabel ?? t("emptySlot");
+  const resolvedEmptyStashLabel = emptyStashLabel ?? t("emptyStash");
+  const resolvedGearSlotsLabel = gearSlotsLabel ?? t("gearSlots");
+  const resolvedLoadoutEyebrow = loadoutEyebrow ?? t("profileEyebrow");
+  const resolvedLoadoutTitle = loadoutTitle ?? t("loadoutTitle");
+  const resolvedStashActionLabel = stashActionLabel ?? t("dropToUnequip");
+  const resolvedStashTitle = stashTitle ?? t("stashTitle");
+  const stashTabs: readonly TabDefinition<StashTabId>[] = STASH_TAB_IDS.map(
+    (id, index) => ({ id, label: t(`tabs.stash${index + 1}`) })
+  );
   const [activeStashTabId, setActiveStashTabId] =
     useState<StashTabId>("stash-1");
   const [inventoryDrag, setInventoryDrag] = useState<InventoryDrag | null>(
@@ -231,7 +241,7 @@ export function Inventory({
   }
 
   return (
-    <section aria-label={ariaLabel} className={classNames}>
+    <section aria-label={resolvedAriaLabel} className={classNames}>
       {showLoadout ? (
         <div
           className={loadoutClassNames}
@@ -239,9 +249,9 @@ export function Inventory({
           onDrop={handleLoadoutDrop}
         >
           <SectionHeader
-            aside={gearSlotsLabel}
-            eyebrow={loadoutEyebrow}
-            title={loadoutTitle}
+            aside={resolvedGearSlotsLabel}
+            eyebrow={resolvedLoadoutEyebrow}
+            title={resolvedLoadoutTitle}
           />
           <div className="pointer-events-none absolute inset-x-0 top-28 bottom-4 z-0">
             <Image
@@ -256,7 +266,7 @@ export function Inventory({
             {slots.map((slot) => (
               <InventorySlotPanel
                 actionsDisabled={actionsDisabled}
-                emptyLabel={emptySlotLabel}
+                emptyLabel={resolvedEmptySlotLabel}
                 key={slot.id}
                 onItemDragEnd={handleItemDragEnd}
                 onItemDragStart={
@@ -280,13 +290,13 @@ export function Inventory({
           onDrop={handleStashDrop}
         >
           <SectionHeader
-            aside={stashActionLabel}
-            eyebrow="Inventory"
-            title={stashTitle}
+            aside={resolvedStashActionLabel}
+            eyebrow={t("stashEyebrow")}
+            title={resolvedStashTitle}
           />
           <Tabs
             activeTabId={activeStashTabId}
-            ariaLabel="Stash pages"
+            ariaLabel={t("stashPagesLabel")}
             idPrefix={stashIdPrefix}
             onTabChange={setActiveStashTabId}
             tabs={stashTabs}
@@ -300,7 +310,10 @@ export function Inventory({
               role="tabpanel"
             >
               <ol
-                aria-label={`${stashTitle} page ${pageIndex + 1}`}
+                aria-label={t("stashPage", {
+                  page: pageIndex + 1,
+                  title: resolvedStashTitle
+                })}
                 className={cx(
                   "m-0 grid list-none grid-cols-2 border-line p-0 sm:grid-cols-4",
                   showsWorkspace && "xl:grid-cols-3"
@@ -308,7 +321,7 @@ export function Inventory({
               >
                 {stashPages[pageIndex].map((item, index) => (
                   <li
-                    aria-label={item ? undefined : "Empty stash slot"}
+                    aria-label={item ? undefined : t("emptyStashSlot")}
                     className="h-full border-r border-b border-line p-2"
                     key={
                       item
@@ -341,10 +354,12 @@ export function Inventory({
                         <InventoryEmptySlot>
                           {index === 0 && stashItems.length === 0 ? (
                             <p className="m-0 text-center text-base leading-relaxed text-muted">
-                              {emptyStashLabel}
+                              {resolvedEmptyStashLabel}
                             </p>
                           ) : (
-                            <span className="sr-only">Empty stash slot</span>
+                            <span className="sr-only">
+                              {t("emptyStashSlot")}
+                            </span>
                           )}
                         </InventoryEmptySlot>
                       )}
@@ -364,7 +379,7 @@ export function Inventory({
                               size="small"
                               variant="primary"
                             >
-                              Use
+                              {t("use")}
                             </Button>
                           ) : null}
                           {onEquip && item.slot ? (
@@ -383,8 +398,10 @@ export function Inventory({
                               {item.levelRequirement !== undefined &&
                               playerLevel !== undefined &&
                               playerLevel < item.levelRequirement
-                                ? `Lv ${item.levelRequirement}`
-                                : "Equip"}
+                                ? tItem("levelShort", {
+                                    level: item.levelRequirement
+                                  })
+                                : t("equip")}
                             </Button>
                           ) : null}
                           {onSell ? (
@@ -395,7 +412,7 @@ export function Inventory({
                               size="small"
                               variant="quiet"
                             >
-                              Sell
+                              {t("sell")}
                             </Button>
                           ) : null}
                         </div>

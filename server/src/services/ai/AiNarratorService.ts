@@ -3,6 +3,7 @@ import {
   beatNarrativeSchema,
   outcomeNarrativeSchema,
 } from "../../../../shared/jobSchemas";
+import { PlayerLanguage } from "../../../../shared/language";
 import {
   BeatNarrationResult,
   MissionNarrator,
@@ -24,6 +25,7 @@ export class AiNarratorService implements MissionNarrator {
     const output = await this.generateValidated(
       MissionPrompts.beatPrompt(input),
       beatNarrativeSchema,
+      input.player.language ?? undefined,
     );
 
     return {
@@ -43,6 +45,7 @@ export class AiNarratorService implements MissionNarrator {
     const output = await this.generateValidated(
       MissionPrompts.outcomePrompt(input),
       outcomeNarrativeSchema,
+      input.player.language ?? undefined,
     );
 
     return {
@@ -58,8 +61,9 @@ export class AiNarratorService implements MissionNarrator {
   private async generateValidated<T>(
     userPrompt: string,
     schema: ZodType<T>,
+    language?: PlayerLanguage,
   ): Promise<T> {
-    const systemPrompt = MissionPrompts.systemPrompt();
+    const systemPrompt = MissionPrompts.systemPrompt(language);
     let prompt = userPrompt;
     let lastIssues = "";
 

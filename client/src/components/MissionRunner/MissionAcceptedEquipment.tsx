@@ -1,29 +1,30 @@
 import type { MissionAcceptedState } from "@shared/job";
 import type { EquipmentSlotId } from "@shared/player";
 import { SKILLS } from "@shared/skills";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 type MissionAcceptedEquipmentProps = {
   acceptedState?: MissionAcceptedState;
 };
 
-const slots: readonly { id: EquipmentSlotId; label: string }[] = [
-  { id: "head", label: "Head" },
-  { id: "torso", label: "Torso" },
-  { id: "hand", label: "Hand" },
-  { id: "waist", label: "Waist" },
-  { id: "feet", label: "Feet" },
+const slotIds: readonly EquipmentSlotId[] = [
+  "head",
+  "torso",
+  "hand",
+  "waist",
+  "feet",
 ];
 
 export function MissionAcceptedEquipment({
   acceptedState,
 }: MissionAcceptedEquipmentProps) {
+  const t = useTranslations("mission.acceptedEquipment");
+  const { itemName, skillName } = useCatalogText();
+
   if (!acceptedState) {
-    return (
-      <p className={`m-0 ${typography.metadata}`}>
-        Accepted equipment details are unavailable for this older job.
-      </p>
-    );
+    return <p className={`m-0 ${typography.metadata}`}>{t("unavailable")}</p>;
   }
 
   const effects = Object.values(acceptedState.loadout).flatMap(
@@ -32,34 +33,43 @@ export function MissionAcceptedEquipment({
 
   return (
     <section
-      aria-label="Accepted mission equipment"
+      aria-label={t("ariaLabel")}
       className="rounded-panel border border-line bg-black/20 p-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className={`m-0 ${displayText} text-xl text-title`}>
-          Accepted equipment
+          {t("title")}
         </h3>
         <p className={`m-0 ${typography.metadata}`}>
-          Power {acceptedState.totalPower} · Armor {acceptedState.armor}
+          {t("powerArmor", {
+            armor: acceptedState.armor,
+            power: acceptedState.totalPower,
+          })}
         </p>
       </div>
       <p className={`m-0 mt-1 ${typography.metadata}`}>
-        Locked for this job: {acceptedState.characterPower} character +{" "}
-        {acceptedState.equipmentPower} equipment power.
+        {t("lockedPower", {
+          character: acceptedState.characterPower,
+          equipment: acceptedState.equipmentPower,
+        })}
       </p>
       <dl className="m-0 mt-3 grid gap-2 sm:grid-cols-5">
-        {slots.map(({ id, label }) => {
+        {slotIds.map((id) => {
           const item = acceptedState.loadout[id];
           return (
             <div className="rounded-control border border-line p-2" key={id}>
-              <dt className={typography.metadata}>{label}</dt>
+              <dt className={typography.metadata}>{t(`slots.${id}`)}</dt>
               <dd className="m-0 text-sm font-medium text-ink">
-                {item?.name ?? "Empty"}
+                {item ? itemName(item) : t("empty")}
               </dd>
               {item ? (
                 <dd className={`m-0 mt-1 ${typography.metadata}`}>
-                  P {item.power ?? 0}
-                  {id === "hand" ? "" : ` · A ${item.armor ?? 0}`}
+                  {id === "hand"
+                    ? t("itemPower", { power: item.power ?? 0 })
+                    : t("itemPowerArmor", {
+                        armor: item.armor ?? 0,
+                        power: item.power ?? 0,
+                      })}
                 </dd>
               ) : null}
             </div>
@@ -74,32 +84,36 @@ export function MissionAcceptedEquipment({
               key={`${effect.type}-${index}`}
             >
               {effect.type === "skillBonus"
-                ? `+${effect.value} ${SKILLS[effect.skill].label} checks`
+                ? t("effects.skillBonus", {
+                    skill: skillName(effect.skill),
+                    value: effect.value,
+                  })
                 : effect.type === "approachBonus"
-                  ? `+${effect.value}% ${effect.approach}`
-                  : `−${effect.value} heat`}
+                  ? t("effects.approachBonus", {
+                      approach: effect.approach,
+                      value: effect.value,
+                    })
+                  : t("effects.heatReduction", { value: effect.value })}
             </li>
           ))}
         </ul>
       ) : null}
       {acceptedState.gear.length > 0 ? (
         <div className="mt-3 border-t border-line pt-3">
-          <p className={`m-0 ${typography.metadata}`}>
-            Relevant stash gear at acceptance
-          </p>
+          <p className={`m-0 ${typography.metadata}`}>{t("stashGear")}</p>
           <ul className="m-0 mt-2 grid list-none gap-2 p-0 sm:grid-cols-2">
             {acceptedState.gear.map((item) => (
               <li
                 className="rounded-control border border-line p-2 text-sm font-medium text-ink"
                 key={item.id}
               >
-                {item.name} ×{item.quantity ?? 1}
+                {itemName(item)} ×{item.quantity ?? 1}
                 <span className={`block ${typography.metadata}`}>
                   {item.consumable
                     ? item.power
-                      ? `Single-use · Power ${item.power} on a matching choice`
-                      : "Single-use · one consumed on a matching choice"
-                    : "Reusable exact match · no consumed-item power"}
+                      ? t("gearSingleUsePower", { power: item.power })
+                      : t("gearSingleUse")
+                    : t("gearReusable")}
                 </span>
               </li>
             ))}

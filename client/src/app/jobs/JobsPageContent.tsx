@@ -3,6 +3,7 @@
 import { crewJobCapacity, type CrewMember } from "@shared/crew";
 import type { PrisonAttemptResult, PrisonStatus } from "@shared/prison";
 import type { PlayerItem } from "@shared/player";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Button } from "../../components/Button/Button";
@@ -27,6 +28,7 @@ import { useJobBoard } from "./hooks/useJobBoard";
 import { useMission } from "./hooks/useMission";
 
 export function JobsPageContent() {
+  const t = useTranslations("jobs");
   const { user } = useAuth();
   const { player, setPlayer, status: playerStatus } = usePlayer();
   const board = useJobBoard();
@@ -121,7 +123,7 @@ export function JobsPageContent() {
   ) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Checking the streets…</p>
+        <p className={typography.metadata}>{t("loading")}</p>
       </div>
     );
   }
@@ -129,9 +131,7 @@ export function JobsPageContent() {
   if (playerStatus === "error" || mission.status === "error" || !player) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>
-          Could not reach your contacts. Refresh to try again.
-        </p>
+        <p className={typography.metadata}>{t("loadError")}</p>
       </div>
     );
   }
@@ -152,7 +152,7 @@ export function JobsPageContent() {
       }
     } catch (error) {
       setActionMessage(
-        error instanceof ApiError ? error.message : "That didn't work. Try again."
+        error instanceof ApiError ? error.message : t("actionError")
       );
     } finally {
       setIsActing(false);
@@ -167,15 +167,15 @@ export function JobsPageContent() {
         onBribe={() =>
           void runPrisonAction(
             () => bribePrisonGuard(user!),
-            "The guard pockets the envelope and forgets to lock a door. You walk.",
-            "He takes the money and calls it a donation. You're still here."
+            t("prison.bribeSuccess"),
+            t("prison.bribeFailure")
           )
         }
         onEscape={() =>
           void runPrisonAction(
             () => escapePrison(user!),
-            "Over the wall and gone — but the whole city is looking for you now.",
-            "A spotlight, a whistle, and a longer sentence."
+            t("prison.escapeSuccess"),
+            t("prison.escapeFailure")
           )
         }
         onServed={() => {
@@ -191,7 +191,7 @@ export function JobsPageContent() {
   if (imprisoned) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Checking in with the warden…</p>
+        <p className={typography.metadata}>{t("prison.checkingWarden")}</p>
       </div>
     );
   }
@@ -255,10 +255,8 @@ export function JobsPageContent() {
     <div className="flex flex-col gap-6">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-3">
-          <h1 className={`m-0 ${typography.panelHeading}`}>Jobs</h1>
-          <p className={`m-0 ${typography.paragraph}`}>
-            Word on the street. Pick a contract and see it through.
-          </p>
+          <h1 className={`m-0 ${typography.panelHeading}`}>{t("title")}</h1>
+          <p className={`m-0 ${typography.paragraph}`}>{t("subtitle")}</p>
         </div>
         <Button
           disabled={board.isBusy}
@@ -266,7 +264,7 @@ export function JobsPageContent() {
           size="small"
           variant="secondary"
         >
-          Ask around again
+          {t("askAroundAgain")}
         </Button>
       </div>
       <StreetStatus
@@ -278,21 +276,19 @@ export function JobsPageContent() {
       {pendingOfferId ? (
         <CrewPicker
           capacity={crewJobCapacity(player.progression.skills.leadership)}
-          confirmLabel="Take the job"
+          confirmLabel={t("crewPicker.confirm")}
           crew={idleCrew}
-          intro="Each soldier boosts checks that lean on his specialty. On a disaster, they share the consequences — and their gear is on the line."
+          intro={t("crewPicker.intro")}
           isBusy={board.isBusy}
           onCancel={() => setPendingOfferId(null)}
           onConfirm={(crewIds) => void acceptWithCrew(pendingOfferId, crewIds)}
-          title="Who rides along?"
+          title={t("crewPicker.title")}
         />
       ) : null}
       {board.status === "loading" ? (
-        <p className={typography.metadata}>Listening for rumors…</p>
+        <p className={typography.metadata}>{t("boardLoading")}</p>
       ) : board.status === "error" || !board.board ? (
-        <p className={typography.metadata}>
-          The board is quiet. Refresh to try again.
-        </p>
+        <p className={typography.metadata}>{t("boardError")}</p>
       ) : (
         <div className="grid gap-6 lg:grid-cols-3">
           {board.board.offers.map((offer) => (

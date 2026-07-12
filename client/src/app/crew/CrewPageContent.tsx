@@ -14,6 +14,7 @@ import {
 } from "@shared/crew";
 import { PLAYER_RANKS, type PlayerItem } from "@shared/player";
 import { SKILLS } from "@shared/skills";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Button } from "../../components/Button/Button";
@@ -33,6 +34,7 @@ import {
   trainCrewMember,
   unequipCrewMember,
 } from "../../lib/api";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 const moneyFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
@@ -47,6 +49,8 @@ type CrewToast = {
 };
 
 export function CrewPageContent() {
+  const t = useTranslations("crew");
+  const { archetypeName, skillName, tierName, traitName } = useCatalogText();
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
   const [crew, setCrew] = useState<CrewMember[] | null>(null);
@@ -138,21 +142,21 @@ export function CrewPageContent() {
           message:
             error instanceof ApiError
               ? error.message
-              : "That didn't work. Try again.",
-          title: "No dice",
+              : t("toast.errorMessage"),
+          title: t("toast.errorTitle"),
           tone: "failure",
         });
       } finally {
         setIsBusy(false);
       }
     },
-    [isBusy, setPlayer, user],
+    [isBusy, setPlayer, t, user],
   );
 
   if (status === "loading" || status === "missing" || !player) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Rounding up the soldiers…</p>
+        <p className={typography.metadata}>{t("loading")}</p>
       </div>
     );
   }
@@ -161,11 +165,12 @@ export function CrewPageContent() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="max-w-lg text-center">
-          <h1 className={`m-0 ${typography.panelHeading}`}>Crew</h1>
+          <h1 className={`m-0 ${typography.panelHeading}`}>
+            {t("locked.title")}
+          </h1>
           <p className={`mt-3 ${typography.paragraph}`}>
-            Nobody works for a nobody. Make{" "}
-            <strong>Street Hustler</strong> (level 10) and the right people
-            start returning your calls.
+            {t("locked.beforeRank")}{" "}
+            <strong>{t("locked.rankName")}</strong> {t("locked.afterRank")}
           </p>
         </div>
       </div>
@@ -188,38 +193,41 @@ export function CrewPageContent() {
         );
         return result;
       },
-      "On the payroll",
-      `${candidate.name} works for you now.`,
+      t("toast.hired.title"),
+      t("toast.hired.message", { name: candidate.name }),
     );
 
   return (
     <div className="flex flex-col gap-6 pb-6">
       <header className="flex flex-wrap items-end justify-between gap-4 rounded-panel border border-line bg-surface px-6 py-5 shadow-panel">
         <div>
-          <p className={`m-0 ${displayText} text-xl text-faint`}>The family</p>
+          <p className={`m-0 ${displayText} text-xl text-faint`}>
+            {t("header.eyebrow")}
+          </p>
           <h1 className={`mt-1 mb-0 ${displayText} text-5xl text-title`}>
-            Crew
+            {t("header.title")}
           </h1>
           <p className={`mt-2 mb-0 ${typography.narrativeCaption}`}>
-            Soldiers boost your jobs, staff your rackets, and hold your turf.
-            Pay them on time — the unpaid walk, and the bitter talk.
+            {t("header.tagline")}
           </p>
         </div>
         <dl className="m-0 flex gap-8 text-right">
           <div>
-            <dt className={typography.metadata}>Roster</dt>
+            <dt className={typography.metadata}>{t("header.roster")}</dt>
             <dd className={`m-0 ${displayText} text-3xl text-brass-bright`}>
               {crew?.length ?? "—"}/{cap}
             </dd>
           </div>
           <div>
-            <dt className={typography.metadata}>Payroll/day</dt>
+            <dt className={typography.metadata}>
+              {t("header.payrollPerDay")}
+            </dt>
             <dd className={`m-0 ${displayText} text-3xl text-danger-strong`}>
               {moneyFormatter.format(totalWages)}
             </dd>
           </div>
           <div>
-            <dt className={typography.metadata}>Your cash</dt>
+            <dt className={typography.metadata}>{t("header.yourCash")}</dt>
             <dd className={`m-0 ${displayText} text-3xl text-profit`}>
               {moneyFormatter.format(player.resources.cash)}
             </dd>
@@ -228,13 +236,13 @@ export function CrewPageContent() {
       </header>
 
       <section>
-        <h2 className={`m-0 mb-3 ${typography.panelHeading}`}>Your soldiers</h2>
+        <h2 className={`m-0 mb-3 ${typography.panelHeading}`}>
+          {t("roster.heading")}
+        </h2>
         {!crew ? (
-          <p className={typography.metadata}>Taking attendance…</p>
+          <p className={typography.metadata}>{t("roster.loading")}</p>
         ) : crew.length === 0 ? (
-          <p className={typography.metadata}>
-            Nobody on the payroll yet. Look over the candidates below.
-          </p>
+          <p className={typography.metadata}>{t("roster.empty")}</p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {crew.map((member) => (
@@ -246,36 +254,36 @@ export function CrewPageContent() {
                 onBribe={(memberId) =>
                   void runAction(
                     () => bribeCrewMember(user!, memberId),
-                    "Sprung",
-                    "The envelope worked. He walked out with his gear.",
+                    t("toast.bribed.title"),
+                    t("toast.bribed.message"),
                   )
                 }
                 onEquip={(memberId, itemId) =>
                   void runAction(
                     () => equipCrewMember(user!, memberId, itemId),
-                    "Geared up",
-                    "The gear moved from your stash to his hands.",
+                    t("toast.equipped.title"),
+                    t("toast.equipped.message"),
                   )
                 }
                 onFire={(memberId) =>
                   void runAction(
                     async () => fireCrewMember(user!, memberId),
-                    "Cut loose",
-                    "He cleared out. The gear on his back went with him.",
+                    t("toast.fired.title"),
+                    t("toast.fired.message"),
                   )
                 }
                 onTrain={(memberId) =>
                   void runAction(
                     () => trainCrewMember(user!, memberId),
-                    "In training",
-                    "Two hours on the mats. He'll come back sharper.",
+                    t("toast.trained.title"),
+                    t("toast.trained.message"),
                   )
                 }
                 onUnequip={(memberId, slot: CrewSlotId) =>
                   void runAction(
                     () => unequipCrewMember(user!, memberId, slot),
-                    "Stored",
-                    "The gear is back in your stash.",
+                    t("toast.unequipped.title"),
+                    t("toast.unequipped.message"),
                   )
                 }
               />
@@ -286,18 +294,15 @@ export function CrewPageContent() {
 
       <section>
         <h2 className={`m-0 mb-3 ${typography.panelHeading}`}>
-          Looking for work
+          {t("recruitment.heading")}
         </h2>
         <p className={`mt-0 mb-3 ${typography.narrativeCaption}`}>
-          A fresh pool of faces every day. Signing money up front, wages every
-          game day after.
+          {t("recruitment.intro")}
         </p>
         {!candidates ? (
-          <p className={typography.metadata}>Asking around…</p>
+          <p className={typography.metadata}>{t("recruitment.loading")}</p>
         ) : candidates.length === 0 ? (
-          <p className={typography.metadata}>
-            The pool is dry. New faces show up tomorrow.
-          </p>
+          <p className={typography.metadata}>{t("recruitment.empty")}</p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {candidates.map((candidate) => (
@@ -311,13 +316,13 @@ export function CrewPageContent() {
                       {candidate.name}
                     </p>
                     <p className={`m-0 ${typography.metadata}`}>
-                      {CREW_TIER_LABELS[candidate.tier]} ·{" "}
-                      {CREW_ARCHETYPES[candidate.archetype].label}
+                      {tierName(candidate.tier)} ·{" "}
+                      {archetypeName(candidate.archetype)}
                     </p>
                   </div>
                   <div className="rounded-control border border-brass/50 bg-brass/10 px-3 py-1 text-center">
                     <p className={`m-0 ${typography.metadata}`}>
-                      {SKILLS[CREW_ARCHETYPES[candidate.archetype].skill].label}
+                      {skillName(CREW_ARCHETYPES[candidate.archetype].skill)}
                     </p>
                     <p className={`m-0 ${displayText} text-lg text-brass-bright`}>
                       {candidate.skillLevel}
@@ -333,14 +338,16 @@ export function CrewPageContent() {
                       <Tag
                         className="border-brass/60 text-brass"
                         key={trait}
-                        label={CREW_TRAITS[trait].label}
+                        label={traitName(trait)}
                       />
                     ))}
                   </div>
                 ) : null}
                 <div className="mt-auto flex items-center justify-between gap-2">
                   <span className={typography.metadata}>
-                    {moneyFormatter.format(candidate.wage)}/day
+                    {t("recruitment.wagePerDay", {
+                      wage: moneyFormatter.format(candidate.wage),
+                    })}
                   </span>
                   <Button
                     disabled={
@@ -352,7 +359,9 @@ export function CrewPageContent() {
                     size="small"
                     variant="primary"
                   >
-                    Hire ({moneyFormatter.format(candidate.hireCost)})
+                    {t("recruitment.hire", {
+                      cost: moneyFormatter.format(candidate.hireCost),
+                    })}
                   </Button>
                 </div>
               </article>

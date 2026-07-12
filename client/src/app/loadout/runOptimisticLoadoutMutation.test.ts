@@ -19,6 +19,7 @@ const player: Player = {
   avatar: null,
   createdAt: "2026-07-10T00:00:00.000Z",
   id: "player-1",
+  language: null,
   loadout: { hand: knife },
   name: "Rico Vale",
   nameKey: "rico vale",

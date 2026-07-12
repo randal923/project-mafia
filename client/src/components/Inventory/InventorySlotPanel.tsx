@@ -1,6 +1,8 @@
+import { useTranslations } from "next-intl";
 import type { DragEvent } from "react";
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 import { ItemHoverCard } from "../ItemHoverCard/ItemHoverCard";
 import { InventoryEmptySlot } from "./InventoryEmptySlot";
@@ -29,14 +31,16 @@ export function InventorySlotPanel({
   placementClassName,
   slot
 }: InventorySlotPanelProps) {
+  const t = useTranslations("inventory");
+  const { itemName } = useCatalogText();
   const classNames = cx(
     "relative z-10 min-h-28 rounded-panel border bg-surface-raised p-2",
     slot.item ? "border-brass" : "border-line",
     placementClassName
   );
   const ariaLabel = slot.item
-    ? `${slot.label} slot equipped with ${slot.item.name}`
-    : `${slot.label} slot empty`;
+    ? t("slotEquipped", { item: itemName(slot.item), slot: slot.label })
+    : t("slotEmpty", { slot: slot.label });
 
   return (
     <article aria-label={ariaLabel} className={cx(classNames, "flex flex-col")}>
@@ -44,7 +48,9 @@ export function InventorySlotPanel({
         <h3 className={`m-0 ${displayText} text-lg text-muted`}>
           {slot.label}
         </h3>
-        <span className={`${displayText} text-base text-brass`}>Slot</span>
+        <span className={`${displayText} text-base text-brass`}>
+          {t("slotTag")}
+        </span>
       </div>
       <div className="mt-2 flex items-center justify-center border border-line bg-page p-1">
         {slot.item ? (
@@ -74,7 +80,7 @@ export function InventorySlotPanel({
             size="small"
             variant="quiet"
           >
-            Unequip
+            {t("unequip")}
           </Button>
         ) : null}
       </div>

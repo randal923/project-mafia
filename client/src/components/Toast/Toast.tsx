@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { toneTextClasses } from "../../design-system/tones";
 import { typography } from "../../design-system/typography";
@@ -23,13 +26,6 @@ const toneTokens: Record<
   warning: "brassBright"
 };
 
-const toneLabels: Record<ToastTone, string> = {
-  failure: "Failure",
-  info: "Info",
-  success: "Success",
-  warning: "Warning"
-};
-
 const toneRoles: Record<ToastTone, "alert" | "status"> = {
   failure: "alert",
   info: "status",
@@ -44,14 +40,15 @@ export function Toast({
   title,
   tone = "info"
 }: ToastProps) {
+  const t = useTranslations("common");
   const toneToken = toneTokens[tone];
 
   return (
     <Frame
       className={`w-full max-w-md shadow-panel ${toneTextClasses[toneToken]}`}
       element="section"
-      headerDismissLabel="Dismiss notification"
-      headerLabel={toneLabels[tone]}
+      headerDismissLabel={t("dismissNotification")}
+      headerLabel={t(`toastTone.${tone}`)}
       headerTitle={title}
       onHeaderDismiss={onDismiss}
       role={toneRoles[tone]}

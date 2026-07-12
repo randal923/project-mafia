@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AppShell } from "../components/AppShell/AppShell";
 import { AuthGuard } from "../components/AuthGuard/AuthGuard";
 import { AuthProvider } from "../components/AuthProvider/AuthProvider";
+import { LanguageProvider } from "../components/LanguageProvider/LanguageProvider";
 import { PlayerProvider } from "../components/PlayerProvider/PlayerProvider";
 import { mafiaFonts } from "./mafiaFonts";
 import "./globals.css";
@@ -23,11 +24,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body>
         <AuthProvider>
-          <AuthGuard>
-            <PlayerProvider>
-              <AppShell>{children}</AppShell>
-            </PlayerProvider>
-          </AuthGuard>
+          <PlayerProvider>
+            <LanguageProvider>
+              <AuthGuard>
+                <AppShell>{children}</AppShell>
+              </AuthGuard>
+            </LanguageProvider>
+          </PlayerProvider>
         </AuthProvider>
       </body>
     </html>

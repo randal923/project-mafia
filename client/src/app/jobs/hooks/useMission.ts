@@ -1,6 +1,7 @@
 "use client";
 
 import type { MissionView } from "@shared/job";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../../components/AuthProvider/AuthProvider";
 import { usePlayer } from "../../../components/PlayerProvider/PlayerProvider";
@@ -34,6 +35,7 @@ function isAtLeastAsAdvanced(
 }
 
 export function useMission() {
+  const t = useTranslations("jobs");
   const { user } = useAuth();
   const { setPlayer } = usePlayer();
   const [mission, setMission] = useState<MissionView | null>(null);
@@ -141,16 +143,14 @@ export function useMission() {
       } catch (error) {
         console.error("Failed to use healing item:", error);
         setHealingError(
-          error instanceof ApiError
-            ? error.message
-            : "That kit could not be used. Refresh and try again."
+          error instanceof ApiError ? error.message : t("healError")
         );
       } finally {
         actionInFlight.current = false;
         setHealingItemId(null);
       }
     },
-    [mission, setPlayer, user]
+    [mission, setPlayer, t, user]
   );
 
   const startMission = useCallback((view: MissionView) => {

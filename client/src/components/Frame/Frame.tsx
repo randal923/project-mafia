@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { AriaRole, ReactNode } from "react";
 import {
   toneTopBorderClasses,
@@ -51,7 +54,7 @@ export function Frame({
   className,
   element: Element = "div",
   headerAside,
-  headerDismissLabel = "Dismiss",
+  headerDismissLabel,
   headerIcon,
   headerLabel,
   headerTitle,
@@ -62,6 +65,7 @@ export function Frame({
   topBorderColor = "line",
   withHeader = false
 }: FrameProps) {
+  const t = useTranslations("common");
   const classNames = cx(
     "rounded-panel border border-t-2 border-line",
     surfaceClasses[surface],
@@ -101,7 +105,7 @@ export function Frame({
           ) : null}
           {onHeaderDismiss ? (
             <button
-              aria-label={headerDismissLabel}
+              aria-label={headerDismissLabel ?? t("dismiss")}
               className={`min-h-8 min-w-8 cursor-pointer rounded-control border border-line bg-transparent ${displayText} text-xl text-muted transition-[border-color,color] duration-150 hover:border-brass hover:text-ink focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright`}
               onClick={onHeaderDismiss}
               type="button"

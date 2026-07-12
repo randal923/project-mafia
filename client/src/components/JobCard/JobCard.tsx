@@ -1,7 +1,9 @@
 import type { JobOffer } from "@shared/job";
 import type { PlayerItem } from "@shared/player";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 import { Tag } from "../Tag/Tag";
 
@@ -28,6 +30,8 @@ export function JobCard({
   ownedItems,
   playerStamina
 }: JobCardProps) {
+  const t = useTranslations("jobCard");
+  const { districtNameForLabel } = useCatalogText();
   const tooTired =
     offer.staminaCost !== undefined &&
     playerStamina !== undefined &&
@@ -37,9 +41,9 @@ export function JobCard({
   return (
     <article className="flex flex-col gap-4 rounded-panel border border-line bg-surface-raised p-6">
       <div className="flex items-center justify-between gap-3">
-        <Tag label={offer.district} />
+        <Tag label={districtNameForLabel(offer.district)} />
         <p className={`m-0 ${typography.metadata}`}>
-          Difficulty {offer.difficulty} / 100
+          {t("difficulty", { difficulty: offer.difficulty })}
         </p>
       </div>
       <h3 className={`m-0 ${displayText} text-2xl text-title`}>
@@ -50,9 +54,7 @@ export function JobCard({
       </p>
       {gear.length > 0 ? (
         <div className="flex flex-col gap-2">
-          <p className={`m-0 ${typography.metadata}`}>
-            Gear this job may call for — going without makes it harder:
-          </p>
+          <p className={`m-0 ${typography.metadata}`}>{t("gearIntro")}</p>
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
             {gear.map((entry) => {
               const matchingItem = ownedItems
@@ -85,9 +87,7 @@ export function JobCard({
                   )}
                   key={entry.label}
                   title={
-                    consumes
-                      ? "Consumable — one gets used up per demand on the run."
-                      : "Reusable tool — carrying one covers the whole run."
+                    consumes ? t("gearConsumable") : t("gearReusable")
                   }
                 >
                   {carried === undefined ? "" : carried ? "✓ " : "✗ "}
@@ -101,7 +101,7 @@ export function JobCard({
       ) : null}
       <dl className="m-0 flex items-center justify-between gap-3">
         <div>
-          <dt className={typography.metadata}>Take</dt>
+          <dt className={typography.metadata}>{t("take")}</dt>
           <dd className={`m-0 ${displayText} text-xl text-profit`}>
             {moneyFormatter.format(offer.rewardMin)} –{" "}
             {moneyFormatter.format(offer.rewardMax)}
@@ -109,7 +109,7 @@ export function JobCard({
         </div>
         {offer.staminaCost !== undefined ? (
           <div className="text-right">
-            <dt className={typography.metadata}>Stamina</dt>
+            <dt className={typography.metadata}>{t("stamina")}</dt>
             <dd
               className={`m-0 ${displayText} text-xl ${tooTired ? "text-danger-strong" : "text-brass"}`}
             >
@@ -118,7 +118,7 @@ export function JobCard({
           </div>
         ) : null}
         <div className="text-right">
-          <dt className={typography.metadata}>Heat</dt>
+          <dt className={typography.metadata}>{t("heat")}</dt>
           <dd className={`m-0 ${displayText} text-xl text-danger-strong`}>
             +{offer.heatIncrease}
           </dd>
@@ -129,7 +129,7 @@ export function JobCard({
         onClick={() => onAccept(offer.id)}
         size="small"
       >
-        {tooTired ? "Too tired" : "Take the job"}
+        {tooTired ? t("tooTired") : t("takeJob")}
       </Button>
     </article>
   );

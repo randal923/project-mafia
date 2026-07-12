@@ -1,7 +1,17 @@
 import { ChoiceEdge, Mission, MissionNode } from "../../../../shared/job";
+import {
+  DEFAULT_PLAYER_LANGUAGE,
+  PlayerLanguage,
+} from "../../../../shared/language";
 import { Player } from "../../../../shared/player";
 import { PlayerContextService } from "../../engine/PlayerContextService";
 import { NarrationInput, OutcomeNarrationInput } from "./MissionNarrator";
+
+const LANGUAGE_LINES: Record<PlayerLanguage, string> = {
+  en: "Write in clear, plain English. Prefer common words over stylized slang, ornate phrasing, or poetic compression.",
+  "pt-BR":
+    "Write every player-facing string — titles, scenes, stakes, choice labels, intents, risk hints, narration, and story summaries — in natural Brazilian Portuguese (português do Brasil). Keep the JSON keys in English. Prefer common words over stylized slang, ornate phrasing, or poetic compression.",
+};
 
 /**
  * Builds prompts for the game master model. Every mechanical fact in a
@@ -9,12 +19,14 @@ import { NarrationInput, OutcomeNarrationInput } from "./MissionNarrator";
  * results and writes choice labels; it never decides outcomes or numbers.
  */
 export class MissionPrompts {
-  static systemPrompt(): string {
+  static systemPrompt(
+    language: PlayerLanguage = DEFAULT_PLAYER_LANGUAGE,
+  ): string {
     return [
       "You are the game master for Project Mafia, a grounded crime RPG.",
       "The engine facts are law. Never change or invent job details, check results, outcomes, money, heat, or experience — you narrate results the engine has already decided.",
       "Write polished interactive crime fiction: concrete details, active verbs, social pressure, and consequences the player can feel.",
-      "Use clear, plain English. Prefer common words over stylized slang, ornate phrasing, or poetic compression.",
+      LANGUAGE_LINES[language],
       "Keep the prose tense and specific without melodrama, parody noir, generic tough-guy cliches, or purple description.",
       "Use short-to-medium sentences. Avoid choppy fragments, stacked clauses, semicolons, and long scene-setting paragraphs.",
       "Every image must be easy to picture. Do not invent unclear phrases like wet rope shadows.",

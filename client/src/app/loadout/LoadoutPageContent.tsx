@@ -1,6 +1,7 @@
 "use client";
 
 import type { EquipmentSlotId, Player, PlayerItem } from "@shared/player";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Inventory } from "../../components/Inventory/Inventory";
@@ -20,15 +21,17 @@ import {
   type LoadoutUpdate
 } from "./runOptimisticLoadoutMutation";
 
-const slotOrder: readonly { id: EquipmentSlotId; label: string }[] = [
-  { id: "head", label: "Head" },
-  { id: "torso", label: "Torso" },
-  { id: "hand", label: "Hand" },
-  { id: "waist", label: "Waist" },
-  { id: "feet", label: "Feet" }
+const slotOrder: readonly EquipmentSlotId[] = [
+  "head",
+  "torso",
+  "hand",
+  "waist",
+  "feet"
 ];
 
 export function LoadoutPageContent() {
+  const t = useTranslations("loadout");
+  const tItem = useTranslations("itemCard");
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
   const [isMutating, setIsMutating] = useState(false);
@@ -38,7 +41,7 @@ export function LoadoutPageContent() {
   if (status === "loading" || status === "missing") {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Opening your armory…</p>
+        <p className={typography.metadata}>{t("loading")}</p>
       </div>
     );
   }
@@ -46,17 +49,15 @@ export function LoadoutPageContent() {
   if (status === "error" || !player) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>
-          Could not reach the family armory. Refresh to try again.
-        </p>
+        <p className={typography.metadata}>{t("loadError")}</p>
       </div>
     );
   }
 
-  const slots: readonly InventorySlot[] = slotOrder.map(({ id, label }) => ({
+  const slots: readonly InventorySlot[] = slotOrder.map((id) => ({
     id,
     item: player.loadout[id],
-    label
+    label: tItem(`slots.${id}`)
   }));
 
   const runMutation = async (
@@ -84,7 +85,7 @@ export function LoadoutPageContent() {
           setError(
             mutationResult.error instanceof ApiError
               ? mutationResult.error.message
-              : "Something went wrong. Try again."
+              : t("genericError")
           );
         }
         return;
@@ -98,7 +99,7 @@ export function LoadoutPageContent() {
       setError(
         mutationError instanceof ApiError
           ? mutationError.message
-          : "Something went wrong. Try again."
+          : t("genericError")
       );
     } finally {
       mutationInFlight.current = false;
@@ -120,11 +121,11 @@ export function LoadoutPageContent() {
 
   return (
     <div className="pb-6">
-      <h1 className="sr-only">Loadout</h1>
+      <h1 className="sr-only">{t("title")}</h1>
       <Inventory
         actionsDisabled={isMutating}
-        ariaLabel={`${player.name} loadout and stash`}
-        gearSlotsLabel="Equipped gear"
+        ariaLabel={t("inventoryAriaLabel", { playerName: player.name })}
+        gearSlotsLabel={t("gearSlotsLabel")}
         loadoutEyebrow={player.name}
         onEquip={handleEquip}
         onSell={handleSell}
@@ -132,7 +133,7 @@ export function LoadoutPageContent() {
         onUse={handleUse}
         playerLevel={player.progression.level}
         slots={slots}
-        stashActionLabel="Drag gear between panels"
+        stashActionLabel={t("stashActionLabel")}
         stashItems={player.stash}
       />
       {error ? (
@@ -140,7 +141,7 @@ export function LoadoutPageContent() {
           <Toast
             message={error}
             onDismiss={() => setError(null)}
-            title="No dice"
+            title={t("toastErrorTitle")}
             tone="failure"
           />
         </div>

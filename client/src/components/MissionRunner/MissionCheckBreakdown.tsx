@@ -1,5 +1,7 @@
 import type { CheckModifierBreakdown, EdgeGear } from "@shared/job";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 type MissionCheckBreakdownProps = {
   breakdown: CheckModifierBreakdown;
@@ -15,6 +17,8 @@ export function MissionCheckBreakdown({
   breakdown,
   gear,
 }: MissionCheckBreakdownProps) {
+  const t = useTranslations("mission.checkBreakdown");
+  const { itemName } = useCatalogText();
   const combinedPower = breakdown.characterPower + breakdown.equipmentPower;
   const powerUntilNextBonus = breakdown.powerDivisor
     ? breakdown.powerDivisor - (combinedPower % breakdown.powerDivisor)
@@ -22,34 +26,36 @@ export function MissionCheckBreakdown({
 
   return (
     <div className="col-span-2 border-t border-line pt-3">
-      <p className={`m-0 ${typography.metadata}`}>Authoritative check math</p>
+      <p className={`m-0 ${typography.metadata}`}>{t("title")}</p>
       <dl className="m-0 mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-        <dt>Base chance</dt>
+        <dt>{t("baseChance")}</dt>
         <dd className="m-0 text-right">{breakdown.baseChance}%</dd>
-        <dt>Skill ({breakdown.skillLevel})</dt>
+        <dt>{t("skillLevel", { level: breakdown.skillLevel })}</dt>
         <dd className="m-0 text-right">+{breakdown.skillChance}%</dd>
         {breakdown.equipmentSkillBonus !== 0 ? (
           <>
-            <dt>Equipped skill effect</dt>
+            <dt>{t("equippedSkillEffect")}</dt>
             <dd className="m-0 text-right">
               +{breakdown.equipmentSkillBonus}%
             </dd>
           </>
         ) : null}
-        <dt>Character power ({breakdown.characterPower})</dt>
+        <dt>{t("characterPower", { power: breakdown.characterPower })}</dt>
         <dd className="m-0 text-right">
           +{breakdown.characterPowerBonus}%
         </dd>
-        <dt>Equipment power ({breakdown.equipmentPower})</dt>
+        <dt>{t("equipmentPower", { power: breakdown.equipmentPower })}</dt>
         <dd className="m-0 text-right">
           +{breakdown.equipmentPowerBonus}%
         </dd>
         {powerUntilNextBonus !== null ? (
           <>
-            <dt>Base power progress</dt>
+            <dt>{t("basePowerProgress")}</dt>
             <dd className="m-0 text-right">
-              {combinedPower} combined · {powerUntilNextBonus} power to next
-              +1%
+              {t("powerProgressValue", {
+                combined: combinedPower,
+                remaining: powerUntilNextBonus,
+              })}
             </dd>
           </>
         ) : null}
@@ -59,7 +65,10 @@ export function MissionCheckBreakdown({
         breakdown.consumablePower > 0 ? (
           <>
             <dt>
-              On use: {gear.item.name} (Power {breakdown.consumablePower})
+              {t("onUse", {
+                item: itemName(gear.item),
+                power: breakdown.consumablePower,
+              })}
             </dt>
             <dd className="m-0 text-right">
               +{breakdown.consumablePowerBonus}%
@@ -68,21 +77,21 @@ export function MissionCheckBreakdown({
         ) : null}
         {breakdown.approachBonus !== 0 ? (
           <>
-            <dt>Approach effect</dt>
+            <dt>{t("approachEffect")}</dt>
             <dd className="m-0 text-right">+{breakdown.approachBonus}%</dd>
           </>
         ) : null}
-        <dt>Difficulty</dt>
+        <dt>{t("difficulty")}</dt>
         <dd className="m-0 text-right">{breakdown.difficultyModifier}%</dd>
-        <dt>Heat</dt>
+        <dt>{t("heat")}</dt>
         <dd className="m-0 text-right">−{breakdown.heatPenalty}%</dd>
-        <dt>Intoxication</dt>
+        <dt>{t("intoxication")}</dt>
         <dd className="m-0 text-right">
           −{breakdown.intoxicationPenalty}%
         </dd>
         {breakdown.finalAdjustment !== 0 ? (
           <>
-            <dt>Rounding / limits</dt>
+            <dt>{t("roundingLimits")}</dt>
             <dd className="m-0 text-right">
               {formatAdjustment(breakdown.finalAdjustment)}
             </dd>
@@ -90,7 +99,7 @@ export function MissionCheckBreakdown({
         ) : null}
       </dl>
       <p className={`m-0 mt-2 ${displayText} text-lg text-profit`}>
-        Final chance {breakdown.finalChance}%
+        {t("finalChance", { chance: breakdown.finalChance })}
       </p>
     </div>
   );

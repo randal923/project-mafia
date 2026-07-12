@@ -1,5 +1,6 @@
 import type { MissionView } from "@shared/job";
 import type { PlayerItem } from "@shared/player";
+import { useTranslations } from "next-intl";
 import { typography } from "../../design-system/typography";
 import { NarrativeCard } from "../NarrativeCard/NarrativeCard";
 import { MissionCheckBadge } from "./MissionCheckBadge";
@@ -38,6 +39,7 @@ export function MissionRunner({
   onFinish,
   onHeal
 }: MissionRunnerProps) {
+  const t = useTranslations("mission");
   const step = currentStep(mission);
   const beatNumber = mission.steps.length;
   const totalBeats = mission.depth + 1;
@@ -49,17 +51,17 @@ export function MissionRunner({
       priority={step.edgeTaken && !step.edgeTaken.passed ? "urgent" : "standard"}
       timeLabel={
         mission.status === "resolved"
-          ? "Job complete"
+          ? t("runner.jobComplete")
           : isWaitingOnNarration(mission)
-            ? "Casing the place…"
-            : `Beat ${beatNumber} of ${totalBeats}`
+            ? t("runner.casingThePlace")
+            : t("runner.beatProgress", { beat: beatNumber, total: totalBeats })
       }
       title={
         mission.status === "resolved"
-          ? "The dust settles"
+          ? t("runner.dustSettles")
           : isWaitingOnNarration(mission)
-            ? "Setting up the job…"
-            : (step.narrative?.title ?? "Setting up the job…")
+            ? t("runner.settingUp")
+            : (step.narrative?.title ?? t("runner.settingUp"))
       }
     >
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
@@ -92,11 +94,13 @@ export function MissionRunner({
       ) : isWaitingOnNarration(mission) ? (
         <div className="flex flex-col gap-3">
           <p className={`m-0 ${typography.narrativeBody}`}>
-            The fixer is working out the details…
+            {t("runner.fixerWorking")}
           </p>
           <p className={`m-0 ${typography.metadata}`}>
-            {mission.narrativeProgress.ready} of{" "}
-            {mission.narrativeProgress.total} scenes ready
+            {t("runner.scenesReady", {
+              ready: mission.narrativeProgress.ready,
+              total: mission.narrativeProgress.total
+            })}
           </p>
         </div>
       ) : (

@@ -1,13 +1,17 @@
 import type { RevealedEdge } from "@shared/job";
 import { SKILLS } from "@shared/skills";
+import { useTranslations } from "next-intl";
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 type MissionCheckBadgeProps = {
   edge: RevealedEdge;
 };
 
 export function MissionCheckBadge({ edge }: MissionCheckBadgeProps) {
+  const t = useTranslations("mission.checkBadge");
+  const { itemName, skillName } = useCatalogText();
   const wide = Math.abs(edge.margin) >= 40;
   const floorProtection = edge.damage
     ? Math.max(
@@ -17,9 +21,18 @@ export function MissionCheckBadge({ edge }: MissionCheckBadgeProps) {
           edge.damage.healthLost,
       )
     : 0;
+  const skill = skillName(edge.check.skill);
   const text = edge.passed
-    ? `${SKILLS[edge.check.skill].label} check passed${wide ? " — critical" : ""}`
-    : `${SKILLS[edge.check.skill].label} check failed${wide ? " — badly" : ""}`;
+    ? wide
+      ? t("passedCritical", { skill })
+      : t("passed", { skill })
+    : wide
+      ? t("failedBadly", { skill })
+      : t("failed", { skill });
+  const momentumDeltaText =
+    typeof edge.momentumDelta === "number" && edge.momentumDelta >= 0
+      ? `+${edge.momentumDelta}`
+      : `${edge.momentumDelta}`;
 
   return (
     <div className="flex flex-col items-start gap-2">
@@ -35,17 +48,21 @@ export function MissionCheckBadge({ edge }: MissionCheckBadgeProps) {
       </span>
       {edge.damage ? (
         <span className="text-sm font-medium text-danger-strong">
-          Incoming {edge.damage.incoming} · Armor absorbed {edge.damage.absorbed}
-          {" · "}Health lost {edge.damage.healthLost}
+          {t("damageSummary", {
+            absorbed: edge.damage.absorbed,
+            incoming: edge.damage.incoming,
+            lost: edge.damage.healthLost,
+          })}
           {floorProtection > 0
-            ? ` · 1-Health floor stopped ${floorProtection}`
+            ? ` · ${t("floorStopped", { amount: floorProtection })}`
             : ""}
         </span>
       ) : null}
       {edge.gear?.item ? (
         <span className="text-sm font-medium text-brass">
-          {edge.gear.item.name}
-          {edge.gear.consumes ? " was consumed" : " covered the move"}
+          {edge.gear.consumes
+            ? t("gearConsumed", { item: itemName(edge.gear.item) })
+            : t("gearCovered", { item: itemName(edge.gear.item) })}
         </span>
       ) : null}
       {typeof edge.momentumDelta === "number" ? (
@@ -55,19 +72,23 @@ export function MissionCheckBadge({ edge }: MissionCheckBadgeProps) {
             edge.momentumDelta >= 0 ? "text-profit" : "text-danger-strong"
           )}
         >
-          Momentum {edge.momentumDelta >= 0 ? "+" : ""}
-          {edge.momentumDelta}
-          {edge.stakes ? ` — ${edge.stakes === "bolder" ? "bold" : "safe"} play` : ""}
+          {edge.stakes
+            ? edge.stakes === "bolder"
+              ? t("momentumBold", { delta: momentumDeltaText })
+              : t("momentumSafe", { delta: momentumDeltaText })
+            : t("momentum", { delta: momentumDeltaText })}
         </span>
       ) : null}
       {edge.cashSpent ? (
         <span className="text-sm font-medium text-danger-strong">
-          Paid ${edge.cashSpent.toLocaleString("en-US")} up front
+          {t("paidUpFront", {
+            amount: edge.cashSpent.toLocaleString("en-US"),
+          })}
         </span>
       ) : null}
       {edge.heatGained ? (
         <span className="text-sm font-medium text-danger-strong">
-          +{edge.heatGained} heat — the move went loud
+          {t("heatGained", { heat: edge.heatGained })}
         </span>
       ) : null}
     </div>

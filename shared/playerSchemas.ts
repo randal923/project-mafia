@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { PLAYER_LANGUAGES } from "./language";
+
+export const playerLanguageSchema = z.enum(PLAYER_LANGUAGES);
 
 export const PLAYER_NAME_MIN_LENGTH = 3;
 export const PLAYER_NAME_MAX_LENGTH = 20;
@@ -28,11 +31,22 @@ export const playerNameSchema = z
 
 export const createPlayerRequestSchema = z
   .object({
+    language: playerLanguageSchema.optional(),
     name: playerNameSchema
   })
   .strict();
 
 export type CreatePlayerRequest = z.infer<typeof createPlayerRequestSchema>;
+
+export const updatePlayerLanguageRequestSchema = z
+  .object({
+    language: playerLanguageSchema
+  })
+  .strict();
+
+export type UpdatePlayerLanguageRequest = z.infer<
+  typeof updatePlayerLanguageRequestSchema
+>;
 
 /** Canonical key used to enforce case-insensitive name uniqueness. */
 export function playerNameKey(name: string): string {

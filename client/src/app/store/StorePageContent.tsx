@@ -2,10 +2,10 @@
 
 import {
   EQUIPMENT_CATEGORIES,
-  EQUIPMENT_CATEGORY_LABELS,
   type Equipment,
   type EquipmentCategory,
 } from "@shared/equipment";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { DropdownMenu } from "../../components/DropdownMenu/DropdownMenu";
@@ -16,6 +16,7 @@ import { Toast } from "../../components/Toast/Toast";
 import { displayText, typography } from "../../design-system/typography";
 import { ApiError, buyEquipment, fetchStoreCatalog } from "../../lib/api";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 type CategoryFilter = "all" | EquipmentCategory;
 type RequirementLevelFilter = "all" | number;
@@ -33,6 +34,8 @@ const moneyFormatter = new Intl.NumberFormat("en-US", {
 });
 
 export function StorePageContent() {
+  const t = useTranslations("store");
+  const { itemName } = useCatalogText();
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
   const [catalog, setCatalog] = useState<Equipment[] | null>(null);
@@ -127,17 +130,17 @@ export function StorePageContent() {
 
     return catalog.filter(
       (item) =>
-        item.name.toLowerCase().includes(normalizedNameQuery) &&
+        itemName(item).toLowerCase().includes(normalizedNameQuery) &&
         (categoryFilter === "all" || item.category === categoryFilter) &&
         (requirementLevelFilter === "all" ||
           item.levelRequirement === requirementLevelFilter),
     );
-  }, [catalog, categoryFilter, equipmentNameQuery, requirementLevelFilter]);
+  }, [catalog, categoryFilter, equipmentNameQuery, itemName, requirementLevelFilter]);
 
   if (status === "loading" || status === "missing" || !player) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Opening the back room…</p>
+        <p className={typography.metadata}>{t("loading")}</p>
       </div>
     );
   }
@@ -153,8 +156,10 @@ export function StorePageContent() {
       const result = await buyEquipment(user, equipmentId);
       setPlayer(result.player);
       setToast({
-        message: `${item?.name ?? "Gear"} moved to your stash.`,
-        title: "Deal done",
+        message: t("toast.buySuccessMessage", {
+          itemName: item ? itemName(item) : t("toast.fallbackItemName"),
+        }),
+        title: t("toast.buySuccessTitle"),
         tone: "success",
       });
     } catch (error) {
@@ -162,8 +167,8 @@ export function StorePageContent() {
         message:
           error instanceof ApiError
             ? error.message
-            : "The fence isn't answering. Try again.",
-        title: "No deal",
+            : t("toast.buyErrorMessage"),
+        title: t("toast.buyErrorTitle"),
         tone: "failure",
       });
     } finally {
@@ -176,32 +181,31 @@ export function StorePageContent() {
       <header className="flex flex-wrap items-end justify-between gap-4 rounded-panel border border-line bg-surface px-6 py-5 shadow-panel">
         <div>
           <p className={`m-0 ${displayText} text-xl text-faint`}>
-            Back-room armory
+            {t("header.eyebrow")}
           </p>
           <h1 className={`mt-1 mb-0 ${displayText} text-5xl text-title`}>
-            The Store
+            {t("header.title")}
           </h1>
           <p className={`mt-2 mb-0 ${typography.narrativeCaption}`}>
-            Cash buys the gear; jobs decide if you needed it. Locked pieces open
-            up as you level.
+            {t("header.tagline")}
           </p>
         </div>
         <dl className="m-0 flex gap-8 text-right">
           <div>
-            <dt className={typography.metadata}>Your cash</dt>
+            <dt className={typography.metadata}>{t("header.yourCash")}</dt>
             <dd className={`m-0 ${displayText} text-3xl text-profit`}>
               {moneyFormatter.format(player.resources.cash)}
             </dd>
           </div>
           <div>
-            <dt className={typography.metadata}>Level</dt>
+            <dt className={typography.metadata}>{t("header.level")}</dt>
             <dd className={`m-0 ${displayText} text-3xl text-brass-bright`}>
               {player.progression.level}
             </dd>
           </div>
         </dl>
       </header>
-      <nav aria-label="Store categories" className="flex flex-wrap gap-2">
+      <nav aria-label={t("categoriesNav")} className="flex flex-wrap gap-2">
         {categories.map((category) => (
           <button
             aria-pressed={categoryFilter === category}
@@ -216,8 +220,8 @@ export function StorePageContent() {
             type="button"
           >
             {category === "all"
-              ? "Everything"
-              : EQUIPMENT_CATEGORY_LABELS[category]}
+              ? t("filters.everything")
+              : t(`categories.${category}`)}
           </button>
         ))}
       </nav>
@@ -226,9 +230,9 @@ export function StorePageContent() {
         <TextInput
           className="w-full"
           id="equipment-name-search"
-          label="Equipment name"
+          label={t("filters.equipmentName")}
           onChange={(event) => setEquipmentNameQuery(event.target.value)}
-          placeholder="Search by name"
+          placeholder={t("filters.searchPlaceholder")}
           type="search"
           value={equipmentNameQuery}
         />
@@ -236,7 +240,7 @@ export function StorePageContent() {
         <div className="sm:w-64">
           <DropdownMenu
             className="focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brass-bright"
-            label="Required level"
+            label={t("filters.requiredLevel")}
             onChange={(event) => {
               const nextLevel = event.target.value;
               if (nextLevel === "all") {
@@ -250,9 +254,9 @@ export function StorePageContent() {
               }
             }}
             options={[
-              { label: "All required levels", value: "all" },
+              { label: t("filters.allRequiredLevels"), value: "all" },
               ...requirementLevels.map((level) => ({
-                label: `Level ${level}`,
+                label: t("filters.levelOption", { level }),
                 value: String(level),
               })),
             ]}
@@ -262,19 +266,16 @@ export function StorePageContent() {
       </div>
 
       {catalogError ? (
-        <p className={typography.metadata}>
-          The store is shuttered. Refresh to try again.
-        </p>
+        <p className={typography.metadata}>{t("catalogError")}</p>
       ) : !catalog ? (
-        <p className={typography.metadata}>Laying the goods out…</p>
+        <p className={typography.metadata}>{t("catalogLoading")}</p>
       ) : catalog.length === 0 ? (
         <p className={typography.metadata} role="status">
-          No gear is currently available.
+          {t("emptyCatalog")}
         </p>
       ) : visibleItems.length === 0 ? (
         <p className={typography.metadata} role="status">
-          No gear matches your current search and filters. Try another name,
-          category, or required level.
+          {t("noMatches")}
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

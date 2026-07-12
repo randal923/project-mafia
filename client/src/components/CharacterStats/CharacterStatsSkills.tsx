@@ -4,7 +4,8 @@ import {
   SKILL_XP_PER_LEVEL,
   xpToNextLevel
 } from "@shared/leveling";
-import { SKILLS, SKILL_IDS } from "@shared/skills";
+import { SKILL_IDS } from "@shared/skills";
+import { useTranslations } from "next-intl";
 import { numberFormatter } from "./CharacterStatsFormat";
 import { CharacterStatsGroup } from "./CharacterStatsGroup";
 import { CharacterStatsMeter } from "./CharacterStatsMeter";
@@ -20,29 +21,30 @@ export function CharacterStatsSkills({
 }: CharacterStatsSkillsProps) {
   const atLevelCap = progression.level >= MAX_PLAYER_LEVEL;
   const xpNeeded = xpToNextLevel(progression.level);
+  const t = useTranslations("character");
 
   return (
     <div className="flex flex-col gap-6">
-      <CharacterStatsGroup label="Progression">
+      <CharacterStatsGroup label={t("groups.progression")}>
         <div className="flex flex-col gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <CharacterStatsTile
-              label="Level"
+              label={t("tiles.level")}
               tone={atLevelCap ? "brassBright" : "ink"}
               value={`${numberFormatter.format(progression.level)} / ${MAX_PLAYER_LEVEL}`}
             />
             <CharacterStatsTile
-              label="Experience"
+              label={t("tiles.experience")}
               value={
                 atLevelCap
-                  ? "At the top"
+                  ? t("progression.atTheTop")
                   : `${numberFormatter.format(progression.experience)} / ${numberFormatter.format(xpNeeded)}`
               }
             />
           </div>
           {!atLevelCap ? (
             <CharacterStatsMeter
-              label="Next level"
+              label={t("progression.nextLevel")}
               max={xpNeeded}
               tone="brass"
               value={progression.experience}
@@ -51,7 +53,7 @@ export function CharacterStatsSkills({
           ) : null}
         </div>
       </CharacterStatsGroup>
-      <CharacterStatsGroup label="Skills">
+      <CharacterStatsGroup label={t("groups.skills")}>
         <div className="grid gap-x-8 gap-y-6 lg:grid-cols-2">
           {SKILL_IDS.map((id) => {
             const level = progression.skills[id];
@@ -60,16 +62,21 @@ export function CharacterStatsSkills({
 
             return (
               <CharacterStatsMeter
-                hint={SKILLS[id].description}
+                hint={t(`skills.${id}.description`)}
                 key={id}
-                label={SKILLS[id].label}
+                label={t(`skills.${id}.label`)}
                 max={MAX_SKILL_LEVEL}
                 tone="brass"
                 value={level}
                 valueLabel={
                   capped
-                    ? `${level} / ${MAX_SKILL_LEVEL} · mastered`
-                    : `${level} / ${MAX_SKILL_LEVEL} · ${numberFormatter.format(xp)}/${SKILL_XP_PER_LEVEL} xp`
+                    ? t("skillMeter.mastered", { level, max: MAX_SKILL_LEVEL })
+                    : t("skillMeter.progress", {
+                        level,
+                        max: MAX_SKILL_LEVEL,
+                        xp,
+                        xpPerLevel: SKILL_XP_PER_LEVEL
+                      })
                 }
               />
             );

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { toneTextClasses } from "../../design-system/tones";
 import { displayText, typography } from "../../design-system/typography";
@@ -59,16 +62,19 @@ export function Table({
   columns,
   density = "comfortable",
   description,
-  emptyMessage = "No records available.",
+  emptyMessage,
   rows
 }: TableProps) {
+  const t = useTranslations("common");
   const classNames = cx(
     "overflow-x-auto rounded-panel border border-line bg-surface shadow-panel",
     className
   );
   const hasColumns = columns.length > 0;
   const shouldShowEmptyState = !hasColumns || rows.length === 0;
-  const emptyStateMessage = hasColumns ? emptyMessage : "No columns available.";
+  const emptyStateMessage = hasColumns
+    ? (emptyMessage ?? t("noRecords"))
+    : t("noColumns");
 
   return (
     <div className={classNames}>

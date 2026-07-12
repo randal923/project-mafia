@@ -8,6 +8,7 @@ import {
   TERRITORY_UNLOCK_RANK,
   type TurfState,
 } from "@shared/territory";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
@@ -55,6 +56,7 @@ type PendingAction =
   | { kind: "defense"; turfId: string };
 
 export function MapPageContent() {
+  const t = useTranslations("map");
   const { user } = useAuth();
   const { player, setPlayer, status } = usePlayer();
   const router = useRouter();
@@ -117,7 +119,7 @@ export function MapPageContent() {
   if (status === "loading" || status === "missing" || !player) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className={typography.metadata}>Unfolding the map…</p>
+        <p className={typography.metadata}>{t("loading")}</p>
       </div>
     );
   }
@@ -126,10 +128,12 @@ export function MapPageContent() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="max-w-lg text-center">
-          <h1 className={`m-0 ${typography.panelHeading}`}>The City</h1>
+          <h1 className={`m-0 ${typography.panelHeading}`}>
+            {t("locked.title")}
+          </h1>
           <p className={`mt-3 ${typography.paragraph}`}>
-            The map opens when you make <strong>Local Boss</strong> (level 40).
-            Keep working — the city will still be here.
+            {t("locked.beforeRank")} <strong>{t("locked.rank")}</strong>{" "}
+            {t("locked.afterRank")}
           </p>
         </div>
       </div>
@@ -144,25 +148,24 @@ export function MapPageContent() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="w-full max-w-xl rounded-panel border border-line bg-surface p-8 shadow-panel">
-          <h1 className={`m-0 ${typography.panelHeading}`}>Found your family</h1>
-          <p className={`mt-3 ${typography.paragraph}`}>
-            Before you paint the map, the city needs a name to fear and a color
-            to recognize. Choose both carefully — the Ledger will print them.
-          </p>
+          <h1 className={`m-0 ${typography.panelHeading}`}>
+            {t("found.title")}
+          </h1>
+          <p className={`mt-3 ${typography.paragraph}`}>{t("found.intro")}</p>
           <div className="mt-5">
             <TextInput
               id="family-name"
-              label="Family name"
+              label={t("found.nameLabel")}
               maxLength={24}
               onChange={(event) => setFamilyName(event.target.value)}
-              placeholder="e.g. The Moretti Family"
+              placeholder={t("found.namePlaceholder")}
               value={familyName}
             />
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             {FAMILY_COLORS.map((color) => (
               <button
-                aria-label={`Family color ${color}`}
+                aria-label={t("found.colorAria", { color })}
                 aria-pressed={colorChoice === color}
                 className="h-12 w-12 cursor-pointer rounded-control border-2 transition-transform duration-150 hover:scale-110"
                 key={color}
@@ -194,8 +197,8 @@ export function MapPageContent() {
                     message:
                       error instanceof ApiError
                         ? error.message
-                        : "The founding didn't take. Try again.",
-                    title: "Not yet",
+                        : t("found.errorMessage"),
+                    title: t("found.errorTitle"),
                     tone: "failure",
                   });
                 } finally {
@@ -205,7 +208,7 @@ export function MapPageContent() {
             }
             variant="primary"
           >
-            Fly the colors
+            {t("found.submit")}
           </Button>
         </div>
       </div>
@@ -236,8 +239,8 @@ export function MapPageContent() {
     } catch (error) {
       setToast({
         message:
-          error instanceof ApiError ? error.message : "That didn't work.",
-        title: "No dice",
+          error instanceof ApiError ? error.message : t("toasts.genericError"),
+        title: t("toasts.noDiceTitle"),
         tone: "failure",
       });
     } finally {
@@ -262,11 +265,26 @@ export function MapPageContent() {
         setPending(null);
         setToast({
           message: battle.turfFlipped
-            ? `You took ${battle.turfName}${battle.incomeSkimmed > 0 ? ` and skimmed ${moneyFormatter.format(battle.incomeSkimmed)}` : ""}${battle.bountyCollected ? `, collecting a ${moneyFormatter.format(battle.bountyCollected)} bounty` : ""}.`
+            ? t("toasts.attackWin", {
+                bounty: battle.bountyCollected
+                  ? t("toasts.attackWinBounty", {
+                      amount: moneyFormatter.format(battle.bountyCollected),
+                    })
+                  : "",
+                skim:
+                  battle.incomeSkimmed > 0
+                    ? t("toasts.attackWinSkim", {
+                        amount: moneyFormatter.format(battle.incomeSkimmed),
+                      })
+                    : "",
+                turf: battle.turfName,
+              })
             : battle.tier === "partial_failure"
-              ? `${battle.turfName} held, but you dented its defenses. Hit it again.`
-              : `A rout at ${battle.turfName}. Your soldiers paid for it.`,
-          title: battle.turfFlipped ? "Flag planted" : "They held",
+              ? t("toasts.attackPartial", { turf: battle.turfName })
+              : t("toasts.attackRout", { turf: battle.turfName }),
+          title: battle.turfFlipped
+            ? t("toasts.flagPlanted")
+            : t("toasts.theyHeld"),
           tone: battle.turfFlipped ? "success" : "failure",
         });
         refresh();
@@ -274,15 +292,15 @@ export function MapPageContent() {
       }
       await runTurfAction(
         () => assignTurfDefense(user, action.turfId, crewIds),
-        "Guard posted",
-        "Your soldiers took their corners.",
+        t("toasts.defenseTitle"),
+        t("toasts.defenseMessage"),
       );
       setPending(null);
     } catch (error) {
       setToast({
         message:
-          error instanceof ApiError ? error.message : "That didn't work.",
-        title: "No dice",
+          error instanceof ApiError ? error.message : t("toasts.genericError"),
+        title: t("toasts.noDiceTitle"),
         tone: "failure",
       });
     } finally {
@@ -296,10 +314,20 @@ export function MapPageContent() {
     <div className="flex flex-col gap-6 pb-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className={`m-0 ${typography.panelHeading}`}>The City</h1>
+          <h1 className={`m-0 ${typography.panelHeading}`}>
+            {t("header.title")}
+          </h1>
           <p className={`mt-1 mb-0 ${typography.paragraph}`}>
-            Seventy blocks, seven districts, one winner.{" "}
-            {view ? `${view.season.name} ends ${new Intl.DateTimeFormat("en-US", { day: "numeric", month: "long" }).format(Date.parse(view.season.endsAt))}.` : ""}
+            {t("header.subtitle")}{" "}
+            {view
+              ? t("header.seasonEnds", {
+                  date: new Intl.DateTimeFormat("en-US", {
+                    day: "numeric",
+                    month: "long",
+                  }).format(Date.parse(view.season.endsAt)),
+                  season: view.season.name,
+                })
+              : ""}
           </p>
         </div>
         {view ? (
@@ -322,15 +350,14 @@ export function MapPageContent() {
       {countdown ? (
         <div className="rounded-panel border border-danger bg-danger/10 px-6 py-4">
           <p className={`m-0 ${displayText} text-xl text-danger-strong`}>
-            THE CONQUEST CLOCK IS RUNNING — the {countdown.familyName} family
-            holds every district. Break their grip before the 72 hours run out.
+            {t("conquestClock", { family: countdown.familyName })}
           </p>
         </div>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         {!view ? (
-          <p className={typography.metadata}>Surveying the streets…</p>
+          <p className={typography.metadata}>{t("surveying")}</p>
         ) : (
           <CityMapSvg
             onSelect={setSelectedTurfId}
@@ -349,8 +376,8 @@ export function MapPageContent() {
             onBuild={(definitionId) =>
               void runTurfAction(
                 () => buildRacket(user!, selectedTurf.id, definitionId),
-                "Ground broken",
-                "The racket opens damaged-free and starts earning.",
+                t("toasts.buildTitle"),
+                t("toasts.buildMessage"),
               )
             }
             onClaim={() =>
@@ -362,22 +389,22 @@ export function MapPageContent() {
             onRepairBuilding={(buildingId) =>
               void runTurfAction(
                 () => repairRacket(user!, selectedTurf.id, buildingId),
-                "Back in business",
-                "The doors are open again.",
+                t("toasts.backInBusinessTitle"),
+                t("toasts.backInBusinessMessage"),
               )
             }
             onStaffBuilding={(buildingId, crewIds) =>
               void runTurfAction(
                 () => staffRacket(user!, selectedTurf.id, buildingId, crewIds),
-                "Shift assigned",
-                "The floor is covered.",
+                t("toasts.staffTitle"),
+                t("toasts.staffMessage"),
               )
             }
             onUpgradeBuilding={(buildingId) =>
               void runTurfAction(
                 () => upgradeRacket(user!, selectedTurf.id, buildingId),
-                "Expanded",
-                "Bigger floor, bigger take.",
+                t("toasts.upgradeTitle"),
+                t("toasts.upgradeMessage"),
               )
             }
             player={player}
@@ -386,8 +413,7 @@ export function MapPageContent() {
         ) : (
           <aside className="flex items-center justify-center rounded-panel border border-line bg-surface p-8 shadow-panel">
             <p className={`m-0 text-center ${typography.narrativeCaption}`}>
-              Pick a block. Gray is unclaimed; colors are families; ★ marks the
-              landmarks money can’t buy.
+              {t("emptyPanel")}
             </p>
           </aside>
         )}
@@ -396,7 +422,7 @@ export function MapPageContent() {
       {battles.length > 0 ? (
         <section>
           <h2 className={`m-0 mb-3 ${typography.panelHeading}`}>
-            Recent battles
+            {t("battles.title")}
           </h2>
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {battles.slice(0, 8).map((battle) => {
@@ -410,13 +436,21 @@ export function MapPageContent() {
                 >
                   <span className={typography.paragraph}>
                     <strong>{battle.attackerName}</strong>{" "}
-                    {battle.kind === "landmark_siege" ? "stormed" : "hit"}{" "}
+                    {battle.kind === "landmark_siege"
+                      ? t("battles.stormed")
+                      : t("battles.hit")}{" "}
                     <strong>{battle.turfName}</strong>
-                    {battle.defenderName ? ` (held by ${battle.defenderName})` : ""}
+                    {battle.defenderName
+                      ? ` ${t("battles.heldBy", { name: battle.defenderName })}`
+                      : ""}
                     {" — "}
-                    {battle.turfFlipped ? "the block fell" : "the defense held"}
+                    {battle.turfFlipped
+                      ? t("battles.blockFell")
+                      : t("battles.defenseHeld")}
                     {battle.incomeSkimmed > 0
-                      ? `, ${moneyFormatter.format(battle.incomeSkimmed)} skimmed`
+                      ? t("battles.skimmed", {
+                          amount: moneyFormatter.format(battle.incomeSkimmed),
+                        })
                       : ""}
                     .
                   </span>
@@ -448,10 +482,10 @@ export function MapPageContent() {
           }
           confirmLabel={
             pending.kind === "claim"
-              ? "Start the takeover"
+              ? t("picker.claimConfirm")
               : pending.kind === "attack"
-                ? "Launch the assault"
-                : "Post them"
+                ? t("picker.attackConfirm")
+                : t("picker.defenseConfirm")
           }
           crew={
             pending.kind === "defense"
@@ -465,20 +499,20 @@ export function MapPageContent() {
           }
           intro={
             pending.kind === "claim"
-              ? "The takeover plays like a job — your crew's specialties boost its checks."
+              ? t("picker.claimIntro")
               : pending.kind === "attack"
-                ? "Committed soldiers add their power to the assault. A rout costs bodies and gear."
-                : "Posted defenders add double their power to this block's defense."
+                ? t("picker.attackIntro")
+                : t("picker.defenseIntro")
           }
           isBusy={isBusy}
           onCancel={() => setPending(null)}
           onConfirm={(crewIds) => void handlePickerConfirm(crewIds)}
           title={
             pending.kind === "claim"
-              ? "Who works the takeover?"
+              ? t("picker.claimTitle")
               : pending.kind === "attack"
-                ? "Who marches?"
-                : "Who stands guard?"
+                ? t("picker.attackTitle")
+                : t("picker.defenseTitle")
           }
         />
       ) : null}

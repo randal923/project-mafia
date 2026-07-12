@@ -1,9 +1,10 @@
 import type { MissionView, OutcomeTier } from "@shared/job";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
 import {
   MOMENTUM_TIER_ORDER,
-  outcomeTierLabels,
+  outcomeTierLabelKeys,
   tierForMomentum
 } from "./MissionRunnerHelpers";
 
@@ -25,20 +26,23 @@ const zoneClasses: Record<OutcomeTier, string> = {
  * zones. Safe plays nudge the marker, bold plays throw it.
  */
 export function MissionMomentumMeter({ momentum }: MissionMomentumMeterProps) {
+  const t = useTranslations("mission");
   const { bands, current } = momentum;
   const pace = tierForMomentum(current, bands);
 
   return (
     <section
-      aria-label="Momentum"
+      aria-label={t("momentum.title")}
       className="rounded-panel border border-line bg-black/30 p-4"
     >
       <div className="flex items-baseline justify-between gap-4">
-        <p className={`m-0 ${typography.metadata}`}>Momentum</p>
+        <p className={`m-0 ${typography.metadata}`}>{t("momentum.title")}</p>
         <p className={`m-0 ${displayText} text-xl text-brass-bright`}>
           {current > 0 ? `+${current}` : current}
           <span className={`ml-2 ${typography.metadata}`}>
-            on pace for {outcomeTierLabels[pace]}
+            {t("momentum.onPaceFor", {
+              tier: t(`outcomeTiers.${outcomeTierLabelKeys[pace]}`)
+            })}
           </span>
         </p>
       </div>
@@ -53,14 +57,16 @@ export function MissionMomentumMeter({ momentum }: MissionMomentumMeterProps) {
                 : "opacity-50"
             )}
             key={tier}
-            title={outcomeTierLabels[tier]}
+            title={t(`outcomeTiers.${outcomeTierLabelKeys[tier]}`)}
           />
         ))}
       </div>
       <p className={`m-0 mt-2 ${typography.metadata}`}>
-        Finish at {bands.successfulAtLeast}+ for a clean success · above{" "}
-        {bands.jackpotAbove} is jackpot · below {bands.failureAtLeast} ends in
-        arrest
+        {t("momentum.bandsSummary", {
+          failureBelow: bands.failureAtLeast,
+          jackpotAbove: bands.jackpotAbove,
+          successAt: bands.successfulAtLeast
+        })}
       </p>
     </section>
   );

@@ -1,7 +1,9 @@
 import Image from "next/image";
 import type { Equipment, EquipmentEffect } from "@shared/equipment";
+import { useTranslations } from "next-intl";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 
 type StoreItemCardProps = {
@@ -19,34 +21,6 @@ const moneyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency"
 });
 
-const slotLabels: Record<string, string> = {
-  feet: "Feet",
-  hand: "Hand",
-  head: "Head",
-  torso: "Torso",
-  waist: "Waist"
-};
-
-const approachLabels: Record<string, string> = {
-  deception: "deception",
-  force: "force",
-  opportunistic: "opportunistic",
-  quiet: "quiet",
-  social: "social",
-  technical: "technical"
-};
-
-function effectLabel(effect: EquipmentEffect): string {
-  if (effect.type === "skillBonus") {
-    const skill = effect.skill.charAt(0).toUpperCase() + effect.skill.slice(1);
-    return `+${effect.value} ${skill} on checks`;
-  }
-  if (effect.type === "approachBonus") {
-    return `+${effect.value}% on ${approachLabels[effect.approach] ?? effect.approach} moves`;
-  }
-  return `−${effect.value} heat per job`;
-}
-
 export function StoreItemCard({
   isBusy,
   isLocked,
@@ -55,8 +29,27 @@ export function StoreItemCard({
   ownedQuantity,
   playerCash
 }: StoreItemCardProps) {
+  const t = useTranslations("store");
+  const tItem = useTranslations("itemCard");
+  const { itemDescription, itemName } = useCatalogText();
   const canAfford = playerCash >= item.price;
   const purchasable = !isLocked && canAfford && !isBusy;
+
+  const effectLabel = (effect: EquipmentEffect): string => {
+    if (effect.type === "skillBonus") {
+      return t("item.effects.skillBonus", {
+        skill: tItem(`skills.${effect.skill}`),
+        value: effect.value
+      });
+    }
+    if (effect.type === "approachBonus") {
+      return t("item.effects.approachBonus", {
+        approach: tItem(`approaches.${effect.approach}`),
+        value: effect.value
+      });
+    }
+    return t("item.effects.heatReduction", { value: effect.value });
+  };
 
   return (
     <article
@@ -78,72 +71,78 @@ export function StoreItemCard({
         />
         {ownedQuantity > 0 ? (
           <span className="absolute top-2 right-2 rounded-control border border-brass bg-page/90 px-2 py-1 text-sm font-medium leading-none text-brass-bright">
-            Owned ×{ownedQuantity}
+            {t("item.owned", { quantity: ownedQuantity })}
           </span>
         ) : null}
         {isLocked ? (
           <span
             className={`absolute bottom-2 left-2 rounded-control border border-danger bg-page/90 px-2 py-1 ${displayText} text-base text-danger-strong`}
           >
-            Level {item.levelRequirement}
+            {t("item.levelRequirement", { level: item.levelRequirement })}
           </span>
         ) : (
           <span className="absolute bottom-2 left-2 rounded-control border border-line bg-page/90 px-2 py-1 text-sm font-medium leading-none text-faint">
-            Lv {item.levelRequirement}
-            {item.slot ? ` · ${slotLabels[item.slot]}` : " · Stash"}
+            {tItem("levelShort", { level: item.levelRequirement })}
+            {" · "}
+            {item.slot ? tItem(`slots.${item.slot}`) : t("item.stashSlot")}
           </span>
         )}
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <h3 className={`m-0 ${displayText} text-2xl leading-none text-title`}>
-          {item.name}
+          {itemName(item)}
         </h3>
         <p className={`m-0 flex-1 ${typography.narrativeCaption}`}>
-          {item.description}
+          {itemDescription(item.id, item.description)}
         </p>
 
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {item.power > 0 ? (
             <span className={`${displayText} text-lg text-brass`}>
-              Power {item.power}
+              {t("item.power", { value: item.power })}
             </span>
           ) : null}
           {item.armor ? (
             <span className={`${displayText} text-lg text-teal`}>
-              Armor {item.armor}
+              {t("item.armor", { value: item.armor })}
             </span>
           ) : null}
           {item.use?.stamina ? (
             <span className={`${displayText} text-lg text-profit`}>
-              +{item.use.stamina} Stamina
+              {t("item.stamina", { value: item.use.stamina })}
             </span>
           ) : null}
           {item.use?.health ? (
             <span className={`${displayText} text-lg text-teal`}>
-              +{item.use.health} Health
+              {t("item.health", { value: item.use.health })}
             </span>
           ) : null}
           {item.use?.heat ? (
             <span
               className={`${displayText} text-lg ${item.use.heat > 0 ? "text-danger-strong" : "text-teal"}`}
             >
-              {item.use.heat > 0 ? `+${item.use.heat}` : item.use.heat} Heat
+              {t("item.heat", {
+                value:
+                  item.use.heat > 0
+                    ? `+${item.use.heat}`
+                    : String(item.use.heat)
+              })}
             </span>
           ) : null}
           {item.use?.high ? (
             <span className={`${displayText} text-lg text-teal`}>
-              +{item.use.high} High
+              {t("item.high", { value: item.use.high })}
             </span>
           ) : null}
           {item.use?.drunk ? (
             <span className={`${displayText} text-lg text-teal`}>
-              +{item.use.drunk} Drunk
+              {t("item.drunk", { value: item.use.drunk })}
             </span>
           ) : null}
           {item.consumable ? (
             <span className={`${displayText} text-lg text-faint`}>
-              Single use
+              {tItem("singleUse")}
             </span>
           ) : null}
         </div>
@@ -176,7 +175,7 @@ export function StoreItemCard({
             size="small"
             variant={isLocked ? "quiet" : "primary"}
           >
-            {isLocked ? "Locked" : "Buy"}
+            {isLocked ? t("item.locked") : t("item.buy")}
           </Button>
         </div>
       </div>

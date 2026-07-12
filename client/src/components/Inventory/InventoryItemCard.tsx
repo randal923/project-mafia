@@ -6,6 +6,7 @@ import {
 } from "../../design-system/tones";
 import { displayText } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
 import type { InventoryItem, InventoryItemTone } from "./InventoryTypes";
 
 type InventoryItemCardProps = {
@@ -31,6 +32,7 @@ export function InventoryItemCard({
   onDragEnd,
   onDragStart
 }: InventoryItemCardProps) {
+  const { itemName } = useCatalogText();
   const tone = item.tone ?? "neutral";
   const quantityLabel =
     item.quantity !== undefined && item.quantity > 1
@@ -63,7 +65,7 @@ export function InventoryItemCard({
           width={compact ? 160 : 240}
         />
       ) : (
-        <p className={titleClassNames}>{item.name}</p>
+        <p className={titleClassNames}>{itemName(item)}</p>
       )}
       {quantityLabel ? (
         <span className="absolute top-2 right-2 rounded-control border border-line bg-page/90 px-2 py-1 text-sm font-medium leading-none text-faint shadow-command">

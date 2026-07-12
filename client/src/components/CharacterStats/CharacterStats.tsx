@@ -1,6 +1,6 @@
+import { useTranslations } from "next-intl";
 import { cx } from "../../lib/cx";
 import { SectionHeader } from "../SectionHeader/SectionHeader";
-import { formatIdentifier } from "./CharacterStatsFormat";
 import { CharacterStatsGroup } from "./CharacterStatsGroup";
 import { CharacterStatsOverview } from "./CharacterStatsOverview";
 import { CharacterStatsSkills } from "./CharacterStatsSkills";
@@ -13,25 +13,26 @@ type CharacterStatsProps = {
 };
 
 export function CharacterStats({
-  ariaLabel = "Character stats",
+  ariaLabel,
   className,
   profile
 }: CharacterStatsProps) {
+  const t = useTranslations("character");
   const classNames = cx(
     "w-full rounded-panel border border-line bg-surface shadow-panel",
     className
   );
 
   return (
-    <section aria-label={ariaLabel} className={classNames}>
+    <section aria-label={ariaLabel ?? t("stats.ariaLabel")} className={classNames}>
       <SectionHeader
-        aside={`Level ${profile.progression.level}`}
-        eyebrow={formatIdentifier(profile.rank)}
+        aside={t("stats.level", { level: profile.progression.level })}
+        eyebrow={t(`ranks.${profile.rank}`)}
         title={profile.name}
       />
       <div className="divide-y divide-line">
         <div className="p-6">
-          <CharacterStatsGroup label="Overview">
+          <CharacterStatsGroup label={t("groups.overview")}>
             <CharacterStatsOverview player={profile} />
           </CharacterStatsGroup>
         </div>

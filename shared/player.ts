@@ -9,6 +9,10 @@ import {
   createSkillRecord,
 } from "./skills";
 
+import type { PlayerLanguage } from "./language";
+
+export type { PlayerLanguage } from "./language";
+
 export const PLAYER_RANKS = [
   "nobody",
   "street_hustler",
@@ -135,6 +139,9 @@ export type Player = {
   /** Family identity for the city map; null until founded at map unlock. */
   family: PlayerFamily | null;
   id: string;
+  /** UI/narration language. Null until first set, so clients can seed it
+   * from the browser language on first login. */
+  language: PlayerLanguage | null;
   loadout: PlayerLoadout;
   name: string;
   /** Lowercased, whitespace-collapsed name used for uniqueness checks. */
@@ -159,12 +166,14 @@ export function createNewPlayer(
   name: string,
   nowIso: string,
   loadout: PlayerLoadout = {},
+  language: PlayerLanguage | null = null,
 ): Player {
   return {
     avatar: null,
     createdAt: nowIso,
     family: null,
     id,
+    language,
     loadout,
     name,
     nameKey: playerNameKey(name),
@@ -252,6 +261,7 @@ export function normalizePlayer(player: Player): Player {
             playerNameKey(player.family.name ?? player.name),
         }
       : null,
+    language: player.language ?? null,
     narrative: player.narrative ?? createEmptyNarrative(),
     prison: player.prison ?? null,
     progression: {

@@ -1,0 +1,1364 @@
+{
+  "authGuard": {
+    "verifying": "Verifying credentials…"
+  },
+  "catalog": {
+    "buildings": {
+      "casino": {
+        "description": "Tables, wheels, and odds that answer to you. The crown jewel of any family's books.",
+        "name": "Casino"
+      },
+      "chop-shop": {
+        "description": "Cars in whole, parts out the back. Your fences pay 65 cents on the dollar for gear instead of 50.",
+        "name": "Chop Shop"
+      },
+      "city-hall-annex": {
+        "description": "Permits, zoning, and a clerk who owes you. Turf upkeep runs 25% cheaper citywide.",
+        "name": "City Hall Annex"
+      },
+      "drug-lab": {
+        "description": "Glassware, burners, and product the street can't get enough of. Runs hot in every sense.",
+        "name": "Drug Lab"
+      },
+      "fight-club": {
+        "description": "Two men in, one purse out. The book takes bets on both and the house never bleeds.",
+        "name": "Fight Club"
+      },
+      "hillcrest-general": {
+        "description": "Private wings and discreet surgeons. You and your crew heal twice as fast.",
+        "name": "Hillcrest General"
+      },
+      "laundromat": {
+        "description": "Machines hum, books stay clean. A quiet earner that keeps your name off the blotter.",
+        "name": "Laundromat"
+      },
+      "loan-office": {
+        "description": "Friendly terms, unfriendly collections. The vig compounds either way.",
+        "name": "Loan Office"
+      },
+      "pawn-shop": {
+        "description": "Everything has a price tag and a story. The estimates are creative; the margins are not.",
+        "name": "Pawn Shop"
+      },
+      "pizzeria": {
+        "description": "Best slice on the block, and nobody asks what moves through the back room.",
+        "name": "Pizzeria"
+      },
+      "police-precinct-hq": {
+        "description": "The desk every beat cop answers to. The family holding it pays 30% less for every envelope in the city.",
+        "name": "Police Precinct HQ"
+      },
+      "riverside-freight-yard": {
+        "description": "Rails, trucks, and manifests that say whatever you need. Jobs cost 15% less stamina for its holder.",
+        "name": "Riverside Freight Yard"
+      },
+      "safehouse": {
+        "description": "A quiet place with clean sheets and a doctor who makes house calls. Hurt crew get back on their feet twice as fast.",
+        "name": "Safehouse"
+      },
+      "smuggling-den": {
+        "description": "Crates that skip customs and trucks that drive at night. Volume is the whole business.",
+        "name": "Smuggling Den"
+      },
+      "speakeasy": {
+        "description": "A password, a piano, and shelves of the good stuff. Thirsty city, loyal crowd.",
+        "name": "Speakeasy"
+      },
+      "strip-club": {
+        "description": "Velvet, neon, and a cover charge nobody argues with. The till never cools.",
+        "name": "Strip Club"
+      },
+      "taxi-company": {
+        "description": "Cabs that know every alley and never keep a logbook. Steady fares, better errands.",
+        "name": "Taxi Company"
+      },
+      "the-grand-casino": {
+        "description": "The biggest floor in the city, and the house edge answers to whoever holds it.",
+        "name": "The Grand Casino"
+      },
+      "the-port": {
+        "description": "Cranes, containers, and customs men on the payroll. The store sells to its holder at 10% off.",
+        "name": "The Port"
+      },
+      "union-hall": {
+        "description": "Every crane and picket line in town listens to this floor. Crew wages drop 20% for its holder.",
+        "name": "Union Hall"
+      },
+      "warehouse": {
+        "description": "Rows of crates nobody inventories. Every till you own holds four more hours of take.",
+        "name": "Warehouse"
+      }
+    },
+    "items": {
+      "ammo-bandolier": {
+        "description": "Wears the whole gunfight across your chest.",
+        "name": "Ammo Bandolier"
+      },
+      "armored-pinstripe-suit": {
+        "description": "Tailored sharp enough to hide the steel underneath.",
+        "name": "Armored Pinstripe Suit"
+      },
+      "ballistic-overcoat": {
+        "description": "A trench coat that takes the bullet and keeps its crease.",
+        "name": "Ballistic Overcoat"
+      },
+      "bar-m1918": {
+        "description": "Walking fire, just like the manual promised.",
+        "name": "BAR M1918"
+      },
+      "baseball-bat": {
+        "description": "Straight off the sandlot, and it never misses a swing.",
+        "name": "Baseball Bat"
+      },
+      "bathtub-gin": {
+        "description": "Juniper and menace, bottled in somebody's basement.",
+        "name": "Bathtub Gin"
+      },
+      "bennies": {
+        "description": "Truck-stop amphetamines that turn 4 a.m. into noon.",
+        "name": "Bennies"
+      },
+      "black-market-trauma-kit": {
+        "description": "A surgeon's whole bag, minus the surgeon's license.",
+        "name": "Black Market Trauma Kit"
+      },
+      "blockbuster-charge": {
+        "description": "For when the building itself is the witness.",
+        "name": "Blockbuster Charge"
+      },
+      "bolt-cutters": {
+        "description": "Chain-link fences and padlocks give up on sight.",
+        "name": "Bolt Cutters"
+      },
+      "brass-knuckles": {
+        "description": "Four rings of persuasion for conversations that turn ugly.",
+        "name": "Brass Knuckles"
+      },
+      "browning-auto-5": {
+        "description": "Five shells, self-loading, zero patience.",
+        "name": "Browning Auto-5"
+      },
+      "browning-m1919": {
+        "description": "Belt-fed arithmetic that always adds up in your favor.",
+        "name": "Browning M1919"
+      },
+      "burglars-hood": {
+        "description": "Black wool and no face worth remembering.",
+        "name": "Burglar's Hood"
+      },
+      "canvas-tool-belt": {
+        "description": "Every honest tool a dishonest job could need.",
+        "name": "Canvas Tool Belt"
+      },
+      "chemical-smoke-shell": {
+        "description": "Military-grade fog that swallows searchlights whole.",
+        "name": "Chemical Smoke Shell"
+      },
+      "climbing-rope": {
+        "description": "Forty feet of the quiet way in.",
+        "name": "Climbing Rope"
+      },
+      "coach-gun": {
+        "description": "Once guarded stagecoaches; now it guards your interests.",
+        "name": "Coach Gun"
+      },
+      "concussion-flash-charge": {
+        "description": "Rings every bell in a city block's worth of skulls.",
+        "name": "Concussion Flash Charge"
+      },
+      "crepe-sole-creepers": {
+        "description": "Soles so soft the floorboards never get a word in.",
+        "name": "Crepe-Sole Creepers"
+      },
+      "crowbar": {
+        "description": "The universal key for everything the picks can't charm.",
+        "name": "Crowbar"
+      },
+      "custom-garand": {
+        "description": "Tuned by a gunsmith who asks no questions.",
+        "name": "Custom Garand"
+      },
+      "detective-special": {
+        "description": "The same iron the flatfoots carry, minus the badge.",
+        "name": "Detective Special"
+      },
+      "disguise-kit": {
+        "description": "A new face for every job and a moustache to spare.",
+        "name": "Disguise Kit"
+      },
+      "dons-armored-topcoat": {
+        "description": "Cashmere over plate; the last word in untouchable.",
+        "name": "Don's Armored Topcoat"
+      },
+      "door-buster-charge": {
+        "description": "Knocks once, and the door stops being a door.",
+        "name": "Door-Buster Charge"
+      },
+      "doormans-leather-jacket": {
+        "description": "Thick enough to bounce a bottle and most bad ideas.",
+        "name": "Doorman's Leather Jacket"
+      },
+      "drum-thompson": {
+        "description": "A hundred rounds in the drum and a headline in every one.",
+        "name": "Drum Thompson"
+      },
+      "dynamite-bundle": {
+        "description": "Three sticks of instant renovation.",
+        "name": "Dynamite Bundle"
+      },
+      "enfield-no4": {
+        "description": "British steel with manners and a murderous follow-through.",
+        "name": "Enfield No. 4"
+      },
+      "executioners-balaclava": {
+        "description": "Nothing above the collar but bad news.",
+        "name": "Executioner's Balaclava"
+      },
+      "extended-magazine-rig": {
+        "description": "Spare drums and long sticks; the argument never runs dry.",
+        "name": "Extended Magazine Rig"
+      },
+      "field-surgeon-kit": {
+        "description": "Stitches bullet holes in the back of a moving car.",
+        "name": "Field Surgeon Kit"
+      },
+      "fire-axe": {
+        "description": "Borrowed from a firehouse wall and never returned.",
+        "name": "Fire Axe"
+      },
+      "first-aid-tin": {
+        "description": "Gauze, iodine, and no questions at the hospital.",
+        "name": "First-Aid Tin"
+      },
+      "flash-powder-grenade": {
+        "description": "Steals ten seconds of everybody's eyesight.",
+        "name": "Flash Powder Grenade"
+      },
+      "flat-cap": {
+        "description": "Pulls low enough to make eyes forget your face.",
+        "name": "Flat Cap"
+      },
+      "french-champagne": {
+        "description": "Celebrating early is a professional hazard worth having.",
+        "name": "French Champagne"
+      },
+      "gas-mask": {
+        "description": "Breathes easy while the room learns to regret.",
+        "name": "Gas Mask"
+      },
+      "getaway-car-keys": {
+        "description": "A tuned V8 idling exactly where you'll need it.",
+        "name": "Getaway Car Keys"
+      },
+      "gi-sniper-03a4": {
+        "description": "Government-issue precision, privately employed.",
+        "name": "G.I. Sniper '03A4"
+      },
+      "goofballs": {
+        "description": "Uppers cut with downers — smooth ride, but people notice the eyes.",
+        "name": "Goofballs"
+      },
+      "grease-gun-m3": {
+        "description": "Cheap, ugly, and it chews through trouble by the crate.",
+        "name": "M3 Grease Gun"
+      },
+      "growler-of-beer": {
+        "description": "Warm, flat, and better than nothing after a long night.",
+        "name": "Growler of Beer"
+      },
+      "hop-tar": {
+        "description": "Old Quarter opium — melts an evening and the trail behind you with it.",
+        "name": "Hop Tar"
+      },
+      "hunting-30-06": {
+        "description": "Made for elk; repurposed for bigger game.",
+        "name": "Hunting .30-06"
+      },
+      "hushed-welrod": {
+        "description": "Coughs once and the room goes quiet forever.",
+        "name": "Hushed Welrod"
+      },
+      "italian-leather-loafers": {
+        "description": "Imported, immaculate, and worth more than the man staring at them.",
+        "name": "Italian Leather Loafers"
+      },
+      "kingpin-gun-belt": {
+        "description": "Hand-tooled leather for a man who never draws second.",
+        "name": "Kingpin Gun Belt"
+      },
+      "kingpin-homburg": {
+        "description": "The hat that makes rooms go quiet on arrival.",
+        "name": "Kingpin Homburg"
+      },
+      "lead-pipe": {
+        "description": "Plumbing-grade diplomacy, swung from the shadows.",
+        "name": "Lead Pipe"
+      },
+      "leather-holster": {
+        "description": "Keeps the iron close and the draw smooth.",
+        "name": "Leather Holster"
+      },
+      "lever-action-carbine": {
+        "description": "Cowboy iron that never went out of style downtown.",
+        "name": "Lever-Action Carbine"
+      },
+      "lewis-gun": {
+        "description": "Pan-fed thunder off the back of a truck.",
+        "name": "Lewis Gun"
+      },
+      "lined-greatcoat": {
+        "description": "Wool outside, steel plates where it counts.",
+        "name": "Lined Greatcoat"
+      },
+      "lockpick-set": {
+        "description": "Sings through a padlock like it was never there.",
+        "name": "Lockpick Set"
+      },
+      "long-barrel-357": {
+        "description": "Six inches of barrel that make every argument final.",
+        "name": "Long-Barrel .357"
+      },
+      "m1-garand-surplus": {
+        "description": "Eight rounds and a ping that means somebody's day is over.",
+        "name": "M1 Garand Surplus"
+      },
+      "magnesium-flashbang": {
+        "description": "Daylight in a can, cashed in all at once.",
+        "name": "Magnesium Flashbang"
+      },
+      "match-grade-enfield": {
+        "description": "Competition barrel, criminal intentions.",
+        "name": "Match-Grade Enfield"
+      },
+      "military-smoke-grenade": {
+        "description": "A wall of grey you could hide a whole crew behind.",
+        "name": "Military Smoke Grenade"
+      },
+      "molotov-cocktail": {
+        "description": "Bottled trouble with a burning rag for a fuse.",
+        "name": "Molotov Cocktail"
+      },
+      "morphine-ampoule": {
+        "description": "Hospital-grade quiet in a glass ampoule — the city stops looking for a man who isn't moving.",
+        "name": "Morphine Ampoule"
+      },
+      "nose-candy": {
+        "description": "Uptown powder; makes you brilliant and loud in that order.",
+        "name": "Nose Candy"
+      },
+      "padded-work-vest": {
+        "description": "Dockworker's padding that shrugs off knuckles and worse.",
+        "name": "Padded Work Vest"
+      },
+      "pep-pills": {
+        "description": "Corner-drugstore courage; twenty minutes of feeling bulletproof.",
+        "name": "Pep Pills"
+      },
+      "pharma-amps": {
+        "description": "Sealed bottles walked out of a factory loading dock — the pure article.",
+        "name": "Pharma-Grade Amps"
+      },
+      "pineapple-grenade": {
+        "description": "Army surplus that ends meetings early.",
+        "name": "Pineapple Grenade"
+      },
+      "pocket-derringer": {
+        "description": "Two shots of last resort tucked in a vest pocket.",
+        "name": "Pocket Derringer"
+      },
+      "prewar-cognac": {
+        "description": "What the bosses pour when the city belongs to them.",
+        "name": "Prewar Cognac"
+      },
+      "pump-12-gauge": {
+        "description": "One rack of the slide clears the whole back room.",
+        "name": "Pump 12-Gauge"
+      },
+      "radio-scanner": {
+        "description": "Every police call in the city, delivered to your ear.",
+        "name": "Radio Scanner"
+      },
+      "radio-scanner-belt": {
+        "description": "Hears the prowl cars coming three blocks out.",
+        "name": "Radio Scanner Belt"
+      },
+      "riot-gun": {
+        "description": "Built to break up crowds; works fine on partnerships too.",
+        "name": "Riot Gun"
+      },
+      "rooftop-special": {
+        "description": "Lives on fire escapes and settles debts from above.",
+        "name": "Rooftop Special"
+      },
+      "rotgut-whiskey": {
+        "description": "Burns going down and takes the day's aches with it.",
+        "name": "Rotgut Whiskey"
+      },
+      "rubber-sole-prowlers": {
+        "description": "Built for rooftops, fire escapes, and clean exits.",
+        "name": "Rubber-Sole Prowlers"
+      },
+      "rye-whiskey": {
+        "description": "The honest stuff — puts steel back in the spine.",
+        "name": "Rye Whiskey"
+      },
+      "safecracker-drill": {
+        "description": "Bores through a vault door while the city sleeps.",
+        "name": "Safecracker Drill"
+      },
+      "satchel-charge": {
+        "description": "For walls, vaults, and other stubborn opinions.",
+        "name": "Satchel Charge"
+      },
+      "sawed-off-double": {
+        "description": "Cut short so the message travels wide.",
+        "name": "Sawed-Off Double"
+      },
+      "scoped-springfield": {
+        "description": "Puts the whole city within arm's reach.",
+        "name": "Scoped Springfield"
+      },
+      "service-45": {
+        "description": "Army surplus with a kick that ends negotiations.",
+        "name": "Service .45"
+      },
+      "shoulder-holster-rig": {
+        "description": "Twin rigs under the jacket, drawn faster than doubt.",
+        "name": "Shoulder Holster Rig"
+      },
+      "signal-jammer": {
+        "description": "Turns every alarm and radio for a block into dead air.",
+        "name": "Signal Jammer"
+      },
+      "silenced-sten": {
+        "description": "Spits its whole story without raising its voice.",
+        "name": "Silenced Sten"
+      },
+      "single-malt-scotch": {
+        "description": "Older than your rap sheet and twice as smooth.",
+        "name": "Single Malt Scotch"
+      },
+      "smoke-canister": {
+        "description": "Turns any room into a getaway.",
+        "name": "Smoke Canister"
+      },
+      "smuggled-bourbon": {
+        "description": "Kentucky's finest, minus the tax stamp.",
+        "name": "Smuggled Bourbon"
+      },
+      "snub-nose-38": {
+        "description": "Short barrel, short temper, fits under any coat.",
+        "name": "Snub-Nose .38"
+      },
+      "speedball-kit": {
+        "description": "Both directions at once. Works every time until it doesn't.",
+        "name": "Speedball Kit"
+      },
+      "springfield-03": {
+        "description": "Old army bolt gun that still holds a grudge at 300 yards.",
+        "name": "Springfield '03"
+      },
+      "steel-toe-boots": {
+        "description": "For doors and shins that won't open politely.",
+        "name": "Steel-Toe Boots"
+      },
+      "sten-mk-ii": {
+        "description": "Stamped-metal chatterbox smuggled off a supply truck.",
+        "name": "Sten Mk II"
+      },
+      "stiletto-knife": {
+        "description": "A whisper of steel that settles arguments before they start.",
+        "name": "Stiletto Knife"
+      },
+      "surplus-flak-vest": {
+        "description": "Kept a tail gunner alive; it'll keep you in business.",
+        "name": "Surplus Flak Vest"
+      },
+      "surplus-mp40": {
+        "description": "A war trophy that still speaks fluent trouble.",
+        "name": "Surplus MP40"
+      },
+      "surplus-steel-helmet": {
+        "description": "Army steel that's already survived worse than you will.",
+        "name": "Surplus Steel Helmet"
+      },
+      "the-chicago-organ": {
+        "description": "Plays one song, and the whole city dances.",
+        "name": "The Chicago Organ"
+      },
+      "the-longshot": {
+        "description": "Ten blocks away is close enough.",
+        "name": "The Longshot"
+      },
+      "thompson-m1928": {
+        "description": "The classic Chicago typewriter, ready for dictation.",
+        "name": "Thompson M1928"
+      },
+      "trench-club": {
+        "description": "Trench salvage with iron studs and old grudges baked in.",
+        "name": "Trench Club"
+      },
+      "trench-sweeper": {
+        "description": "Cleans a hallway the way the war taught it.",
+        "name": "Trench Sweeper"
+      },
+      "trophy-mg42": {
+        "description": "Sounds like tearing canvas; leaves nothing to repair.",
+        "name": "Trophy MG42"
+      },
+      "water-cooled-maxim": {
+        "description": "Old-world artillery for new-world empires.",
+        "name": "Water-Cooled Maxim"
+      },
+      "whisper-scope": {
+        "description": "The last thing they never hear.",
+        "name": "Whisper Scope"
+      },
+      "white-cross": {
+        "description": "Pharmacy-white tablets the long-haul crews swear by.",
+        "name": "White Cross"
+      },
+      "wingtip-brogues": {
+        "description": "Polished bright enough to distract from the shoulder holster.",
+        "name": "Wingtip Brogues"
+      },
+      "wiretap-kit": {
+        "description": "Lets you sit in on conversations you weren't invited to.",
+        "name": "Wiretap Kit"
+      },
+      "wool-fedora": {
+        "description": "The brim that keeps the streetlights out of your business.",
+        "name": "Wool Fedora"
+      },
+      "worn-oxfords": {
+        "description": "Scuffed enough to blend in anywhere south of Main.",
+        "name": "Worn Oxfords"
+      }
+    }
+  },
+  "character": {
+    "error": "Could not reach the family archives. Refresh to try again.",
+    "groups": {
+      "condition": "Condition",
+      "overview": "Overview",
+      "progression": "Progression",
+      "resources": "Resources",
+      "skills": "Skills"
+    },
+    "impaired": "Impaired: −{penalty}% on every job check until you sober up. Doses also restore less stamina while the buzz lasts.",
+    "loading": "Pulling your file…",
+    "meters": {
+      "drunk": {
+        "hint": "How drunk you are. −1% on every job check per 10 points, and liquor restores less stamina the drunker you already are. Sobers off 20 per idle hour.",
+        "label": "Drunk"
+      },
+      "health": {
+        "hint": "Physical condition. Failed risky choices can cause damage; armor absorbs part of the hit, while kits and rest restore Health.",
+        "label": "Health"
+      },
+      "heat": {
+        "hint": "Police attention. Raises every check's difficulty on jobs. Cools 4 per idle hour — or faster via precinct bribes, lay-low work, and doing prison time.",
+        "label": "Heat"
+      },
+      "high": {
+        "hint": "How high you are. −1% on every job check per 10 points, and drugs restore less stamina the higher you already are. Sobers off 20 per idle hour.",
+        "label": "High"
+      },
+      "stamina": {
+        "hint": "Energy for jobs — each contract costs some. Regenerates 25 per hour while you rest; drugs and liquor refill it faster, at a price.",
+        "label": "Stamina"
+      }
+    },
+    "portrait": {
+      "ariaLabel": "Portrait of {name}",
+      "noMugshot": "No mugshot on file"
+    },
+    "portraitAlt": "{name} character portrait",
+    "progression": {
+      "atTheTop": "At the top",
+      "nextLevel": "Next level"
+    },
+    "ranks": {
+      "city_kingpin": "City Kingpin",
+      "crew_leader": "Crew Leader",
+      "crime_lord": "Crime Lord",
+      "district_boss": "District Boss",
+      "local_boss": "Local Boss",
+      "nobody": "Nobody",
+      "street_hustler": "Street Hustler"
+    },
+    "skillMeter": {
+      "mastered": "{level} / {max} · mastered",
+      "progress": "{level} / {max} · {xp}/{xpPerLevel} xp"
+    },
+    "skills": {
+      "charisma": {
+        "description": "Raw personal magnetism. Rolled by charm choices on jobs, and it's what sways a prison guard when you try to bribe your way out of a cell. +1% check chance per level.",
+        "label": "Charisma"
+      },
+      "corruption": {
+        "description": "Knowing who takes envelopes and how thick they need to be. Rolled by deception choices on jobs, and every level shaves the price of paying off the precinct to lower your heat.",
+        "label": "Corruption"
+      },
+      "leadership": {
+        "description": "Running a crew and working a room. Rolled by social choices on jobs — rallying accomplices, leaning on witnesses, commanding respect. +1% check chance per level.",
+        "label": "Leadership"
+      },
+      "muscle": {
+        "description": "Hitting hard and holding your ground. Rolled by force choices on jobs. Equipped power helps every approach, while armor absorbs Health damage after risky failures. +1% check chance per level.",
+        "label": "Muscle"
+      },
+      "stealth": {
+        "description": "Moving unseen and leaving no trace. Rolled by quiet choices on jobs, and it's what carries a prison break attempt. +1% check chance per level.",
+        "label": "Stealth"
+      },
+      "strategy": {
+        "description": "Reading a situation and striking when the gap opens. Rolled by opportunistic choices on jobs. +1% check chance per level.",
+        "label": "Strategy"
+      },
+      "tech": {
+        "description": "Locks, wires, alarms, and explosives — the technical trades. Rolled by technical choices on jobs. +1% check chance per level.",
+        "label": "Tech"
+      }
+    },
+    "srTitle": "{name} character",
+    "stats": {
+      "ariaLabel": "Character stats",
+      "level": "Level {level}"
+    },
+    "tiles": {
+      "cash": "Cash",
+      "experience": "Experience",
+      "level": "Level",
+      "power": "Power"
+    }
+  },
+  "clock": {
+    "tooltip": "City time — one day passes every real hour"
+  },
+  "common": {
+    "decisionRequired": "Decision required",
+    "dismiss": "Dismiss",
+    "dismissNotification": "Dismiss notification",
+    "noColumns": "No columns available.",
+    "noRecords": "No records available.",
+    "toastTone": {
+      "failure": "Failure",
+      "info": "Info",
+      "success": "Success",
+      "warning": "Warning"
+    }
+  },
+  "crew": {
+    "backAround": "Back around {time}",
+    "bribeOut": "Bribe out ({cost})",
+    "cutLoose": "Cut loose",
+    "equip": "Equip",
+    "equipSlotAria": "Equip {slot}",
+    "header": {
+      "eyebrow": "The family",
+      "payrollPerDay": "Payroll/day",
+      "roster": "Roster",
+      "tagline": "Soldiers boost your jobs, staff your rackets, and hold your turf. Pay them on time — the unpaid walk, and the bitter talk.",
+      "title": "Crew",
+      "yourCash": "Your cash"
+    },
+    "loading": "Rounding up the soldiers…",
+    "locked": {
+      "afterRank": "(level 10) and the right people start returning your calls.",
+      "beforeRank": "Nobody works for a nobody. Make",
+      "rankName": "Street Hustler",
+      "title": "Crew"
+    },
+    "nothingFits": "Nothing fits",
+    "pickFromStash": "Pick from your stash…",
+    "picker": {
+      "capacity": "Bring up to {capacity} — leadership runs the room. ({selected}/{capacity} picked)",
+      "confirmAlone": "{label} alone",
+      "confirmWith": "{label} with {count}",
+      "memberStats": "+{bonus}% {skill} · power {power}",
+      "neverMind": "Never mind",
+      "nobodyFree": "Nobody is free right now. You go alone."
+    },
+    "recruitment": {
+      "empty": "The pool is dry. New faces show up tomorrow.",
+      "heading": "Looking for work",
+      "hire": "Hire ({cost})",
+      "intro": "A fresh pool of faces every day. Signing money up front, wages every game day after.",
+      "loading": "Asking around…",
+      "wagePerDay": "{wage}/day"
+    },
+    "removeGear": "Remove",
+    "roster": {
+      "empty": "Nobody on the payroll yet. Look over the candidates below.",
+      "heading": "Your soldiers",
+      "loading": "Taking attendance…"
+    },
+    "skillRequirement": "(skill {level})",
+    "slots": {
+      "hand": "Weapon",
+      "torso": "Vest",
+      "waist": "Belt"
+    },
+    "stats": {
+      "jobBonus": "Job bonus",
+      "loyalty": "Loyalty",
+      "power": "Power",
+      "wagePerDay": "Wage/day"
+    },
+    "status": {
+      "assigned_building": "Working a floor",
+      "assigned_turf": "Standing guard",
+      "dead": "Gone",
+      "idle": "Ready",
+      "imprisoned": "In a cell",
+      "injured": "Recovering",
+      "on_job": "Out on a job",
+      "training": "Training"
+    },
+    "toast": {
+      "bribed": {
+        "message": "The envelope worked. He walked out with his gear.",
+        "title": "Sprung"
+      },
+      "equipped": {
+        "message": "The gear moved from your stash to his hands.",
+        "title": "Geared up"
+      },
+      "errorMessage": "That didn't work. Try again.",
+      "errorTitle": "No dice",
+      "fired": {
+        "message": "He cleared out. The gear on his back went with him.",
+        "title": "Cut loose"
+      },
+      "hired": {
+        "message": "{name} works for you now.",
+        "title": "On the payroll"
+      },
+      "trained": {
+        "message": "Two hours on the mats. He'll come back sharper.",
+        "title": "In training"
+      },
+      "unequipped": {
+        "message": "The gear is back in your stash.",
+        "title": "Stored"
+      }
+    },
+    "train": "Train ({cost})"
+  },
+  "empire": {
+    "card": {
+      "assignStaff": "Assign staff",
+      "closed": "Closed",
+      "confirmShift": "Confirm shift",
+      "inTheTill": "In the till",
+      "level": "Level {level}/{max}",
+      "nobodyFree": "Nobody is free to work.",
+      "open": "Open",
+      "ratePerHour": "Rate/hr",
+      "repair": "Repair ({price})",
+      "staffLabel": "Staff ({count}/{slots}) — best run by a {archetype}",
+      "unstaffed": "Unstaffed (40% output)",
+      "upgrade": "Upgrade ({price})"
+    },
+    "header": {
+      "collectEverything": "Collect everything",
+      "description": "Fronts and safe property — nobody can take these from you. The big rackets get built on turf, from the Map.",
+      "holdings": "Holdings",
+      "kicker": "Personal holdings",
+      "title": "Empire",
+      "yourCash": "Your cash"
+    },
+    "loading": "Opening the books…",
+    "market": {
+      "buy": "Buy ({price})",
+      "heatPerDay": "Heat/day",
+      "incomePerHour": "Income/hr",
+      "owned": "Owned",
+      "requiresRank": "Requires {rank}",
+      "title": "On the market"
+    },
+    "property": {
+      "counting": "Counting the tills…",
+      "empty": "You own nothing yet. Every empire starts with one clean storefront.",
+      "title": "Your property"
+    },
+    "toasts": {
+      "backInBusinessTitle": "Back in business",
+      "buySuccess": "{name} is yours. Staff it and let it earn.",
+      "buyTitle": "Deed signed",
+      "collected": "{amount} banked.",
+      "collectedRaided": "You banked {amount} — but the police raided your {building}. Repair it to reopen.",
+      "collectedWithUpkeep": "{amount} banked after {upkeep} in territory upkeep.",
+      "collectionFailed": "Collection failed.",
+      "genericError": "That didn't work. Try again.",
+      "noDealTitle": "No deal",
+      "raidedTitle": "Raided",
+      "repairSuccess": "{name} is producing again.",
+      "staffSuccess": "{name} staffing updated.",
+      "staffTitle": "Shift assigned",
+      "tillsEmptiedTitle": "Tills emptied",
+      "upgradeSuccess": "{name} is now level {level}.",
+      "upgradeTitle": "Expanded"
+    }
+  },
+  "home": {
+    "cards": {
+      "crew": {
+        "body": "Hire soldiers, arm them, keep them paid.",
+        "title": "Run your crew"
+      },
+      "empire": {
+        "body": "Fronts and rackets. Empty the tills before they cap.",
+        "title": "Mind the books"
+      },
+      "jobs": {
+        "body": "Contracts on the board. Cash, XP, and trouble.",
+        "title": "Work the streets"
+      },
+      "map": {
+        "body": "Seventy blocks. Paint them your color.",
+        "title": "Take the city"
+      }
+    },
+    "greeting": "Morning, {name}.",
+    "intro": "Here’s what the city did while you slept.",
+    "loading": "Pouring the coffee…",
+    "masthead": "{name} — Day {day}",
+    "noEditionYet": "The first edition of {name} hasn’t hit the stands yet. Make some news.",
+    "readFullEdition": "Read the full edition →",
+    "seasonStandings": "Season standings →",
+    "whileAway": "While you were away"
+  },
+  "inventory": {
+    "defaultAriaLabel": "Inventory",
+    "dropToUnequip": "Drop to unequip",
+    "emptySlot": "Empty",
+    "emptyStash": "No stash items.",
+    "emptyStashSlot": "Empty stash slot",
+    "equip": "Equip",
+    "gearSlots": "Gear slots",
+    "loadoutTitle": "Loadout",
+    "profileEyebrow": "Profile",
+    "sell": "Sell",
+    "slotEmpty": "{slot} slot empty",
+    "slotEquipped": "{slot} slot equipped with {item}",
+    "slotTag": "Slot",
+    "stashEyebrow": "Inventory",
+    "stashPage": "{title} page {page}",
+    "stashPagesLabel": "Stash pages",
+    "stashTitle": "Stash",
+    "tabs": {
+      "stash1": "Stash I",
+      "stash2": "Stash II",
+      "stash3": "Stash III"
+    },
+    "unequip": "Unequip",
+    "use": "Use"
+  },
+  "itemCard": {
+    "approaches": {
+      "charm": "charm",
+      "deception": "deception",
+      "force": "force",
+      "opportunistic": "opportunistic",
+      "quiet": "quiet",
+      "social": "social",
+      "technical": "technical"
+    },
+    "armor": "Armor {value}",
+    "effects": {
+      "approachBonus": "+{value}% {approach} moves",
+      "heatReduction": "−{value} heat per job",
+      "skillBonus": "+{value} {skill}"
+    },
+    "levelShort": "Lv {level}",
+    "power": "Power {value}",
+    "singleUse": "Single use",
+    "skills": {
+      "charisma": "Charisma",
+      "corruption": "Corruption",
+      "leadership": "Leadership",
+      "muscle": "Muscle",
+      "stealth": "Stealth",
+      "strategy": "Strategy",
+      "tech": "Tech"
+    },
+    "slots": {
+      "feet": "Feet",
+      "hand": "Hand",
+      "head": "Head",
+      "torso": "Torso",
+      "waist": "Waist"
+    },
+    "use": {
+      "drunk": "+{value} drunk",
+      "health": "+{value} health",
+      "heat": "{value} heat",
+      "high": "+{value} high",
+      "stamina": "+{value} stamina"
+    }
+  },
+  "jobCard": {
+    "difficulty": "Difficulty {difficulty} / 100",
+    "gearConsumable": "Consumable — one gets used up per demand on the run.",
+    "gearIntro": "Gear this job may call for — going without makes it harder:",
+    "gearReusable": "Reusable tool — carrying one covers the whole run.",
+    "heat": "Heat",
+    "stamina": "Stamina",
+    "take": "Take",
+    "takeJob": "Take the job",
+    "tooTired": "Too tired"
+  },
+  "jobs": {
+    "actionError": "That didn't work. Try again.",
+    "askAroundAgain": "Ask around again",
+    "boardError": "The board is quiet. Refresh to try again.",
+    "boardLoading": "Listening for rumors…",
+    "crewPicker": {
+      "confirm": "Take the job",
+      "intro": "Each soldier boosts checks that lean on his specialty. On a disaster, they share the consequences — and their gear is on the line.",
+      "title": "Who rides along?"
+    },
+    "healError": "That kit could not be used. Refresh and try again.",
+    "loadError": "Could not reach your contacts. Refresh to try again.",
+    "loading": "Checking the streets…",
+    "prison": {
+      "bribeFailure": "He takes the money and calls it a donation. You're still here.",
+      "bribeSuccess": "The guard pockets the envelope and forgets to lock a door. You walk.",
+      "checkingWarden": "Checking in with the warden…",
+      "escapeFailure": "A spotlight, a whistle, and a longer sentence.",
+      "escapeSuccess": "Over the wall and gone — but the whole city is looking for you now."
+    },
+    "subtitle": "Word on the street. Pick a contract and see it through.",
+    "title": "Jobs"
+  },
+  "languageSwitcher": {
+    "english": "English",
+    "label": "Language",
+    "portuguese": "Português (Brasil)"
+  },
+  "loadout": {
+    "gearSlotsLabel": "Equipped gear",
+    "genericError": "Something went wrong. Try again.",
+    "inventoryAriaLabel": "{playerName} loadout and stash",
+    "loadError": "Could not reach the family armory. Refresh to try again.",
+    "loading": "Opening your armory…",
+    "stashActionLabel": "Drag gear between panels",
+    "title": "Loadout",
+    "toastErrorTitle": "No dice"
+  },
+  "login": {
+    "error": "Sign-in failed. Try again.",
+    "eyebrow": "Members only",
+    "signIn": "Sign in with Google",
+    "signingIn": "Opening the door…",
+    "subtitle": "Identify yourself before entering the operation."
+  },
+  "map": {
+    "battles": {
+      "blockFell": "the block fell",
+      "defenseHeld": "the defense held",
+      "heldBy": "(held by {name})",
+      "hit": "hit",
+      "skimmed": ", {amount} skimmed",
+      "stormed": "stormed",
+      "title": "Recent battles"
+    },
+    "conquestClock": "THE CONQUEST CLOCK IS RUNNING — the {family} family holds every district. Break their grip before the 72 hours run out.",
+    "emptyPanel": "Pick a block. Gray is unclaimed; colors are families; ★ marks the landmarks money can’t buy.",
+    "found": {
+      "colorAria": "Family color {color}",
+      "errorMessage": "The founding didn't take. Try again.",
+      "errorTitle": "Not yet",
+      "intro": "Before you paint the map, the city needs a name to fear and a color to recognize. Choose both carefully — the Ledger will print them.",
+      "nameLabel": "Family name",
+      "namePlaceholder": "e.g. The Moretti Family",
+      "submit": "Fly the colors",
+      "title": "Found your family"
+    },
+    "header": {
+      "seasonEnds": "{season} ends {date}.",
+      "subtitle": "Seventy blocks, seven districts, one winner.",
+      "title": "The City"
+    },
+    "loading": "Unfolding the map…",
+    "locked": {
+      "afterRank": "(level 40). Keep working — the city will still be here.",
+      "beforeRank": "The map opens when you make",
+      "rank": "Local Boss",
+      "title": "The City"
+    },
+    "picker": {
+      "attackConfirm": "Launch the assault",
+      "attackIntro": "Committed soldiers add their power to the assault. A rout costs bodies and gear.",
+      "attackTitle": "Who marches?",
+      "claimConfirm": "Start the takeover",
+      "claimIntro": "The takeover plays like a job — your crew's specialties boost its checks.",
+      "claimTitle": "Who works the takeover?",
+      "defenseConfirm": "Post them",
+      "defenseIntro": "Posted defenders add double their power to this block's defense.",
+      "defenseTitle": "Who stands guard?"
+    },
+    "surveying": "Surveying the streets…",
+    "svg": {
+      "ariaLabel": "City map",
+      "harbor": "THE HARBOR"
+    },
+    "toasts": {
+      "attackPartial": "{turf} held, but you dented its defenses. Hit it again.",
+      "attackRout": "A rout at {turf}. Your soldiers paid for it.",
+      "attackWin": "You took {turf}{skim}{bounty}.",
+      "attackWinBounty": ", collecting a {amount} bounty",
+      "attackWinSkim": " and skimmed {amount}",
+      "backInBusinessMessage": "The doors are open again.",
+      "backInBusinessTitle": "Back in business",
+      "buildMessage": "The racket opens damaged-free and starts earning.",
+      "buildTitle": "Ground broken",
+      "defenseMessage": "Your soldiers took their corners.",
+      "defenseTitle": "Guard posted",
+      "flagPlanted": "Flag planted",
+      "genericError": "That didn't work.",
+      "noDiceTitle": "No dice",
+      "staffMessage": "The floor is covered.",
+      "staffTitle": "Shift assigned",
+      "theyHeld": "They held",
+      "upgradeMessage": "Bigger floor, bigger take.",
+      "upgradeTitle": "Expanded"
+    },
+    "turf": {
+      "assignStaffAria": "Assign staff",
+      "attack": "Attack (stake ~{amount})",
+      "breakGround": "Break ground",
+      "buildAria": "Racket to build",
+      "buildOption": "{name} — {cost} ({income}/hr)",
+      "buildTitle": "Build a racket",
+      "choose": "Choose…",
+      "clearStaff": "(clear staff)",
+      "closed": "Closed",
+      "defenders": "Defenders ({count})",
+      "defense": "Defense",
+      "flagOther": "{name}'s flag",
+      "flagYours": "Your flag",
+      "incomePerHour": "Income/hr",
+      "level": "L{level}",
+      "moveOnBlock": "Move on this block",
+      "nobodyGuarding": "Nobody standing guard.",
+      "npcGarrison": "NPC garrison",
+      "pickWorker": "Pick a worker…",
+      "postDefenders": "Post defenders",
+      "racketsHere": "Rackets here",
+      "repair": "Repair ({price})",
+      "shieldedUntil": "Shielded until {time}",
+      "slots": "Slots",
+      "staff": "Staff ({count}/{slots})",
+      "stormLandmark": "Storm the landmark (stake ~{amount})",
+      "takeoverHint": "A takeover plays out like a job — win it and the flag goes up.",
+      "till": "till {amount}",
+      "unclaimed": "Unclaimed",
+      "upgrade": "Upgrade ({price})"
+    }
+  },
+  "mission": {
+    "acceptedEquipment": {
+      "ariaLabel": "Accepted mission equipment",
+      "effects": {
+        "approachBonus": "+{value}% {approach}",
+        "heatReduction": "−{value} heat",
+        "skillBonus": "+{value} {skill} checks"
+      },
+      "empty": "Empty",
+      "gearReusable": "Reusable exact match · no consumed-item power",
+      "gearSingleUse": "Single-use · one consumed on a matching choice",
+      "gearSingleUsePower": "Single-use · Power {power} on a matching choice",
+      "itemPower": "P {power}",
+      "itemPowerArmor": "P {power} · A {armor}",
+      "lockedPower": "Locked for this job: {character} character + {equipment} equipment power.",
+      "powerArmor": "Power {power} · Armor {armor}",
+      "slots": {
+        "feet": "Feet",
+        "hand": "Hand",
+        "head": "Head",
+        "torso": "Torso",
+        "waist": "Waist"
+      },
+      "stashGear": "Relevant stash gear at acceptance",
+      "title": "Accepted equipment",
+      "unavailable": "Accepted equipment details are unavailable for this older job."
+    },
+    "checkBadge": {
+      "damageSummary": "Incoming {incoming} · Armor absorbed {absorbed} · Health lost {lost}",
+      "failed": "{skill} check failed",
+      "failedBadly": "{skill} check failed — badly",
+      "floorStopped": "1-Health floor stopped {amount}",
+      "gearConsumed": "{item} was consumed",
+      "gearCovered": "{item} covered the move",
+      "heatGained": "+{heat} heat — the move went loud",
+      "momentum": "Momentum {delta}",
+      "momentumBold": "Momentum {delta} — bold play",
+      "momentumSafe": "Momentum {delta} — safe play",
+      "paidUpFront": "Paid ${amount} up front",
+      "passed": "{skill} check passed",
+      "passedCritical": "{skill} check passed — critical"
+    },
+    "checkBreakdown": {
+      "approachEffect": "Approach effect",
+      "baseChance": "Base chance",
+      "basePowerProgress": "Base power progress",
+      "characterPower": "Character power ({power})",
+      "difficulty": "Difficulty",
+      "equipmentPower": "Equipment power ({power})",
+      "equippedSkillEffect": "Equipped skill effect",
+      "finalChance": "Final chance {chance}%",
+      "heat": "Heat",
+      "intoxication": "Intoxication",
+      "onUse": "On use: {item} (Power {power})",
+      "powerProgressValue": "{combined} combined · {remaining} power to next +1%",
+      "roundingLimits": "Rounding / limits",
+      "skillLevel": "Skill ({level})",
+      "title": "Authoritative check math"
+    },
+    "choice": {
+      "bolderPlay": "Bolder play",
+      "cashUpFront": "−{amount} up front",
+      "difficulty": "Difficulty",
+      "equipment": {
+        "locked": "Locked: this move needs a {gear} and you don't have one",
+        "missing": "Missing: {gear} — penalty included in odds",
+        "none": "No equipment required — odds shown as-is",
+        "readyConsumable": "Ready: {item} — single-use; one is consumed if chosen, and readiness is included in the odds",
+        "readyReusable": "Ready: {item} — reusable; readiness is included in the odds"
+      },
+      "equipmentLabel": "Equipment:",
+      "failure": "Failure",
+      "genericGear": "equipment",
+      "healthRisk": "Health risk: failure can cause damage; accepted armor is already included in protection.",
+      "heatOnMiss": "+{heat} heat on a miss",
+      "lockedNeeds": "Locked — needs {gear}",
+      "momentum": "Momentum",
+      "priceOfMove": "Price of the move",
+      "saferPlay": "Safer play",
+      "skill": "Skill",
+      "skillXpOnSuccess": "Skill XP on success",
+      "success": "Success",
+      "testsSkill": "Tests {skill}.",
+      "upfrontCost": "Upfront cost: {amount} is paid the moment you commit — win or lose.",
+      "xpUnavailable": "Unavailable for this older job",
+      "xpValues": "+{success} XP · Critical +{critical} XP"
+    },
+    "healthPanel": {
+      "ariaLabel": "Live health and healing",
+      "healingWindow": "Healing opens after your first choice and closes when the job ends.",
+      "noKits": "No healing kits in your stash.",
+      "title": "Live Health",
+      "using": "Using…"
+    },
+    "momentum": {
+      "bandsSummary": "Finish at {successAt}+ for a clean success · above {jackpotAbove} is jackpot · below {failureBelow} ends in arrest",
+      "onPaceFor": "on pace for {tier}",
+      "title": "Momentum"
+    },
+    "outcome": {
+      "backToBoard": "Back to the board",
+      "experience": "Experience",
+      "heat": "Heat",
+      "jobOver": "The job is over",
+      "levelUp": "Level up",
+      "take": "Take"
+    },
+    "outcomeTiers": {
+      "disaster": "Disaster",
+      "failure": "Failure",
+      "jackpot": "Jackpot",
+      "partialFailure": "Partial failure",
+      "partialSuccess": "Partial success",
+      "success": "Success"
+    },
+    "runner": {
+      "beatProgress": "Beat {beat} of {total}",
+      "casingThePlace": "Casing the place…",
+      "dustSettles": "The dust settles",
+      "fixerWorking": "The fixer is working out the details…",
+      "jobComplete": "Job complete",
+      "scenesReady": "{ready} of {total} scenes ready",
+      "settingUp": "Setting up the job…"
+    },
+    "skillXp": {
+      "gain": "+{xp} XP",
+      "none": "No skill experience gained on this job.",
+      "title": "Skill experience earned"
+    }
+  },
+  "nav": {
+    "character": "Character",
+    "crew": "Crew",
+    "empire": "Empire",
+    "jobs": "Jobs",
+    "loadout": "Loadout",
+    "map": "Map",
+    "news": "News",
+    "store": "Store"
+  },
+  "newspaper": {
+    "bounty": "(Take a block from the {family} family and the {amount} is yours.)",
+    "classifieds": "Classifieds",
+    "day": "Day {day}",
+    "empty": "No edition has hit the stands yet. The presses run once a day — give the city time to make some news.",
+    "loading": "Waiting on the presses…",
+    "reign": "Under the reign of the {family} family",
+    "sections": {
+      "business": "Business",
+      "crime_blotter": "Crime Blotter",
+      "front_page": "Front Page",
+      "season": "The Season",
+      "war_report": "War Report"
+    },
+    "standings": {
+      "blocks": "Blocks",
+      "family": "Family",
+      "respect": "Respect"
+    },
+    "standingsHeading": "The Season — Standings",
+    "tagline": "All the crime that’s fit to print"
+  },
+  "notifications": {
+    "bell": "Word",
+    "bellLabel": "Word on the street",
+    "bellLabelUnread": "Word on the street — {count} new",
+    "empty": "The street is quiet. Nothing new."
+  },
+  "playerNameDialog": {
+    "ariaLabel": "Choose your name",
+    "eyebrow": "Welcome to the family",
+    "genericError": "Something went wrong. Try again.",
+    "invalidName": "Invalid name.",
+    "nameLabel": "Name",
+    "placeholder": "Rico Vale",
+    "submit": "Claim the name",
+    "submitting": "Making it official…",
+    "subtitle": "This is how the city will know you. Choose carefully — it cannot be changed later.",
+    "title": "Choose your name"
+  },
+  "prison": {
+    "bribe": {
+      "action": "Slip the envelope",
+      "body": "{cost} changes hands whether he bites or not. Your charisma does the talking — {chance}% odds.",
+      "title": "Bribe a guard"
+    },
+    "cooldown": "The guards are watching you too closely. Next attempt in {time}.",
+    "escape": {
+      "action": "Go over the wall",
+      "body": "Stealth carries you over the wall — {chance}% odds. Fail and the sentence grows; succeed and the manhunt adds heat.",
+      "title": "Break out"
+    },
+    "eyebrow": "County lockup",
+    "flavor": "The cell is cold, the coffee is worse, and the city is getting along fine without you.",
+    "releaseIn": "Release in",
+    "serveNote": "— serving the full stretch also cools your heat",
+    "title": "You’re doing time"
+  },
+  "rankings": {
+    "countdown": "CONQUEST COUNTDOWN — the {family} family holds all seven districts. About {hours} hours remain to break their grip.",
+    "description": "Respect accrues from held turf (weighted by district), battles won, landmarks controlled, and jackpot jobs. Conquer every district stronghold and hold it {hours} hours to take the city outright — otherwise the most respected family wins when the season ends on {date}.",
+    "loading": "Tallying respect…",
+    "table": {
+      "blocks": "Blocks",
+      "caption": "Season standings",
+      "description": "Every family with a name in the city, most respected first.",
+      "empty": "Nobody has planted a flag yet. The city waits.",
+      "family": "Family",
+      "landmarks": "Landmarks",
+      "respect": "Respect"
+    },
+    "title": "Rankings",
+    "you": "(you)"
+  },
+  "shell": {
+    "signOut": "Sign out",
+    "signOutModal": {
+      "eyebrow": "Leaving the operation",
+      "intro": "You are about to sign out. The family will keep your affairs in order until you return.",
+      "signOutDescription": "End the session and head back to the door.",
+      "signOutLabel": "Sign out",
+      "stayDescription": "Return to the operation as if nothing happened.",
+      "stayLabel": "Stay",
+      "title": "Sure you want out?"
+    }
+  },
+  "store": {
+    "catalogError": "The store is shuttered. Refresh to try again.",
+    "catalogLoading": "Laying the goods out…",
+    "categories": {
+      "alcohol": "Liquor",
+      "armor": "Body Armor",
+      "drug": "Narcotics",
+      "explosive": "Explosives",
+      "footwear": "Footwear",
+      "headgear": "Headgear",
+      "machine_gun": "Machine Guns",
+      "melee": "Melee",
+      "pistol": "Pistols",
+      "rifle": "Rifles",
+      "shotgun": "Shotguns",
+      "smg": "SMGs",
+      "sniper": "Sniper Rifles",
+      "tool": "Tools",
+      "utility": "Utility"
+    },
+    "categoriesNav": "Store categories",
+    "emptyCatalog": "No gear is currently available.",
+    "filters": {
+      "allRequiredLevels": "All required levels",
+      "equipmentName": "Equipment name",
+      "everything": "Everything",
+      "levelOption": "Level {level}",
+      "requiredLevel": "Required level",
+      "searchPlaceholder": "Search by name"
+    },
+    "header": {
+      "eyebrow": "Back-room armory",
+      "level": "Level",
+      "tagline": "Cash buys the gear; jobs decide if you needed it. Locked pieces open up as you level.",
+      "title": "The Store",
+      "yourCash": "Your cash"
+    },
+    "item": {
+      "armor": "Armor {value}",
+      "buy": "Buy",
+      "drunk": "+{value} Drunk",
+      "effects": {
+        "approachBonus": "+{value}% on {approach} moves",
+        "heatReduction": "−{value} heat per job",
+        "skillBonus": "+{value} {skill} on checks"
+      },
+      "health": "+{value} Health",
+      "heat": "{value} Heat",
+      "high": "+{value} High",
+      "levelRequirement": "Level {level}",
+      "locked": "Locked",
+      "owned": "Owned ×{quantity}",
+      "power": "Power {value}",
+      "stamina": "+{value} Stamina",
+      "stashSlot": "Stash"
+    },
+    "loading": "Opening the back room…",
+    "noMatches": "No gear matches your current search and filters. Try another name, category, or required level.",
+    "toast": {
+      "buyErrorMessage": "The fence isn't answering. Try again.",
+      "buyErrorTitle": "No deal",
+      "buySuccessMessage": "{itemName} moved to your stash.",
+      "buySuccessTitle": "Deal done",
+      "fallbackItemName": "Gear"
+    }
+  },
+  "street": {
+    "bribeQuote": "−{chunk} heat for {cost}",
+    "drunk": "Drunk",
+    "heat": "Heat",
+    "high": "High",
+    "impaired": "Impaired: −{penalty}% on all checks",
+    "impairedTip": "Being high or drunk lowers the pass chance of every check on jobs you take, and doses restore less stamina. It wears off while you rest.",
+    "payPrecinct": "Pay off the precinct",
+    "stamina": "Stamina"
+  }
+}

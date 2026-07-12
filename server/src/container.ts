@@ -75,7 +75,7 @@ export class Container {
     const loadoutService = new LoadoutService(this.firebase);
     const storeService = new StoreService(this.firebase, equipment, effectsService);
     const prisonService = new PrisonService(this.firebase, engineConfig);
-    const jobBoardService = new JobBoardService(this.firebase, this.missionTemplates, engineConfig);
+    const jobBoardService = new JobBoardService(this.firebase, this.missionTemplates, engineConfig, aiProvider);
     const worldEventService = new WorldEventService(this.firebase);
     const seasonService = new SeasonService(this.firebase, effectsService);
     const newspaperService = new NewspaperService(

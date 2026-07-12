@@ -1,6 +1,7 @@
 "use client";
 
 import { formatGameClock, gameTime } from "@shared/gameTime";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { displayText } from "../../design-system/typography";
 import { usePlayer } from "../PlayerProvider/PlayerProvider";
@@ -12,6 +13,7 @@ import { usePlayer } from "../PlayerProvider/PlayerProvider";
  * the browser about the time.
  */
 export function GameClock() {
+  const t = useTranslations("clock");
   const { player } = usePlayer();
   const [label, setLabel] = useState<string | null>(null);
   const createdAt = player?.createdAt;
@@ -34,7 +36,7 @@ export function GameClock() {
     <span
       className={`inline-flex min-h-10 items-center rounded-control border border-line px-3 ${displayText} text-lg text-brass`}
       suppressHydrationWarning
-      title="City time — one day passes every real hour"
+      title={t("tooltip")}
     >
       {createdAt ? (label ?? "—") : "—"}
     </span>

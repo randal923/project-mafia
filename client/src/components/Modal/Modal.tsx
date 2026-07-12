@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   useEffect,
   useRef,
@@ -46,7 +47,7 @@ const optionToneClasses: Record<ModalTone, string> = {
 
 export function Modal({
   className,
-  eyebrow = "Decision required",
+  eyebrow,
   intro,
   onClick,
   onClose,
@@ -56,6 +57,7 @@ export function Modal({
   title,
   ...props
 }: ModalProps) {
+  const t = useTranslations("common");
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -103,7 +105,9 @@ export function Modal({
       {...props}
     >
       <div className="border-b border-line p-6">
-        <p className={`m-0 ${typography.eyebrow}`}>{eyebrow}</p>
+        <p className={`m-0 ${typography.eyebrow}`}>
+          {eyebrow ?? t("decisionRequired")}
+        </p>
         <h2 className={`mt-3 mb-0 ${typography.dialogTitle}`}>{title}</h2>
       </div>
       <div className="px-6 py-8 md:py-10">

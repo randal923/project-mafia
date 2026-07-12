@@ -1,7 +1,9 @@
 import { MAX_HEALTH, recoveredHealth } from "@shared/health";
 import type { PlayerItem } from "@shared/player";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 
 type MissionHealthPanelProps = {
@@ -25,6 +27,8 @@ export function MissionHealthPanel({
   items,
   onHeal,
 }: MissionHealthPanelProps) {
+  const t = useTranslations("mission.healthPanel");
+  const { itemName } = useCatalogText();
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -41,13 +45,13 @@ export function MissionHealthPanel({
 
   return (
     <section
-      aria-label="Live health and healing"
+      aria-label={t("ariaLabel")}
       aria-live="polite"
       className="rounded-panel border border-line bg-black/20 p-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className={`m-0 ${typography.metadata}`}>Live Health</p>
+          <p className={`m-0 ${typography.metadata}`}>{t("title")}</p>
           <p className={`m-0 ${displayText} text-2xl text-teal`}>
             {liveHealth} / {MAX_HEALTH}
           </p>
@@ -71,19 +75,17 @@ export function MissionHealthPanel({
               variant="secondary"
             >
               {healingItemId === item.id
-                ? "Using…"
-                : `${item.name} +${item.use?.health ?? 0} (${item.quantity ?? 1})`}
+                ? t("using")
+                : `${itemName(item)} +${item.use?.health ?? 0} (${item.quantity ?? 1})`}
             </Button>
           ))}
         </div>
       ) : liveHealth < MAX_HEALTH ? (
-        <p className={`m-0 mt-2 ${typography.metadata}`}>
-          No healing kits in your stash.
-        </p>
+        <p className={`m-0 mt-2 ${typography.metadata}`}>{t("noKits")}</p>
       ) : null}
       {!canHeal && liveHealth < MAX_HEALTH ? (
         <p className={`m-0 mt-2 ${typography.metadata}`}>
-          Healing opens after your first choice and closes when the job ends.
+          {t("healingWindow")}
         </p>
       ) : null}
       {errorMessage ? (

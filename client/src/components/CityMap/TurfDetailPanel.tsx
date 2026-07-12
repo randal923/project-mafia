@@ -11,8 +11,10 @@ import { CREW_ARCHETYPES, type CrewMember } from "@shared/crew";
 import { DISTRICTS } from "@shared/district";
 import { PLAYER_RANKS, type Player } from "@shared/player";
 import { turfDefense, type TurfState } from "@shared/territory";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
+import { useCatalogText } from "../../lib/useCatalogText";
 import { Button } from "../Button/Button";
 import { Tag } from "../Tag/Tag";
 
@@ -49,6 +51,9 @@ export function TurfDetailPanel({
   player,
   turf,
 }: TurfDetailPanelProps) {
+  const t = useTranslations("map");
+  const { archetypeName, buildingDescription, buildingName, districtName } =
+    useCatalogText();
   const [buildSelection, setBuildSelection] = useState("");
   const [staffingBuildingId, setStaffingBuildingId] = useState<string | null>(
     null,
@@ -77,27 +82,39 @@ export function TurfDetailPanel({
     <aside className="flex flex-col gap-4 rounded-panel border border-line bg-surface p-5 shadow-panel">
       <header>
         <p className={`m-0 ${typography.metadata}`}>
-          {DISTRICTS[turf.district].label}
+          {districtName(turf.district)}
         </p>
         <h2 className={`m-0 ${displayText} text-3xl text-title`}>
           {turf.name}
         </h2>
         <div className="mt-2 flex flex-wrap gap-2">
           {landmark ? (
-            <Tag className="border-brass text-brass" label={`★ ${landmark.name}`} />
+            <Tag
+              className="border-brass text-brass"
+              label={`★ ${buildingName(landmark)}`}
+            />
           ) : null}
           {shielded ? (
             <Tag
               className="border-teal text-teal"
-              label={`Shielded until ${new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit" }).format(shieldMs)}`}
+              label={t("turf.shieldedUntil", {
+                time: new Intl.DateTimeFormat("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(shieldMs),
+              })}
             />
           ) : null}
           {isNeutral ? (
-            <Tag label={landmark ? "NPC garrison" : "Unclaimed"} />
+            <Tag label={landmark ? t("turf.npcGarrison") : t("turf.unclaimed")} />
           ) : (
             <Tag
               className={isOwn ? "border-brass text-brass" : "border-danger text-danger-strong"}
-              label={isOwn ? "Your flag" : `${turf.ownerName}'s flag`}
+              label={
+                isOwn
+                  ? t("turf.flagYours")
+                  : t("turf.flagOther", { name: turf.ownerName ?? "" })
+              }
             />
           )}
         </div>
@@ -105,16 +122,16 @@ export function TurfDetailPanel({
 
       {landmark ? (
         <p className={`m-0 ${typography.narrativeCaption}`}>
-          {landmark.description}
+          {buildingDescription(landmark.id, landmark.description)}
         </p>
       ) : null}
 
       <dl className="m-0 grid grid-cols-3 gap-2 text-center">
         {[
-          ["Defense", `${visibleDefense}+`],
-          ["Slots", `${turf.buildings.length}/${turf.buildingSlots}`],
+          [t("turf.defense"), `${visibleDefense}+`],
+          [t("turf.slots"), `${turf.buildings.length}/${turf.buildingSlots}`],
           [
-            "Income/hr",
+            t("turf.incomePerHour"),
             moneyFormatter.format(DISTRICTS[turf.district].turfIncomePerHour),
           ],
         ].map(([label, value]) => (
@@ -135,7 +152,7 @@ export function TurfDetailPanel({
         <div className="flex flex-col gap-2">
           {isNeutral && !landmark ? (
             <Button disabled={isBusy} onClick={onClaim} variant="primary">
-              Move on this block
+              {t("turf.moveOnBlock")}
             </Button>
           ) : (
             <Button
@@ -143,13 +160,17 @@ export function TurfDetailPanel({
               onClick={onAttack}
               variant="danger"
             >
-              {landmark && isNeutral ? "Storm the landmark" : "Attack"} (stake ~
-              {moneyFormatter.format(attackStake(visibleDefense))})
+              {t(
+                landmark && isNeutral ? "turf.stormLandmark" : "turf.attack",
+                {
+                  amount: moneyFormatter.format(attackStake(visibleDefense)),
+                },
+              )}
             </Button>
           )}
           {isNeutral && !landmark ? (
             <p className={`m-0 ${typography.metadata}`}>
-              A takeover plays out like a job — win it and the flag goes up.
+              {t("turf.takeoverHint")}
             </p>
           ) : null}
         </div>
@@ -160,12 +181,12 @@ export function TurfDetailPanel({
         <>
           <div>
             <p className={`m-0 ${typography.metadata}`}>
-              Defenders ({turf.assignedCrew.length})
+              {t("turf.defenders", { count: turf.assignedCrew.length })}
             </p>
             <p className={`m-0 ${typography.paragraph}`}>
               {defenderNames.length > 0
                 ? defenderNames.join(", ")
-                : "Nobody standing guard."}
+                : t("turf.nobodyGuarding")}
             </p>
             <Button
               className="mt-2"
@@ -174,13 +195,15 @@ export function TurfDetailPanel({
               size="small"
               variant="secondary"
             >
-              Post defenders
+              {t("turf.postDefenders")}
             </Button>
           </div>
 
           {turf.buildings.length > 0 ? (
             <div className="flex flex-col gap-3">
-              <p className={`m-0 ${typography.metadata}`}>Rackets here</p>
+              <p className={`m-0 ${typography.metadata}`}>
+                {t("turf.racketsHere")}
+              </p>
               {turf.buildings.map((building) => {
                 const definition = buildingDefinition(building.definitionId);
                 if (!definition) {
@@ -201,16 +224,21 @@ export function TurfDetailPanel({
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className={`${displayText} text-lg text-title`}>
-                        {definition.name} · L{building.level}
+                        {buildingName(definition)} ·{" "}
+                        {t("turf.level", { level: building.level })}
                       </span>
                       {building.damaged ? (
                         <Tag
                           className="border-danger text-danger-strong"
-                          label="Closed"
+                          label={t("turf.closed")}
                         />
                       ) : (
                         <span className={typography.metadata}>
-                          till {moneyFormatter.format(Math.floor(building.storedIncome))}
+                          {t("turf.till", {
+                            amount: moneyFormatter.format(
+                              Math.floor(building.storedIncome),
+                            ),
+                          })}
                         </span>
                       )}
                     </div>
@@ -222,7 +250,9 @@ export function TurfDetailPanel({
                           size="small"
                           variant="primary"
                         >
-                          Repair ({moneyFormatter.format(repairCost)})
+                          {t("turf.repair", {
+                            price: moneyFormatter.format(repairCost),
+                          })}
                         </Button>
                       ) : (
                         <>
@@ -235,12 +265,14 @@ export function TurfDetailPanel({
                               size="small"
                               variant="secondary"
                             >
-                              Upgrade ({moneyFormatter.format(upgradeCost)})
+                              {t("turf.upgrade", {
+                                price: moneyFormatter.format(upgradeCost),
+                              })}
                             </Button>
                           ) : null}
                           {staffingBuildingId === building.id ? (
                             <select
-                              aria-label="Assign staff"
+                              aria-label={t("turf.assignStaffAria")}
                               className="rounded-control border border-line bg-black/30 px-2 py-1 text-ink"
                               onChange={(event) => {
                                 setStaffingBuildingId(null);
@@ -252,12 +284,12 @@ export function TurfDetailPanel({
                               }}
                               value=""
                             >
-                              <option value="">Pick a worker…</option>
-                              <option value="">(clear staff)</option>
+                              <option value="">{t("turf.pickWorker")}</option>
+                              <option value="">{t("turf.clearStaff")}</option>
                               {idleCrew.map((member) => (
                                 <option key={member.id} value={member.id}>
                                   {member.name} (
-                                  {CREW_ARCHETYPES[member.archetype].label})
+                                  {archetypeName(member.archetype)})
                                 </option>
                               ))}
                             </select>
@@ -268,8 +300,10 @@ export function TurfDetailPanel({
                               size="small"
                               variant="quiet"
                             >
-                              Staff ({building.staff.length}/
-                              {definition.staffSlots})
+                              {t("turf.staff", {
+                                count: building.staff.length,
+                                slots: definition.staffSlots,
+                              })}
                             </Button>
                           )}
                         </>
@@ -283,18 +317,23 @@ export function TurfDetailPanel({
 
           {turf.buildings.length < turf.buildingSlots ? (
             <div className="flex flex-col gap-2">
-              <p className={`m-0 ${typography.metadata}`}>Build a racket</p>
+              <p className={`m-0 ${typography.metadata}`}>
+                {t("turf.buildTitle")}
+              </p>
               <select
-                aria-label="Racket to build"
+                aria-label={t("turf.buildAria")}
                 className="rounded-control border border-line bg-black/30 px-2 py-2 text-ink"
                 onChange={(event) => setBuildSelection(event.target.value)}
                 value={buildSelection}
               >
-                <option value="">Choose…</option>
+                <option value="">{t("turf.choose")}</option>
                 {rackets.map((def) => (
                   <option key={def.id} value={def.id}>
-                    {def.name} — {moneyFormatter.format(def.cost)} (
-                    {moneyFormatter.format(def.incomePerHour)}/hr)
+                    {t("turf.buildOption", {
+                      cost: moneyFormatter.format(def.cost),
+                      income: moneyFormatter.format(def.incomePerHour),
+                      name: buildingName(def),
+                    })}
                   </option>
                 ))}
               </select>
@@ -312,7 +351,7 @@ export function TurfDetailPanel({
                 size="small"
                 variant="primary"
               >
-                Break ground
+                {t("turf.breakGround")}
               </Button>
             </div>
           ) : null}

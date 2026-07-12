@@ -5,13 +5,17 @@ import type {
   OutcomeTier
 } from "@shared/job";
 
-export const outcomeTierLabels: Record<OutcomeTier, string> = {
-  disaster: "Disaster",
-  failure: "Failure",
-  jackpot: "Jackpot",
-  partial_failure: "Partial failure",
-  partially_successful: "Partial success",
-  successful: "Success"
+/**
+ * Message keys under the "mission.outcomeTiers" namespace — components
+ * translate these via useTranslations.
+ */
+export const outcomeTierLabelKeys: Record<OutcomeTier, string> = {
+  disaster: "disaster",
+  failure: "failure",
+  jackpot: "jackpot",
+  partial_failure: "partialFailure",
+  partially_successful: "partialSuccess",
+  successful: "success"
 };
 
 export const outcomeTierTones: Record<OutcomeTier, "danger" | "profit"> = {

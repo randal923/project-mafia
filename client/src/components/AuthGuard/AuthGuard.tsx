@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { typography } from "../../design-system/typography";
@@ -16,6 +17,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isPublicPath = publicPaths.includes(pathname);
+  const t = useTranslations("authGuard");
 
   useEffect(() => {
     if (!isLoading && !user && !isPublicPath) {
@@ -30,7 +32,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   if (isLoading || !user) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-page">
-        <p className={typography.metadata}>Verifying credentials…</p>
+        <p className={typography.metadata}>{t("verifying")}</p>
       </main>
     );
   }

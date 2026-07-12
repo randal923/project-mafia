@@ -3,7 +3,9 @@
 import { CITY_GRID_COLUMNS, CITY_GRID_ROWS } from "@shared/cityMap";
 import { DISTRICTS, type DistrictId } from "@shared/district";
 import type { TurfState } from "@shared/territory";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useCatalogText } from "../../lib/useCatalogText";
 
 /**
  * The city as a street map: paper-gray blocks cut by streets, wider
@@ -159,6 +161,8 @@ export function CityMapSvg({
   turfs,
   viewerUid,
 }: CityMapSvgProps) {
+  const t = useTranslations("map");
+  const { districtName } = useCatalogText();
   // Shield checks tolerate the map's 45s polling staleness.
   const [now] = useState(() => Date.now());
 
@@ -187,7 +191,7 @@ export function CityMapSvg({
 
   return (
     <svg
-      aria-label="City map"
+      aria-label={t("svg.ariaLabel")}
       className="h-auto w-full rounded-panel border border-line shadow-panel"
       role="group"
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
@@ -220,7 +224,7 @@ export function CityMapSvg({
         x={PADDING + 6}
         y={waterTop + 36}
       >
-        THE HARBOR
+        {t("svg.harbor")}
       </text>
 
       {/* avenue center lines */}
@@ -394,7 +398,7 @@ export function CityMapSvg({
             x={X[anchor.x]! + (anchor.x === 5 ? 30 : 6)}
             y={Y[anchor.y]! - (anchor.y === 0 ? 8 : 5)}
           >
-            {DISTRICTS[district].label}
+            {districtName(district)}
           </text>
         );
       })}

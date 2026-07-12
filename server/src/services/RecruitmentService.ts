@@ -27,7 +27,12 @@ import {
   CREW_NICKNAMES,
   formatCrewName,
 } from "../../../shared/crewNames";
-import { PLAYER_RANKS, Player, normalizePlayer } from "../../../shared/player";
+import {
+  PLAYER_RANKS,
+  Player,
+  PlayerLanguage,
+  normalizePlayer,
+} from "../../../shared/player";
 import { MissionRng } from "../engine/MissionRng";
 import { HttpError } from "../middleware/errorHandler";
 import { CrewService } from "./CrewService";
@@ -109,7 +114,7 @@ export class RecruitmentService {
       candidates.push(this.rollCandidate(rng, player.progression.level, i));
     }
 
-    await this.writeBios(candidates);
+    await this.writeBios(candidates, player.language);
 
     const pool: CrewRecruitmentPool = {
       candidates,
@@ -261,7 +266,10 @@ export class RecruitmentService {
   }
 
   /** One batch LLM call for the pool's bios; fallbacks already in place. */
-  private async writeBios(candidates: CrewCandidate[]): Promise<void> {
+  private async writeBios(
+    candidates: CrewCandidate[],
+    language: PlayerLanguage | null,
+  ): Promise<void> {
     try {
       const roster = candidates
         .map(
@@ -269,11 +277,15 @@ export class RecruitmentService {
             `${i + 1}. ${c.name} — ${CREW_ARCHETYPES[c.archetype].label}, tier ${c.tier}`,
         )
         .join("\n");
+      const languageLine =
+        language === "pt-BR"
+          ? " Write the bios in natural Brazilian Portuguese (português do Brasil)."
+          : "";
 
       const raw = await this.provider.generateJson({
         systemPrompt:
           "You write terse noir character bios for a 1970s mafia game. Reply with JSON only.",
-        userPrompt: `Write one bio line (under 140 characters, period-era, no emoji) for each recruit below. Return {"bios": ["...", ...]} with exactly ${candidates.length} entries, in order.\n\n${roster}`,
+        userPrompt: `Write one bio line (under 140 characters, period-era, no emoji) for each recruit below.${languageLine} Return {"bios": ["...", ...]} with exactly ${candidates.length} entries, in order.\n\n${roster}`,
       });
 
       const parsed = biosSchema.safeParse(raw);

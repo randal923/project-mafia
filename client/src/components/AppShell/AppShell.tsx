@@ -1,26 +1,28 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { Button } from "../Button/Button";
 import { GameClock } from "../GameClock/GameClock";
+import { LanguageSwitcher } from "../LanguageSwitcher/LanguageSwitcher";
 import { Modal } from "../Modal/Modal";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import { NotificationsBell } from "../NotificationsBell/NotificationsBell";
 import { PlayerNameDialog } from "../PlayerNameDialog/PlayerNameDialog";
 import { usePlayer } from "../PlayerProvider/PlayerProvider";
 
-const navigationItems = [
-  { href: "/", id: "news", label: "News" },
-  { href: "/jobs", id: "jobs", label: "Jobs" },
-  { href: "/crew", id: "crew", label: "Crew" },
-  { href: "/empire", id: "empire", label: "Empire" },
-  { href: "/map", id: "map", label: "Map" },
-  { href: "/store", id: "store", label: "Store" },
-  { href: "/character", id: "character", label: "Character" },
-  { href: "/loadout", id: "loadout", label: "Loadout" }
-];
+const navigationRoutes = [
+  { href: "/", id: "news" },
+  { href: "/jobs", id: "jobs" },
+  { href: "/crew", id: "crew" },
+  { href: "/empire", id: "empire" },
+  { href: "/map", id: "map" },
+  { href: "/store", id: "store" },
+  { href: "/character", id: "character" },
+  { href: "/loadout", id: "loadout" }
+] as const;
 
 type AppShellProps = {
   children: ReactNode;
@@ -31,10 +33,16 @@ export function AppShell({ children }: AppShellProps) {
   const { status: playerStatus } = usePlayer();
   const pathname = usePathname();
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
+  const t = useTranslations();
 
   if (!user || pathname === "/login") {
     return children;
   }
+
+  const navigationItems = navigationRoutes.map((route) => ({
+    ...route,
+    label: t(`nav.${route.id}`)
+  }));
 
   const activeItemId = navigationItems.find(
     (item) => item.href === pathname
@@ -48,6 +56,9 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <main className="flex min-h-screen flex-col bg-page px-6 pb-6 text-ink lg:h-screen">
       <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col">
+        <div className="flex justify-end pt-2">
+          <LanguageSwitcher />
+        </div>
         <NavigationBar
           actions={
             <div className="ml-8 flex items-center gap-3">
@@ -58,7 +69,7 @@ export function AppShell({ children }: AppShellProps) {
                 size="small"
                 variant="danger"
               >
-                Sign out
+                {t("shell.signOut")}
               </Button>
             </div>
           }
@@ -70,26 +81,26 @@ export function AppShell({ children }: AppShellProps) {
       </div>
       {playerStatus === "missing" && <PlayerNameDialog />}
       <Modal
-        eyebrow="Leaving the operation"
-        intro="You are about to sign out. The family will keep your affairs in order until you return."
+        eyebrow={t("shell.signOutModal.eyebrow")}
+        intro={t("shell.signOutModal.intro")}
         onDismiss={() => setIsSignOutModalOpen(false)}
         open={isSignOutModalOpen}
         options={[
           {
-            description: "Return to the operation as if nothing happened.",
+            description: t("shell.signOutModal.stayDescription"),
             id: "stay",
-            label: "Stay",
+            label: t("shell.signOutModal.stayLabel"),
             onSelect: () => setIsSignOutModalOpen(false)
           },
           {
-            description: "End the session and head back to the door.",
+            description: t("shell.signOutModal.signOutDescription"),
             id: "sign-out",
-            label: "Sign out",
+            label: t("shell.signOutModal.signOutLabel"),
             onSelect: handleSignOut,
             tone: "danger"
           }
         ]}
-        title="Sure you want out?"
+        title={t("shell.signOutModal.title")}
       />
     </main>
   );
