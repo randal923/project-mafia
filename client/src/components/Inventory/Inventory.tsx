@@ -1,3 +1,19 @@
+"use client";
+
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { useId, useState, type DragEvent } from "react";
+import { cx } from "../../lib/cx";
+import { Button } from "../Button/Button";
+import { ItemHoverCard } from "../ItemHoverCard/ItemHoverCard";
+import { SectionHeader } from "../SectionHeader/SectionHeader";
+import {
+  Tabs,
+  tabDomId,
+  tabPanelDomId,
+  type TabDefinition
+} from "../Tabs/Tabs";
+import { InventoryEmptySlot } from "./InventoryEmptySlot";
 import { InventoryItemCard } from "./InventoryItemCard";
 import { InventorySlotPanel } from "./InventorySlotPanel";
 import type {
@@ -7,6 +23,7 @@ import type {
 } from "./InventoryTypes";
 
 type InventoryProps = {
+  actionsDisabled?: boolean;
   ariaLabel?: string;
   className?: string;
   emptySlotLabel?: string;
@@ -14,12 +31,17 @@ type InventoryProps = {
   gearSlotsLabel?: string;
   loadoutEyebrow?: string;
   loadoutTitle?: string;
+  onEquip?: (item: InventoryItem) => void;
+  onSell?: (item: InventoryItem) => void;
+  onUnequip?: (slotId: InventorySlotId) => void;
+  onUse?: (item: InventoryItem) => void;
+  playerLevel?: number;
   showLoadout?: boolean;
   showStash?: boolean;
   slots: readonly InventorySlot[];
   stashActionLabel?: string;
-  stashCapacity?: number;
   stashItems: readonly InventoryItem[];
+  stashSlotsPerPage?: number;
   stashTitle?: string;
 };
 
@@ -31,63 +53,228 @@ const slotPlacementClasses: Record<InventorySlotId, string> = {
   waist: "md:col-start-3 md:row-start-2"
 };
 
+type StashTabId = "stash-1" | "stash-2" | "stash-3";
+
+type InventoryDrag =
+  | { item: InventoryItem; source: "stash" }
+  | { item: InventoryItem; slotId: InventorySlotId; source: "loadout" };
+
+const STASH_TAB_IDS: readonly StashTabId[] = ["stash-1", "stash-2", "stash-3"];
+
 export function Inventory({
-  ariaLabel = "Inventory",
+  actionsDisabled = false,
+  ariaLabel,
   className,
-  emptySlotLabel = "Empty",
-  emptyStashLabel = "No stash items.",
-  gearSlotsLabel = "Gear slots",
-  loadoutEyebrow = "Profile",
-  loadoutTitle = "Loadout",
+  emptySlotLabel,
+  emptyStashLabel,
+  gearSlotsLabel,
+  loadoutEyebrow,
+  loadoutTitle,
+  onEquip,
+  onSell,
+  onUnequip,
+  onUse,
+  playerLevel,
   showLoadout = true,
   showStash = true,
   slots,
-  stashActionLabel = "Drop to unequip",
-  stashCapacity = 8,
+  stashActionLabel,
   stashItems,
-  stashTitle = "Stash"
+  stashSlotsPerPage = 12,
+  stashTitle
 }: InventoryProps) {
-  const classNames = ["w-full max-w-5xl", className]
-    .filter(Boolean)
-    .join(" ");
-  const stashCellCount = Math.max(1, stashCapacity, stashItems.length);
-  const stashCells: Array<InventoryItem | undefined> = Array.from(
-    { length: stashCellCount },
-    (_, index) => stashItems[index]
+  const t = useTranslations("inventory");
+  const tItem = useTranslations("itemCard");
+  const resolvedAriaLabel = ariaLabel ?? t("defaultAriaLabel");
+  const resolvedEmptySlotLabel = emptySlotLabel ?? t("emptySlot");
+  const resolvedEmptyStashLabel = emptyStashLabel ?? t("emptyStash");
+  const resolvedGearSlotsLabel = gearSlotsLabel ?? t("gearSlots");
+  const resolvedLoadoutEyebrow = loadoutEyebrow ?? t("profileEyebrow");
+  const resolvedLoadoutTitle = loadoutTitle ?? t("loadoutTitle");
+  const resolvedStashActionLabel = stashActionLabel ?? t("dropToUnequip");
+  const resolvedStashTitle = stashTitle ?? t("stashTitle");
+  const stashTabs: readonly TabDefinition<StashTabId>[] = STASH_TAB_IDS.map(
+    (id, index) => ({ id, label: t(`tabs.stash${index + 1}`) })
   );
-  const stashClassNames = [
+  const [activeStashTabId, setActiveStashTabId] =
+    useState<StashTabId>("stash-1");
+  const [inventoryDrag, setInventoryDrag] = useState<InventoryDrag | null>(
+    null
+  );
+  const stashIdPrefix = `inventory-stash-${useId()}`;
+  const showsWorkspace = showLoadout && showStash;
+  const isLoadoutDropTarget =
+    showsWorkspace &&
+    !actionsDisabled &&
+    inventoryDrag?.source === "stash" &&
+    Boolean(onEquip);
+  const isStashDropTarget =
+    showsWorkspace &&
+    !actionsDisabled &&
+    inventoryDrag?.source === "loadout" &&
+    Boolean(onUnequip);
+  const classNames = cx(
+    "w-full",
+    showsWorkspace
+      ? "max-w-none xl:grid xl:grid-cols-2 xl:gap-4"
+      : "max-w-5xl",
+    className
+  );
+  const normalizedStashSlotsPerPage = Number.isFinite(stashSlotsPerPage)
+    ? Math.max(1, Math.floor(stashSlotsPerPage))
+    : 1;
+  const stashCellCount = Math.max(
+    1,
+    normalizedStashSlotsPerPage,
+    Math.ceil(stashItems.length / stashTabs.length)
+  );
+  const stashPages: ReadonlyArray<ReadonlyArray<InventoryItem | undefined>> =
+    stashTabs.map((_, pageIndex) =>
+      Array.from(
+        { length: stashCellCount },
+        (_, index) => stashItems[pageIndex * stashCellCount + index]
+      )
+    );
+  const loadoutClassNames = cx(
+    "relative isolate overflow-hidden rounded-panel border border-line bg-surface shadow-panel",
+    isLoadoutDropTarget && "ring-1 ring-brass"
+  );
+  const stashClassNames = cx(
     "rounded-panel border border-line bg-surface shadow-panel",
-    showLoadout ? "mt-4" : ""
-  ]
-    .filter(Boolean)
-    .join(" ");
+    showLoadout && "mt-4 xl:mt-0",
+    isStashDropTarget && "ring-1 ring-brass"
+  );
+
+  const handleStashItemDragStart = (
+    event: DragEvent<HTMLDivElement>,
+    item: InventoryItem
+  ) => {
+    const belowLevelRequirement =
+      item.levelRequirement !== undefined &&
+      playerLevel !== undefined &&
+      playerLevel < item.levelRequirement;
+
+    if (
+      !showsWorkspace ||
+      actionsDisabled ||
+      !onEquip ||
+      !item.slot ||
+      belowLevelRequirement
+    ) {
+      event.preventDefault();
+      return;
+    }
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", item.name);
+    setInventoryDrag({ item, source: "stash" });
+  };
+
+  const handleLoadoutItemDragStart = (
+    event: DragEvent<HTMLDivElement>,
+    slot: InventorySlot
+  ) => {
+    if (!showsWorkspace || actionsDisabled || !onUnequip || !slot.item) {
+      event.preventDefault();
+      return;
+    }
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", slot.item.name);
+    setInventoryDrag({
+      item: slot.item,
+      slotId: slot.id,
+      source: "loadout"
+    });
+  };
+
+  const handleLoadoutDragOver = (event: DragEvent<HTMLDivElement>) => {
+    if (!isLoadoutDropTarget) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const handleStashDragOver = (event: DragEvent<HTMLDivElement>) => {
+    if (!isStashDropTarget) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const handleLoadoutDrop = (event: DragEvent<HTMLDivElement>) => {
+    if (!isLoadoutDropTarget || inventoryDrag?.source !== "stash") {
+      return;
+    }
+
+    event.preventDefault();
+    const { item } = inventoryDrag;
+    setInventoryDrag(null);
+    onEquip?.(item);
+  };
+
+  const handleStashDrop = (event: DragEvent<HTMLDivElement>) => {
+    if (!isStashDropTarget || inventoryDrag?.source !== "loadout") {
+      return;
+    }
+
+    event.preventDefault();
+    const draggedSlot = slots.find(({ id }) => id === inventoryDrag.slotId);
+    if (draggedSlot?.item !== inventoryDrag.item) {
+      setInventoryDrag(null);
+      return;
+    }
+
+    const { slotId } = inventoryDrag;
+    setInventoryDrag(null);
+    onUnequip?.(slotId);
+  };
+
+  const handleItemDragEnd = () => setInventoryDrag(null);
 
   if (!showLoadout && !showStash) {
     return null;
   }
 
   return (
-    <section aria-label={ariaLabel} className={classNames}>
+    <section aria-label={resolvedAriaLabel} className={classNames}>
       {showLoadout ? (
-        <div className="rounded-panel border border-line bg-surface shadow-panel">
-          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line bg-surface-raised px-4 py-4">
-            <div>
-              <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-faint">
-                {loadoutEyebrow}
-              </p>
-              <h2 className="mt-2 mb-0 font-display text-4xl uppercase leading-none tracking-normal text-title">
-                {loadoutTitle}
-              </h2>
-            </div>
-            <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-brass">
-              {gearSlotsLabel}
-            </p>
+        <div
+          className={loadoutClassNames}
+          onDragOver={handleLoadoutDragOver}
+          onDrop={handleLoadoutDrop}
+        >
+          <SectionHeader
+            aside={resolvedGearSlotsLabel}
+            eyebrow={resolvedLoadoutEyebrow}
+            title={resolvedLoadoutTitle}
+          />
+          <div className="pointer-events-none absolute inset-x-0 top-28 bottom-4 z-0">
+            <Image
+              alt=""
+              className="object-contain p-4 opacity-20 invert"
+              fill
+              sizes="(min-width: 1280px) 38rem, 100vw"
+              src="/images/characters/gangster-loadout-silhouette.png"
+            />
           </div>
-          <div className="grid gap-4 p-4 md:grid-cols-3 md:grid-rows-3">
+          <div className="relative z-10 mx-auto grid w-full max-w-lg gap-4 p-4 md:grid-cols-3 md:grid-rows-3">
             {slots.map((slot) => (
               <InventorySlotPanel
-                emptyLabel={emptySlotLabel}
+                actionsDisabled={actionsDisabled}
+                emptyLabel={resolvedEmptySlotLabel}
                 key={slot.id}
+                onItemDragEnd={handleItemDragEnd}
+                onItemDragStart={
+                  showsWorkspace && onUnequip
+                    ? handleLoadoutItemDragStart
+                    : undefined
+                }
+                onUnequip={onUnequip}
                 placementClassName={slotPlacementClasses[slot.id]}
                 slot={slot}
               />
@@ -97,46 +284,146 @@ export function Inventory({
       ) : null}
 
       {showStash ? (
-        <div className={stashClassNames}>
-          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line bg-surface-raised px-4 py-4">
-            <div>
-              <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-faint">
-                Inventory
-              </p>
-              <h2 className="mt-2 mb-0 font-display text-4xl uppercase leading-none tracking-normal text-title">
-                {stashTitle}
-              </h2>
-            </div>
-            <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-brass">
-              {stashActionLabel}
-            </p>
-          </div>
-          <ol
-            aria-label={stashTitle}
-            className="m-0 grid list-none grid-cols-2 border-line p-0 sm:grid-cols-4"
-          >
-            {stashCells.map((item, index) => (
-              <li
-                aria-label={item ? undefined : "Empty stash slot"}
-                className="min-h-36 border-r border-b border-line p-2"
-                key={item ? item.id : `stash-empty-${index}`}
-              >
-                {item ? (
-                  <InventoryItemCard item={item} />
-                ) : (
-                  <div className="flex h-full min-h-28 items-center justify-center border border-dashed border-line bg-black/20 p-3">
-                    {index === 0 && stashItems.length === 0 ? (
-                      <p className="m-0 text-center text-base leading-relaxed text-muted">
-                        {emptyStashLabel}
-                      </p>
-                    ) : (
-                      <span className="sr-only">Empty stash slot</span>
-                    )}
-                  </div>
+        <div
+          className={stashClassNames}
+          onDragOver={handleStashDragOver}
+          onDrop={handleStashDrop}
+        >
+          <SectionHeader
+            aside={resolvedStashActionLabel}
+            eyebrow={t("stashEyebrow")}
+            title={resolvedStashTitle}
+          />
+          <Tabs
+            activeTabId={activeStashTabId}
+            ariaLabel={t("stashPagesLabel")}
+            idPrefix={stashIdPrefix}
+            onTabChange={setActiveStashTabId}
+            tabs={stashTabs}
+          />
+          {stashTabs.map((tab, pageIndex) => (
+            <div
+              aria-labelledby={tabDomId(stashIdPrefix, tab.id)}
+              hidden={tab.id !== activeStashTabId}
+              id={tabPanelDomId(stashIdPrefix, tab.id)}
+              key={tab.id}
+              role="tabpanel"
+            >
+              <ol
+                aria-label={t("stashPage", {
+                  page: pageIndex + 1,
+                  title: resolvedStashTitle
+                })}
+                className={cx(
+                  "m-0 grid list-none grid-cols-2 border-line p-0 sm:grid-cols-4",
+                  showsWorkspace && "xl:grid-cols-3"
                 )}
-              </li>
-            ))}
-          </ol>
+              >
+                {stashPages[pageIndex].map((item, index) => (
+                  <li
+                    aria-label={item ? undefined : t("emptyStashSlot")}
+                    className="h-full border-r border-b border-line p-2"
+                    key={
+                      item
+                        ? `${item.id}-${pageIndex}-${index}`
+                        : `${tab.id}-empty-${index}`
+                    }
+                  >
+                    <div className="flex h-full flex-col gap-2">
+                      {item ? (
+                        <ItemHoverCard item={item}>
+                          <InventoryItemCard
+                            draggable={
+                              showsWorkspace &&
+                              !actionsDisabled &&
+                              Boolean(onEquip && item.slot) &&
+                              !(
+                                item.levelRequirement !== undefined &&
+                                playerLevel !== undefined &&
+                                playerLevel < item.levelRequirement
+                              )
+                            }
+                            item={item}
+                            onDragEnd={handleItemDragEnd}
+                            onDragStart={(event) =>
+                              handleStashItemDragStart(event, item)
+                            }
+                          />
+                        </ItemHoverCard>
+                      ) : (
+                        <InventoryEmptySlot>
+                          {index === 0 && stashItems.length === 0 ? (
+                            <p className="m-0 text-center text-base leading-relaxed text-muted">
+                              {resolvedEmptyStashLabel}
+                            </p>
+                          ) : (
+                            <span className="sr-only">
+                              {t("emptyStashSlot")}
+                            </span>
+                          )}
+                        </InventoryEmptySlot>
+                      )}
+                      <div className="min-h-24 xl:min-h-10">
+                      {item && (onEquip || onSell || onUse) ? (
+                        <div className="flex flex-col gap-2 xl:flex-row">
+                          {onUse && item.use ? (
+                            <Button
+                              className="flex-1"
+                              disabled={
+                                actionsDisabled ||
+                                (item.levelRequirement !== undefined &&
+                                  playerLevel !== undefined &&
+                                  playerLevel < item.levelRequirement)
+                              }
+                              onClick={() => onUse(item)}
+                              size="small"
+                              variant="primary"
+                            >
+                              {t("use")}
+                            </Button>
+                          ) : null}
+                          {onEquip && item.slot ? (
+                            <Button
+                              className="flex-1"
+                              disabled={
+                                actionsDisabled ||
+                                (item.levelRequirement !== undefined &&
+                                  playerLevel !== undefined &&
+                                  playerLevel < item.levelRequirement)
+                              }
+                              onClick={() => onEquip(item)}
+                              size="small"
+                              variant="secondary"
+                            >
+                              {item.levelRequirement !== undefined &&
+                              playerLevel !== undefined &&
+                              playerLevel < item.levelRequirement
+                                ? tItem("levelShort", {
+                                    level: item.levelRequirement
+                                  })
+                                : t("equip")}
+                            </Button>
+                          ) : null}
+                          {onSell ? (
+                            <Button
+                              className="flex-1"
+                              disabled={actionsDisabled}
+                              onClick={() => onSell(item)}
+                              size="small"
+                              variant="quiet"
+                            >
+                              {t("sell")}
+                            </Button>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                </li>
+                ))}
+              </ol>
+            </div>
+          ))}
         </div>
       ) : null}
     </section>

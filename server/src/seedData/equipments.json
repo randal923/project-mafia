@@ -1,0 +1,1869 @@
+[
+  {
+    "category": "melee",
+    "description": "A whisper of steel that settles arguments before they start.",
+    "id": "stiletto-knife",
+    "image": {
+      "alt": "Stiletto knife",
+      "src": "/images/items/stiletto-knife.webp"
+    },
+    "levelRequirement": 1,
+    "name": "Stiletto Knife",
+    "power": 3,
+    "price": 50,
+    "slot": "hand"
+  },
+  {
+    "category": "melee",
+    "description": "Four rings of persuasion for conversations that turn ugly.",
+    "id": "brass-knuckles",
+    "image": {
+      "alt": "Brass Knuckles",
+      "src": "/images/items/brass-knuckles.webp"
+    },
+    "levelRequirement": 3,
+    "name": "Brass Knuckles",
+    "power": 7,
+    "price": 135,
+    "slot": "hand"
+  },
+  {
+    "category": "melee",
+    "description": "Plumbing-grade diplomacy, swung from the shadows.",
+    "id": "lead-pipe",
+    "image": {
+      "alt": "Lead Pipe",
+      "src": "/images/items/lead-pipe.webp"
+    },
+    "levelRequirement": 6,
+    "name": "Lead Pipe",
+    "power": 14,
+    "price": 495,
+    "slot": "hand"
+  },
+  {
+    "category": "melee",
+    "description": "Straight off the sandlot, and it never misses a swing.",
+    "id": "baseball-bat",
+    "image": {
+      "alt": "Baseball Bat",
+      "src": "/images/items/baseball-bat.webp"
+    },
+    "levelRequirement": 9,
+    "name": "Baseball Bat",
+    "power": 21,
+    "price": 1050,
+    "slot": "hand"
+  },
+  {
+    "category": "melee",
+    "description": "Borrowed from a firehouse wall and never returned.",
+    "id": "fire-axe",
+    "image": {
+      "alt": "Fire Axe",
+      "src": "/images/items/fire-axe.webp"
+    },
+    "levelRequirement": 12,
+    "name": "Fire Axe",
+    "power": 29,
+    "price": 1785,
+    "slot": "hand"
+  },
+  {
+    "category": "melee",
+    "description": "Trench salvage with iron studs and old grudges baked in.",
+    "id": "trench-club",
+    "image": {
+      "alt": "Trench Club",
+      "src": "/images/items/trench-club.webp"
+    },
+    "levelRequirement": 15,
+    "name": "Trench Club",
+    "power": 37,
+    "price": 2700,
+    "slot": "hand"
+  },
+  {
+    "category": "pistol",
+    "description": "Two shots of last resort tucked in a vest pocket.",
+    "id": "pocket-derringer",
+    "image": {
+      "alt": "Pocket Derringer",
+      "src": "/images/items/pocket-derringer.webp"
+    },
+    "levelRequirement": 3,
+    "name": "Pocket Derringer",
+    "power": 7,
+    "price": 135,
+    "slot": "hand"
+  },
+  {
+    "category": "pistol",
+    "description": "Short barrel, short temper, fits under any coat.",
+    "id": "snub-nose-38",
+    "image": {
+      "alt": "Snub-Nose .38",
+      "src": "/images/items/snub-nose-38.webp"
+    },
+    "levelRequirement": 8,
+    "name": "Snub-Nose .38",
+    "power": 18,
+    "price": 845,
+    "slot": "hand"
+  },
+  {
+    "category": "pistol",
+    "description": "The same iron the flatfoots carry, minus the badge.",
+    "id": "detective-special",
+    "image": {
+      "alt": "Detective Special",
+      "src": "/images/items/detective-special.webp"
+    },
+    "levelRequirement": 13,
+    "name": "Detective Special",
+    "power": 31,
+    "price": 2070,
+    "slot": "hand"
+  },
+  {
+    "category": "pistol",
+    "description": "Army surplus with a kick that ends negotiations.",
+    "id": "service-45",
+    "image": {
+      "alt": "Service .45",
+      "src": "/images/items/service-45.webp"
+    },
+    "levelRequirement": 19,
+    "name": "Service .45",
+    "power": 46,
+    "price": 4180,
+    "slot": "hand"
+  },
+  {
+    "category": "pistol",
+    "description": "Coughs once and the room goes quiet forever.",
+    "id": "hushed-welrod",
+    "image": {
+      "alt": "Hushed Welrod",
+      "src": "/images/items/hushed-welrod.webp"
+    },
+    "levelRequirement": 25,
+    "name": "Hushed Welrod",
+    "power": 57,
+    "price": 6940,
+    "slot": "hand"
+  },
+  {
+    "category": "pistol",
+    "description": "Six inches of barrel that make every argument final.",
+    "id": "long-barrel-357",
+    "image": {
+      "alt": "Long-Barrel .357",
+      "src": "/images/items/long-barrel-357.webp"
+    },
+    "levelRequirement": 30,
+    "name": "Long-Barrel .357",
+    "power": 77,
+    "price": 9725,
+    "slot": "hand"
+  },
+  {
+    "category": "smg",
+    "description": "Cheap, ugly, and it chews through trouble by the crate.",
+    "id": "grease-gun-m3",
+    "image": {
+      "alt": "M3 Grease Gun",
+      "src": "/images/items/grease-gun-m3.webp"
+    },
+    "levelRequirement": 20,
+    "name": "M3 Grease Gun",
+    "power": 48,
+    "price": 4595,
+    "slot": "hand"
+  },
+  {
+    "category": "smg",
+    "description": "Stamped-metal chatterbox smuggled off a supply truck.",
+    "id": "sten-mk-ii",
+    "image": {
+      "alt": "Sten Mk II",
+      "src": "/images/items/sten-mk-ii.webp"
+    },
+    "levelRequirement": 26,
+    "name": "Sten Mk II",
+    "power": 64,
+    "price": 7465,
+    "slot": "hand"
+  },
+  {
+    "category": "smg",
+    "description": "A war trophy that still speaks fluent trouble.",
+    "id": "surplus-mp40",
+    "image": {
+      "alt": "Surplus MP40",
+      "src": "/images/items/surplus-mp40.webp"
+    },
+    "levelRequirement": 32,
+    "name": "Surplus MP40",
+    "power": 80,
+    "price": 10960,
+    "slot": "hand"
+  },
+  {
+    "category": "smg",
+    "description": "The classic Chicago typewriter, ready for dictation.",
+    "id": "thompson-m1928",
+    "image": {
+      "alt": "Thompson M1928",
+      "src": "/images/items/thompson-m1928.webp"
+    },
+    "levelRequirement": 38,
+    "name": "Thompson M1928",
+    "power": 97,
+    "price": 15060,
+    "slot": "hand"
+  },
+  {
+    "category": "smg",
+    "description": "Spits its whole story without raising its voice.",
+    "id": "silenced-sten",
+    "image": {
+      "alt": "Silenced Sten",
+      "src": "/images/items/silenced-sten.webp"
+    },
+    "levelRequirement": 44,
+    "name": "Silenced Sten",
+    "power": 108,
+    "price": 19755,
+    "slot": "hand"
+  },
+  {
+    "category": "smg",
+    "description": "A hundred rounds in the drum and a headline in every one.",
+    "id": "drum-thompson",
+    "image": {
+      "alt": "Drum Thompson",
+      "src": "/images/items/drum-thompson.webp"
+    },
+    "levelRequirement": 50,
+    "name": "Drum Thompson",
+    "power": 133,
+    "price": 25025,
+    "slot": "hand"
+  },
+  {
+    "category": "shotgun",
+    "description": "Cut short so the message travels wide.",
+    "id": "sawed-off-double",
+    "image": {
+      "alt": "Sawed-Off Double",
+      "src": "/images/items/sawed-off-double.webp"
+    },
+    "levelRequirement": 25,
+    "name": "Sawed-Off Double",
+    "power": 64,
+    "price": 6940,
+    "slot": "hand"
+  },
+  {
+    "category": "shotgun",
+    "description": "Once guarded stagecoaches; now it guards your interests.",
+    "id": "coach-gun",
+    "image": {
+      "alt": "Coach Gun",
+      "src": "/images/items/coach-gun.webp"
+    },
+    "levelRequirement": 30,
+    "name": "Coach Gun",
+    "power": 77,
+    "price": 9725,
+    "slot": "hand"
+  },
+  {
+    "category": "shotgun",
+    "description": "One rack of the slide clears the whole back room.",
+    "id": "pump-12-gauge",
+    "image": {
+      "alt": "Pump 12-Gauge",
+      "src": "/images/items/pump-12-gauge.webp"
+    },
+    "levelRequirement": 36,
+    "name": "Pump 12-Gauge",
+    "power": 94,
+    "price": 13630,
+    "slot": "hand"
+  },
+  {
+    "category": "shotgun",
+    "description": "Built to break up crowds; works fine on partnerships too.",
+    "id": "riot-gun",
+    "image": {
+      "alt": "Riot Gun",
+      "src": "/images/items/riot-gun.webp"
+    },
+    "levelRequirement": 42,
+    "name": "Riot Gun",
+    "power": 109,
+    "price": 18125,
+    "slot": "hand"
+  },
+  {
+    "category": "shotgun",
+    "description": "Cleans a hallway the way the war taught it.",
+    "id": "trench-sweeper",
+    "image": {
+      "alt": "Trench Sweeper",
+      "src": "/images/items/trench-sweeper.webp"
+    },
+    "levelRequirement": 48,
+    "name": "Trench Sweeper",
+    "power": 127,
+    "price": 23205,
+    "slot": "hand"
+  },
+  {
+    "category": "shotgun",
+    "description": "Five shells, self-loading, zero patience.",
+    "id": "browning-auto-5",
+    "image": {
+      "alt": "Browning Auto-5",
+      "src": "/images/items/browning-auto-5.webp"
+    },
+    "levelRequirement": 55,
+    "name": "Browning Auto-5",
+    "power": 149,
+    "price": 29850,
+    "slot": "hand"
+  },
+  {
+    "category": "rifle",
+    "description": "Cowboy iron that never went out of style downtown.",
+    "id": "lever-action-carbine",
+    "image": {
+      "alt": "Lever-Action Carbine",
+      "src": "/images/items/lever-action-carbine.webp"
+    },
+    "levelRequirement": 40,
+    "name": "Lever-Action Carbine",
+    "power": 100,
+    "price": 16560,
+    "slot": "hand"
+  },
+  {
+    "category": "rifle",
+    "description": "Old army bolt gun that still holds a grudge at 300 yards.",
+    "id": "springfield-03",
+    "image": {
+      "alt": "Springfield '03",
+      "src": "/images/items/springfield-03.webp"
+    },
+    "levelRequirement": 46,
+    "name": "Springfield '03",
+    "power": 117,
+    "price": 21445,
+    "slot": "hand"
+  },
+  {
+    "category": "rifle",
+    "description": "Eight rounds and a ping that means somebody's day is over.",
+    "id": "m1-garand-surplus",
+    "image": {
+      "alt": "M1 Garand Surplus",
+      "src": "/images/items/m1-garand-surplus.webp"
+    },
+    "levelRequirement": 53,
+    "name": "M1 Garand Surplus",
+    "power": 138,
+    "price": 27875,
+    "slot": "hand"
+  },
+  {
+    "category": "rifle",
+    "description": "British steel with manners and a murderous follow-through.",
+    "id": "enfield-no4",
+    "image": {
+      "alt": "Enfield No. 4",
+      "src": "/images/items/enfield-no4.webp"
+    },
+    "levelRequirement": 60,
+    "name": "Enfield No. 4",
+    "power": 156,
+    "price": 35065,
+    "slot": "hand"
+  },
+  {
+    "category": "rifle",
+    "description": "Made for elk; repurposed for bigger game.",
+    "id": "hunting-30-06",
+    "image": {
+      "alt": "Hunting .30-06",
+      "src": "/images/items/hunting-30-06.webp"
+    },
+    "levelRequirement": 67,
+    "name": "Hunting .30-06",
+    "power": 178,
+    "price": 43005,
+    "slot": "hand"
+  },
+  {
+    "category": "rifle",
+    "description": "Tuned by a gunsmith who asks no questions.",
+    "id": "custom-garand",
+    "image": {
+      "alt": "Custom Garand",
+      "src": "/images/items/custom-garand.webp"
+    },
+    "levelRequirement": 75,
+    "name": "Custom Garand",
+    "power": 203,
+    "price": 52985,
+    "slot": "hand"
+  },
+  {
+    "category": "sniper",
+    "description": "Puts the whole city within arm's reach.",
+    "id": "scoped-springfield",
+    "image": {
+      "alt": "Scoped Springfield",
+      "src": "/images/items/scoped-springfield.webp"
+    },
+    "levelRequirement": 50,
+    "name": "Scoped Springfield",
+    "power": 130,
+    "price": 25025,
+    "slot": "hand"
+  },
+  {
+    "category": "sniper",
+    "description": "Lives on fire escapes and settles debts from above.",
+    "id": "rooftop-special",
+    "image": {
+      "alt": "Rooftop Special",
+      "src": "/images/items/rooftop-special.webp"
+    },
+    "levelRequirement": 57,
+    "name": "Rooftop Special",
+    "power": 151,
+    "price": 31890,
+    "slot": "hand"
+  },
+  {
+    "category": "sniper",
+    "description": "The last thing they never hear.",
+    "id": "whisper-scope",
+    "image": {
+      "alt": "Whisper Scope",
+      "src": "/images/items/whisper-scope.webp"
+    },
+    "levelRequirement": 64,
+    "name": "Whisper Scope",
+    "power": 166,
+    "price": 39510,
+    "slot": "hand"
+  },
+  {
+    "category": "sniper",
+    "description": "Government-issue precision, privately employed.",
+    "id": "gi-sniper-03a4",
+    "image": {
+      "alt": "G.I. Sniper '03A4",
+      "src": "/images/items/gi-sniper-03a4.webp"
+    },
+    "levelRequirement": 71,
+    "name": "G.I. Sniper '03A4",
+    "power": 192,
+    "price": 47875,
+    "slot": "hand"
+  },
+  {
+    "category": "sniper",
+    "description": "Competition barrel, criminal intentions.",
+    "id": "match-grade-enfield",
+    "image": {
+      "alt": "Match-Grade Enfield",
+      "src": "/images/items/match-grade-enfield.webp"
+    },
+    "levelRequirement": 78,
+    "name": "Match-Grade Enfield",
+    "power": 215,
+    "price": 56970,
+    "slot": "hand"
+  },
+  {
+    "category": "sniper",
+    "description": "Ten blocks away is close enough.",
+    "id": "the-longshot",
+    "image": {
+      "alt": "The Longshot",
+      "src": "/images/items/the-longshot.webp"
+    },
+    "levelRequirement": 85,
+    "name": "The Longshot",
+    "power": 238,
+    "price": 66790,
+    "slot": "hand"
+  },
+  {
+    "category": "machine_gun",
+    "description": "Walking fire, just like the manual promised.",
+    "id": "bar-m1918",
+    "image": {
+      "alt": "BAR M1918",
+      "src": "/images/items/bar-m1918.webp"
+    },
+    "levelRequirement": 70,
+    "name": "BAR M1918",
+    "power": 182,
+    "price": 46635,
+    "slot": "hand"
+  },
+  {
+    "category": "machine_gun",
+    "description": "Pan-fed thunder off the back of a truck.",
+    "id": "lewis-gun",
+    "image": {
+      "alt": "Lewis Gun",
+      "src": "/images/items/lewis-gun.webp"
+    },
+    "levelRequirement": 76,
+    "name": "Lewis Gun",
+    "power": 201,
+    "price": 54295,
+    "slot": "hand"
+  },
+  {
+    "category": "machine_gun",
+    "description": "Sounds like tearing canvas; leaves nothing to repair.",
+    "id": "trophy-mg42",
+    "image": {
+      "alt": "Trophy MG42",
+      "src": "/images/items/trophy-mg42.webp"
+    },
+    "levelRequirement": 82,
+    "name": "Trophy MG42",
+    "power": 221,
+    "price": 62495,
+    "slot": "hand"
+  },
+  {
+    "category": "machine_gun",
+    "description": "Belt-fed arithmetic that always adds up in your favor.",
+    "id": "browning-m1919",
+    "image": {
+      "alt": "Browning M1919",
+      "src": "/images/items/browning-m1919.webp"
+    },
+    "levelRequirement": 88,
+    "name": "Browning M1919",
+    "power": 242,
+    "price": 71215,
+    "slot": "hand"
+  },
+  {
+    "category": "machine_gun",
+    "description": "Old-world artillery for new-world empires.",
+    "id": "water-cooled-maxim",
+    "image": {
+      "alt": "Water-Cooled Maxim",
+      "src": "/images/items/water-cooled-maxim.webp"
+    },
+    "levelRequirement": 94,
+    "name": "Water-Cooled Maxim",
+    "power": 244,
+    "price": 80455,
+    "slot": "hand"
+  },
+  {
+    "category": "machine_gun",
+    "description": "Plays one song, and the whole city dances.",
+    "id": "the-chicago-organ",
+    "image": {
+      "alt": "The Chicago Organ",
+      "src": "/images/items/the-chicago-organ.webp"
+    },
+    "levelRequirement": 100,
+    "name": "The Chicago Organ",
+    "power": 250,
+    "price": 90215,
+    "slot": "hand"
+  },
+  {
+    "armor": 6,
+    "category": "armor",
+    "description": "Dockworker's padding that shrugs off knuckles and worse.",
+    "id": "padded-work-vest",
+    "image": {
+      "alt": "Padded Work Vest",
+      "src": "/images/items/padded-work-vest.webp"
+    },
+    "levelRequirement": 5,
+    "name": "Padded Work Vest",
+    "power": 3,
+    "price": 245,
+    "slot": "torso"
+  },
+  {
+    "armor": 18,
+    "category": "armor",
+    "description": "Thick enough to bounce a bottle and most bad ideas.",
+    "id": "doormans-leather-jacket",
+    "image": {
+      "alt": "Doorman's Leather Jacket",
+      "src": "/images/items/doormans-leather-jacket.webp"
+    },
+    "levelRequirement": 15,
+    "name": "Doorman's Leather Jacket",
+    "power": 9,
+    "price": 1890,
+    "slot": "torso"
+  },
+  {
+    "armor": 34,
+    "category": "armor",
+    "description": "Wool outside, steel plates where it counts.",
+    "id": "lined-greatcoat",
+    "image": {
+      "alt": "Lined Greatcoat",
+      "src": "/images/items/lined-greatcoat.webp"
+    },
+    "levelRequirement": 28,
+    "name": "Lined Greatcoat",
+    "power": 17,
+    "price": 5995,
+    "slot": "torso"
+  },
+  {
+    "armor": 50,
+    "category": "armor",
+    "description": "Kept a tail gunner alive; it'll keep you in business.",
+    "id": "surplus-flak-vest",
+    "image": {
+      "alt": "Surplus Flak Vest",
+      "src": "/images/items/surplus-flak-vest.webp"
+    },
+    "levelRequirement": 42,
+    "name": "Surplus Flak Vest",
+    "power": 25,
+    "price": 12690,
+    "slot": "torso"
+  },
+  {
+    "armor": 70,
+    "category": "armor",
+    "description": "Tailored sharp enough to hide the steel underneath.",
+    "effects": [
+      {
+        "type": "approachBonus",
+        "approach": "social",
+        "value": 9
+      }
+    ],
+    "id": "armored-pinstripe-suit",
+    "image": {
+      "alt": "Armored Pinstripe Suit",
+      "src": "/images/items/armored-pinstripe-suit.webp"
+    },
+    "levelRequirement": 58,
+    "name": "Armored Pinstripe Suit",
+    "power": 35,
+    "price": 23050,
+    "slot": "torso"
+  },
+  {
+    "armor": 90,
+    "category": "armor",
+    "description": "A trench coat that takes the bullet and keeps its crease.",
+    "id": "ballistic-overcoat",
+    "image": {
+      "alt": "Ballistic Overcoat",
+      "src": "/images/items/ballistic-overcoat.webp"
+    },
+    "levelRequirement": 75,
+    "name": "Ballistic Overcoat",
+    "power": 45,
+    "price": 37090,
+    "slot": "torso"
+  },
+  {
+    "armor": 114,
+    "category": "armor",
+    "description": "Cashmere over plate; the last word in untouchable.",
+    "effects": [
+      {
+        "type": "skillBonus",
+        "skill": "leadership",
+        "value": 12
+      },
+      {
+        "type": "heatReduction",
+        "value": 6
+      }
+    ],
+    "id": "dons-armored-topcoat",
+    "image": {
+      "alt": "Don's Armored Topcoat",
+      "src": "/images/items/dons-armored-topcoat.webp"
+    },
+    "levelRequirement": 95,
+    "name": "Don's Armored Topcoat",
+    "power": 57,
+    "price": 57435,
+    "slot": "torso"
+  },
+  {
+    "armor": 2,
+    "category": "headgear",
+    "description": "Pulls low enough to make eyes forget your face.",
+    "id": "flat-cap",
+    "image": {
+      "alt": "Flat Cap",
+      "src": "/images/items/flat-cap.webp"
+    },
+    "levelRequirement": 3,
+    "name": "Flat Cap",
+    "power": 1,
+    "price": 60,
+    "slot": "head"
+  },
+  {
+    "armor": 6,
+    "category": "headgear",
+    "description": "The brim that keeps the streetlights out of your business.",
+    "id": "wool-fedora",
+    "image": {
+      "alt": "Wool Fedora",
+      "src": "/images/items/wool-fedora.webp"
+    },
+    "levelRequirement": 12,
+    "name": "Wool Fedora",
+    "power": 5,
+    "price": 805,
+    "slot": "head"
+  },
+  {
+    "armor": 11,
+    "category": "headgear",
+    "description": "Black wool and no face worth remembering.",
+    "effects": [
+      {
+        "type": "approachBonus",
+        "approach": "quiet",
+        "value": 3
+      }
+    ],
+    "id": "burglars-hood",
+    "image": {
+      "alt": "Burglar's Hood",
+      "src": "/images/items/burglars-hood.webp"
+    },
+    "levelRequirement": 22,
+    "name": "Burglar's Hood",
+    "power": 9,
+    "price": 2465,
+    "slot": "head"
+  },
+  {
+    "armor": 18,
+    "category": "headgear",
+    "description": "Army steel that's already survived worse than you will.",
+    "id": "surplus-steel-helmet",
+    "image": {
+      "alt": "Surplus Steel Helmet",
+      "src": "/images/items/surplus-steel-helmet.webp"
+    },
+    "levelRequirement": 35,
+    "name": "Surplus Steel Helmet",
+    "power": 14,
+    "price": 5820,
+    "slot": "head"
+  },
+  {
+    "armor": 25,
+    "category": "headgear",
+    "description": "Breathes easy while the room learns to regret.",
+    "effects": [
+      {
+        "type": "heatReduction",
+        "value": 8
+      }
+    ],
+    "id": "gas-mask",
+    "image": {
+      "alt": "Gas Mask",
+      "src": "/images/items/gas-mask.webp"
+    },
+    "levelRequirement": 50,
+    "name": "Gas Mask",
+    "power": 20,
+    "price": 11260,
+    "slot": "head"
+  },
+  {
+    "armor": 35,
+    "category": "headgear",
+    "description": "Nothing above the collar but bad news.",
+    "effects": [
+      {
+        "type": "skillBonus",
+        "skill": "stealth",
+        "value": 10
+      },
+      {
+        "type": "approachBonus",
+        "approach": "quiet",
+        "value": 5
+      }
+    ],
+    "id": "executioners-balaclava",
+    "image": {
+      "alt": "Executioner's Balaclava",
+      "src": "/images/items/executioners-balaclava.webp"
+    },
+    "levelRequirement": 70,
+    "name": "Executioner's Balaclava",
+    "power": 28,
+    "price": 20985,
+    "slot": "head"
+  },
+  {
+    "armor": 45,
+    "category": "headgear",
+    "description": "The hat that makes rooms go quiet on arrival.",
+    "effects": [
+      {
+        "type": "skillBonus",
+        "skill": "leadership",
+        "value": 12
+      },
+      {
+        "type": "approachBonus",
+        "approach": "social",
+        "value": 6
+      }
+    ],
+    "id": "kingpin-homburg",
+    "image": {
+      "alt": "Kingpin Homburg",
+      "src": "/images/items/kingpin-homburg.webp"
+    },
+    "levelRequirement": 90,
+    "name": "Kingpin Homburg",
+    "power": 36,
+    "price": 33405,
+    "slot": "head"
+  },
+  {
+    "armor": 1,
+    "category": "footwear",
+    "description": "Scuffed enough to blend in anywhere south of Main.",
+    "id": "worn-oxfords",
+    "image": {
+      "alt": "Worn Oxfords",
+      "src": "/images/items/worn-oxfords.webp"
+    },
+    "levelRequirement": 4,
+    "name": "Worn Oxfords",
+    "power": 1,
+    "price": 80,
+    "slot": "feet"
+  },
+  {
+    "armor": 5,
+    "category": "footwear",
+    "description": "Soles so soft the floorboards never get a word in.",
+    "effects": [
+      {
+        "type": "approachBonus",
+        "approach": "quiet",
+        "value": 2
+      }
+    ],
+    "id": "crepe-sole-creepers",
+    "image": {
+      "alt": "Crepe-Sole Creepers",
+      "src": "/images/items/crepe-sole-creepers.webp"
+    },
+    "levelRequirement": 15,
+    "name": "Crepe-Sole Creepers",
+    "power": 5,
+    "price": 945,
+    "slot": "feet"
+  },
+  {
+    "armor": 8,
+    "category": "footwear",
+    "description": "For doors and shins that won't open politely.",
+    "id": "steel-toe-boots",
+    "image": {
+      "alt": "Steel-Toe Boots",
+      "src": "/images/items/steel-toe-boots.webp"
+    },
+    "levelRequirement": 28,
+    "name": "Steel-Toe Boots",
+    "power": 8,
+    "price": 2995,
+    "slot": "feet"
+  },
+  {
+    "armor": 14,
+    "category": "footwear",
+    "description": "Polished bright enough to distract from the shoulder holster.",
+    "id": "wingtip-brogues",
+    "image": {
+      "alt": "Wingtip Brogues",
+      "src": "/images/items/wingtip-brogues.webp"
+    },
+    "levelRequirement": 45,
+    "name": "Wingtip Brogues",
+    "power": 14,
+    "price": 7205,
+    "slot": "feet"
+  },
+  {
+    "armor": 20,
+    "category": "footwear",
+    "description": "Built for rooftops, fire escapes, and clean exits.",
+    "effects": [
+      {
+        "type": "skillBonus",
+        "skill": "stealth",
+        "value": 10
+      }
+    ],
+    "id": "rubber-sole-prowlers",
+    "image": {
+      "alt": "Rubber-Sole Prowlers",
+      "src": "/images/items/rubber-sole-prowlers.webp"
+    },
+    "levelRequirement": 65,
+    "name": "Rubber-Sole Prowlers",
+    "power": 20,
+    "price": 14230,
+    "slot": "feet"
+  },
+  {
+    "armor": 26,
+    "category": "footwear",
+    "description": "Imported, immaculate, and worth more than the man staring at them.",
+    "id": "italian-leather-loafers",
+    "image": {
+      "alt": "Italian Leather Loafers",
+      "src": "/images/items/italian-leather-loafers.webp"
+    },
+    "levelRequirement": 85,
+    "name": "Italian Leather Loafers",
+    "power": 26,
+    "price": 23375,
+    "slot": "feet"
+  },
+  {
+    "category": "utility",
+    "description": "Keeps the iron close and the draw smooth.",
+    "id": "leather-holster",
+    "image": {
+      "alt": "Leather Holster",
+      "src": "/images/items/leather-holster.webp"
+    },
+    "levelRequirement": 5,
+    "name": "Leather Holster",
+    "power": 2,
+    "price": 160,
+    "slot": "waist",
+    "armor": 2
+  },
+  {
+    "category": "utility",
+    "description": "Every honest tool a dishonest job could need.",
+    "id": "canvas-tool-belt",
+    "image": {
+      "alt": "Canvas Tool Belt",
+      "src": "/images/items/canvas-tool-belt.webp"
+    },
+    "levelRequirement": 14,
+    "name": "Canvas Tool Belt",
+    "power": 4,
+    "price": 1070,
+    "slot": "waist",
+    "armor": 4
+  },
+  {
+    "category": "utility",
+    "description": "Twin rigs under the jacket, drawn faster than doubt.",
+    "id": "shoulder-holster-rig",
+    "image": {
+      "alt": "Shoulder Holster Rig",
+      "src": "/images/items/shoulder-holster-rig.webp"
+    },
+    "levelRequirement": 26,
+    "name": "Shoulder Holster Rig",
+    "power": 8,
+    "price": 3360,
+    "slot": "waist",
+    "armor": 8
+  },
+  {
+    "category": "utility",
+    "description": "Wears the whole gunfight across your chest.",
+    "id": "ammo-bandolier",
+    "image": {
+      "alt": "Ammo Bandolier",
+      "src": "/images/items/ammo-bandolier.webp"
+    },
+    "levelRequirement": 40,
+    "name": "Ammo Bandolier",
+    "power": 12,
+    "price": 7450,
+    "slot": "waist",
+    "armor": 12
+  },
+  {
+    "category": "utility",
+    "description": "Spare drums and long sticks; the argument never runs dry.",
+    "effects": [
+      {
+        "type": "approachBonus",
+        "approach": "force",
+        "value": 8
+      }
+    ],
+    "id": "extended-magazine-rig",
+    "image": {
+      "alt": "Extended Magazine Rig",
+      "src": "/images/items/extended-magazine-rig.webp"
+    },
+    "levelRequirement": 55,
+    "name": "Extended Magazine Rig",
+    "power": 17,
+    "price": 13430,
+    "slot": "waist",
+    "armor": 17
+  },
+  {
+    "category": "utility",
+    "description": "Hears the prowl cars coming three blocks out.",
+    "effects": [
+      {
+        "type": "heatReduction",
+        "value": 10
+      }
+    ],
+    "id": "radio-scanner-belt",
+    "image": {
+      "alt": "Radio Scanner Belt",
+      "src": "/images/items/radio-scanner-belt.webp"
+    },
+    "levelRequirement": 70,
+    "name": "Radio Scanner Belt",
+    "power": 21,
+    "price": 20985,
+    "slot": "waist",
+    "tags": [
+      "scanner"
+    ],
+    "armor": 21
+  },
+  {
+    "category": "utility",
+    "description": "Hand-tooled leather for a man who never draws second.",
+    "effects": [
+      {
+        "type": "approachBonus",
+        "approach": "force",
+        "value": 12
+      }
+    ],
+    "id": "kingpin-gun-belt",
+    "image": {
+      "alt": "Kingpin Gun Belt",
+      "src": "/images/items/kingpin-gun-belt.webp"
+    },
+    "levelRequirement": 90,
+    "name": "Kingpin Gun Belt",
+    "power": 27,
+    "price": 33405,
+    "slot": "waist",
+    "armor": 27
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Bottled trouble with a burning rag for a fuse.",
+    "id": "molotov-cocktail",
+    "image": {
+      "alt": "Molotov Cocktail",
+      "src": "/images/items/molotov-cocktail.webp"
+    },
+    "levelRequirement": 8,
+    "name": "Molotov Cocktail",
+    "power": 12,
+    "price": 110,
+    "slot": null,
+    "tags": [
+      "explosive"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Turns any room into a getaway.",
+    "id": "smoke-canister",
+    "image": {
+      "alt": "Smoke Canister",
+      "src": "/images/items/smoke-canister.webp"
+    },
+    "levelRequirement": 10,
+    "name": "Smoke Canister",
+    "power": 5,
+    "price": 160,
+    "slot": null,
+    "tags": [
+      "smoke"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Steals ten seconds of everybody's eyesight.",
+    "id": "flash-powder-grenade",
+    "image": {
+      "alt": "Flash Powder Grenade",
+      "src": "/images/items/flash-powder-grenade.webp"
+    },
+    "levelRequirement": 12,
+    "name": "Flash Powder Grenade",
+    "power": 6,
+    "price": 215,
+    "slot": null,
+    "tags": [
+      "flashbang"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Knocks once, and the door stops being a door.",
+    "id": "door-buster-charge",
+    "image": {
+      "alt": "Door-Buster Charge",
+      "src": "/images/items/door-buster-charge.webp"
+    },
+    "levelRequirement": 25,
+    "name": "Door-Buster Charge",
+    "power": 38,
+    "price": 690,
+    "slot": null,
+    "tags": [
+      "breaching",
+      "explosive"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Army surplus that ends meetings early.",
+    "id": "pineapple-grenade",
+    "image": {
+      "alt": "Pineapple Grenade",
+      "src": "/images/items/pineapple-grenade.webp"
+    },
+    "levelRequirement": 35,
+    "name": "Pineapple Grenade",
+    "power": 53,
+    "price": 1180,
+    "slot": null,
+    "tags": [
+      "explosive"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "A wall of grey you could hide a whole crew behind.",
+    "id": "military-smoke-grenade",
+    "image": {
+      "alt": "Military Smoke Grenade",
+      "src": "/images/items/military-smoke-grenade.webp"
+    },
+    "levelRequirement": 40,
+    "name": "Military Smoke Grenade",
+    "power": 20,
+    "price": 1465,
+    "slot": null,
+    "tags": [
+      "smoke"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Daylight in a can, cashed in all at once.",
+    "id": "magnesium-flashbang",
+    "image": {
+      "alt": "Magnesium Flashbang",
+      "src": "/images/items/magnesium-flashbang.webp"
+    },
+    "levelRequirement": 45,
+    "name": "Magnesium Flashbang",
+    "power": 23,
+    "price": 1765,
+    "slot": null,
+    "tags": [
+      "flashbang"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Three sticks of instant renovation.",
+    "id": "dynamite-bundle",
+    "image": {
+      "alt": "Dynamite Bundle",
+      "src": "/images/items/dynamite-bundle.webp"
+    },
+    "levelRequirement": 55,
+    "name": "Dynamite Bundle",
+    "power": 83,
+    "price": 2435,
+    "slot": null,
+    "tags": [
+      "explosive",
+      "breaching"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "For walls, vaults, and other stubborn opinions.",
+    "id": "satchel-charge",
+    "image": {
+      "alt": "Satchel Charge",
+      "src": "/images/items/satchel-charge.webp"
+    },
+    "levelRequirement": 65,
+    "name": "Satchel Charge",
+    "power": 98,
+    "price": 3180,
+    "slot": null,
+    "tags": [
+      "breaching",
+      "explosive"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Military-grade fog that swallows searchlights whole.",
+    "id": "chemical-smoke-shell",
+    "image": {
+      "alt": "Chemical Smoke Shell",
+      "src": "/images/items/chemical-smoke-shell.webp"
+    },
+    "levelRequirement": 75,
+    "name": "Chemical Smoke Shell",
+    "power": 38,
+    "price": 4000,
+    "slot": null,
+    "tags": [
+      "smoke"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "Rings every bell in a city block's worth of skulls.",
+    "id": "concussion-flash-charge",
+    "image": {
+      "alt": "Concussion Flash Charge",
+      "src": "/images/items/concussion-flash-charge.webp"
+    },
+    "levelRequirement": 80,
+    "name": "Concussion Flash Charge",
+    "power": 40,
+    "price": 4435,
+    "slot": null,
+    "tags": [
+      "flashbang"
+    ]
+  },
+  {
+    "category": "explosive",
+    "consumable": true,
+    "description": "For when the building itself is the witness.",
+    "id": "blockbuster-charge",
+    "image": {
+      "alt": "Blockbuster Charge",
+      "src": "/images/items/blockbuster-charge.webp"
+    },
+    "levelRequirement": 95,
+    "name": "Blockbuster Charge",
+    "power": 143,
+    "price": 5840,
+    "slot": null,
+    "tags": [
+      "explosive",
+      "breaching"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Sings through a padlock like it was never there.",
+    "id": "lockpick-set",
+    "image": {
+      "alt": "Lockpick Set",
+      "src": "/images/items/lockpick-set.webp"
+    },
+    "levelRequirement": 2,
+    "name": "Lockpick Set",
+    "power": 0,
+    "price": 25,
+    "slot": null,
+    "tags": [
+      "lockpick"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "The universal key for everything the picks can't charm.",
+    "id": "crowbar",
+    "image": {
+      "alt": "Crowbar",
+      "src": "/images/items/crowbar.webp"
+    },
+    "levelRequirement": 5,
+    "name": "Crowbar",
+    "power": 0,
+    "price": 125,
+    "slot": null,
+    "tags": [
+      "crowbar"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Gauze, iodine, and no questions at the hospital.",
+    "id": "first-aid-tin",
+    "image": {
+      "alt": "First-Aid Tin",
+      "src": "/images/items/first-aid-tin.webp"
+    },
+    "levelRequirement": 10,
+    "name": "First-Aid Tin",
+    "power": 0,
+    "price": 400,
+    "slot": null,
+    "use": {
+      "health": 25
+    }
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Chain-link fences and padlocks give up on sight.",
+    "id": "bolt-cutters",
+    "image": {
+      "alt": "Bolt Cutters",
+      "src": "/images/items/bolt-cutters.webp"
+    },
+    "levelRequirement": 12,
+    "name": "Bolt Cutters",
+    "power": 0,
+    "price": 545,
+    "slot": null,
+    "tags": [
+      "breaching"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Forty feet of the quiet way in.",
+    "id": "climbing-rope",
+    "image": {
+      "alt": "Climbing Rope",
+      "src": "/images/items/climbing-rope.webp"
+    },
+    "levelRequirement": 15,
+    "name": "Climbing Rope",
+    "power": 0,
+    "price": 800,
+    "slot": null,
+    "tags": [
+      "climbing"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "A new face for every job and a moustache to spare.",
+    "id": "disguise-kit",
+    "image": {
+      "alt": "Disguise Kit",
+      "src": "/images/items/disguise-kit.webp"
+    },
+    "levelRequirement": 18,
+    "name": "Disguise Kit",
+    "power": 0,
+    "price": 1090,
+    "slot": null,
+    "tags": [
+      "disguise"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Lets you sit in on conversations you weren't invited to.",
+    "id": "wiretap-kit",
+    "image": {
+      "alt": "Wiretap Kit",
+      "src": "/images/items/wiretap-kit.webp"
+    },
+    "levelRequirement": 30,
+    "name": "Wiretap Kit",
+    "power": 0,
+    "price": 2595,
+    "slot": null,
+    "tags": [
+      "hacking"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "A tuned V8 idling exactly where you'll need it.",
+    "id": "getaway-car-keys",
+    "image": {
+      "alt": "Getaway Car Keys",
+      "src": "/images/items/getaway-car-keys.webp"
+    },
+    "levelRequirement": 35,
+    "name": "Getaway Car Keys",
+    "power": 0,
+    "price": 3375,
+    "slot": null,
+    "tags": [
+      "getaway"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Every police call in the city, delivered to your ear.",
+    "id": "radio-scanner",
+    "image": {
+      "alt": "Radio Scanner",
+      "src": "/images/items/radio-scanner.webp"
+    },
+    "levelRequirement": 40,
+    "name": "Radio Scanner",
+    "power": 0,
+    "price": 4230,
+    "slot": null,
+    "tags": [
+      "scanner"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Stitches bullet holes in the back of a moving car.",
+    "id": "field-surgeon-kit",
+    "image": {
+      "alt": "Field Surgeon Kit",
+      "src": "/images/items/field-surgeon-kit.webp"
+    },
+    "levelRequirement": 45,
+    "name": "Field Surgeon Kit",
+    "power": 0,
+    "price": 5170,
+    "slot": null,
+    "use": {
+      "health": 50
+    }
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Bores through a vault door while the city sleeps.",
+    "id": "safecracker-drill",
+    "image": {
+      "alt": "Safecracker Drill",
+      "src": "/images/items/safecracker-drill.webp"
+    },
+    "levelRequirement": 50,
+    "name": "Safecracker Drill",
+    "power": 0,
+    "price": 6185,
+    "slot": null,
+    "tags": [
+      "lockpick"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "Turns every alarm and radio for a block into dead air.",
+    "id": "signal-jammer",
+    "image": {
+      "alt": "Signal Jammer",
+      "src": "/images/items/signal-jammer.webp"
+    },
+    "levelRequirement": 65,
+    "name": "Signal Jammer",
+    "power": 0,
+    "price": 9660,
+    "slot": null,
+    "tags": [
+      "jammer"
+    ]
+  },
+  {
+    "category": "tool",
+    "consumable": true,
+    "description": "A surgeon's whole bag, minus the surgeon's license.",
+    "id": "black-market-trauma-kit",
+    "image": {
+      "alt": "Black Market Trauma Kit",
+      "src": "/images/items/black-market-trauma-kit.webp"
+    },
+    "levelRequirement": 80,
+    "name": "Black Market Trauma Kit",
+    "power": 0,
+    "price": 13750,
+    "slot": null,
+    "use": {
+      "health": 100
+    }
+  },
+  {
+    "id": "pep-pills",
+    "image": {
+      "alt": "Pep Pills",
+      "src": "/images/items/pep-pills.webp"
+    },
+    "name": "Pep Pills",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 2,
+    "price": 45,
+    "description": "Corner-drugstore courage; twenty minutes of feeling bulletproof.",
+    "use": {
+      "stamina": 20,
+      "high": 10
+    }
+  },
+  {
+    "id": "bennies",
+    "image": {
+      "alt": "Bennies",
+      "src": "/images/items/bennies.webp"
+    },
+    "name": "Bennies",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 8,
+    "price": 120,
+    "description": "Truck-stop amphetamines that turn 4 a.m. into noon.",
+    "use": {
+      "stamina": 30,
+      "high": 14
+    }
+  },
+  {
+    "id": "goofballs",
+    "image": {
+      "alt": "Goofballs",
+      "src": "/images/items/goofballs.webp"
+    },
+    "name": "Goofballs",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 15,
+    "price": 290,
+    "description": "Uppers cut with downers — smooth ride, but people notice the eyes.",
+    "use": {
+      "stamina": 40,
+      "heat": 2,
+      "high": 18
+    }
+  },
+  {
+    "id": "white-cross",
+    "image": {
+      "alt": "White Cross",
+      "src": "/images/items/white-cross.webp"
+    },
+    "name": "White Cross",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 25,
+    "price": 600,
+    "description": "Pharmacy-white tablets the long-haul crews swear by.",
+    "use": {
+      "stamina": 55,
+      "high": 20
+    }
+  },
+  {
+    "id": "hop-tar",
+    "image": {
+      "alt": "Hop Tar",
+      "src": "/images/items/hop-tar.webp"
+    },
+    "name": "Hop Tar",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 35,
+    "price": 1100,
+    "description": "Old Quarter opium — melts an evening and the trail behind you with it.",
+    "use": {
+      "stamina": 25,
+      "heat": -8,
+      "high": 24
+    }
+  },
+  {
+    "id": "nose-candy",
+    "image": {
+      "alt": "Nose Candy",
+      "src": "/images/items/nose-candy.webp"
+    },
+    "name": "Nose Candy",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 45,
+    "price": 2100,
+    "description": "Uptown powder; makes you brilliant and loud in that order.",
+    "use": {
+      "stamina": 70,
+      "heat": 4,
+      "high": 25
+    }
+  },
+  {
+    "id": "morphine-ampoule",
+    "image": {
+      "alt": "Morphine Ampoule",
+      "src": "/images/items/morphine-ampoule.webp"
+    },
+    "name": "Morphine Ampoule",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 60,
+    "price": 3900,
+    "description": "Hospital-grade quiet in a glass ampoule — the city stops looking for a man who isn't moving.",
+    "use": {
+      "stamina": 50,
+      "heat": -12,
+      "high": 28
+    }
+  },
+  {
+    "id": "speedball-kit",
+    "image": {
+      "alt": "Speedball Kit",
+      "src": "/images/items/speedball-kit.webp"
+    },
+    "name": "Speedball Kit",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 75,
+    "price": 7200,
+    "description": "Both directions at once. Works every time until it doesn't.",
+    "use": {
+      "stamina": 90,
+      "heat": 6,
+      "high": 32
+    }
+  },
+  {
+    "id": "pharma-amps",
+    "image": {
+      "alt": "Pharma-Grade Amps",
+      "src": "/images/items/pharma-amps.webp"
+    },
+    "name": "Pharma-Grade Amps",
+    "category": "drug",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 90,
+    "price": 13500,
+    "description": "Sealed bottles walked out of a factory loading dock — the pure article.",
+    "use": {
+      "stamina": 100,
+      "high": 24
+    }
+  },
+  {
+    "id": "growler-of-beer",
+    "image": {
+      "alt": "Growler of Beer",
+      "src": "/images/items/growler-of-beer.webp"
+    },
+    "name": "Growler of Beer",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 1,
+    "price": 25,
+    "description": "Warm, flat, and better than nothing after a long night.",
+    "use": {
+      "stamina": 10,
+      "drunk": 8
+    }
+  },
+  {
+    "id": "rotgut-whiskey",
+    "image": {
+      "alt": "Rotgut Whiskey",
+      "src": "/images/items/rotgut-whiskey.webp"
+    },
+    "name": "Rotgut Whiskey",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 4,
+    "price": 60,
+    "description": "Burns going down and takes the day's aches with it.",
+    "use": {
+      "stamina": 18,
+      "drunk": 14
+    }
+  },
+  {
+    "id": "bathtub-gin",
+    "image": {
+      "alt": "Bathtub Gin",
+      "src": "/images/items/bathtub-gin.webp"
+    },
+    "name": "Bathtub Gin",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 10,
+    "price": 140,
+    "description": "Juniper and menace, bottled in somebody's basement.",
+    "use": {
+      "stamina": 25,
+      "drunk": 18
+    }
+  },
+  {
+    "id": "rye-whiskey",
+    "image": {
+      "alt": "Rye Whiskey",
+      "src": "/images/items/rye-whiskey.webp"
+    },
+    "name": "Rye Whiskey",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 18,
+    "price": 340,
+    "description": "The honest stuff — puts steel back in the spine.",
+    "use": {
+      "stamina": 35,
+      "drunk": 20
+    }
+  },
+  {
+    "id": "smuggled-bourbon",
+    "image": {
+      "alt": "Smuggled Bourbon",
+      "src": "/images/items/smuggled-bourbon.webp"
+    },
+    "name": "Smuggled Bourbon",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 30,
+    "price": 800,
+    "description": "Kentucky's finest, minus the tax stamp.",
+    "use": {
+      "stamina": 45,
+      "drunk": 22
+    }
+  },
+  {
+    "id": "french-champagne",
+    "image": {
+      "alt": "French Champagne",
+      "src": "/images/items/french-champagne.webp"
+    },
+    "name": "French Champagne",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 45,
+    "price": 1900,
+    "description": "Celebrating early is a professional hazard worth having.",
+    "use": {
+      "stamina": 55,
+      "drunk": 20
+    }
+  },
+  {
+    "id": "single-malt-scotch",
+    "image": {
+      "alt": "Single Malt Scotch",
+      "src": "/images/items/single-malt-scotch.webp"
+    },
+    "name": "Single Malt Scotch",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 60,
+    "price": 3800,
+    "description": "Older than your rap sheet and twice as smooth.",
+    "use": {
+      "stamina": 65,
+      "drunk": 22
+    }
+  },
+  {
+    "id": "prewar-cognac",
+    "image": {
+      "alt": "Prewar Cognac",
+      "src": "/images/items/prewar-cognac.webp"
+    },
+    "name": "Prewar Cognac",
+    "category": "alcohol",
+    "slot": null,
+    "consumable": true,
+    "power": 0,
+    "levelRequirement": 80,
+    "price": 8500,
+    "description": "What the bosses pour when the city belongs to them.",
+    "use": {
+      "stamina": 80,
+      "drunk": 25
+    }
+  }
+]

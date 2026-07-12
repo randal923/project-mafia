@@ -1,0 +1,1790 @@
+{
+  "framework": {
+    "error": {
+      "body": "Não foi possível concluir a operação. Tente novamente.",
+      "retry": "Tentar novamente",
+      "title": "Algo deu errado"
+    },
+    "globalError": {
+      "body": "Não foi possível carregar o Project Mafia. Tente novamente.",
+      "retry": "Recarregar",
+      "title": "A operação falhou"
+    },
+    "notFound": {
+      "body": "Essa página não existe ou foi movida.",
+      "home": "Voltar para a cidade",
+      "title": "Página não encontrada"
+    }
+  },
+  "metadata": {
+    "description": "Console de operações narrativas para um jogo de estratégia criminal no navegador.",
+    "pages": {
+      "character": "Personagem — Project Mafia",
+      "crew": "Equipe — Project Mafia",
+      "empire": "Império — Project Mafia",
+      "home": "Notícias — Project Mafia",
+      "jobs": "Trabalhos — Project Mafia",
+      "loadout": "Equipamento — Project Mafia",
+      "login": "Entrar — Project Mafia",
+      "map": "A Cidade — Project Mafia",
+      "newspaper": "Diário da Cidade — Project Mafia",
+      "rankings": "Classificação — Project Mafia",
+      "store": "Loja — Project Mafia"
+    },
+    "title": "Project Mafia"
+  },
+  "authGuard": {
+    "verifying": "Verificando credenciais…"
+  },
+  "catalog": {
+    "buildings": {
+      "casino": {
+        "description": "Mesas, roletas e chances que obedecem a você. A joia da coroa nos livros de qualquer família.",
+        "name": "Cassino"
+      },
+      "chop-shop": {
+        "description": "Carros entram inteiros, peças saem pelos fundos. Seus receptadores pagam 65 centavos por dólar pelo equipamento, em vez de 50.",
+        "name": "Desmanche"
+      },
+      "city-hall-annex": {
+        "description": "Alvarás, zoneamento e um escrivão que te deve um favor. A manutenção do território sai 25% mais barata na cidade inteira.",
+        "name": "Anexo da Prefeitura"
+      },
+      "drug-lab": {
+        "description": "Vidraria, queimadores e um produto que a rua não cansa de pedir. Quente em todos os sentidos.",
+        "name": "Laboratório de Drogas"
+      },
+      "fight-club": {
+        "description": "Dois homens entram, uma bolsa sai. A banca aceita apostas dos dois lados e a casa nunca sangra.",
+        "name": "Clube de Luta"
+      },
+      "hillcrest-general": {
+        "description": "Alas privativas e cirurgiões discretos. Você e sua equipe se recuperam duas vezes mais rápido.",
+        "name": "Hospital Geral Hillcrest"
+      },
+      "laundromat": {
+        "description": "As máquinas zumbem, os livros ficam limpos. Uma renda discreta que mantém seu nome fora do boletim.",
+        "name": "Lavanderia"
+      },
+      "loan-office": {
+        "description": "Condições amigáveis, cobranças nem tanto. Os juros do agiota rendem de qualquer jeito.",
+        "name": "Escritório de Empréstimos"
+      },
+      "pawn-shop": {
+        "description": "Tudo tem etiqueta de preço e uma história. As avaliações são criativas; as margens, não.",
+        "name": "Casa de Penhores"
+      },
+      "pizzeria": {
+        "description": "A melhor fatia do quarteirão, e ninguém pergunta o que passa pelos fundos.",
+        "name": "Pizzaria"
+      },
+      "police-precinct-hq": {
+        "description": "A mesa a que todo guarda de ronda responde. A família que a controla paga 30% menos por cada envelope na cidade.",
+        "name": "Delegacia Central"
+      },
+      "riverside-freight-yard": {
+        "description": "Trilhos, caminhões e manifestos que dizem o que você precisar. Trabalhos custam 15% menos energia para quem o controla.",
+        "name": "Pátio de Cargas de Riverside"
+      },
+      "safehouse": {
+        "description": "Um lugar tranquilo, lençóis limpos e um médico que atende em domicílio. Membros feridos da equipe ficam de pé duas vezes mais rápido.",
+        "name": "Casa Segura"
+      },
+      "smuggling-den": {
+        "description": "Caixotes que pulam a alfândega e caminhões que rodam de madrugada. Volume é o negócio inteiro.",
+        "name": "Covil de Contrabando"
+      },
+      "speakeasy": {
+        "description": "Uma senha, um piano e prateleiras do bom. Cidade sedenta, clientela fiel.",
+        "name": "Bar Clandestino"
+      },
+      "strip-club": {
+        "description": "Veludo, neon e um couvert que ninguém discute. O caixa nunca esfria.",
+        "name": "Clube de Striptease"
+      },
+      "taxi-company": {
+        "description": "Táxis que conhecem cada beco e nunca mantêm registro. Corridas constantes, recados melhores.",
+        "name": "Companhia de Táxi"
+      },
+      "the-grand-casino": {
+        "description": "O maior salão da cidade, e a vantagem da casa obedece a quem o controla.",
+        "name": "O Grande Cassino"
+      },
+      "the-port": {
+        "description": "Guindastes, contêineres e fiscais da alfândega na folha de pagamento. A loja vende com 10% de desconto para quem o controla.",
+        "name": "O Porto"
+      },
+      "union-hall": {
+        "description": "Cada guindaste e cada piquete da cidade escuta o que se decide neste salão. Os salários da equipe caem 20% para quem o controla.",
+        "name": "Sede do Sindicato"
+      },
+      "warehouse": {
+        "description": "Fileiras de caixotes que ninguém inventaria. Cada caixa sua acumula mais quatro horas de parte.",
+        "name": "Armazém"
+      },
+      "unknown": {
+        "description": "Os detalhes do negócio não estão disponíveis.",
+        "name": "Negócio desconhecido"
+      }
+    },
+    "items": {
+      "ammo-bandolier": {
+        "description": "Carrega o tiroteio inteiro atravessado no peito.",
+        "name": "Bandoleira de Munição"
+      },
+      "armored-pinstripe-suit": {
+        "description": "Corte afiado o bastante para esconder o aço por baixo.",
+        "name": "Terno Risca de Giz Blindado"
+      },
+      "ballistic-overcoat": {
+        "description": "Um sobretudo que leva a bala e não perde o vinco.",
+        "name": "Sobretudo Balístico"
+      },
+      "bar-m1918": {
+        "description": "Fogo em marcha, exatamente como o manual prometia.",
+        "name": "BAR M1918"
+      },
+      "baseball-bat": {
+        "description": "Direto do campinho, e nunca erra uma tacada.",
+        "name": "Taco de Beisebol"
+      },
+      "bathtub-gin": {
+        "description": "Zimbro e ameaça, engarrafados no porão de alguém.",
+        "name": "Gim de Banheira"
+      },
+      "bennies": {
+        "description": "Anfetamina de posto de estrada que transforma quatro da manhã em meio-dia.",
+        "name": "Bolinhas"
+      },
+      "black-market-trauma-kit": {
+        "description": "A maleta inteira de um cirurgião, menos a licença do cirurgião.",
+        "name": "Kit de Trauma do Mercado Negro"
+      },
+      "blockbuster-charge": {
+        "description": "Para quando o próprio prédio é a testemunha.",
+        "name": "Carga Arrasa-Quarteirão"
+      },
+      "bolt-cutters": {
+        "description": "Cercas de alambrado e cadeados desistem só de ver.",
+        "name": "Alicate de Corte"
+      },
+      "brass-knuckles": {
+        "description": "Quatro anéis de persuasão para conversas que azedam.",
+        "name": "Soco-Inglês"
+      },
+      "browning-auto-5": {
+        "description": "Cinco cartuchos, recarga automática, paciência zero.",
+        "name": "Browning Auto-5"
+      },
+      "browning-m1919": {
+        "description": "Aritmética alimentada por esteira que sempre fecha a conta a seu favor.",
+        "name": "Browning M1919"
+      },
+      "burglars-hood": {
+        "description": "Lã preta e nenhum rosto que valha a pena lembrar.",
+        "name": "Capuz de Ladrão"
+      },
+      "canvas-tool-belt": {
+        "description": "Toda ferramenta honesta de que um trabalho desonesto pode precisar.",
+        "name": "Cinto de Ferramentas de Lona"
+      },
+      "chemical-smoke-shell": {
+        "description": "Névoa de grau militar que engole holofotes inteiros.",
+        "name": "Projétil de Fumaça Química"
+      },
+      "climbing-rope": {
+        "description": "Doze metros do caminho silencioso para dentro.",
+        "name": "Corda de Escalada"
+      },
+      "coach-gun": {
+        "description": "Um dia guardou diligências; hoje guarda os seus interesses.",
+        "name": "Espingarda de Diligência"
+      },
+      "concussion-flash-charge": {
+        "description": "Faz soar todos os sinos de um quarteirão inteiro de crânios.",
+        "name": "Carga de Luz e Concussão"
+      },
+      "crepe-sole-creepers": {
+        "description": "Solas tão macias que o assoalho nunca consegue dar um pio.",
+        "name": "Sapatos de Sola de Crepe"
+      },
+      "crowbar": {
+        "description": "A chave universal para tudo que as gazuas não conseguem seduzir.",
+        "name": "Pé de Cabra"
+      },
+      "custom-garand": {
+        "description": "Ajustado por um armeiro que não faz perguntas.",
+        "name": "Garand Customizado"
+      },
+      "detective-special": {
+        "description": "O mesmo ferro que os tiras carregam, menos o distintivo.",
+        "name": "Detective Special"
+      },
+      "disguise-kit": {
+        "description": "Um rosto novo para cada trabalho e um bigode de reserva.",
+        "name": "Kit de Disfarce"
+      },
+      "dons-armored-topcoat": {
+        "description": "Caxemira sobre placas de aço; a última palavra em intocável.",
+        "name": "Sobretudo Blindado do Don"
+      },
+      "door-buster-charge": {
+        "description": "Bate uma vez, e a porta deixa de ser porta.",
+        "name": "Carga Arromba-Porta"
+      },
+      "doormans-leather-jacket": {
+        "description": "Grossa o bastante para rebater uma garrafa e a maioria das más ideias.",
+        "name": "Jaqueta de Couro de Leão de Chácara"
+      },
+      "drum-thompson": {
+        "description": "Cem balas no tambor e uma manchete em cada uma.",
+        "name": "Thompson de Tambor"
+      },
+      "dynamite-bundle": {
+        "description": "Três bananas de reforma instantânea.",
+        "name": "Feixe de Dinamite"
+      },
+      "enfield-no4": {
+        "description": "Aço britânico com boas maneiras e um acabamento assassino.",
+        "name": "Enfield Nº 4"
+      },
+      "executioners-balaclava": {
+        "description": "Nada acima do colarinho além de más notícias.",
+        "name": "Balaclava do Executor"
+      },
+      "extended-magazine-rig": {
+        "description": "Tambores de reserva e pentes longos; o argumento nunca seca.",
+        "name": "Cinturão de Carregadores Estendidos"
+      },
+      "field-surgeon-kit": {
+        "description": "Costura buracos de bala no banco de trás de um carro em movimento.",
+        "name": "Kit de Cirurgião de Campo"
+      },
+      "fire-axe": {
+        "description": "Emprestado da parede de um quartel de bombeiros e nunca devolvido.",
+        "name": "Machado de Incêndio"
+      },
+      "first-aid-tin": {
+        "description": "Gaze, iodo e nenhuma pergunta no hospital.",
+        "name": "Lata de Primeiros Socorros"
+      },
+      "flash-powder-grenade": {
+        "description": "Rouba dez segundos da visão de todo mundo.",
+        "name": "Granada de Pólvora-Relâmpago"
+      },
+      "flat-cap": {
+        "description": "Desce baixo o suficiente para fazer os olhos esquecerem seu rosto.",
+        "name": "Boina Inglesa"
+      },
+      "french-champagne": {
+        "description": "Comemorar cedo demais é um risco da profissão que vale a pena correr.",
+        "name": "Champanhe Francês"
+      },
+      "gas-mask": {
+        "description": "Respira tranquilo enquanto a sala aprende a se arrepender.",
+        "name": "Máscara de Gás"
+      },
+      "getaway-car-keys": {
+        "description": "Um V8 regulado, em ponto morto, exatamente onde você vai precisar.",
+        "name": "Chaves do Carro de Fuga"
+      },
+      "gi-sniper-03a4": {
+        "description": "Precisão de fardamento oficial, a serviço particular.",
+        "name": "Sniper G.I. '03A4"
+      },
+      "goofballs": {
+        "description": "Estimulantes cortados com calmantes — a viagem é macia, mas reparam nos olhos.",
+        "name": "Mistureba"
+      },
+      "grease-gun-m3": {
+        "description": "Barata, feia, e mastiga encrenca aos caixotes.",
+        "name": "M3 Grease Gun"
+      },
+      "growler-of-beer": {
+        "description": "Quente, choca e melhor que nada depois de uma noite longa.",
+        "name": "Garrafão de Cerveja"
+      },
+      "hop-tar": {
+        "description": "Ópio do Old Quarter — derrete a noite e, junto com ela, o rastro atrás de você.",
+        "name": "Breu de Ópio"
+      },
+      "hunting-30-06": {
+        "description": "Feito para alces; realocado para caça maior.",
+        "name": "Rifle de Caça .30-06"
+      },
+      "hushed-welrod": {
+        "description": "Tosse uma vez e a sala fica em silêncio para sempre.",
+        "name": "Welrod Silenciada"
+      },
+      "italian-leather-loafers": {
+        "description": "Importados, imaculados e valendo mais que o sujeito que está olhando para eles.",
+        "name": "Mocassins de Couro Italiano"
+      },
+      "kingpin-gun-belt": {
+        "description": "Couro trabalhado à mão para um homem que nunca saca em segundo lugar.",
+        "name": "Cinturão de Armas do Chefão"
+      },
+      "kingpin-homburg": {
+        "description": "O chapéu que faz as salas silenciarem quando chega.",
+        "name": "Homburg do Chefão"
+      },
+      "lead-pipe": {
+        "description": "Diplomacia de encanador, brandida das sombras.",
+        "name": "Cano de Chumbo"
+      },
+      "leather-holster": {
+        "description": "Mantém o ferro por perto e o saque macio.",
+        "name": "Coldre de Couro"
+      },
+      "lever-action-carbine": {
+        "description": "Ferro de caubói que nunca saiu de moda no centro da cidade.",
+        "name": "Carabina de Alavanca"
+      },
+      "lewis-gun": {
+        "description": "Trovão alimentado a tambor na caçamba de um caminhão.",
+        "name": "Metralhadora Lewis"
+      },
+      "lined-greatcoat": {
+        "description": "Lã por fora, placas de aço onde importa.",
+        "name": "Capote Forrado"
+      },
+      "lockpick-set": {
+        "description": "Atravessa um cadeado cantando, como se ele nunca tivesse existido.",
+        "name": "Jogo de Gazuas"
+      },
+      "long-barrel-357": {
+        "description": "Quinze centímetros de cano que tornam qualquer discussão definitiva.",
+        "name": ".357 de Cano Longo"
+      },
+      "m1-garand-surplus": {
+        "description": "Oito balas e um \"ping\" que significa que o dia de alguém acabou.",
+        "name": "M1 Garand Excedente"
+      },
+      "magnesium-flashbang": {
+        "description": "Luz do dia numa lata, gasta toda de uma vez.",
+        "name": "Flashbang de Magnésio"
+      },
+      "match-grade-enfield": {
+        "description": "Cano de competição, intenções criminosas.",
+        "name": "Enfield de Competição"
+      },
+      "military-smoke-grenade": {
+        "description": "Uma parede cinza atrás da qual dá para esconder uma equipe inteira.",
+        "name": "Granada de Fumaça Militar"
+      },
+      "molotov-cocktail": {
+        "description": "Encrenca engarrafada com um trapo em chamas por pavio.",
+        "name": "Coquetel Molotov"
+      },
+      "morphine-ampoule": {
+        "description": "Silêncio de padrão hospitalar numa ampola de vidro — a cidade para de procurar um homem que não está se mexendo.",
+        "name": "Ampola de Morfina"
+      },
+      "nose-candy": {
+        "description": "Pó da zona nobre; deixa você brilhante e barulhento, nessa ordem.",
+        "name": "Pó Fino"
+      },
+      "padded-work-vest": {
+        "description": "Acolchoado de estivador que aguenta soco e coisa pior.",
+        "name": "Colete de Trabalho Acolchoado"
+      },
+      "pep-pills": {
+        "description": "Coragem de farmácia de esquina; vinte minutos se sentindo à prova de bala.",
+        "name": "Pílulas de Ânimo"
+      },
+      "pharma-amps": {
+        "description": "Frascos lacrados que saíram andando do pátio de uma fábrica — o artigo puro.",
+        "name": "Anfetas Farmacêuticas"
+      },
+      "pineapple-grenade": {
+        "description": "Excedente do exército que encerra reuniões mais cedo.",
+        "name": "Granada Abacaxi"
+      },
+      "pocket-derringer": {
+        "description": "Dois tiros de último recurso enfiados no bolso do colete.",
+        "name": "Derringer de Bolso"
+      },
+      "prewar-cognac": {
+        "description": "O que os chefes servem quando a cidade é deles.",
+        "name": "Conhaque Pré-Guerra"
+      },
+      "pump-12-gauge": {
+        "description": "Um tranco no ferrolho limpa a sala dos fundos inteira.",
+        "name": "Calibre 12 Pump"
+      },
+      "radio-scanner": {
+        "description": "Cada chamado da polícia na cidade, entregue direto no seu ouvido.",
+        "name": "Escâner de Rádio"
+      },
+      "radio-scanner-belt": {
+        "description": "Ouve as viaturas chegando a três quarteirões de distância.",
+        "name": "Cinto com Escâner de Rádio"
+      },
+      "riot-gun": {
+        "description": "Feita para dispersar multidões; funciona bem com sociedades também.",
+        "name": "Escopeta Antimotim"
+      },
+      "rooftop-special": {
+        "description": "Vive em escadas de incêndio e acerta contas lá do alto.",
+        "name": "Especial dos Telhados"
+      },
+      "rotgut-whiskey": {
+        "description": "Queima na descida e leva junto as dores do dia.",
+        "name": "Uísque Vagabundo"
+      },
+      "rubber-sole-prowlers": {
+        "description": "Feitos para telhados, escadas de incêndio e saídas limpas.",
+        "name": "Sapatos de Gatuno"
+      },
+      "rye-whiskey": {
+        "description": "O troço honesto — devolve o aço à espinha.",
+        "name": "Uísque de Centeio"
+      },
+      "safecracker-drill": {
+        "description": "Perfura a porta de um cofre enquanto a cidade dorme.",
+        "name": "Furadeira de Cofres"
+      },
+      "satchel-charge": {
+        "description": "Para paredes, cofres e outras opiniões teimosas.",
+        "name": "Carga de Demolição"
+      },
+      "sawed-off-double": {
+        "description": "Serrada curta para a mensagem se espalhar.",
+        "name": "Dois Canos Serrada"
+      },
+      "scoped-springfield": {
+        "description": "Coloca a cidade inteira ao alcance do braço.",
+        "name": "Springfield com Luneta"
+      },
+      "service-45": {
+        "description": "Excedente do exército com um coice que encerra negociações.",
+        "name": ".45 de Serviço"
+      },
+      "shoulder-holster-rig": {
+        "description": "Coldres gêmeos por baixo do paletó, sacados mais rápido que a dúvida.",
+        "name": "Coldre de Ombro Duplo"
+      },
+      "signal-jammer": {
+        "description": "Transforma todo alarme e rádio de um quarteirão em silêncio absoluto.",
+        "name": "Bloqueador de Sinal"
+      },
+      "silenced-sten": {
+        "description": "Cospe a história inteira sem levantar a voz.",
+        "name": "Sten Silenciada"
+      },
+      "single-malt-scotch": {
+        "description": "Mais velho que a sua ficha corrida e duas vezes mais macio.",
+        "name": "Uísque Single Malt"
+      },
+      "smoke-canister": {
+        "description": "Transforma qualquer sala numa rota de fuga.",
+        "name": "Lata de Fumaça"
+      },
+      "smuggled-bourbon": {
+        "description": "O melhor do Kentucky, menos o selo do imposto.",
+        "name": "Bourbon Contrabandeado"
+      },
+      "snub-nose-38": {
+        "description": "Cano curto, pavio curto, cabe embaixo de qualquer casaco.",
+        "name": ".38 Cano Curto"
+      },
+      "speedball-kit": {
+        "description": "As duas direções ao mesmo tempo. Funciona todas as vezes, até o dia em que não funciona.",
+        "name": "Kit de Speedball"
+      },
+      "springfield-03": {
+        "description": "Velho fuzil de ferrolho do exército que ainda guarda rancor a 300 metros.",
+        "name": "Springfield '03"
+      },
+      "steel-toe-boots": {
+        "description": "Para portas e canelas que não abrem por bem.",
+        "name": "Botas com Biqueira de Aço"
+      },
+      "sten-mk-ii": {
+        "description": "Matraca de metal estampado desviada de um caminhão de suprimentos.",
+        "name": "Sten Mk II"
+      },
+      "stiletto-knife": {
+        "description": "Um sussurro de aço que resolve discussões antes que comecem.",
+        "name": "Faca Estilete"
+      },
+      "surplus-flak-vest": {
+        "description": "Manteve um artilheiro de cauda vivo; vai manter você no negócio.",
+        "name": "Colete Antiestilhaço Excedente"
+      },
+      "surplus-mp40": {
+        "description": "Um troféu de guerra que ainda fala encrenca fluentemente.",
+        "name": "MP40 Excedente"
+      },
+      "surplus-steel-helmet": {
+        "description": "Aço do exército que já sobreviveu a coisa pior do que você vai enfrentar.",
+        "name": "Capacete de Aço Excedente"
+      },
+      "the-chicago-organ": {
+        "description": "Toca uma música só, e a cidade inteira dança.",
+        "name": "O Órgão de Chicago"
+      },
+      "the-longshot": {
+        "description": "Dez quarteirões de distância já é perto o bastante.",
+        "name": "O Tiro Longo"
+      },
+      "thompson-m1928": {
+        "description": "A clássica máquina de escrever de Chicago, pronta para o ditado.",
+        "name": "Thompson M1928"
+      },
+      "trench-club": {
+        "description": "Sucata de trincheira com cravos de ferro e rancores antigos embutidos.",
+        "name": "Porrete de Trincheira"
+      },
+      "trench-sweeper": {
+        "description": "Limpa um corredor do jeito que a guerra lhe ensinou.",
+        "name": "Varredora de Trincheira"
+      },
+      "trophy-mg42": {
+        "description": "Soa como lona rasgando; não deixa nada para consertar.",
+        "name": "MG42 de Troféu"
+      },
+      "water-cooled-maxim": {
+        "description": "Artilharia do velho mundo para impérios do novo.",
+        "name": "Maxim Refrigerada a Água"
+      },
+      "whisper-scope": {
+        "description": "A última coisa que eles nunca chegam a ouvir.",
+        "name": "Luneta Sussurro"
+      },
+      "white-cross": {
+        "description": "Comprimidos brancos de farmácia pelos quais as equipes de longa estrada juram de pé junto.",
+        "name": "Cruz Branca"
+      },
+      "wingtip-brogues": {
+        "description": "Polidos o bastante para desviar a atenção do coldre de ombro.",
+        "name": "Sapatos Brogue"
+      },
+      "wiretap-kit": {
+        "description": "Permite acompanhar conversas para as quais você não foi convidado.",
+        "name": "Kit de Escuta"
+      },
+      "wool-fedora": {
+        "description": "A aba que mantém os postes de luz fora dos seus negócios.",
+        "name": "Fedora de Lã"
+      },
+      "worn-oxfords": {
+        "description": "Surrados o bastante para se misturar em qualquer lugar ao sul da rua principal.",
+        "name": "Oxfords Surrados"
+      },
+      "unknown": {
+        "description": "Os detalhes do item não estão disponíveis.",
+        "name": "Item desconhecido"
+      }
+    },
+    "approaches": {
+      "charm": "Charme",
+      "deception": "Enganação",
+      "force": "Força",
+      "opportunistic": "Oportunismo",
+      "quiet": "Discrição",
+      "social": "Influência",
+      "technical": "Técnica"
+    },
+    "archetypes": {
+      "enforcer": {
+        "description": "Bate pesado e não recua. Melhora testes de força nos trabalhos e segura território como uma muralha.",
+        "name": "Brutamontes"
+      },
+      "face": {
+        "description": "Conquista tanto uma sala quanto um alvo. Melhora testes de charme e mantém os clubes cheios.",
+        "name": "Lábia"
+      },
+      "fixer": {
+        "description": "Sabe quem aceita envelopes. Melhora testes de enganação e faz a lei olhar para o outro lado.",
+        "name": "Intermediário"
+      },
+      "ghost": {
+        "description": "Entra e sai sem ser visto. Melhora testes discretos e movimenta mercadoria sem deixar rastro.",
+        "name": "Fantasma"
+      },
+      "mastermind": {
+        "description": "Enxerga os ângulos antes de todo mundo. Melhora testes de oportunismo e cuida dos números.",
+        "name": "Estrategista"
+      },
+      "underboss": {
+        "description": "Comanda equipes para você não precisar. Melhora testes sociais e mantém os soldados na linha.",
+        "name": "Subchefe"
+      },
+      "wirehead": {
+        "description": "Fechaduras, fios e mesas adulteradas. Melhora testes técnicos e mantém as máquinas pagando.",
+        "name": "Especialista"
+      }
+    },
+    "crewBios": {
+      "enforcer": "Quebrou ossos para três famílias diferentes e nunca precisou levantar a voz.",
+      "face": "Escapou de duas acusações na conversa e entrou em todos os clubes da cidade.",
+      "fixer": "Sabe qual mesa da prefeitura faz um processo sumir por cem dólares.",
+      "ghost": "Três acusações de invasão, nenhuma condenação e nenhuma foto conhecida.",
+      "mastermind": "Planeja golpes em papel de açougue e queima tudo antes do café esfriar.",
+      "underboss": "Comandou seis pessoas durante a última guerra sem perder um soldado.",
+      "wirehead": "Faz uma ponte nos fios antes que a central de alarme consiga discar."
+    },
+    "districts": {
+      "downtown": {
+        "description": "Bancos, torres e a delegacia central. Os quarteirões mais disputados da cidade.",
+        "name": "Centro"
+      },
+      "hillcrest": {
+        "description": "Dinheiro antigo nas colinas. Ruas quietas, bolsos fundos e memória longa.",
+        "name": "Hillcrest"
+      },
+      "ironworks": {
+        "description": "Fundição e carga. O sindicato tem força e tudo está à venda.",
+        "name": "Distrito Industrial"
+      },
+      "neon_strip": {
+        "description": "Clubes, mesas e neon. O dinheiro corre rápido, assim como as reputações.",
+        "name": "Faixa de Neon"
+      },
+      "old_quarter": {
+        "description": "As primeiras ruas da cidade. Becos apertados, famílias antigas e dívidas ainda mais velhas.",
+        "name": "Bairro Antigo"
+      },
+      "riverside": {
+        "description": "Armazéns e salas de jogo à beira d'água. Carga entra, mercadoria sai.",
+        "name": "Beira-Rio"
+      },
+      "the_docks": {
+        "description": "Guindastes, contêineres e fiscais que desviam o olhar. A porta dos fundos da cidade.",
+        "name": "As Docas"
+      },
+      "unknown": {
+        "description": "Os detalhes do bairro não estão disponíveis.",
+        "name": "Bairro desconhecido"
+      }
+    },
+    "ranks": {
+      "city_kingpin": "Chefão da Cidade",
+      "crew_leader": "Líder de Equipe",
+      "crime_lord": "Senhor do Crime",
+      "district_boss": "Chefe de Distrito",
+      "local_boss": "Chefe Local",
+      "nobody": "Zé-Ninguém",
+      "street_hustler": "Malandro de Rua"
+    },
+    "nicknames": {
+      "banker": "o Banqueiro",
+      "baron": "o Barão",
+      "book": "o Livro",
+      "bricks": "Tijolos",
+      "bull": "o Touro",
+      "doctor": "o Doutor",
+      "echo": "Eco",
+      "fingers": "Dedos",
+      "fox": "a Raposa",
+      "ghost": "o Fantasma",
+      "hammer": "o Martelo",
+      "ice": "Gelo",
+      "judge": "o Juiz",
+      "knuckles": "Soqueira",
+      "locksmith": "o Chaveiro",
+      "lucky": "Sortudo",
+      "matches": "Fósforos",
+      "owl": "a Coruja",
+      "pockets": "Bolsos",
+      "razor": "Navalha",
+      "saint": "o Santo",
+      "shadows": "Sombras",
+      "smiles": "Sorrisos",
+      "snake_eyes": "Olhos de Cobra",
+      "static": "Estática",
+      "tailor": "o Alfaiate",
+      "trigger": "Gatilho",
+      "two_times": "Duas Vezes",
+      "whisper": "o Sussurro",
+      "wire": "o Fio"
+    },
+    "skills": {
+      "charisma": {
+        "description": "Magnetismo pessoal puro. Usado em ações de charme e para convencer guardas da prisão.",
+        "name": "Carisma"
+      },
+      "corruption": {
+        "description": "Saber quem aceita envelopes e quanto colocar dentro. Usado em ações de enganação.",
+        "name": "Corrupção"
+      },
+      "leadership": {
+        "description": "Comandar uma equipe e dominar uma sala. Usado em ações de influência.",
+        "name": "Liderança"
+      },
+      "muscle": {
+        "description": "Bater pesado e não recuar. Usado em ações de força.",
+        "name": "Força Bruta"
+      },
+      "stealth": {
+        "description": "Mover-se sem ser visto e não deixar rastros. Usado em ações discretas.",
+        "name": "Furtividade"
+      },
+      "strategy": {
+        "description": "Ler a situação e atacar quando surge uma brecha. Usado em ações oportunistas.",
+        "name": "Estratégia"
+      },
+      "tech": {
+        "description": "Fechaduras, fios, alarmes e explosivos. Usado em ações técnicas.",
+        "name": "Técnica"
+      }
+    },
+    "tiers": {
+      "1": "Associado",
+      "2": "Soldado",
+      "3": "Veterano",
+      "4": "Capo",
+      "5": "Lenda"
+    },
+    "traits": {
+      "connected": {
+        "description": "Veio bem recomendado — contratá-lo custa menos de entrada.",
+        "name": "Bem Relacionado"
+      },
+      "coward": {
+        "description": "É o primeiro a correr quando tudo dá errado. Piora nos trabalhos, mas não morre — foge.",
+        "name": "Covarde"
+      },
+      "discreet": {
+        "description": "Não deixa rastros. Desastres com ele na equipe atraem menos pressão.",
+        "name": "Discreto"
+      },
+      "greedy": {
+        "description": "Tira uma parte de tudo — custa mais, mas extrai mais dos negócios.",
+        "name": "Ganancioso"
+      },
+      "hothead": {
+        "description": "Bate primeiro. Tem mais poder, mas faz mais barulho quando o trabalho vira desastre.",
+        "name": "Cabeça-Quente"
+      },
+      "loyal_dog": {
+        "description": "Fica quando o dinheiro acaba. Perde lealdade pela metade da velocidade.",
+        "name": "Cão Fiel"
+      },
+      "veteran_instincts": {
+        "description": "Já viu tudo duas vezes. É um pouco mais afiado em qualquer teste.",
+        "name": "Instinto de Veterano"
+      },
+      "workhorse": {
+        "description": "Nunca encerra o expediente. Os negócios em que trabalha produzem mais.",
+        "name": "Incansável"
+      }
+    },
+    "turfs": {
+      "downtown-01": "Praça da Bolsa",
+      "downtown-02": "Quarteirões do Meridiano",
+      "downtown-03": "Alameda do Granito",
+      "downtown-04": "Praça do Fórum",
+      "downtown-05": "Quarteirões do Edifício Trust",
+      "downtown-06": "Esquina do Pináculo",
+      "downtown-07": "Distrito da Imprensa",
+      "downtown-08": "Galeria de Mármore",
+      "downtown-09": "Quarteirões Standard",
+      "downtown-10": "Praça da União",
+      "hillcrest-01": "Terraço Crestview",
+      "hillcrest-02": "Alameda das Magnólias",
+      "hillcrest-03": "Quarteirões do Conservatório",
+      "hillcrest-04": "Portão do Bispo",
+      "hillcrest-05": "Colinas Laurel",
+      "hillcrest-06": "Propriedade Pemberton",
+      "hillcrest-07": "Pátio dos Jardins",
+      "hillcrest-08": "Passeio da Viúva",
+      "hillcrest-09": "Mirante",
+      "hillcrest-10": "Círculo das Heras",
+      "ironworks-01": "Fileiras da Fundição",
+      "ironworks-02": "Pátio do Cadinho",
+      "ironworks-03": "Vila da Escória",
+      "ironworks-04": "Oficinas de Correntes",
+      "ironworks-05": "Quarteirão dos Caldeireiros",
+      "ironworks-06": "Oficinas de Moldes",
+      "ironworks-07": "Pátio da Bigorna",
+      "ironworks-08": "Fornos de Coque",
+      "ironworks-09": "Beco dos Pistões",
+      "ironworks-10": "Linha dos Guindastes",
+      "neon-strip-01": "Milha dos Letreiros",
+      "neon-strip-02": "Alameda de Veludo",
+      "neon-strip-03": "Quarteirões do Palace",
+      "neon-strip-04": "Esquina da Sorte Grande",
+      "neon-strip-05": "Avenida dos Ases",
+      "neon-strip-06": "Pátio da Luz das Estrelas",
+      "neon-strip-07": "Quarteirões do Revue",
+      "neon-strip-08": "Alameda da Roleta",
+      "neon-strip-09": "Milha da Meia-Noite",
+      "neon-strip-10": "Esquina do Champanhe",
+      "old-quarter-01": "Travessa dos Sapateiros",
+      "old-quarter-02": "Escadaria de Santo Amaro",
+      "old-quarter-03": "Quarteirões da Torre do Relógio",
+      "old-quarter-04": "Alameda dos Curtidores",
+      "old-quarter-05": "Praça do Mercado Antigo",
+      "old-quarter-06": "Quarteirão dos Arquivos",
+      "old-quarter-07": "Cruzamento Chandler",
+      "old-quarter-08": "Passeio do Priorado",
+      "old-quarter-09": "Pátio dos Abandonados",
+      "old-quarter-10": "Beco Bellhaven",
+      "riverside-01": "Salas de Jogo",
+      "riverside-02": "Cais do Barqueiro",
+      "riverside-03": "Quarteirões da Fábrica de Conservas",
+      "riverside-04": "Alameda das Barcaças",
+      "riverside-05": "Quarteirões da Casa de Gelo",
+      "riverside-06": "Rua da Correnteza",
+      "riverside-07": "Canais do Moinho",
+      "riverside-08": "Pátio da Madeira à Deriva",
+      "riverside-09": "Fileiras dos Empacotadores",
+      "riverside-10": "Beco da Ressaca",
+      "the-docks-01": "Cais Treze",
+      "the-docks-02": "Galpões da Alfândega",
+      "the-docks-03": "Alameda dos Estivadores",
+      "the-docks-04": "Quarteirões do Quebra-Mar",
+      "the-docks-05": "Pátio da Âncora",
+      "the-docks-06": "Fileiras de Contêineres",
+      "the-docks-07": "Passeio do Carregador",
+      "the-docks-08": "Linha da Neblina",
+      "the-docks-09": "Quarteirão do Capitão do Porto",
+      "the-docks-10": "Pilhas de Sal",
+      "unknown": "Território desconhecido"
+    }
+  },
+  "character": {
+    "error": "Não foi possível acessar os arquivos da família. Atualize a página e tente de novo.",
+    "groups": {
+      "condition": "Condição",
+      "overview": "Visão geral",
+      "progression": "Progressão",
+      "resources": "Recursos",
+      "skills": "Habilidades"
+    },
+    "impaired": "Debilitado: −{penalty}% em todo teste de trabalho até você ficar sóbrio. Doses também restauram menos energia enquanto o efeito durar.",
+    "loading": "Puxando sua ficha…",
+    "meters": {
+      "drunk": {
+        "hint": "O quanto você está bêbado. −1% em todo teste de trabalho a cada 10 pontos, e bebida restaura menos energia quanto mais bêbado você já estiver. Passa 20 por hora parado.",
+        "label": "Embriaguez"
+      },
+      "health": {
+        "hint": "Condição física. Escolhas arriscadas que falham podem causar dano; a armadura absorve parte do golpe, enquanto kits e descanso restauram a Saúde.",
+        "label": "Saúde"
+      },
+      "heat": {
+        "hint": "Atenção da polícia. Aumenta a dificuldade de todos os testes nos trabalhos. Esfria 4 por hora parado — ou mais rápido com subornos na delegacia, trabalhos discretos e tempo de prisão.",
+        "label": "Pressão"
+      },
+      "high": {
+        "hint": "O quanto você está chapado. −1% em todo teste de trabalho a cada 10 pontos, e drogas restauram menos energia quanto mais chapado você já estiver. Passa 20 por hora parado.",
+        "label": "Euforia"
+      },
+      "stamina": {
+        "hint": "Fôlego para os trabalhos — cada contrato consome um pouco. Regenera 25 por hora enquanto você descansa; drogas e bebida recarregam mais rápido, por um preço.",
+        "label": "Energia"
+      }
+    },
+    "portrait": {
+      "ariaLabel": "Retrato de {name}",
+      "noMugshot": "Nenhuma foto de fichamento no arquivo"
+    },
+    "portraitAlt": "Retrato do personagem {name}",
+    "progression": {
+      "atTheTop": "No topo",
+      "nextLevel": "Próximo nível"
+    },
+    "ranks": {
+      "city_kingpin": "Chefão da Cidade",
+      "crew_leader": "Líder de Equipe",
+      "crime_lord": "Barão do Crime",
+      "district_boss": "Chefe de Distrito",
+      "local_boss": "Chefe Local",
+      "nobody": "Ninguém",
+      "street_hustler": "Malandro de Rua"
+    },
+    "skillMeter": {
+      "mastered": "{level} / {max} · dominada",
+      "progress": "{level} / {max} · {xp}/{xpPerLevel} xp"
+    },
+    "skills": {
+      "charisma": {
+        "description": "Magnetismo pessoal puro. Testada em escolhas de charme nos trabalhos, e é o que convence o guarda da prisão quando você tenta subornar sua saída da cela. +1% de chance no teste por nível.",
+        "label": "Carisma"
+      },
+      "corruption": {
+        "description": "Saber quem aceita envelopes e quão gordos eles precisam ser. Testada em escolhas de trapaça nos trabalhos, e cada nível reduz o preço de pagar a delegacia para baixar sua pressão.",
+        "label": "Corrupção"
+      },
+      "leadership": {
+        "description": "Comandar uma equipe e dominar o ambiente. Testada em escolhas sociais nos trabalhos — reunir cúmplices, pressionar testemunhas, impor respeito. +1% de chance no teste por nível.",
+        "label": "Liderança"
+      },
+      "muscle": {
+        "description": "Bater forte e não recuar. Testada em escolhas de força nos trabalhos. O poder equipado ajuda em toda abordagem, enquanto a armadura absorve dano à Saúde após falhas arriscadas. +1% de chance no teste por nível.",
+        "label": "Músculo"
+      },
+      "stealth": {
+        "description": "Mover-se sem ser visto e não deixar rastro. Testada em escolhas silenciosas nos trabalhos, e é o que sustenta uma tentativa de fuga da prisão. +1% de chance no teste por nível.",
+        "label": "Furtividade"
+      },
+      "strategy": {
+        "description": "Ler a situação e atacar quando a brecha se abre. Testada em escolhas oportunistas nos trabalhos. +1% de chance no teste por nível.",
+        "label": "Estratégia"
+      },
+      "tech": {
+        "description": "Fechaduras, fios, alarmes e explosivos — os ofícios técnicos. Testada em escolhas técnicas nos trabalhos. +1% de chance no teste por nível.",
+        "label": "Técnica"
+      }
+    },
+    "srTitle": "Personagem {name}",
+    "stats": {
+      "ariaLabel": "Atributos do personagem",
+      "level": "Nível {level}"
+    },
+    "tiles": {
+      "cash": "Dinheiro",
+      "experience": "Experiência",
+      "level": "Nível",
+      "power": "Poder"
+    }
+  },
+  "clock": {
+    "label": "Dia {day} · {hour}:{minute}",
+    "tooltip": "Hora da cidade — um dia se passa a cada hora real"
+  },
+  "common": {
+    "decisionRequired": "Decisão necessária",
+    "dismiss": "Dispensar",
+    "dismissNotification": "Dispensar notificação",
+    "noColumns": "Nenhuma coluna disponível.",
+    "noRecords": "Nenhum registro disponível.",
+    "toastTone": {
+      "failure": "Falha",
+      "info": "Informação",
+      "success": "Sucesso",
+      "warning": "Atenção"
+    }
+  },
+  "crew": {
+    "backAround": "De volta lá pelas {time}",
+    "bribeOut": "Pagar suborno ({cost})",
+    "cutLoose": "Mandar embora",
+    "equip": "Equipar",
+    "equipSlotAria": "Equipar {slot}",
+    "header": {
+      "eyebrow": "A família",
+      "payrollPerDay": "Folha/dia",
+      "roster": "Plantel",
+      "tagline": "Soldados reforçam seus trabalhos, tocam seus esquemas e seguram seu território. Pague em dia — quem não recebe vai embora, e os ressentidos falam demais.",
+      "title": "Equipe",
+      "yourCash": "Seu dinheiro"
+    },
+    "loading": "Reunindo os soldados…",
+    "locked": {
+      "afterRank": "(nível 10) e as pessoas certas começam a retornar suas ligações.",
+      "beforeRank": "Ninguém trabalha para um zé-ninguém. Chegue a",
+      "rankName": "Malandro de Rua",
+      "title": "Equipe"
+    },
+    "nothingFits": "Nada serve",
+    "pickFromStash": "Escolha do seu esconderijo…",
+    "picker": {
+      "capacity": "Leve até {capacity} — quem manda é a liderança. ({selected}/{capacity} escolhidos)",
+      "confirmAlone": "{label} sozinho",
+      "confirmWith": "{label} com {count}",
+      "memberStats": "+{bonus}% {skill} · poder {power}",
+      "neverMind": "Deixa pra lá",
+      "nobodyFree": "Ninguém está livre agora. Você vai sozinho."
+    },
+    "recruitment": {
+      "empty": "O poço secou. Caras novos aparecem amanhã.",
+      "heading": "Procurando trabalho",
+      "hire": "Contratar ({cost})",
+      "intro": "Uma leva nova de rostos todo dia. Luva paga na entrada, salário a cada dia de jogo depois.",
+      "loading": "Perguntando por aí…",
+      "wagePerDay": "{wage}/dia"
+    },
+    "removeGear": "Remover",
+    "roster": {
+      "empty": "Ninguém na folha ainda. Dê uma olhada nos candidatos abaixo.",
+      "heading": "Seus soldados",
+      "loading": "Fazendo a chamada…"
+    },
+    "skillRequirement": "(habilidade {level})",
+    "slots": {
+      "hand": "Arma",
+      "torso": "Colete",
+      "waist": "Cinto"
+    },
+    "stats": {
+      "jobBonus": "Bônus de trabalho",
+      "loyalty": "Lealdade",
+      "power": "Poder",
+      "wagePerDay": "Salário/dia"
+    },
+    "status": {
+      "assigned_building": "Cuidando de um andar",
+      "assigned_turf": "Montando guarda",
+      "dead": "Se foi",
+      "idle": "Pronto",
+      "imprisoned": "Na cela",
+      "injured": "Se recuperando",
+      "on_job": "Num trabalho",
+      "training": "Treinando"
+    },
+    "toast": {
+      "bribed": {
+        "message": "O envelope funcionou. Ele saiu com o equipamento dele.",
+        "title": "Solto"
+      },
+      "equipped": {
+        "message": "O equipamento saiu do seu esconderijo para as mãos dele.",
+        "title": "Equipado"
+      },
+      "errorMessage": "Não deu certo. Tente de novo.",
+      "errorTitle": "Não rolou",
+      "fired": {
+        "message": "Ele juntou as coisas e saiu. O equipamento que carregava foi junto.",
+        "title": "Dispensado"
+      },
+      "hired": {
+        "message": "{name} trabalha para você agora.",
+        "title": "Na folha de pagamento"
+      },
+      "trained": {
+        "message": "Duas horas no tatame. Ele volta mais afiado.",
+        "title": "Em treinamento"
+      },
+      "unequipped": {
+        "message": "O equipamento está de volta no seu esconderijo.",
+        "title": "Guardado"
+      }
+    },
+    "train": "Treinar ({cost})"
+  },
+  "empire": {
+    "card": {
+      "assignStaff": "Escalar equipe",
+      "closed": "Fechado",
+      "confirmShift": "Confirmar turno",
+      "inTheTill": "No caixa",
+      "level": "Nível {level}/{max}",
+      "nobodyFree": "Ninguém está livre para trabalhar.",
+      "open": "Aberto",
+      "ratePerHour": "Taxa/h",
+      "repair": "Reparar ({price})",
+      "staffLabel": "Equipe ({count}/{slots}) — rende mais com um {archetype}",
+      "unstaffed": "Sem equipe (40% da produção)",
+      "upgrade": "Melhorar ({price})"
+    },
+    "header": {
+      "collectEverything": "Coletar tudo",
+      "description": "Fachadas e propriedades seguras — ninguém pode tirá-las de você. Os grandes esquemas se constroem em território, pelo Mapa.",
+      "holdings": "Propriedades",
+      "kicker": "Propriedades pessoais",
+      "title": "Império",
+      "yourCash": "Seu dinheiro"
+    },
+    "loading": "Abrindo os livros…",
+    "market": {
+      "buy": "Comprar ({price})",
+      "heatPerDay": "Pressão/dia",
+      "incomePerHour": "Renda/h",
+      "owned": "Adquirido",
+      "requiresRank": "Exige {rank}",
+      "title": "No mercado"
+    },
+    "property": {
+      "counting": "Contando os caixas…",
+      "empty": "Você ainda não possui nada. Todo império começa com uma fachada limpa.",
+      "title": "Suas propriedades"
+    },
+    "toasts": {
+      "backInBusinessTitle": "De volta aos negócios",
+      "buySuccess": "{name} é seu. Escale a equipe e deixe render.",
+      "buyTitle": "Escritura assinada",
+      "collected": "{amount} no cofre.",
+      "collectedRaided": "Você guardou {amount} — mas a polícia fez uma batida no seu {building}. Repare para reabrir.",
+      "collectedWithUpkeep": "{amount} no cofre, após {upkeep} em manutenção de território.",
+      "collectionFailed": "A coleta falhou.",
+      "genericError": "Não deu certo. Tente de novo.",
+      "noDealTitle": "Sem acordo",
+      "raidedTitle": "Batida policial",
+      "repairSuccess": "{name} está produzindo de novo.",
+      "staffSuccess": "Equipe de {name} atualizada.",
+      "staffTitle": "Turno definido",
+      "tillsEmptiedTitle": "Caixas esvaziados",
+      "upgradeSuccess": "{name} agora é nível {level}.",
+      "upgradeTitle": "Ampliado"
+    }
+  },
+  "home": {
+    "cards": {
+      "crew": {
+        "body": "Contrate soldados, arme-os e mantenha o pagamento em dia.",
+        "title": "Comande sua equipe"
+      },
+      "empire": {
+        "body": "Fachadas e esquemas. Esvazie os caixas antes que estourem.",
+        "title": "Cuide dos livros"
+      },
+      "jobs": {
+        "body": "Contratos no quadro. Dinheiro, XP e encrenca.",
+        "title": "Trabalhe as ruas"
+      },
+      "map": {
+        "body": "Setenta quarteirões. Pinte todos com a sua cor.",
+        "title": "Tome a cidade"
+      }
+    },
+    "greeting": "Bom dia, {name}.",
+    "intro": "Isto é o que a cidade aprontou enquanto você dormia.",
+    "loading": "Passando o café…",
+    "masthead": "{name} — Dia {day}",
+    "noEditionYet": "A primeira edição do {name} ainda não chegou às bancas. Vá fazer notícia.",
+    "readFullEdition": "Leia a edição completa →",
+    "seasonStandings": "Classificação da temporada →",
+    "whileAway": "Enquanto você esteve fora"
+  },
+  "inventory": {
+    "defaultAriaLabel": "Inventário",
+    "dropToUnequip": "Solte para desequipar",
+    "emptySlot": "Vazio",
+    "emptyStash": "Nenhum item no esconderijo.",
+    "emptyStashSlot": "Espaço vazio do esconderijo",
+    "equip": "Equipar",
+    "gearSlots": "Espaços de equipamento",
+    "loadoutTitle": "Equipamento",
+    "profileEyebrow": "Perfil",
+    "sell": "Vender",
+    "slotEmpty": "Espaço de {slot} vazio",
+    "slotEquipped": "Espaço de {slot} equipado com {item}",
+    "slotTag": "Espaço",
+    "stashEyebrow": "Inventário",
+    "stashPage": "{title}, página {page}",
+    "stashPagesLabel": "Páginas do esconderijo",
+    "stashTitle": "Esconderijo",
+    "tabs": {
+      "stash1": "Esconderijo I",
+      "stash2": "Esconderijo II",
+      "stash3": "Esconderijo III"
+    },
+    "unequip": "Desequipar",
+    "use": "Usar"
+  },
+  "itemCard": {
+    "approaches": {
+      "charm": "charme",
+      "deception": "engano",
+      "force": "força",
+      "opportunistic": "oportunismo",
+      "quiet": "silêncio",
+      "social": "influência social",
+      "technical": "técnica"
+    },
+    "armor": "Armadura {value}",
+    "effects": {
+      "approachBonus": "+{value}% em ações de {approach}",
+      "heatReduction": "−{value} de pressão por trabalho",
+      "skillBonus": "+{value} {skill}"
+    },
+    "levelShort": "Nv {level}",
+    "power": "Poder {value}",
+    "singleUse": "Uso único",
+    "skills": {
+      "charisma": "Carisma",
+      "corruption": "Corrupção",
+      "leadership": "Liderança",
+      "muscle": "Músculo",
+      "stealth": "Furtividade",
+      "strategy": "Estratégia",
+      "tech": "Técnica"
+    },
+    "slots": {
+      "feet": "Pés",
+      "hand": "Mão",
+      "head": "Cabeça",
+      "torso": "Torso",
+      "waist": "Cintura"
+    },
+    "use": {
+      "drunk": "+{value} de embriaguez",
+      "health": "+{value} de saúde",
+      "heat": "{value} de pressão",
+      "high": "+{value} de euforia",
+      "stamina": "+{value} de energia"
+    }
+  },
+  "jobCard": {
+    "difficulty": "Dificuldade {difficulty} / 100",
+    "gearConsumable": "Consumível — um é gasto a cada exigência durante a ação.",
+    "gearIntro": "Equipamento que este trabalho pode exigir — ir sem ele torna tudo mais difícil:",
+    "gearReusable": "Ferramenta reutilizável — levar uma cobre a ação inteira.",
+    "heat": "Pressão",
+    "stamina": "Energia",
+    "take": "Parte",
+    "takeJob": "Aceitar o trabalho",
+    "tooTired": "Cansado demais"
+  },
+  "jobs": {
+    "actionError": "Não funcionou. Tente de novo.",
+    "askAroundAgain": "Perguntar por aí de novo",
+    "boardError": "O quadro está quieto. Atualize a página e tente de novo.",
+    "boardLoading": "Escutando os boatos…",
+    "crewPicker": {
+      "confirm": "Aceitar o trabalho",
+      "intro": "Cada soldado reforça os testes que dependem da especialidade dele. Num desastre, eles dividem as consequências — e o equipamento deles fica em jogo.",
+      "title": "Quem vai junto?"
+    },
+    "healError": "Não deu para usar esse kit. Atualize a página e tente de novo.",
+    "loadError": "Não foi possível falar com seus contatos. Atualize a página e tente de novo.",
+    "loading": "Sondando as ruas…",
+    "prison": {
+      "bribeFailure": "Ele pega o dinheiro e chama de doação. Você continua aqui.",
+      "bribeSuccess": "O guarda embolsa o envelope e esquece de trancar uma porta. Você sai andando.",
+      "checkingWarden": "Falando com o diretor da prisão…",
+      "escapeFailure": "Um holofote, um apito e uma pena mais longa.",
+      "escapeSuccess": "Por cima do muro e sumiu — mas agora a cidade inteira está atrás de você."
+    },
+    "subtitle": "O que se comenta nas ruas. Escolha um contrato e vá até o fim.",
+    "title": "Trabalhos"
+  },
+  "languageSwitcher": {
+    "english": "Inglês",
+    "label": "Idioma",
+    "portuguese": "Português (Brasil)"
+  },
+  "loadout": {
+    "gearSlotsLabel": "Equipamento em uso",
+    "genericError": "Algo deu errado. Tente de novo.",
+    "inventoryAriaLabel": "Equipamento e esconderijo de {playerName}",
+    "loadError": "Não foi possível acessar o arsenal da família. Atualize para tentar de novo.",
+    "loading": "Abrindo seu arsenal…",
+    "stashActionLabel": "Arraste o equipamento entre os painéis",
+    "title": "Equipamento",
+    "toastErrorTitle": "Nada feito"
+  },
+  "login": {
+    "error": "Falha ao entrar. Tente novamente.",
+    "eyebrow": "Somente membros",
+    "signIn": "Entrar com o Google",
+    "signingIn": "Abrindo a porta…",
+    "subtitle": "Identifique-se antes de entrar na operação."
+  },
+  "map": {
+    "battles": {
+      "blockFell": "o quarteirão caiu",
+      "defenseHeld": "a defesa resistiu",
+      "heldBy": "(defendido por {name})",
+      "hit": "atacou",
+      "skimmed": ", {amount} desviados",
+      "stormed": "tomou de assalto",
+      "title": "Batalhas recentes"
+    },
+    "conquestClock": "O RELÓGIO DA CONQUISTA ESTÁ CORRENDO — a família {family} controla todos os distritos. Quebre o domínio deles antes que as 72 horas acabem.",
+    "emptyPanel": "Escolha um quarteirão. Cinza é território sem dono; cores são famílias; ★ marca os pontos que dinheiro não compra.",
+    "found": {
+      "colorAria": "Cor da família {color}",
+      "errorMessage": "A fundação não vingou. Tente de novo.",
+      "errorTitle": "Ainda não",
+      "intro": "Antes de pintar o mapa, a cidade precisa de um nome para temer e uma cor para reconhecer. Escolha os dois com cuidado — o Ledger vai imprimi-los.",
+      "nameLabel": "Nome da família",
+      "namePlaceholder": "ex.: A Família Moretti",
+      "submit": "Hastear as cores",
+      "title": "Funde sua família"
+    },
+    "header": {
+      "seasonEnds": "{season} termina em {date}.",
+      "subtitle": "Setenta quarteirões, sete distritos, um vencedor.",
+      "title": "A Cidade"
+    },
+    "loading": "Desdobrando o mapa…",
+    "unknownFamily": "Família sem nome",
+    "locked": {
+      "afterRank": "(nível 40). Continue trabalhando — a cidade ainda vai estar aqui.",
+      "beforeRank": "O mapa se abre quando você vira",
+      "rank": "Chefe Local",
+      "title": "A Cidade"
+    },
+    "picker": {
+      "attackConfirm": "Lançar o assalto",
+      "attackIntro": "Soldados comprometidos somam seu poder ao assalto. Uma derrota custa homens e equipamento.",
+      "attackTitle": "Quem marcha?",
+      "claimConfirm": "Iniciar a tomada",
+      "claimIntro": "A tomada joga como um trabalho — as especialidades da sua equipe reforçam os testes.",
+      "claimTitle": "Quem trabalha na tomada?",
+      "defenseConfirm": "Posicioná-los",
+      "defenseIntro": "Defensores posicionados somam o dobro do seu poder à defesa deste quarteirão.",
+      "defenseTitle": "Quem fica de guarda?"
+    },
+    "surveying": "Vistoriando as ruas…",
+    "svg": {
+      "ariaLabel": "Mapa da cidade",
+      "harbor": "O PORTO"
+    },
+    "toasts": {
+      "attackPartial": "{turf} resistiu, mas você abalou as defesas. Ataque de novo.",
+      "attackRout": "Uma derrota em {turf}. Seus soldados pagaram o preço.",
+      "attackWin": "Você tomou {turf}{skim}{bounty}.",
+      "attackWinBounty": ", faturando uma recompensa de {amount}",
+      "attackWinSkim": " e desviou {amount}",
+      "backInBusinessMessage": "As portas estão abertas de novo.",
+      "backInBusinessTitle": "De volta aos negócios",
+      "buildMessage": "O esquema abre sem danos e começa a render.",
+      "buildTitle": "Obra iniciada",
+      "defenseMessage": "Seus soldados assumiram as esquinas.",
+      "defenseTitle": "Guarda posicionada",
+      "flagPlanted": "Bandeira fincada",
+      "genericError": "Não deu certo.",
+      "noDiceTitle": "Nada feito",
+      "staffMessage": "O salão está coberto.",
+      "staffTitle": "Turno definido",
+      "theyHeld": "Eles resistiram",
+      "upgradeMessage": "Salão maior, parte maior.",
+      "upgradeTitle": "Ampliado"
+    },
+    "turf": {
+      "assignStaffAria": "Escalar equipe",
+      "attack": "Atacar (aposta ~{amount})",
+      "breakGround": "Começar a obra",
+      "buildAria": "Esquema a construir",
+      "buildOption": "{name} — {cost} ({income}/h)",
+      "buildTitle": "Construir um esquema",
+      "choose": "Escolha…",
+      "clearStaff": "(dispensar equipe)",
+      "closed": "Fechado",
+      "defenders": "Defensores ({count})",
+      "defense": "Defesa",
+      "flagOther": "Bandeira de {name}",
+      "flagYours": "Sua bandeira",
+      "incomePerHour": "Renda/h",
+      "level": "N{level}",
+      "moveOnBlock": "Avançar neste quarteirão",
+      "nobodyGuarding": "Ninguém de guarda.",
+      "npcGarrison": "Guarnição de NPCs",
+      "pickWorker": "Escolha um trabalhador…",
+      "postDefenders": "Posicionar defensores",
+      "racketsHere": "Esquemas aqui",
+      "repair": "Reparar ({price})",
+      "shieldedUntil": "Protegido até {time}",
+      "slots": "Vagas",
+      "staff": "Equipe ({count}/{slots})",
+      "stormLandmark": "Tomar o ponto de assalto (aposta ~{amount})",
+      "takeoverHint": "A tomada joga como um trabalho — vença e a bandeira sobe.",
+      "till": "caixa {amount}",
+      "unclaimed": "Sem dono",
+      "upgrade": "Melhorar ({price})"
+    }
+  },
+  "mission": {
+    "acceptedEquipment": {
+      "ariaLabel": "Equipamento aceito da missão",
+      "effects": {
+        "approachBonus": "+{value}% {approach}",
+        "heatReduction": "−{value} de pressão",
+        "skillBonus": "+{value} em testes de {skill}"
+      },
+      "empty": "Vazio",
+      "gearReusable": "Correspondência exata reutilizável · sem poder de item consumido",
+      "gearSingleUse": "Uso único · um é consumido em uma escolha compatível",
+      "gearSingleUsePower": "Uso único · Poder {power} em uma escolha compatível",
+      "itemPower": "P {power}",
+      "itemPowerArmor": "P {power} · A {armor}",
+      "lockedPower": "Travado para este trabalho: {character} de poder do personagem + {equipment} de poder de equipamento.",
+      "powerArmor": "Poder {power} · Armadura {armor}",
+      "slots": {
+        "feet": "Pés",
+        "hand": "Mão",
+        "head": "Cabeça",
+        "torso": "Torso",
+        "waist": "Cintura"
+      },
+      "stashGear": "Equipamento relevante do esconderijo na aceitação",
+      "title": "Equipamento aceito",
+      "unavailable": "Os detalhes do equipamento aceito não estão disponíveis para este trabalho antigo."
+    },
+    "checkBadge": {
+      "damageSummary": "Dano recebido {incoming} · Armadura absorveu {absorbed} · Saúde perdida {lost}",
+      "failed": "Teste de {skill} falhou",
+      "failedBadly": "Teste de {skill} falhou — feio",
+      "floorStopped": "O piso de 1 de saúde segurou {amount}",
+      "gearConsumed": "{item} foi consumido",
+      "gearCovered": "{item} cobriu a jogada",
+      "heatGained": "+{heat} de pressão — a jogada fez barulho",
+      "momentum": "Impulso {delta}",
+      "momentumBold": "Impulso {delta} — jogada ousada",
+      "momentumSafe": "Impulso {delta} — jogada segura",
+      "paidUpFront": "Pagou {amount} adiantado",
+      "passed": "Teste de {skill} passou",
+      "passedCritical": "Teste de {skill} passou — crítico"
+    },
+    "checkBreakdown": {
+      "approachEffect": "Efeito da abordagem",
+      "baseChance": "Chance base",
+      "basePowerProgress": "Progresso de poder base",
+      "characterPower": "Poder do personagem ({power})",
+      "difficulty": "Dificuldade",
+      "equipmentPower": "Poder do equipamento ({power})",
+      "equippedSkillEffect": "Efeito de habilidade equipada",
+      "finalChance": "Chance final {chance}%",
+      "heat": "Pressão",
+      "intoxication": "Intoxicação",
+      "onUse": "Ao usar: {item} (Poder {power})",
+      "powerProgressValue": "{combined} combinado · faltam {remaining} de poder para o próximo +1%",
+      "roundingLimits": "Arredondamento / limites",
+      "skillLevel": "Habilidade ({level})",
+      "title": "Cálculo oficial do teste"
+    },
+    "choice": {
+      "bolderPlay": "Jogada ousada",
+      "cashUpFront": "−{amount} adiantado",
+      "difficulty": "Dificuldade",
+      "equipment": {
+        "locked": "Travado: esta jogada exige {gear} e você não tem nenhum",
+        "missing": "Faltando: {gear} — penalidade incluída nas chances",
+        "none": "Nenhum equipamento necessário — chances mostradas como estão",
+        "readyConsumable": "Pronto: {item} — uso único; um é consumido se escolhido, e a prontidão já está incluída nas chances",
+        "readyReusable": "Pronto: {item} — reutilizável; a prontidão já está incluída nas chances"
+      },
+      "equipmentLabel": "Equipamento:",
+      "failure": "Falha",
+      "genericGear": "equipamento",
+      "healthRisk": "Risco à saúde: a falha pode causar dano; a armadura aceita já está incluída na proteção.",
+      "heatOnMiss": "+{heat} de pressão se errar",
+      "lockedNeeds": "Travado — exige {gear}",
+      "momentum": "Impulso",
+      "priceOfMove": "Preço da jogada",
+      "saferPlay": "Jogada segura",
+      "skill": "Habilidade",
+      "skillXpOnSuccess": "XP de habilidade no sucesso",
+      "success": "Sucesso",
+      "testsSkill": "Testa {skill}.",
+      "upfrontCost": "Custo adiantado: {amount} é pago no momento em que você se compromete — ganhe ou perca.",
+      "xpUnavailable": "Indisponível para este trabalho antigo",
+      "xpValues": "+{success} XP · Crítico +{critical} XP"
+    },
+    "healthPanel": {
+      "ariaLabel": "Saúde ao vivo e cura",
+      "healingWindow": "A cura abre depois da sua primeira escolha e fecha quando o trabalho termina.",
+      "noKits": "Nenhum kit de cura no seu esconderijo.",
+      "title": "Saúde ao vivo",
+      "using": "Usando…"
+    },
+    "momentum": {
+      "bandsSummary": "Termine com {successAt}+ para um sucesso limpo · acima de {jackpotAbove} é bolada · abaixo de {failureBelow} termina em prisão",
+      "onPaceFor": "a caminho de {tier}",
+      "title": "Impulso"
+    },
+    "outcome": {
+      "backToBoard": "Voltar ao quadro",
+      "experience": "Experiência",
+      "heat": "Pressão",
+      "jobOver": "O trabalho acabou",
+      "levelUp": "Subiu de nível",
+      "take": "Parte"
+    },
+    "outcomeTiers": {
+      "disaster": "Desastre",
+      "failure": "Fracasso",
+      "jackpot": "Bolada",
+      "partialFailure": "Fracasso parcial",
+      "partialSuccess": "Sucesso parcial",
+      "success": "Sucesso"
+    },
+    "runner": {
+      "beatProgress": "Cena {beat} de {total}",
+      "casingThePlace": "Estudando o terreno…",
+      "dustSettles": "A poeira baixa",
+      "fixerWorking": "O intermediário está acertando os detalhes…",
+      "jobComplete": "Trabalho concluído",
+      "legacyBody": "Este trabalho começou em outro idioma. As escolhas mecânicas continuam disponíveis, mas o texto anterior foi ocultado.",
+      "legacyLocation": "Um trabalho em andamento",
+      "legacyTitle": "O trabalho continua",
+      "scenesReady": "{ready} de {total} cenas prontas",
+      "settingUp": "Preparando o trabalho…"
+    },
+    "skillXp": {
+      "gain": "+{xp} XP",
+      "none": "Nenhuma experiência de habilidade ganha neste trabalho.",
+      "title": "Experiência de habilidade ganha"
+    }
+  },
+  "nav": {
+    "ariaLabel": "Navegação principal",
+    "character": "Personagem",
+    "crew": "Equipe",
+    "empire": "Império",
+    "jobs": "Trabalhos",
+    "loadout": "Equipamento",
+    "map": "Mapa",
+    "news": "Notícias",
+    "store": "Loja"
+  },
+  "newspaper": {
+    "bounty": "Cidadãos preocupados oferecem {amount} a quem tomar um quarteirão da família {family}. Discrição garantida.",
+    "classifiedFallback": {
+      "missionModifier": "Trabalhos em {district}: pagamentos ×{payout}, pressão ×{heat} até {until}.",
+      "storeDrop": "{item}: {discount}% de desconto até {until}."
+    },
+    "classifieds": "Classificados",
+    "day": "Dia {day}",
+    "empty": "Nenhuma edição chegou às bancas ainda. As rotativas rodam uma vez por dia — dê tempo à cidade para fazer notícia.",
+    "loading": "Esperando as rotativas…",
+    "unknownFamily": "Família sem nome",
+    "legacy": {
+      "articleBody": "Os detalhes arquivados do dia {day} não estão disponíveis em português.",
+      "articleTitle": "Edição arquivada",
+      "headlineBody": "Esta edição antiga foi preservada sem uma cópia em português. A reportagem original continua no arquivo da cidade.",
+      "headlineTitle": "Do arquivo do dia {day}"
+    },
+    "name": "Diário da Cidade",
+    "reign": "Sob o reinado da família {family}",
+    "sections": {
+      "business": "Negócios",
+      "crime_blotter": "Boletim Policial",
+      "front_page": "Primeira Página",
+      "season": "A Temporada",
+      "war_report": "Relatório de Guerra"
+    },
+    "standings": {
+      "blocks": "Quarteirões",
+      "family": "Família",
+      "respect": "Respeito"
+    },
+    "standingsHeading": "A Temporada — Classificação",
+    "tagline": "Todo crime que merece ser impresso"
+  },
+  "notificationContent": {
+    "legacy": {
+      "bounty_posted": {
+        "body": "Uma recompensa que afeta a cidade foi publicada.",
+        "title": "Atualização de recompensa"
+      },
+      "building_raided": {
+        "body": "A polícia invadiu um dos seus negócios.",
+        "title": "Negócio invadido"
+      },
+      "crew_deserted": {
+        "body": "Um membro deixou sua equipe.",
+        "title": "Membro desertou"
+      },
+      "crew_died": {
+        "body": "Um membro da sua equipe morreu.",
+        "title": "Baixa na equipe"
+      },
+      "crew_rat": {
+        "body": "Um membro da equipe entregou informações à polícia.",
+        "title": "Traição na equipe"
+      },
+      "crew_recovered": {
+        "body": "A condição de um membro da equipe mudou.",
+        "title": "Atualização da equipe"
+      },
+      "crew_released": {
+        "body": "A situação prisional de um membro da equipe mudou.",
+        "title": "Atualização da prisão"
+      },
+      "season": {
+        "body": "Um evento da temporada afetou sua família.",
+        "title": "Atualização da temporada"
+      },
+      "turf_attacked": {
+        "body": "Outra família atacou seu território.",
+        "title": "Território atacado"
+      },
+      "turf_defended": {
+        "body": "Sua família defendeu o território.",
+        "title": "Relatório de defesa"
+      },
+      "turf_lost": {
+        "body": "Sua família perdeu parte do território.",
+        "title": "Território perdido"
+      }
+    },
+    "messages": {
+      "building_raided": {
+        "body": "A polícia invadiu seu negócio, {building}. O caixa foi levado e o local ficará fechado até ser consertado.",
+        "title": "A polícia arrombou uma porta"
+      },
+      "crew_deserted": {
+        "body": "Sem receber por tempo demais, {name} foi embora e levou todo o equipamento que usava.",
+        "title": "{name} desertou"
+      },
+      "crew_died_on_job": {
+        "body": "{name} morreu durante um trabalho. Todo o equipamento que usava foi perdido.",
+        "title": "{name} não sobreviveu"
+      },
+      "crew_imprisoned_on_job": {
+        "body": "A polícia prendeu {name} durante um trabalho e confiscou todo o equipamento. Um suborno pode trazer ambos de volta.",
+        "title": "{name} foi preso"
+      },
+      "crew_injured_on_job": {
+        "body": "{name} se feriu durante um trabalho e precisa de tempo para se recuperar.",
+        "title": "{name} se machucou"
+      },
+      "crew_ratted": {
+        "body": "Sem dinheiro e ressentido, {name} vendeu informações à polícia. Sua pressão aumentou.",
+        "title": "{name} falou com a polícia"
+      },
+      "crew_recovered": {
+        "body": "{name} se recuperou dos ferimentos e está pronto para trabalhar.",
+        "title": "{name} está de pé novamente"
+      },
+      "crew_released": {
+        "body": "{name} cumpriu a pena e saiu da delegacia sem o equipamento confiscado.",
+        "title": "{name} cumpriu a pena"
+      },
+      "season_crackdown": {
+        "body": "Uma semana de guerra aberta tornou sua família o principal alvo da delegacia. A pressão aumentou em {heat}.",
+        "title": "A cidade está reprimindo sua família"
+      },
+      "turf_defended": {
+        "body": "{attackerName} atacou {turf}, mas suas defesas impediram a invasão.",
+        "title": "{turf} resistiu"
+      },
+      "turf_lost": {
+        "body": "{attackerName} tomou {turf}. Você tem 24 horas de revanche para atacar qualquer território dessa família.",
+        "title": "Você perdeu {turf}"
+      }
+    }
+  },
+  "notifications": {
+    "bell": "Boatos",
+    "bellLabel": "O que corre na rua",
+    "bellLabelUnread": "O que corre na rua — {count, plural, one {# novidade} other {# novidades}}",
+    "empty": "A rua está quieta. Nada de novo."
+  },
+  "playerNameDialog": {
+    "ariaLabel": "Escolha seu nome",
+    "eyebrow": "Bem-vindo à família",
+    "genericError": "Algo deu errado. Tente novamente.",
+    "invalidName": "Nome inválido.",
+    "nameLabel": "Nome",
+    "placeholder": "Rico Vale",
+    "submit": "Reivindicar o nome",
+    "submitting": "Tornando oficial…",
+    "subtitle": "É assim que a cidade vai conhecer você. Escolha com cuidado — não poderá ser mudado depois.",
+    "title": "Escolha seu nome"
+  },
+  "prison": {
+    "reason": "A polícia pegou você depois que um trabalho deu errado.",
+    "bribe": {
+      "action": "Passar o envelope",
+      "body": "{cost} muda de mãos, ele aceitando ou não. Quem fala é o seu carisma — {chance}% de chance.",
+      "title": "Subornar um guarda"
+    },
+    "cooldown": "Os guardas estão de olho demais em você. Próxima tentativa em {time}.",
+    "escape": {
+      "action": "Pular o muro",
+      "body": "A furtividade te leva por cima do muro — {chance}% de chance. Se falhar, a pena cresce; se conseguir, a caçada esquenta a pressão.",
+      "title": "Fugir"
+    },
+    "eyebrow": "Cadeia do condado",
+    "flavor": "A cela é fria, o café é pior, e a cidade segue muito bem sem você.",
+    "releaseIn": "Soltura em",
+    "serveNote": "— cumprir a pena até o fim também esfria a pressão da polícia",
+    "title": "Você está cumprindo pena"
+  },
+  "rankings": {
+    "countdown": "CONTAGEM DA CONQUISTA — a família {family} domina todos os sete distritos. Restam cerca de {hours} horas para quebrar esse domínio.",
+    "description": "O respeito vem de território dominado (ponderado por distrito), batalhas vencidas, marcos controlados e trabalhos de jackpot. Conquiste o reduto de cada distrito e segure todos por {hours} horas para tomar a cidade de uma vez — caso contrário, a família mais respeitada vence quando a temporada terminar em {date}.",
+    "loading": "Contabilizando respeito…",
+    "unknownFamily": "Família sem nome",
+    "table": {
+      "blocks": "Quarteirões",
+      "caption": "Classificação da temporada",
+      "description": "Toda família com nome na cidade, da mais respeitada para baixo.",
+      "empty": "Ninguém fincou bandeira ainda. A cidade espera.",
+      "family": "Família",
+      "landmarks": "Marcos",
+      "respect": "Respeito"
+    },
+    "title": "Classificação",
+    "you": "(você)"
+  },
+  "shell": {
+    "signOut": "Sair",
+    "signOutModal": {
+      "eyebrow": "Deixando a operação",
+      "intro": "Você está prestes a sair. A família manterá seus negócios em ordem até você voltar.",
+      "signOutDescription": "Encerrar a sessão e voltar para a porta.",
+      "signOutLabel": "Sair",
+      "stayDescription": "Voltar à operação como se nada tivesse acontecido.",
+      "stayLabel": "Ficar",
+      "title": "Tem certeza de que quer sair?"
+    }
+  },
+  "season": {
+    "name": "Temporada {number}"
+  },
+  "store": {
+    "catalogError": "A loja está de portas fechadas. Atualize para tentar de novo.",
+    "catalogLoading": "Colocando a mercadoria na mesa…",
+    "categories": {
+      "alcohol": "Bebidas",
+      "armor": "Armadura Corporal",
+      "drug": "Narcóticos",
+      "explosive": "Explosivos",
+      "footwear": "Calçados",
+      "headgear": "Chapéus",
+      "machine_gun": "Metralhadoras",
+      "melee": "Corpo a Corpo",
+      "pistol": "Pistolas",
+      "rifle": "Fuzis",
+      "shotgun": "Escopetas",
+      "smg": "Submetralhadoras",
+      "sniper": "Fuzis de Precisão",
+      "tool": "Ferramentas",
+      "utility": "Utilidades"
+    },
+    "categoriesNav": "Categorias da loja",
+    "emptyCatalog": "Nenhum equipamento disponível no momento.",
+    "filters": {
+      "allRequiredLevels": "Todos os níveis exigidos",
+      "equipmentName": "Nome do equipamento",
+      "everything": "Tudo",
+      "levelOption": "Nível {level}",
+      "requiredLevel": "Nível exigido",
+      "searchPlaceholder": "Buscar por nome"
+    },
+    "header": {
+      "eyebrow": "Arsenal dos fundos",
+      "level": "Nível",
+      "tagline": "O dinheiro compra o equipamento; os trabalhos decidem se você precisava dele. Peças bloqueadas se liberam conforme você sobe de nível.",
+      "title": "A Loja",
+      "yourCash": "Seu dinheiro"
+    },
+    "item": {
+      "armor": "Armadura {value}",
+      "buy": "Comprar",
+      "drunk": "+{value} Embriaguez",
+      "effects": {
+        "approachBonus": "+{value}% em ações de {approach}",
+        "heatReduction": "−{value} de pressão por trabalho",
+        "skillBonus": "+{value} de {skill} em testes"
+      },
+      "health": "+{value} Saúde",
+      "heat": "{value} Pressão",
+      "high": "+{value} Euforia",
+      "levelRequirement": "Nível {level}",
+      "locked": "Bloqueado",
+      "owned": "Possui ×{quantity}",
+      "power": "Poder {value}",
+      "stamina": "+{value} Energia",
+      "stashSlot": "Esconderijo"
+    },
+    "loading": "Abrindo a sala dos fundos…",
+    "noMatches": "Nenhum equipamento corresponde à busca e aos filtros. Tente outro nome, categoria ou nível exigido.",
+    "toast": {
+      "buyErrorMessage": "O receptador não está atendendo. Tente de novo.",
+      "buyErrorTitle": "Sem acordo",
+      "buySuccessMessage": "{itemName} foi para o seu esconderijo.",
+      "buySuccessTitle": "Negócio fechado",
+      "fallbackItemName": "Equipamento"
+    }
+  },
+  "street": {
+    "bribeQuote": "−{chunk} de pressão por {cost}",
+    "drunk": "Embriaguez",
+    "heat": "Pressão",
+    "high": "Euforia",
+    "impaired": "Debilitado: −{penalty}% em todos os testes",
+    "impairedTip": "Estar eufórico ou bêbado reduz a chance de passar em cada teste dos trabalhos que você aceita, e as doses restauram menos energia. O efeito passa enquanto você descansa.",
+    "payPrecinct": "Subornar a delegacia",
+    "stamina": "Energia"
+  }
+}

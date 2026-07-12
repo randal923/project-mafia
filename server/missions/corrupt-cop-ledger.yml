@@ -1,0 +1,69 @@
+id: corrupt-cop-ledger
+name: Corrupt Cop Ledger
+type: infiltration
+district: Downtown
+
+levels:
+  min: 28
+  max: 40
+
+depth: 4
+
+difficulty:
+  base: 29
+  perLevel: 1.15
+
+rewards:
+  cashBase: 90
+  cashPerLevel: 60
+  spreadBase: 60
+  spreadPerLevel: 15
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 6
+  perDifficulty: 0.2
+  max: 24
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, deception, quiet, technical]
+
+gear:
+  - approaches: [quiet]
+    chance: 0.4
+    consumes: true
+    label: Climbing Gear
+    tags: [climbing]
+  - approaches: [deception]
+    chance: 0.4
+    consumes: true
+    label: Disguise
+    tags: [disguise]
+
+outcomes:
+  jackpot: {cashFactor: 1.72, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.7, heatFactor: 1, heatBonus: 4, xpFactor: 1}
+  partial_failure: {cashFactor: 0.2, heatFactor: 1, heatBonus: 6, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 12, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 18, xpFactor: 0.1}
+
+storySeeds:
+  - location: Second Precinct records annex
+    premise: A vice lieutenant's payoff ledger is locked beside routine arrest books.
+    pressure: An internal-affairs team has scheduled a surprise midnight inventory.
+  - location: Detective Marsh's apartment
+    premise: Names, dates, and envelope amounts are hidden behind a false medicine cabinet.
+    pressure: His partner is waiting downstairs for an overdue phone call.
+  - location: Municipal evidence office
+    premise: A patrol captain filed his private ledger inside a dead case box.
+    pressure: The building's janitor knows every detective by sight.
+  - location: Downtown police benevolent club
+    premise: The club safe holds duplicate books for an illegal pension skim.
+    pressure: A retirement party is still drinking in the ballroom above.

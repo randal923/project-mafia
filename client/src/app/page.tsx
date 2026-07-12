@@ -1,3 +1,8 @@
+import { getLocalizedMetadata } from "../lib/getLocalizedMetadata";
+import { HomePageContent } from "./HomePageContent";
+
+export const generateMetadata = () => getLocalizedMetadata("home");
+
 export default function Home() {
-  return <main className="min-h-screen bg-page text-ink"></main>;
+  return <HomePageContent />;
 }

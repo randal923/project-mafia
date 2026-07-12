@@ -1,3 +1,5 @@
+import { typography } from "./typography";
+
 type TypographyStyle = {
   className: string;
   colorSwatchClassName: string;
@@ -13,8 +15,7 @@ type TypographyStyle = {
 
 export const typographyStyles = [
   {
-    className:
-      "font-display text-6xl uppercase leading-none tracking-normal text-title md:text-7xl",
+    className: typography.screenTitle,
     colorSwatchClassName: "bg-title",
     colorToken: "text-title",
     font: "Bebas Neue",
@@ -26,8 +27,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className:
-      "font-display text-5xl uppercase leading-none tracking-normal text-title md:text-6xl",
+    className: typography.dialogTitle,
     colorSwatchClassName: "bg-title",
     colorToken: "text-title",
     font: "Bebas Neue",
@@ -39,8 +39,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className:
-      "font-display text-4xl uppercase leading-none tracking-normal text-title",
+    className: typography.brandMark,
     colorSwatchClassName: "bg-title",
     colorToken: "text-title",
     font: "Bebas Neue",
@@ -52,8 +51,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className:
-      "font-display text-3xl uppercase leading-none tracking-normal text-title",
+    className: typography.panelHeading,
     colorSwatchClassName: "bg-title",
     colorToken: "text-title",
     font: "Bebas Neue",
@@ -65,7 +63,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className: "text-xl leading-relaxed text-muted",
+    className: typography.subtitle,
     colorSwatchClassName: "bg-muted",
     colorToken: "text-muted",
     font: "Oswald",
@@ -77,8 +75,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className:
-      "font-display text-2xl uppercase leading-none tracking-normal text-brass",
+    className: typography.eyebrow,
     colorSwatchClassName: "bg-brass",
     colorToken: "text-brass",
     font: "Bebas Neue",
@@ -90,8 +87,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className:
-      "font-display text-xl uppercase leading-none tracking-normal text-ink",
+    className: typography.commandLabel,
     colorSwatchClassName: "bg-ink",
     colorToken: "text-ink",
     font: "Bebas Neue",
@@ -103,8 +99,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className:
-      "font-display text-5xl uppercase leading-none tracking-normal text-ink",
+    className: typography.statValue,
     colorSwatchClassName: "bg-ink",
     colorToken: "text-ink",
     font: "Bebas Neue",
@@ -116,7 +111,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className: "text-xl leading-relaxed text-ink",
+    className: typography.leadBody,
     colorSwatchClassName: "bg-ink",
     colorToken: "text-ink",
     font: "Oswald",
@@ -128,7 +123,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className: "text-xl leading-relaxed text-muted",
+    className: typography.narrativeBody,
     colorSwatchClassName: "bg-muted",
     colorToken: "text-muted",
     font: "Oswald",
@@ -140,7 +135,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className: "text-base leading-relaxed text-muted",
+    className: typography.paragraph,
     colorSwatchClassName: "bg-muted",
     colorToken: "text-muted",
     font: "Oswald",
@@ -152,7 +147,7 @@ export const typographyStyles = [
     weight: "400"
   },
   {
-    className: "text-sm font-medium leading-normal text-faint",
+    className: typography.metadata,
     colorSwatchClassName: "bg-faint",
     colorToken: "text-faint",
     font: "Oswald",

@@ -1,0 +1,74 @@
+id: syndicate-arms-convoy
+name: Syndicate Arms Convoy
+type: hijack
+district: The Docks
+
+levels:
+  min: 60
+  max: 74
+
+depth: 5
+
+difficulty:
+  base: 61
+  perLevel: 1.15
+
+rewards:
+  cashBase: 150
+  cashPerLevel: 68
+  spreadBase: 85
+  spreadPerLevel: 18
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 10
+  perDifficulty: 0.22
+  max: 30
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic, quiet, technical]
+
+gear:
+  - approaches: [opportunistic]
+    chance: 0.5
+    consumes: true
+    label: Getaway Vehicle
+    tags: [getaway]
+  - approaches: [quiet]
+    chance: 0.5
+    consumes: true
+    label: Smoke Grenade
+    tags: [smoke]
+  - approaches: [force]
+    chance: 0.5
+    consumes: true
+    label: Explosive Charge
+    tags: [explosive]
+
+outcomes:
+  jackpot: {cashFactor: 1.8, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.68, heatFactor: 1, heatBonus: 4, xpFactor: 1}
+  partial_failure: {cashFactor: 0.18, heatFactor: 1, heatBonus: 8, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 14, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 22, xpFactor: 0.1}
+
+storySeeds:
+  - location: Harbor expressway viaduct
+    premise: Three trucks of imported weapons must slow for overnight bridge repairs.
+    pressure: Motorcycle outriders are sweeping every ramp ahead of the convoy.
+  - location: Docks customs bypass
+    premise: A syndicate manifest routes contraband through a supposedly empty inspection lane.
+    pressure: A customs supervisor has unexpectedly kept a full crew late.
+  - location: Salt Warehouse road
+    premise: The lead convoy truck has a failing radiator and no safe place to stop.
+    pressure: The rear trucks carry enough guards to lock down the whole block.
+  - location: East Ferry freight deck
+    premise: The convoy must split across two ferries during the night crossing.
+    pressure: Harbor police are boarding vehicles before either boat can sail.

@@ -1,0 +1,100 @@
+# Docks robbery — waterfront work for a crew finding its feet. Better
+# money than corner stores, and the harbor keeps its secrets — but the
+# people you steal from down here settle things themselves.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: docks-robbery
+name: Docks Robbery
+type: robbery
+district: The Docks
+
+levels:
+  min: 8
+  max: 18
+
+depth: 3
+
+difficulty:
+  base: 9
+  perLevel: 1.2
+
+rewards:
+  cashBase: 50
+  cashPerLevel: 50
+  spreadBase: 50
+  spreadPerLevel: 14
+  xpBase: 30
+  xpPerDifficulty: 6
+
+heat:
+  base: 4
+  perDifficulty: 0.16
+  max: 16
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, quiet]
+
+gear:
+  - approaches: [quiet, technical]
+    chance: 0.3
+    consumes: true
+    label: Lockpick Set
+    tags: [lockpick]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.65
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.75
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.25
+    heatFactor: 1
+    heatBonus: 4
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 8
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 14
+    xpFactor: 0.1
+
+storySeeds:
+  - location: Pier 9 bonded warehouse
+    premise: A night-shift manifest clerk sells you the location of a cage full of untaxed cigarettes awaiting customs inspection.
+    pressure: The inspection — and a police walkthrough — happens at dawn.
+  - location: The trawler 'Santa Lucia'
+    premise: A fishing trawler is moored overnight with a skim of gambling cash hidden under the ice in its hold.
+    pressure: The crew drinks at a bar on the quay and stumbles back at random.
+  - location: Harbor master's office
+    premise: The harbor master keeps a week of bribe envelopes in an old floor safe before passing them up the chain.
+    pressure: A private security patrol loops past the office every twenty minutes.
+  - location: Container yard, row F
+    premise: A mislabeled container holds counterfeit designer goods a rival crew hasn't collected yet — and its customs seal is wired to a cheap alarm anyone with steady hands could bypass.
+    pressure: The rival crew's van has already been spotted circling the gate.
+  - location: Dockside pawn shop
+    premise: The pawnbroker who fences for half the waterfront just took in a tray of stolen watches too hot for him to move.
+    pressure: He sleeps above the shop with a shotgun within reach.
+  - location: Union hall back room
+    premise: The dockworkers' union treasurer is skimming dues into a lockbox nobody else is supposed to know about.
+    pressure: A card game in the front room runs until the early hours.

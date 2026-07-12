@@ -25,6 +25,13 @@ export const Secondary: Story = {
   }
 };
 
+export const Danger: Story = {
+  args: {
+    children: "Sign out",
+    variant: "danger"
+  }
+};
+
 export const QuietDisabled: Story = {
   args: {
     children: "Back",

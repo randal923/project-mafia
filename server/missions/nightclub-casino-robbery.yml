@@ -1,0 +1,74 @@
+id: nightclub-casino-robbery
+name: Nightclub Casino Robbery
+type: robbery
+district: Neon Strip
+
+levels:
+  min: 42
+  max: 56
+
+depth: 4
+
+difficulty:
+  base: 43
+  perLevel: 1.15
+
+rewards:
+  cashBase: 120
+  cashPerLevel: 65
+  spreadBase: 70
+  spreadPerLevel: 17
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 8
+  perDifficulty: 0.2
+  max: 26
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, deception, opportunistic, social, technical]
+
+gear:
+  - approaches: [deception, social]
+    chance: 0.45
+    consumes: true
+    label: Staff Disguise
+    tags: [disguise]
+  - approaches: [technical]
+    chance: 0.45
+    consumes: true
+    label: Hacking Rig
+    tags: [hacking]
+  - approaches: [opportunistic]
+    chance: 0.4
+    consumes: true
+    label: Police Scanner
+    tags: [scanner]
+
+outcomes:
+  jackpot: {cashFactor: 1.76, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.7, heatFactor: 1, heatBonus: 4, xpFactor: 1}
+  partial_failure: {cashFactor: 0.2, heatFactor: 1, heatBonus: 8, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 12, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 20, xpFactor: 0.1}
+
+storySeeds:
+  - location: Club Meridian counting floor
+    premise: Weekend table money moves through a service elevator after the final show.
+    pressure: The owner's private security has replaced the usual house guards.
+  - location: Starlight Roof casino
+    premise: A charity tournament has filled the cashier cage with clean banknotes.
+    pressure: A mayoral candidate is hosting donors one room away.
+  - location: The Cobalt Room
+    premise: A crooked pit boss will leave one camera loop running for exactly eight minutes.
+    pressure: His nervous accomplice wants to cancel the arrangement.
+  - location: Neon Palace basement
+    premise: Unreported roulette receipts are boxed beside the liquor cellar.
+    pressure: A surprise liquor-board inspection has every manager downstairs.

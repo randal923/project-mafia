@@ -1,0 +1,133 @@
+# Global engine constants — one source of truth for what a skill point,
+# a critical, or a momentum point means across ALL missions.
+# Per-mission personality (difficulty, rewards, heat, story) belongs in
+# the mission files, not here.
+#
+# Skills, player levels and check difficulties all run on a 1-100 scale.
+# Full parameter reference: see README.md in this folder.
+
+board:
+  # How many offers the job board shows.
+  size: 4
+  # A template keeps appearing until playerLevel > levels.max + levelGrace,
+  # so outleveled jobs fade off the board instead of vanishing overnight.
+  levelGrace: 15
+
+checks:
+  # passChance = clamp(baseChance
+  #                    + perSkillPoint × skillValue      (skill 1-100)
+  #                    + perDifficulty × checkDifficulty (difficulty 1-100)
+  #                    + floor(power / powerDivisor)
+  #                    − floor(heat / heatChanceDivisor),
+  #                    minChance, maxChance)
+  #
+  # Tuned so an at-level player with at-level gear sits around 55-60%,
+  # climbing toward ~75% at level 100 with top-shelf equipment.
+  baseChance: 52
+  perSkillPoint: 1.0
+  perDifficulty: -0.8
+  powerDivisor: 25
+  heatChanceDivisor: 20
+  minChance: 5
+  maxChance: 95
+
+  # Beating/missing the chance by this margin makes the check critical.
+  criticalMargin: 40
+
+  # checkDifficulty = clamp(jobDifficulty
+  #                         + floor(heat / heatPressureDivisor)
+  #                         + beatDepth × perBeatDepth
+  #                         ± saferBolderGap
+  #                         ± gear modifiers,  1, 100)
+  perBeatDepth: 2
+  saferBolderGap: 5
+  heatPressureDivisor: 10
+
+gear:
+  # A choice that demands gear the player is carrying gets easier by
+  # satisfiedBonus. A demand the player CANNOT cover locks that choice —
+  # the other option on the beat is always playable.
+  satisfiedBonus: 5
+
+momentum:
+  # Every beat pairs a safer option with a bolder one, and they swing
+  # momentum differently: safe play protects a lead but caps the ceiling,
+  # bold play reaches for jackpot and risks disaster. Criticals add
+  # ±criticalBonus on top.
+  #
+  # Outcome tier bands derive from these swings and mission depth d:
+  #   jackpot              momentum >  midline           (midline = avg(pass) × d)
+  #   successful           momentum >= safer.pass × d    (a perfect safe run)
+  #   partially_successful momentum >= 1
+  #   partial_failure      momentum >= −(safer.pass × d) (all-safe fails land here)
+  #   failure              momentum >= −midline
+  #   disaster             below — only reachable by failing bold plays.
+  safer:
+    pass: 1
+    fail: -1
+  bolder:
+    pass: 3
+    fail: -3
+  criticalBonus: 1
+
+approaches:
+  # What playing an approach costs beyond the roll. cashCostFactor is paid
+  # UP FRONT as a fraction of the offer's rewardMax — bribes and cover
+  # stories cost money whether they work or not (a broke player pays what
+  # they have). heatOnFail lands only when the check fails and the move
+  # goes loud. Quiet and technical trade these costs for gear demands and
+  # per-template health risk instead.
+  charm:
+    cashCostFactor: 0.1
+  social:
+    cashCostFactor: 0.08
+  force:
+    heatOnFail: 3
+  opportunistic:
+    heatOnFail: 2
+  deception:
+    heatOnFail: 2
+  quiet: {}
+  technical: {}
+
+stamina:
+  # Accepting a job costs
+  #   round(baseCost + costPerDepth × (depth − 3) + perDifficulty × difficulty)
+  # so harder jobs burn more energy: a level-5 street job ≈ 18, a mid-game
+  # depth-4 score ≈ 44, an endgame depth-5 heist ≈ 66 — one top-shelf job
+  # per tank, two or three smaller ones. Templates can override with their
+  # own staminaCost (lay-low does). Regen is 25/hour idle
+  # (shared/stamina.ts); drugs and liquor from the store refill it
+  # instantly.
+  baseCost: 16
+  costPerDepth: 8
+  perDifficulty: 0.36
+
+prison:
+  # A disaster outcome means you were arrested. One game day behind bars
+  # equals one real hour (shared/gameTime.ts).
+  sentenceGameDays: 1
+  # Bribing a guard rolls charisma and costs cash win or lose.
+  bribeBaseCost: 300
+  bribeCostPerLevel: 90
+  bribeBaseChance: 30
+  bribePerCharisma: 0.6
+  # Breaking out rolls stealth; failing extends the stay.
+  escapeBaseChance: 25
+  escapePerStealth: 0.6
+  minChance: 5
+  maxChance: 90
+  escapeFailExtensionMinutes: 30
+  escapeHeat: 15
+  serveHeatRelief: 30
+  attemptCooldownMinutes: 10
+
+precinct:
+  # Paying off the precinct: removes `chunk` heat per payment at
+  # (baseCost + costPerLevel × level), discounted by corruption up to
+  # maxDiscount.
+  chunk: 20
+  baseCost: 250
+  costPerLevel: 45
+  discountPerCorruption: 0.004
+  maxDiscount: 0.4

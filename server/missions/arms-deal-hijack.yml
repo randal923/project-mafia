@@ -1,0 +1,111 @@
+# Arms deal hijack — two dangerous parties, one exchange, and your crew
+# uninvited between them. The cargo sells itself; surviving both sellers
+# and buyers afterward is the actual job. Depth 5, and it assumes you
+# came loaded.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: arms-deal-hijack
+name: Arms Deal Hijack
+type: hijack
+district: The Docks
+
+levels:
+  min: 65
+  max: 78
+
+depth: 5
+
+difficulty:
+  base: 66
+  perLevel: 1.15
+
+rewards:
+  cashBase: 140
+  cashPerLevel: 68
+  spreadBase: 85
+  spreadPerLevel: 18
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 9
+  perDifficulty: 0.22
+  max: 30
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic, quiet]
+
+gear:
+  - approaches: [technical]
+    chance: 0.45
+    consumes: true
+    label: Signal Jammer
+    tags: [jammer]
+  - approaches: [opportunistic]
+    chance: 0.45
+    consumes: true
+    label: Getaway Car
+    tags: [getaway]
+  - approaches: [quiet]
+    chance: 0.45
+    consumes: true
+    label: Smoke Grenade
+    tags: [smoke]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.8
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 6
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 12
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.5
+    heatBonus: 22
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The mothballed destroyer 'Carlisle', navy yard
+    premise: A quartermaster has been selling the fleet piecemeal for years, and tonight his biggest order yet — crated rifles, listed as scrapped — gets handed to a buyer aboard a ship the navy forgot it owned.
+    pressure: The yard's marine sentries are real navy, on real rotations, and the quartermaster will scuttle the deal at the first sound he doesn't recognize.
+  - location: Grain elevator 7, the export pier
+    premise: An arms broker moves military crates inside grain shipments, and this load — enough automatic weapons to start a small war — waits in the elevator's boot pit for a foreign buyer's freighter delayed by weather.
+    pressure: The freighter made up time overnight; it docks at four, and the broker's loading crew arrives an hour before.
+  - location: The customs quarantine shed
+    premise: A seized shipment of surplus machine guns sits in customs limbo while two governments argue over it — the paperwork war ends Friday, and a customs officer with debts will leave one specific door unwired tonight, if someone pays them.
+    pressure: The shed shares a fence line with the harbor police pier, close enough to hear their card game.
+  - location: The Van Houten trading floor, after hours
+    premise: The deal signs in a commodities office at midnight — the guns are paperwork here, a warehouse receipt in a briefcase — and whoever holds that receipt at dawn legally owns the cargo. It's the rare hijack you could do in a good suit.
+    pressure: Both parties bring shooters to the signing, and the elevator man is on somebody's payroll — nobody knows whose.
+  - location: The river barge 'Elena M.', midstream
+    premise: The exchange happens on a barge anchored mid-river — cash boat from the south bank, gun boat from the north, no jurisdiction and no witnesses. Both boats have to pass the narrows at Miller's Point to get there.
+    pressure: The river patrol sweeps the narrows at unpredictable intervals, and out on black water, muzzle flash carries for a mile.
+  - location: The Armory Row auction house
+    premise: A collector's auction of 'deactivated' weapons is a laundry for the real thing — the lot numbers ending in seven were never deactivated at all, and the cartel's bidder has instructions to win every one of them.
+    pressure: The auctioneer banks the deposits at close of business, and the cartel's bidder has men in the room who came to guarantee the outcome.

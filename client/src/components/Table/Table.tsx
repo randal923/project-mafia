@@ -1,4 +1,10 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { toneTextClasses } from "../../design-system/tones";
+import { displayText, typography } from "../../design-system/typography";
+import { cx } from "../../lib/cx";
 
 type TableAlignment = "left" | "right";
 type TableDensity = "comfortable" | "compact";
@@ -42,12 +48,13 @@ const densityClasses: Record<TableDensity, string> = {
   compact: "py-3"
 };
 
-const toneClasses: Record<TableCellTone, string> = {
-  danger: "text-danger-strong",
-  muted: "text-muted",
-  neutral: "text-ink",
-  profit: "text-profit"
-};
+const toneTokens: Record<TableCellTone, "danger" | "ink" | "muted" | "profit"> =
+  {
+    danger: "danger",
+    muted: "muted",
+    neutral: "ink",
+    profit: "profit"
+  };
 
 export function Table({
   caption,
@@ -55,28 +62,27 @@ export function Table({
   columns,
   density = "comfortable",
   description,
-  emptyMessage = "No records available.",
+  emptyMessage,
   rows
 }: TableProps) {
-  const classNames = [
+  const t = useTranslations("common");
+  const classNames = cx(
     "overflow-x-auto rounded-panel border border-line bg-surface shadow-panel",
     className
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
   const hasColumns = columns.length > 0;
   const shouldShowEmptyState = !hasColumns || rows.length === 0;
-  const emptyStateMessage = hasColumns ? emptyMessage : "No columns available.";
+  const emptyStateMessage = hasColumns
+    ? (emptyMessage ?? t("noRecords"))
+    : t("noColumns");
 
   return (
     <div className={classNames}>
       <table className="min-w-full border-collapse">
         <caption className="caption-top border-b border-line bg-surface-raised px-4 py-4 text-left">
-          <span className="block font-display text-3xl uppercase leading-none tracking-normal text-title">
-            {caption}
-          </span>
+          <span className={`block ${typography.panelHeading}`}>{caption}</span>
           {description ? (
-            <span className="mt-2 block text-base leading-relaxed text-muted">
+            <span className={`mt-2 block ${typography.paragraph}`}>
               {description}
             </span>
           ) : null}
@@ -86,7 +92,7 @@ export function Table({
             <tr>
               {columns.map((column) => (
                 <th
-                  className={`border-b border-line bg-black/40 px-4 py-3 font-display text-xl uppercase leading-none tracking-normal text-brass ${alignmentClasses[column.align ?? "left"]}`}
+                  className={`border-b border-line bg-black/40 px-4 py-3 ${displayText} text-xl text-brass ${alignmentClasses[column.align ?? "left"]}`}
                   key={column.id}
                   scope="col"
                 >
@@ -100,7 +106,7 @@ export function Table({
           {shouldShowEmptyState ? (
             <tr>
               <td
-                className="px-4 py-6 text-center text-base leading-relaxed text-muted"
+                className={`px-4 py-6 text-center ${typography.paragraph}`}
                 colSpan={Math.max(columns.length, 1)}
               >
                 {emptyStateMessage}
@@ -111,6 +117,12 @@ export function Table({
               <tr className="transition-colors hover:bg-brass/5" key={row.id}>
                 {columns.map((column, index) => {
                   const cell = row.cells[index];
+                  const cellClasses = cx(
+                    "border-b border-line px-4 align-top text-base leading-relaxed",
+                    alignmentClasses[column.align ?? "left"],
+                    densityClasses[density],
+                    toneTextClasses[toneTokens[cell?.tone ?? "neutral"]]
+                  );
                   const cellContent = cell ? (
                     <>
                       <span className="block">{cell.value}</span>
@@ -127,7 +139,7 @@ export function Table({
                   if (column.isRowHeader) {
                     return (
                       <th
-                        className={`border-b border-line px-4 align-top text-base font-medium leading-relaxed ${alignmentClasses[column.align ?? "left"]} ${densityClasses[density]} ${toneClasses[cell?.tone ?? "neutral"]}`}
+                        className={cx(cellClasses, "font-medium")}
                         key={column.id}
                         scope="row"
                       >
@@ -137,10 +149,7 @@ export function Table({
                   }
 
                   return (
-                    <td
-                      className={`border-b border-line px-4 align-top text-base leading-relaxed ${alignmentClasses[column.align ?? "left"]} ${densityClasses[density]} ${toneClasses[cell?.tone ?? "neutral"]}`}
-                      key={column.id}
-                    >
+                    <td className={cellClasses} key={column.id}>
                       {cellContent}
                     </td>
                   );

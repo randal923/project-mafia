@@ -1,46 +1,88 @@
+import { useTranslations } from "next-intl";
+import type { DragEvent } from "react";
+import { displayText } from "../../design-system/typography";
+import { cx } from "../../lib/cx";
+import { useCatalogText } from "../../lib/useCatalogText";
+import { Button } from "../Button/Button";
+import { ItemHoverCard } from "../ItemHoverCard/ItemHoverCard";
+import { InventoryEmptySlot } from "./InventoryEmptySlot";
 import { InventoryItemCard } from "./InventoryItemCard";
-import type { InventorySlot } from "./InventoryTypes";
+import type { InventorySlot, InventorySlotId } from "./InventoryTypes";
 
 type InventorySlotPanelProps = {
+  actionsDisabled?: boolean;
   emptyLabel: string;
+  onItemDragEnd?: () => void;
+  onItemDragStart?: (
+    event: DragEvent<HTMLDivElement>,
+    slot: InventorySlot
+  ) => void;
+  onUnequip?: (slotId: InventorySlotId) => void;
   placementClassName: string;
   slot: InventorySlot;
 };
 
 export function InventorySlotPanel({
+  actionsDisabled = false,
   emptyLabel,
+  onItemDragEnd,
+  onItemDragStart,
+  onUnequip,
   placementClassName,
   slot
 }: InventorySlotPanelProps) {
-  const classNames = [
-    "min-h-36 rounded-panel border bg-surface-raised p-3",
+  const t = useTranslations("inventory");
+  const { itemName } = useCatalogText();
+  const classNames = cx(
+    "relative z-10 min-h-28 rounded-panel border bg-surface-raised p-2",
     slot.item ? "border-brass" : "border-line",
     placementClassName
-  ].join(" ");
+  );
   const ariaLabel = slot.item
-    ? `${slot.label} slot equipped with ${slot.item.name}`
-    : `${slot.label} slot empty`;
+    ? t("slotEquipped", { item: itemName(slot.item), slot: slot.label })
+    : t("slotEmpty", { slot: slot.label });
 
   return (
-    <article aria-label={ariaLabel} className={classNames}>
+    <article aria-label={ariaLabel} className={cx(classNames, "flex flex-col")}>
       <div className="flex items-center justify-between gap-3 border-b border-line pb-2">
-        <h3 className="m-0 font-display text-xl uppercase leading-none tracking-normal text-muted">
+        <h3 className={`m-0 ${displayText} text-lg text-muted`}>
           {slot.label}
         </h3>
-        <span className="font-display text-lg uppercase leading-none tracking-normal text-brass">
-          Slot
+        <span className={`${displayText} text-base text-brass`}>
+          {t("slotTag")}
         </span>
       </div>
-      <div className="mt-3 flex min-h-24 items-stretch border border-line bg-page p-2">
+      <div className="mt-2 flex items-center justify-center border border-line bg-page p-1">
         {slot.item ? (
-          <InventoryItemCard compact item={slot.item} />
+          <ItemHoverCard className="w-full" item={slot.item}>
+            <InventoryItemCard
+              compact
+              draggable={!actionsDisabled && Boolean(onItemDragStart)}
+              item={slot.item}
+              onDragEnd={onItemDragEnd}
+              onDragStart={(event) => onItemDragStart?.(event, slot)}
+            />
+          </ItemHoverCard>
         ) : (
-          <div className="flex flex-1 items-center justify-center border border-dashed border-line bg-black/20 p-3">
-            <p className="m-0 font-display text-xl uppercase leading-none tracking-normal text-faint">
+          <InventoryEmptySlot>
+            <p className={`m-0 ${displayText} text-lg text-faint`}>
               {emptyLabel}
             </p>
-          </div>
+          </InventoryEmptySlot>
         )}
+      </div>
+      <div className="mt-2 min-h-10">
+        {slot.item && onUnequip ? (
+          <Button
+            className="w-full"
+            disabled={actionsDisabled}
+            onClick={() => onUnequip(slot.id)}
+            size="small"
+            variant="quiet"
+          >
+            {t("unequip")}
+          </Button>
+        ) : null}
       </div>
     </article>
   );

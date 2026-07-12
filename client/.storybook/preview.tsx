@@ -1,14 +1,20 @@
 import type { Preview } from "@storybook/nextjs";
-import { createElement } from "react";
+import { NextIntlClientProvider } from "next-intl";
 import "../src/app/globals.css";
 import { mafiaFonts } from "../src/app/mafiaFonts";
+import en from "../src/messages/en.json";
 
 const mafiaFontClassName = `${mafiaFonts.sans.variable} ${mafiaFonts.display.variable}`;
 
 const preview: Preview = {
   decorators: [
-    (Story) =>
-      createElement("div", { className: mafiaFontClassName }, Story())
+    (Story) => (
+      <NextIntlClientProvider locale="en" messages={en}>
+        <div className={mafiaFontClassName}>
+          <Story />
+        </div>
+      </NextIntlClientProvider>
+    )
   ],
   parameters: {
     backgrounds: {

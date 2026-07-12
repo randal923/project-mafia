@@ -1,0 +1,91 @@
+# Turf takeover — never appears on the job board. The map generates these
+# when a family moves on a block: difficulty comes from the turf's defense
+# at claim time, the location is the turf itself, and ending the run at
+# partially_successful or better plants the family flag.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: turf-takeover
+name: Turf Takeover
+type: turf_takeover
+district: Downtown
+
+levels:
+  min: 1
+  max: 100
+
+depth: 3
+
+difficulty:
+  base: 10
+  perLevel: 0.5
+
+rewards:
+  cashBase: 30
+  cashPerLevel: 20
+  spreadBase: 30
+  spreadPerLevel: 8
+  xpBase: 40
+  xpPerDifficulty: 5
+
+heat:
+  base: 6
+  perDifficulty: 0.15
+  max: 24
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.5
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.75
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.5
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 4
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 8
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 12
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The contested corner
+    premise: The block runs loose — whoever holds it collects from every till, and right now nobody's collection book carries the address.
+    pressure: The locals pay whoever looks strongest, and looking weak for one evening undoes a month of leaning.
+  - location: The block's card room
+    premise: The neighborhood settles its business in a smoky back room, and the man running it answers to no family — yet.
+    pressure: Every regular at the table is watching how this goes before they decide whose name to whisper.
+  - location: The street association office
+    premise: A storefront "merchants' association" collects the block's envelopes and has no muscle behind it worth the name.
+    pressure: The clerk keeps a ledger of who pays what — lose it in the scuffle and the block's income walks away with it.
+  - location: The corner tavern
+    premise: The tavern keeper brokers the block's disputes, and his blessing is what turns a crew squatting on a corner into the family that runs it.
+    pressure: He's buried two would-be bosses already and keeps their hats behind the bar as a lesson.
+  - location: The rooftop line
+    premise: Whoever posts men on these rooftops sees three streets in every direction — the block belongs to whoever holds the high ground.
+    pressure: The current lookouts are freelance kids who will sell you out to the first bidder unless you make it not worth their while.

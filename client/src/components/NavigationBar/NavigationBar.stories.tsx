@@ -6,6 +6,7 @@ const meta = {
   component: NavigationBar,
   args: {
     activeItemId: "news",
+    ariaLabel: "Primary navigation",
     brand: "Project Mafia",
     items: [
       { href: "#news", id: "news", label: "News" },

@@ -1,0 +1,74 @@
+id: hotel-summit-hit
+name: Hotel Summit Hit
+type: takedown
+district: Hillcrest
+
+levels:
+  min: 72
+  max: 86
+
+depth: 5
+
+difficulty:
+  base: 73
+  perLevel: 1.1
+
+rewards:
+  cashBase: 170
+  cashPerLevel: 70
+  spreadBase: 90
+  spreadPerLevel: 19
+  xpBase: 30
+  xpPerDifficulty: 9
+
+heat:
+  base: 10
+  perDifficulty: 0.24
+  max: 32
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, deception, opportunistic, quiet, social]
+
+gear:
+  - approaches: [technical]
+    chance: 0.5
+    consumes: true
+    label: Signal Jammer
+    tags: [jammer]
+  - approaches: [deception, social]
+    chance: 0.5
+    consumes: true
+    label: Staff Disguise
+    tags: [disguise]
+  - approaches: [opportunistic]
+    chance: 0.5
+    consumes: true
+    label: Police Scanner
+    tags: [scanner]
+
+outcomes:
+  jackpot: {cashFactor: 1.82, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.66, heatFactor: 1, heatBonus: 4, xpFactor: 1}
+  partial_failure: {cashFactor: 0.16, heatFactor: 1, heatBonus: 8, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 14, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 24, xpFactor: 0.1}
+
+storySeeds:
+  - location: Grand Hillcrest Hotel
+    premise: Three syndicate bosses are meeting under one roof to divide the waterfront.
+    pressure: Their security teams distrust one another and control separate floors.
+  - location: Beaumont Hotel ballroom
+    premise: A peace banquet offers one chance to break a rival alliance at its birth.
+    pressure: City officials and newspaper photographers fill the adjoining reception.
+  - location: Montrose penthouse
+    premise: A visiting racketeer is signing away local territory before his morning train.
+    pressure: His bodyguard has changed the suite and elevator plan without warning.
+  - location: Hillcrest Crown service wing
+    premise: A summit's private records can ruin every boss attending even if nobody dies.
+    pressure: Hotel detectives have found one forged staff credential already.

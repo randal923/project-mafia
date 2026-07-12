@@ -1,0 +1,13 @@
+.git
+.agents
+.claude
+.codex
+_bmad
+_bmad-output
+client
+tmp
+**/node_modules
+**/.next
+**/dist
+**/coverage
+**/.env*

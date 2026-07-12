@@ -1,0 +1,100 @@
+# Chop shop run — steal a car to order for the cutters in Ironworks.
+# Clean work if you can pop a lock and keep your head; the buyer only
+# pays for cars that arrive without new dents.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: chop-shop-run
+name: Chop Shop Run
+type: theft
+district: Ironworks
+
+levels:
+  min: 5
+  max: 14
+
+depth: 3
+
+difficulty:
+  base: 6
+  perLevel: 1.2
+
+rewards:
+  cashBase: 60
+  cashPerLevel: 50
+  spreadBase: 45
+  spreadPerLevel: 13
+  xpBase: 30
+  xpPerDifficulty: 6
+
+heat:
+  base: 4
+  perDifficulty: 0.16
+  max: 16
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic]
+
+gear:
+  - approaches: [force, technical]
+    chance: 0.3
+    consumes: true
+    label: Crowbar
+    tags: [crowbar]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.65
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.75
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.25
+    heatFactor: 1
+    heatBonus: 4
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 8
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 12
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Continental Hotel valet garage
+    premise: A judge's sedan sits on level two every Thursday while he dines upstairs, and the cutters want it for the armored panels somebody already paid to have installed.
+    pressure: The valet walks the levels on the half hour, and the judge never lingers past dessert.
+  - location: Kovac Freight lot, Ironworks
+    premise: A flatbed truck with its manifest still sealed is worth double to the shop if it arrives with the cargo untouched and unlooked-at.
+    pressure: The lot's dog knows the night watchman's steps — anyone else's, it starts baying.
+  - location: Belmont Avenue, outside the Apollo Club
+    premise: A bootlegger's coupe with a false floor tank is parked out front while he settles a debt inside, and your buyer wants the car more than the liquor.
+    pressure: The doorman minds the car for a folded bill, and the bootlegger settles his debts quickly.
+  - location: Meyer & Sons service garage
+    premise: A collector's roadster waits overnight for an engine fitting, keys hung on a numbered board behind a wired office window any patient hand could work around.
+    pressure: The mechanic's apprentice sleeps in the loft when his landlady locks him out, and lately that's most nights.
+  - location: The ferry terminal long-stay lot
+    premise: An insurance man wants his own car to vanish convincingly before the auditors find what he borrowed against it.
+    pressure: He reports it stolen at eight tomorrow — after that, every patrolman in Riverside has the plate.
+  - location: Calloway Motors showroom
+    premise: The dealership's floor model has papers so clean the shop can sell it whole, and the showroom's rolling gate runs on a chain drive older than the salesman.
+    pressure: The gate shrieks when it moves, and the beat cop smokes his midnight cigarette two doors down.

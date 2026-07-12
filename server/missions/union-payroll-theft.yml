@@ -1,0 +1,69 @@
+id: union-payroll-theft
+name: Union Payroll Theft
+type: theft
+district: Ironworks
+
+levels:
+  min: 14
+  max: 25
+
+depth: 4
+
+difficulty:
+  base: 15
+  perLevel: 1.2
+
+rewards:
+  cashBase: 65
+  cashPerLevel: 55
+  spreadBase: 50
+  spreadPerLevel: 14
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 6
+  perDifficulty: 0.18
+  max: 20
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, opportunistic, quiet, technical]
+
+gear:
+  - approaches: [force]
+    chance: 0.35
+    consumes: true
+    label: Crowbar
+    tags: [crowbar]
+  - approaches: [technical]
+    chance: 0.35
+    consumes: true
+    label: Breaching Gear
+    tags: [breaching]
+
+outcomes:
+  jackpot: {cashFactor: 1.68, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.72, heatFactor: 1, heatBonus: 2, xpFactor: 1}
+  partial_failure: {cashFactor: 0.22, heatFactor: 1, heatBonus: 6, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 10, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 16, xpFactor: 0.1}
+
+storySeeds:
+  - location: Ironworkers Local 18 hall
+    premise: Friday's cash payroll sits in the treasurer's safe before the morning shift.
+    pressure: A grievance meeting has kept half the committee in the building.
+  - location: Foundry paymaster office
+    premise: The mill pays night crews through a barred cashier window at midnight.
+    pressure: A labor dispute has put armed company guards on every gate.
+  - location: Freight handlers' hiring shed
+    premise: Dues and strike-fund envelopes are stacked for Monday's bank run.
+    pressure: Union stewards are sleeping in shifts beside the stove.
+  - location: Machine Works counting room
+    premise: A crooked foreman has duplicated the payroll key and wants a share.
+    pressure: His replacement is arriving early to audit the books.

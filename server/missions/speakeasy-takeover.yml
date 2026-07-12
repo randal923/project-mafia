@@ -1,0 +1,69 @@
+id: speakeasy-takeover
+name: Speakeasy Takeover
+type: takeover
+district: Old Quarter
+
+levels:
+  min: 20
+  max: 32
+
+depth: 4
+
+difficulty:
+  base: 21
+  perLevel: 1.2
+
+rewards:
+  cashBase: 75
+  cashPerLevel: 58
+  spreadBase: 55
+  spreadPerLevel: 15
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 6
+  perDifficulty: 0.18
+  max: 22
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, deception, social]
+
+gear:
+  - approaches: [force]
+    chance: 0.4
+    consumes: true
+    label: Flashbang
+    tags: [flashbang]
+  - approaches: [deception, social]
+    chance: 0.35
+    consumes: true
+    label: Disguise
+    tags: [disguise]
+
+outcomes:
+  jackpot: {cashFactor: 1.7, heatFactor: 1, heatBonus: 0, xpFactor: 2}
+  successful: {cashFactor: 1, heatFactor: 0.5, heatBonus: 0, xpFactor: 1.5}
+  partially_successful: {cashFactor: 0.72, heatFactor: 1, heatBonus: 2, xpFactor: 1}
+  partial_failure: {cashFactor: 0.22, heatFactor: 1, heatBonus: 6, xpFactor: 0.5}
+  failure: {cashFactor: 0, heatFactor: 1, heatBonus: 10, xpFactor: 0.25}
+  disaster: {cashFactor: 0, heatFactor: 1, heatBonus: 18, xpFactor: 0.1}
+
+storySeeds:
+  - location: The Gilded Lily
+    premise: Its owner missed three tribute payments and his bartenders are ready to switch sides.
+    pressure: The owner's cousins have taken the best booth with guns under the table.
+  - location: Blue Lantern basement
+    premise: A profitable hidden bar has lost its police protection for one night.
+    pressure: The regular crowd includes judges, reporters, and rival bookmakers.
+  - location: Saint Mark's supper club
+    premise: The manager wants help removing a violent silent partner from the business.
+    pressure: A sold-out jazz set leaves no clean way to empty the room.
+  - location: The Blind Tiger
+    premise: A disputed liquor shipment can decide who controls the club by dawn.
+    pressure: Both claimants have hired crews to guard separate entrances.

@@ -1,0 +1,105 @@
+# Casino skim — the Neon Strip's counting rooms leak, and the smart money
+# walks out the service door in laundry sacks. No masks, no guns if it
+# goes right: this is a job you wear a suit to.
+#
+# Full parameter + formula reference: README.md in this folder.
+
+id: casino-skim
+name: Casino Skim
+type: infiltration
+district: Neon Strip
+
+levels:
+  min: 36
+  max: 48
+
+depth: 4
+
+difficulty:
+  base: 37
+  perLevel: 1.15
+
+rewards:
+  cashBase: 100
+  cashPerLevel: 58
+  spreadBase: 70
+  spreadPerLevel: 15
+  xpBase: 30
+  xpPerDifficulty: 7.5
+
+heat:
+  base: 6
+  perDifficulty: 0.18
+  max: 22
+
+skillExperience:
+  basePerSuccess: 30
+  perCheckDifficulty: 0.05
+  criticalMultiplier: 2
+
+healthRisk:
+  approaches: [force, deception]
+
+gear:
+  - approaches: [deception, social]
+    chance: 0.45
+    consumes: true
+    label: Staff Disguise
+    tags: [disguise]
+  - approaches: [technical]
+    chance: 0.4
+    consumes: true
+    label: Hacking Rig
+    tags: [hacking]
+
+outcomes:
+  jackpot:
+    cashFactor: 1.75
+    heatFactor: 1
+    heatBonus: 0
+    xpFactor: 2
+  successful:
+    cashFactor: 1
+    heatFactor: 0.5
+    heatBonus: 0
+    xpFactor: 1.5
+  partially_successful:
+    cashFactor: 0.7
+    heatFactor: 1
+    heatBonus: 2
+    xpFactor: 1
+  partial_failure:
+    cashFactor: 0.2
+    heatFactor: 1
+    heatBonus: 6
+    xpFactor: 0.5
+  failure:
+    cashFactor: 0
+    heatFactor: 1
+    heatBonus: 10
+    xpFactor: 0.25
+  disaster:
+    cashFactor: 0
+    heatFactor: 1.25
+    heatBonus: 18
+    xpFactor: 0.1
+
+storySeeds:
+  - location: The Golden Calf, count room level
+    premise: The pit boss has been skimming for the owners' silent partners for years — he'll add your crew's sack to the pile for one night if you make his ex-brother-in-law's debt disappear.
+    pressure: The silent partners count their skim too, and their counter arrives on the last Friday of the month, which is tomorrow.
+  - location: Casino Royale Neon, cage transfer
+    premise: Every night at three the cage sends the overflow upstairs in a brass elevator with one guard and no camera, because the owner doesn't want a record of how much rides in it.
+    pressure: The elevator takes forty seconds, and the guard's replacement — your man — starts his first shift tonight, in a uniform one size wrong.
+  - location: The Tivoli's counting room
+    premise: The Tivoli's new tabulating machine tallies the drop automatically, and the technician who services it can make it under-count by a steady four percent — he just needs someone to carry what the machine no longer sees.
+    pressure: The floor manager suspects the totals already and has started weighing the sacks on a bathroom scale.
+  - location: The Sapphire Lounge, high-roller suite
+    premise: A private baccarat game upstairs runs off the books entirely — the house's own skim, hidden from its own license. Money that officially doesn't exist can't officially be stolen.
+    pressure: The game's banker is the owner's nephew, and he leaves with the box the moment the last whale stands up.
+  - location: Club Mirage, the junket settlement
+    premise: Once a month the junket operators settle their markers in cash in the Mirage's back office, and the settlement clerk is three payments behind to your book.
+    pressure: The operators bring their own muscle to the settlement, and they all know each other's faces — a stranger in that hallway gets asked questions once.
+  - location: The Golden Calf, surveillance room
+    premise: The eye-in-the-sky footage that could hang half the Strip's cheats gets couriered to a vault Sundays — but the room itself holds tonight's skim ledger, and the door lock answers to a code the fired installer still remembers.
+    pressure: The surveillance chief left a man inside watching the watchers, and he logs every door that opens against the shift roster.

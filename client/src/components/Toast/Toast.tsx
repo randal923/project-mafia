@@ -1,4 +1,9 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { toneTextClasses } from "../../design-system/tones";
+import { typography } from "../../design-system/typography";
 import { Frame } from "../Frame/Frame";
 
 type ToastTone = "success" | "failure" | "info" | "warning";
@@ -11,14 +16,7 @@ type ToastProps = {
   tone?: ToastTone;
 };
 
-const toneClasses: Record<ToastTone, string> = {
-  failure: "text-danger-strong",
-  info: "text-teal",
-  success: "text-profit",
-  warning: "text-brass-bright"
-};
-
-const toneBorderColors: Record<
+const toneTokens: Record<
   ToastTone,
   "brassBright" | "danger" | "profit" | "teal"
 > = {
@@ -26,13 +24,6 @@ const toneBorderColors: Record<
   info: "teal",
   success: "profit",
   warning: "brassBright"
-};
-
-const toneLabels: Record<ToastTone, string> = {
-  failure: "Failure",
-  info: "Info",
-  success: "Success",
-  warning: "Warning"
 };
 
 const toneRoles: Record<ToastTone, "alert" | "status"> = {
@@ -49,19 +40,22 @@ export function Toast({
   title,
   tone = "info"
 }: ToastProps) {
+  const t = useTranslations("common");
+  const toneToken = toneTokens[tone];
+
   return (
     <Frame
-      className={`w-full max-w-md shadow-panel ${toneClasses[tone]}`}
+      className={`w-full max-w-md shadow-panel ${toneTextClasses[toneToken]}`}
       element="section"
-      headerDismissLabel="Dismiss notification"
-      headerLabel={toneLabels[tone]}
+      headerDismissLabel={t("dismissNotification")}
+      headerLabel={t(`toastTone.${tone}`)}
       headerTitle={title}
       onHeaderDismiss={onDismiss}
       role={toneRoles[tone]}
-      topBorderColor={toneBorderColors[tone]}
+      topBorderColor={toneToken}
       withHeader
     >
-      <p className="m-0 text-base leading-relaxed text-muted">{message}</p>
+      <p className={`m-0 ${typography.paragraph}`}>{message}</p>
       {action ? <div className="mt-4">{action}</div> : null}
     </Frame>
   );
