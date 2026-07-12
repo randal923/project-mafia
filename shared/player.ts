@@ -1,5 +1,6 @@
 import { createEmptyNarrative, type PlayerNarrative } from "./narrative";
 import { MAX_HEALTH, MIN_HEALTH } from "./health";
+import { normalizeEquipmentImage } from "./normalizeEquipmentImage";
 import { playerNameKey } from "./playerSchemas";
 import type { PlayerFamily } from "./territory";
 import type { JobApproach } from "./job";
@@ -352,7 +353,10 @@ function normalizeItemQuantity(quantity: number | undefined): number {
 }
 
 function normalizePlayerItem(item: PlayerItem, fromStash = false): PlayerItem {
-  const normalized = { ...item };
+  const normalized = {
+    ...item,
+    ...(item.image && { image: normalizeEquipmentImage(item.image) }),
+  };
   const healing = HEALING_BY_ITEM_ID[item.id];
   const waistArmor = WAIST_ARMOR_BY_ITEM_ID[item.id];
 

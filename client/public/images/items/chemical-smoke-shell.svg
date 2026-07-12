@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Chemical Smoke Shell">
-    <rect x="34" y="30" width="28" height="46" rx="5" fill="#f7f2e8"/>
-    <rect x="40" y="22" width="16" height="9" rx="2" fill="#edc553"/>
-    <rect x="44" y="16" width="8" height="7" rx="2" fill="#f7f2e8"/>
-    <line x1="38" y1="42" x2="58" y2="42" stroke="#0a0a0a" stroke-opacity="0.25" fill="none" stroke-width="2.5"/>
-    <line x1="38" y1="64" x2="58" y2="64" stroke="#0a0a0a" stroke-opacity="0.25" fill="none" stroke-width="2.5"/>
-    <circle cx="42" cy="71" r="1.8" fill="#0a0a0a" opacity="0.25"/><circle cx="48" cy="71" r="1.8" fill="#0a0a0a" opacity="0.25"/><circle cx="54" cy="71" r="1.8" fill="#0a0a0a" opacity="0.25"/>
-    <path d="M64 26 Q70 20 68 14 M70 34 Q78 30 78 22" stroke="#f7f2e8" stroke-opacity="0.5" stroke-width="3" fill="none" stroke-linecap="round"/>
-</svg>

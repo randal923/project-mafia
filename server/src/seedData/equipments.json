@@ -5,7 +5,7 @@
     "id": "stiletto-knife",
     "image": {
       "alt": "Stiletto knife",
-      "src": "/images/items/stiletto-knife.png"
+      "src": "/images/items/stiletto-knife.webp"
     },
     "levelRequirement": 1,
     "name": "Stiletto Knife",
@@ -19,7 +19,7 @@
     "id": "brass-knuckles",
     "image": {
       "alt": "Brass Knuckles",
-      "src": "/images/items/brass-knuckles.svg"
+      "src": "/images/items/brass-knuckles.webp"
     },
     "levelRequirement": 3,
     "name": "Brass Knuckles",
@@ -33,7 +33,7 @@
     "id": "lead-pipe",
     "image": {
       "alt": "Lead Pipe",
-      "src": "/images/items/lead-pipe.svg"
+      "src": "/images/items/lead-pipe.webp"
     },
     "levelRequirement": 6,
     "name": "Lead Pipe",
@@ -47,7 +47,7 @@
     "id": "baseball-bat",
     "image": {
       "alt": "Baseball Bat",
-      "src": "/images/items/baseball-bat.svg"
+      "src": "/images/items/baseball-bat.webp"
     },
     "levelRequirement": 9,
     "name": "Baseball Bat",
@@ -61,7 +61,7 @@
     "id": "fire-axe",
     "image": {
       "alt": "Fire Axe",
-      "src": "/images/items/fire-axe.svg"
+      "src": "/images/items/fire-axe.webp"
     },
     "levelRequirement": 12,
     "name": "Fire Axe",
@@ -75,7 +75,7 @@
     "id": "trench-club",
     "image": {
       "alt": "Trench Club",
-      "src": "/images/items/trench-club.svg"
+      "src": "/images/items/trench-club.webp"
     },
     "levelRequirement": 15,
     "name": "Trench Club",
@@ -89,7 +89,7 @@
     "id": "pocket-derringer",
     "image": {
       "alt": "Pocket Derringer",
-      "src": "/images/items/pocket-derringer.svg"
+      "src": "/images/items/pocket-derringer.webp"
     },
     "levelRequirement": 3,
     "name": "Pocket Derringer",
@@ -103,7 +103,7 @@
     "id": "snub-nose-38",
     "image": {
       "alt": "Snub-Nose .38",
-      "src": "/images/items/snub-nose-38.svg"
+      "src": "/images/items/snub-nose-38.webp"
     },
     "levelRequirement": 8,
     "name": "Snub-Nose .38",
@@ -117,7 +117,7 @@
     "id": "detective-special",
     "image": {
       "alt": "Detective Special",
-      "src": "/images/items/detective-special.svg"
+      "src": "/images/items/detective-special.webp"
     },
     "levelRequirement": 13,
     "name": "Detective Special",
@@ -131,7 +131,7 @@
     "id": "service-45",
     "image": {
       "alt": "Service .45",
-      "src": "/images/items/service-45.svg"
+      "src": "/images/items/service-45.webp"
     },
     "levelRequirement": 19,
     "name": "Service .45",
@@ -145,7 +145,7 @@
     "id": "hushed-welrod",
     "image": {
       "alt": "Hushed Welrod",
-      "src": "/images/items/hushed-welrod.svg"
+      "src": "/images/items/hushed-welrod.webp"
     },
     "levelRequirement": 25,
     "name": "Hushed Welrod",
@@ -159,7 +159,7 @@
     "id": "long-barrel-357",
     "image": {
       "alt": "Long-Barrel .357",
-      "src": "/images/items/long-barrel-357.svg"
+      "src": "/images/items/long-barrel-357.webp"
     },
     "levelRequirement": 30,
     "name": "Long-Barrel .357",
@@ -173,7 +173,7 @@
     "id": "grease-gun-m3",
     "image": {
       "alt": "M3 Grease Gun",
-      "src": "/images/items/grease-gun-m3.svg"
+      "src": "/images/items/grease-gun-m3.webp"
     },
     "levelRequirement": 20,
     "name": "M3 Grease Gun",
@@ -187,7 +187,7 @@
     "id": "sten-mk-ii",
     "image": {
       "alt": "Sten Mk II",
-      "src": "/images/items/sten-mk-ii.svg"
+      "src": "/images/items/sten-mk-ii.webp"
     },
     "levelRequirement": 26,
     "name": "Sten Mk II",
@@ -201,7 +201,7 @@
     "id": "surplus-mp40",
     "image": {
       "alt": "Surplus MP40",
-      "src": "/images/items/surplus-mp40.svg"
+      "src": "/images/items/surplus-mp40.webp"
     },
     "levelRequirement": 32,
     "name": "Surplus MP40",
@@ -215,7 +215,7 @@
     "id": "thompson-m1928",
     "image": {
       "alt": "Thompson M1928",
-      "src": "/images/items/thompson-m1928.svg"
+      "src": "/images/items/thompson-m1928.webp"
     },
     "levelRequirement": 38,
     "name": "Thompson M1928",
@@ -229,7 +229,7 @@
     "id": "silenced-sten",
     "image": {
       "alt": "Silenced Sten",
-      "src": "/images/items/silenced-sten.svg"
+      "src": "/images/items/silenced-sten.webp"
     },
     "levelRequirement": 44,
     "name": "Silenced Sten",
@@ -243,7 +243,7 @@
     "id": "drum-thompson",
     "image": {
       "alt": "Drum Thompson",
-      "src": "/images/items/drum-thompson.svg"
+      "src": "/images/items/drum-thompson.webp"
     },
     "levelRequirement": 50,
     "name": "Drum Thompson",
@@ -257,7 +257,7 @@
     "id": "sawed-off-double",
     "image": {
       "alt": "Sawed-Off Double",
-      "src": "/images/items/sawed-off-double.svg"
+      "src": "/images/items/sawed-off-double.webp"
     },
     "levelRequirement": 25,
     "name": "Sawed-Off Double",
@@ -271,7 +271,7 @@
     "id": "coach-gun",
     "image": {
       "alt": "Coach Gun",
-      "src": "/images/items/coach-gun.svg"
+      "src": "/images/items/coach-gun.webp"
     },
     "levelRequirement": 30,
     "name": "Coach Gun",
@@ -285,7 +285,7 @@
     "id": "pump-12-gauge",
     "image": {
       "alt": "Pump 12-Gauge",
-      "src": "/images/items/pump-12-gauge.svg"
+      "src": "/images/items/pump-12-gauge.webp"
     },
     "levelRequirement": 36,
     "name": "Pump 12-Gauge",
@@ -299,7 +299,7 @@
     "id": "riot-gun",
     "image": {
       "alt": "Riot Gun",
-      "src": "/images/items/riot-gun.svg"
+      "src": "/images/items/riot-gun.webp"
     },
     "levelRequirement": 42,
     "name": "Riot Gun",
@@ -313,7 +313,7 @@
     "id": "trench-sweeper",
     "image": {
       "alt": "Trench Sweeper",
-      "src": "/images/items/trench-sweeper.svg"
+      "src": "/images/items/trench-sweeper.webp"
     },
     "levelRequirement": 48,
     "name": "Trench Sweeper",
@@ -327,7 +327,7 @@
     "id": "browning-auto-5",
     "image": {
       "alt": "Browning Auto-5",
-      "src": "/images/items/browning-auto-5.svg"
+      "src": "/images/items/browning-auto-5.webp"
     },
     "levelRequirement": 55,
     "name": "Browning Auto-5",
@@ -341,7 +341,7 @@
     "id": "lever-action-carbine",
     "image": {
       "alt": "Lever-Action Carbine",
-      "src": "/images/items/lever-action-carbine.svg"
+      "src": "/images/items/lever-action-carbine.webp"
     },
     "levelRequirement": 40,
     "name": "Lever-Action Carbine",
@@ -355,7 +355,7 @@
     "id": "springfield-03",
     "image": {
       "alt": "Springfield '03",
-      "src": "/images/items/springfield-03.svg"
+      "src": "/images/items/springfield-03.webp"
     },
     "levelRequirement": 46,
     "name": "Springfield '03",
@@ -369,7 +369,7 @@
     "id": "m1-garand-surplus",
     "image": {
       "alt": "M1 Garand Surplus",
-      "src": "/images/items/m1-garand-surplus.svg"
+      "src": "/images/items/m1-garand-surplus.webp"
     },
     "levelRequirement": 53,
     "name": "M1 Garand Surplus",
@@ -383,7 +383,7 @@
     "id": "enfield-no4",
     "image": {
       "alt": "Enfield No. 4",
-      "src": "/images/items/enfield-no4.svg"
+      "src": "/images/items/enfield-no4.webp"
     },
     "levelRequirement": 60,
     "name": "Enfield No. 4",
@@ -397,7 +397,7 @@
     "id": "hunting-30-06",
     "image": {
       "alt": "Hunting .30-06",
-      "src": "/images/items/hunting-30-06.svg"
+      "src": "/images/items/hunting-30-06.webp"
     },
     "levelRequirement": 67,
     "name": "Hunting .30-06",
@@ -411,7 +411,7 @@
     "id": "custom-garand",
     "image": {
       "alt": "Custom Garand",
-      "src": "/images/items/custom-garand.svg"
+      "src": "/images/items/custom-garand.webp"
     },
     "levelRequirement": 75,
     "name": "Custom Garand",
@@ -425,7 +425,7 @@
     "id": "scoped-springfield",
     "image": {
       "alt": "Scoped Springfield",
-      "src": "/images/items/scoped-springfield.svg"
+      "src": "/images/items/scoped-springfield.webp"
     },
     "levelRequirement": 50,
     "name": "Scoped Springfield",
@@ -439,7 +439,7 @@
     "id": "rooftop-special",
     "image": {
       "alt": "Rooftop Special",
-      "src": "/images/items/rooftop-special.svg"
+      "src": "/images/items/rooftop-special.webp"
     },
     "levelRequirement": 57,
     "name": "Rooftop Special",
@@ -453,7 +453,7 @@
     "id": "whisper-scope",
     "image": {
       "alt": "Whisper Scope",
-      "src": "/images/items/whisper-scope.svg"
+      "src": "/images/items/whisper-scope.webp"
     },
     "levelRequirement": 64,
     "name": "Whisper Scope",
@@ -467,7 +467,7 @@
     "id": "gi-sniper-03a4",
     "image": {
       "alt": "G.I. Sniper '03A4",
-      "src": "/images/items/gi-sniper-03a4.svg"
+      "src": "/images/items/gi-sniper-03a4.webp"
     },
     "levelRequirement": 71,
     "name": "G.I. Sniper '03A4",
@@ -481,7 +481,7 @@
     "id": "match-grade-enfield",
     "image": {
       "alt": "Match-Grade Enfield",
-      "src": "/images/items/match-grade-enfield.svg"
+      "src": "/images/items/match-grade-enfield.webp"
     },
     "levelRequirement": 78,
     "name": "Match-Grade Enfield",
@@ -495,7 +495,7 @@
     "id": "the-longshot",
     "image": {
       "alt": "The Longshot",
-      "src": "/images/items/the-longshot.svg"
+      "src": "/images/items/the-longshot.webp"
     },
     "levelRequirement": 85,
     "name": "The Longshot",
@@ -509,7 +509,7 @@
     "id": "bar-m1918",
     "image": {
       "alt": "BAR M1918",
-      "src": "/images/items/bar-m1918.svg"
+      "src": "/images/items/bar-m1918.webp"
     },
     "levelRequirement": 70,
     "name": "BAR M1918",
@@ -523,7 +523,7 @@
     "id": "lewis-gun",
     "image": {
       "alt": "Lewis Gun",
-      "src": "/images/items/lewis-gun.svg"
+      "src": "/images/items/lewis-gun.webp"
     },
     "levelRequirement": 76,
     "name": "Lewis Gun",
@@ -537,7 +537,7 @@
     "id": "trophy-mg42",
     "image": {
       "alt": "Trophy MG42",
-      "src": "/images/items/trophy-mg42.svg"
+      "src": "/images/items/trophy-mg42.webp"
     },
     "levelRequirement": 82,
     "name": "Trophy MG42",
@@ -551,7 +551,7 @@
     "id": "browning-m1919",
     "image": {
       "alt": "Browning M1919",
-      "src": "/images/items/browning-m1919.svg"
+      "src": "/images/items/browning-m1919.webp"
     },
     "levelRequirement": 88,
     "name": "Browning M1919",
@@ -565,7 +565,7 @@
     "id": "water-cooled-maxim",
     "image": {
       "alt": "Water-Cooled Maxim",
-      "src": "/images/items/water-cooled-maxim.svg"
+      "src": "/images/items/water-cooled-maxim.webp"
     },
     "levelRequirement": 94,
     "name": "Water-Cooled Maxim",
@@ -579,7 +579,7 @@
     "id": "the-chicago-organ",
     "image": {
       "alt": "The Chicago Organ",
-      "src": "/images/items/the-chicago-organ.svg"
+      "src": "/images/items/the-chicago-organ.webp"
     },
     "levelRequirement": 100,
     "name": "The Chicago Organ",
@@ -594,7 +594,7 @@
     "id": "padded-work-vest",
     "image": {
       "alt": "Padded Work Vest",
-      "src": "/images/items/padded-work-vest.svg"
+      "src": "/images/items/padded-work-vest.webp"
     },
     "levelRequirement": 5,
     "name": "Padded Work Vest",
@@ -609,7 +609,7 @@
     "id": "doormans-leather-jacket",
     "image": {
       "alt": "Doorman's Leather Jacket",
-      "src": "/images/items/doormans-leather-jacket.svg"
+      "src": "/images/items/doormans-leather-jacket.webp"
     },
     "levelRequirement": 15,
     "name": "Doorman's Leather Jacket",
@@ -624,7 +624,7 @@
     "id": "lined-greatcoat",
     "image": {
       "alt": "Lined Greatcoat",
-      "src": "/images/items/lined-greatcoat.svg"
+      "src": "/images/items/lined-greatcoat.webp"
     },
     "levelRequirement": 28,
     "name": "Lined Greatcoat",
@@ -639,7 +639,7 @@
     "id": "surplus-flak-vest",
     "image": {
       "alt": "Surplus Flak Vest",
-      "src": "/images/items/surplus-flak-vest.svg"
+      "src": "/images/items/surplus-flak-vest.webp"
     },
     "levelRequirement": 42,
     "name": "Surplus Flak Vest",
@@ -661,7 +661,7 @@
     "id": "armored-pinstripe-suit",
     "image": {
       "alt": "Armored Pinstripe Suit",
-      "src": "/images/items/armored-pinstripe-suit.svg"
+      "src": "/images/items/armored-pinstripe-suit.webp"
     },
     "levelRequirement": 58,
     "name": "Armored Pinstripe Suit",
@@ -676,7 +676,7 @@
     "id": "ballistic-overcoat",
     "image": {
       "alt": "Ballistic Overcoat",
-      "src": "/images/items/ballistic-overcoat.svg"
+      "src": "/images/items/ballistic-overcoat.webp"
     },
     "levelRequirement": 75,
     "name": "Ballistic Overcoat",
@@ -702,7 +702,7 @@
     "id": "dons-armored-topcoat",
     "image": {
       "alt": "Don's Armored Topcoat",
-      "src": "/images/items/dons-armored-topcoat.svg"
+      "src": "/images/items/dons-armored-topcoat.webp"
     },
     "levelRequirement": 95,
     "name": "Don's Armored Topcoat",
@@ -717,7 +717,7 @@
     "id": "flat-cap",
     "image": {
       "alt": "Flat Cap",
-      "src": "/images/items/flat-cap.svg"
+      "src": "/images/items/flat-cap.webp"
     },
     "levelRequirement": 3,
     "name": "Flat Cap",
@@ -732,7 +732,7 @@
     "id": "wool-fedora",
     "image": {
       "alt": "Wool Fedora",
-      "src": "/images/items/wool-fedora.svg"
+      "src": "/images/items/wool-fedora.webp"
     },
     "levelRequirement": 12,
     "name": "Wool Fedora",
@@ -754,7 +754,7 @@
     "id": "burglars-hood",
     "image": {
       "alt": "Burglar's Hood",
-      "src": "/images/items/burglars-hood.svg"
+      "src": "/images/items/burglars-hood.webp"
     },
     "levelRequirement": 22,
     "name": "Burglar's Hood",
@@ -769,7 +769,7 @@
     "id": "surplus-steel-helmet",
     "image": {
       "alt": "Surplus Steel Helmet",
-      "src": "/images/items/surplus-steel-helmet.svg"
+      "src": "/images/items/surplus-steel-helmet.webp"
     },
     "levelRequirement": 35,
     "name": "Surplus Steel Helmet",
@@ -790,7 +790,7 @@
     "id": "gas-mask",
     "image": {
       "alt": "Gas Mask",
-      "src": "/images/items/gas-mask.svg"
+      "src": "/images/items/gas-mask.webp"
     },
     "levelRequirement": 50,
     "name": "Gas Mask",
@@ -817,7 +817,7 @@
     "id": "executioners-balaclava",
     "image": {
       "alt": "Executioner's Balaclava",
-      "src": "/images/items/executioners-balaclava.svg"
+      "src": "/images/items/executioners-balaclava.webp"
     },
     "levelRequirement": 70,
     "name": "Executioner's Balaclava",
@@ -844,7 +844,7 @@
     "id": "kingpin-homburg",
     "image": {
       "alt": "Kingpin Homburg",
-      "src": "/images/items/kingpin-homburg.svg"
+      "src": "/images/items/kingpin-homburg.webp"
     },
     "levelRequirement": 90,
     "name": "Kingpin Homburg",
@@ -859,7 +859,7 @@
     "id": "worn-oxfords",
     "image": {
       "alt": "Worn Oxfords",
-      "src": "/images/items/worn-oxfords.svg"
+      "src": "/images/items/worn-oxfords.webp"
     },
     "levelRequirement": 4,
     "name": "Worn Oxfords",
@@ -881,7 +881,7 @@
     "id": "crepe-sole-creepers",
     "image": {
       "alt": "Crepe-Sole Creepers",
-      "src": "/images/items/crepe-sole-creepers.svg"
+      "src": "/images/items/crepe-sole-creepers.webp"
     },
     "levelRequirement": 15,
     "name": "Crepe-Sole Creepers",
@@ -896,7 +896,7 @@
     "id": "steel-toe-boots",
     "image": {
       "alt": "Steel-Toe Boots",
-      "src": "/images/items/steel-toe-boots.svg"
+      "src": "/images/items/steel-toe-boots.webp"
     },
     "levelRequirement": 28,
     "name": "Steel-Toe Boots",
@@ -911,7 +911,7 @@
     "id": "wingtip-brogues",
     "image": {
       "alt": "Wingtip Brogues",
-      "src": "/images/items/wingtip-brogues.svg"
+      "src": "/images/items/wingtip-brogues.webp"
     },
     "levelRequirement": 45,
     "name": "Wingtip Brogues",
@@ -933,7 +933,7 @@
     "id": "rubber-sole-prowlers",
     "image": {
       "alt": "Rubber-Sole Prowlers",
-      "src": "/images/items/rubber-sole-prowlers.svg"
+      "src": "/images/items/rubber-sole-prowlers.webp"
     },
     "levelRequirement": 65,
     "name": "Rubber-Sole Prowlers",
@@ -948,7 +948,7 @@
     "id": "italian-leather-loafers",
     "image": {
       "alt": "Italian Leather Loafers",
-      "src": "/images/items/italian-leather-loafers.svg"
+      "src": "/images/items/italian-leather-loafers.webp"
     },
     "levelRequirement": 85,
     "name": "Italian Leather Loafers",
@@ -962,7 +962,7 @@
     "id": "leather-holster",
     "image": {
       "alt": "Leather Holster",
-      "src": "/images/items/leather-holster.svg"
+      "src": "/images/items/leather-holster.webp"
     },
     "levelRequirement": 5,
     "name": "Leather Holster",
@@ -977,7 +977,7 @@
     "id": "canvas-tool-belt",
     "image": {
       "alt": "Canvas Tool Belt",
-      "src": "/images/items/canvas-tool-belt.svg"
+      "src": "/images/items/canvas-tool-belt.webp"
     },
     "levelRequirement": 14,
     "name": "Canvas Tool Belt",
@@ -992,7 +992,7 @@
     "id": "shoulder-holster-rig",
     "image": {
       "alt": "Shoulder Holster Rig",
-      "src": "/images/items/shoulder-holster-rig.svg"
+      "src": "/images/items/shoulder-holster-rig.webp"
     },
     "levelRequirement": 26,
     "name": "Shoulder Holster Rig",
@@ -1007,7 +1007,7 @@
     "id": "ammo-bandolier",
     "image": {
       "alt": "Ammo Bandolier",
-      "src": "/images/items/ammo-bandolier.svg"
+      "src": "/images/items/ammo-bandolier.webp"
     },
     "levelRequirement": 40,
     "name": "Ammo Bandolier",
@@ -1029,7 +1029,7 @@
     "id": "extended-magazine-rig",
     "image": {
       "alt": "Extended Magazine Rig",
-      "src": "/images/items/extended-magazine-rig.svg"
+      "src": "/images/items/extended-magazine-rig.webp"
     },
     "levelRequirement": 55,
     "name": "Extended Magazine Rig",
@@ -1050,7 +1050,7 @@
     "id": "radio-scanner-belt",
     "image": {
       "alt": "Radio Scanner Belt",
-      "src": "/images/items/radio-scanner-belt.svg"
+      "src": "/images/items/radio-scanner-belt.webp"
     },
     "levelRequirement": 70,
     "name": "Radio Scanner Belt",
@@ -1075,7 +1075,7 @@
     "id": "kingpin-gun-belt",
     "image": {
       "alt": "Kingpin Gun Belt",
-      "src": "/images/items/kingpin-gun-belt.svg"
+      "src": "/images/items/kingpin-gun-belt.webp"
     },
     "levelRequirement": 90,
     "name": "Kingpin Gun Belt",
@@ -1091,7 +1091,7 @@
     "id": "molotov-cocktail",
     "image": {
       "alt": "Molotov Cocktail",
-      "src": "/images/items/molotov-cocktail.svg"
+      "src": "/images/items/molotov-cocktail.webp"
     },
     "levelRequirement": 8,
     "name": "Molotov Cocktail",
@@ -1109,7 +1109,7 @@
     "id": "smoke-canister",
     "image": {
       "alt": "Smoke Canister",
-      "src": "/images/items/smoke-canister.svg"
+      "src": "/images/items/smoke-canister.webp"
     },
     "levelRequirement": 10,
     "name": "Smoke Canister",
@@ -1127,7 +1127,7 @@
     "id": "flash-powder-grenade",
     "image": {
       "alt": "Flash Powder Grenade",
-      "src": "/images/items/flash-powder-grenade.svg"
+      "src": "/images/items/flash-powder-grenade.webp"
     },
     "levelRequirement": 12,
     "name": "Flash Powder Grenade",
@@ -1145,7 +1145,7 @@
     "id": "door-buster-charge",
     "image": {
       "alt": "Door-Buster Charge",
-      "src": "/images/items/door-buster-charge.svg"
+      "src": "/images/items/door-buster-charge.webp"
     },
     "levelRequirement": 25,
     "name": "Door-Buster Charge",
@@ -1164,7 +1164,7 @@
     "id": "pineapple-grenade",
     "image": {
       "alt": "Pineapple Grenade",
-      "src": "/images/items/pineapple-grenade.svg"
+      "src": "/images/items/pineapple-grenade.webp"
     },
     "levelRequirement": 35,
     "name": "Pineapple Grenade",
@@ -1182,7 +1182,7 @@
     "id": "military-smoke-grenade",
     "image": {
       "alt": "Military Smoke Grenade",
-      "src": "/images/items/military-smoke-grenade.svg"
+      "src": "/images/items/military-smoke-grenade.webp"
     },
     "levelRequirement": 40,
     "name": "Military Smoke Grenade",
@@ -1200,7 +1200,7 @@
     "id": "magnesium-flashbang",
     "image": {
       "alt": "Magnesium Flashbang",
-      "src": "/images/items/magnesium-flashbang.svg"
+      "src": "/images/items/magnesium-flashbang.webp"
     },
     "levelRequirement": 45,
     "name": "Magnesium Flashbang",
@@ -1218,7 +1218,7 @@
     "id": "dynamite-bundle",
     "image": {
       "alt": "Dynamite Bundle",
-      "src": "/images/items/dynamite-bundle.svg"
+      "src": "/images/items/dynamite-bundle.webp"
     },
     "levelRequirement": 55,
     "name": "Dynamite Bundle",
@@ -1237,7 +1237,7 @@
     "id": "satchel-charge",
     "image": {
       "alt": "Satchel Charge",
-      "src": "/images/items/satchel-charge.svg"
+      "src": "/images/items/satchel-charge.webp"
     },
     "levelRequirement": 65,
     "name": "Satchel Charge",
@@ -1256,7 +1256,7 @@
     "id": "chemical-smoke-shell",
     "image": {
       "alt": "Chemical Smoke Shell",
-      "src": "/images/items/chemical-smoke-shell.svg"
+      "src": "/images/items/chemical-smoke-shell.webp"
     },
     "levelRequirement": 75,
     "name": "Chemical Smoke Shell",
@@ -1274,7 +1274,7 @@
     "id": "concussion-flash-charge",
     "image": {
       "alt": "Concussion Flash Charge",
-      "src": "/images/items/concussion-flash-charge.svg"
+      "src": "/images/items/concussion-flash-charge.webp"
     },
     "levelRequirement": 80,
     "name": "Concussion Flash Charge",
@@ -1292,7 +1292,7 @@
     "id": "blockbuster-charge",
     "image": {
       "alt": "Blockbuster Charge",
-      "src": "/images/items/blockbuster-charge.svg"
+      "src": "/images/items/blockbuster-charge.webp"
     },
     "levelRequirement": 95,
     "name": "Blockbuster Charge",
@@ -1311,7 +1311,7 @@
     "id": "lockpick-set",
     "image": {
       "alt": "Lockpick Set",
-      "src": "/images/items/lockpick-set.svg"
+      "src": "/images/items/lockpick-set.webp"
     },
     "levelRequirement": 2,
     "name": "Lockpick Set",
@@ -1329,7 +1329,7 @@
     "id": "crowbar",
     "image": {
       "alt": "Crowbar",
-      "src": "/images/items/crowbar.svg"
+      "src": "/images/items/crowbar.webp"
     },
     "levelRequirement": 5,
     "name": "Crowbar",
@@ -1347,7 +1347,7 @@
     "id": "first-aid-tin",
     "image": {
       "alt": "First-Aid Tin",
-      "src": "/images/items/first-aid-tin.svg"
+      "src": "/images/items/first-aid-tin.webp"
     },
     "levelRequirement": 10,
     "name": "First-Aid Tin",
@@ -1365,7 +1365,7 @@
     "id": "bolt-cutters",
     "image": {
       "alt": "Bolt Cutters",
-      "src": "/images/items/bolt-cutters.svg"
+      "src": "/images/items/bolt-cutters.webp"
     },
     "levelRequirement": 12,
     "name": "Bolt Cutters",
@@ -1383,7 +1383,7 @@
     "id": "climbing-rope",
     "image": {
       "alt": "Climbing Rope",
-      "src": "/images/items/climbing-rope.svg"
+      "src": "/images/items/climbing-rope.webp"
     },
     "levelRequirement": 15,
     "name": "Climbing Rope",
@@ -1401,7 +1401,7 @@
     "id": "disguise-kit",
     "image": {
       "alt": "Disguise Kit",
-      "src": "/images/items/disguise-kit.svg"
+      "src": "/images/items/disguise-kit.webp"
     },
     "levelRequirement": 18,
     "name": "Disguise Kit",
@@ -1419,7 +1419,7 @@
     "id": "wiretap-kit",
     "image": {
       "alt": "Wiretap Kit",
-      "src": "/images/items/wiretap-kit.svg"
+      "src": "/images/items/wiretap-kit.webp"
     },
     "levelRequirement": 30,
     "name": "Wiretap Kit",
@@ -1437,7 +1437,7 @@
     "id": "getaway-car-keys",
     "image": {
       "alt": "Getaway Car Keys",
-      "src": "/images/items/getaway-car-keys.svg"
+      "src": "/images/items/getaway-car-keys.webp"
     },
     "levelRequirement": 35,
     "name": "Getaway Car Keys",
@@ -1455,7 +1455,7 @@
     "id": "radio-scanner",
     "image": {
       "alt": "Radio Scanner",
-      "src": "/images/items/radio-scanner.svg"
+      "src": "/images/items/radio-scanner.webp"
     },
     "levelRequirement": 40,
     "name": "Radio Scanner",
@@ -1473,7 +1473,7 @@
     "id": "field-surgeon-kit",
     "image": {
       "alt": "Field Surgeon Kit",
-      "src": "/images/items/field-surgeon-kit.svg"
+      "src": "/images/items/field-surgeon-kit.webp"
     },
     "levelRequirement": 45,
     "name": "Field Surgeon Kit",
@@ -1491,7 +1491,7 @@
     "id": "safecracker-drill",
     "image": {
       "alt": "Safecracker Drill",
-      "src": "/images/items/safecracker-drill.svg"
+      "src": "/images/items/safecracker-drill.webp"
     },
     "levelRequirement": 50,
     "name": "Safecracker Drill",
@@ -1509,7 +1509,7 @@
     "id": "signal-jammer",
     "image": {
       "alt": "Signal Jammer",
-      "src": "/images/items/signal-jammer.svg"
+      "src": "/images/items/signal-jammer.webp"
     },
     "levelRequirement": 65,
     "name": "Signal Jammer",
@@ -1527,7 +1527,7 @@
     "id": "black-market-trauma-kit",
     "image": {
       "alt": "Black Market Trauma Kit",
-      "src": "/images/items/black-market-trauma-kit.svg"
+      "src": "/images/items/black-market-trauma-kit.webp"
     },
     "levelRequirement": 80,
     "name": "Black Market Trauma Kit",
@@ -1542,7 +1542,7 @@
     "id": "pep-pills",
     "image": {
       "alt": "Pep Pills",
-      "src": "/images/items/pep-pills.svg"
+      "src": "/images/items/pep-pills.webp"
     },
     "name": "Pep Pills",
     "category": "drug",
@@ -1561,7 +1561,7 @@
     "id": "bennies",
     "image": {
       "alt": "Bennies",
-      "src": "/images/items/bennies.svg"
+      "src": "/images/items/bennies.webp"
     },
     "name": "Bennies",
     "category": "drug",
@@ -1580,7 +1580,7 @@
     "id": "goofballs",
     "image": {
       "alt": "Goofballs",
-      "src": "/images/items/goofballs.svg"
+      "src": "/images/items/goofballs.webp"
     },
     "name": "Goofballs",
     "category": "drug",
@@ -1600,7 +1600,7 @@
     "id": "white-cross",
     "image": {
       "alt": "White Cross",
-      "src": "/images/items/white-cross.svg"
+      "src": "/images/items/white-cross.webp"
     },
     "name": "White Cross",
     "category": "drug",
@@ -1619,7 +1619,7 @@
     "id": "hop-tar",
     "image": {
       "alt": "Hop Tar",
-      "src": "/images/items/hop-tar.svg"
+      "src": "/images/items/hop-tar.webp"
     },
     "name": "Hop Tar",
     "category": "drug",
@@ -1639,7 +1639,7 @@
     "id": "nose-candy",
     "image": {
       "alt": "Nose Candy",
-      "src": "/images/items/nose-candy.svg"
+      "src": "/images/items/nose-candy.webp"
     },
     "name": "Nose Candy",
     "category": "drug",
@@ -1659,7 +1659,7 @@
     "id": "morphine-ampoule",
     "image": {
       "alt": "Morphine Ampoule",
-      "src": "/images/items/morphine-ampoule.svg"
+      "src": "/images/items/morphine-ampoule.webp"
     },
     "name": "Morphine Ampoule",
     "category": "drug",
@@ -1679,7 +1679,7 @@
     "id": "speedball-kit",
     "image": {
       "alt": "Speedball Kit",
-      "src": "/images/items/speedball-kit.svg"
+      "src": "/images/items/speedball-kit.webp"
     },
     "name": "Speedball Kit",
     "category": "drug",
@@ -1699,7 +1699,7 @@
     "id": "pharma-amps",
     "image": {
       "alt": "Pharma-Grade Amps",
-      "src": "/images/items/pharma-amps.svg"
+      "src": "/images/items/pharma-amps.webp"
     },
     "name": "Pharma-Grade Amps",
     "category": "drug",
@@ -1718,7 +1718,7 @@
     "id": "growler-of-beer",
     "image": {
       "alt": "Growler of Beer",
-      "src": "/images/items/growler-of-beer.svg"
+      "src": "/images/items/growler-of-beer.webp"
     },
     "name": "Growler of Beer",
     "category": "alcohol",
@@ -1737,7 +1737,7 @@
     "id": "rotgut-whiskey",
     "image": {
       "alt": "Rotgut Whiskey",
-      "src": "/images/items/rotgut-whiskey.svg"
+      "src": "/images/items/rotgut-whiskey.webp"
     },
     "name": "Rotgut Whiskey",
     "category": "alcohol",
@@ -1756,7 +1756,7 @@
     "id": "bathtub-gin",
     "image": {
       "alt": "Bathtub Gin",
-      "src": "/images/items/bathtub-gin.svg"
+      "src": "/images/items/bathtub-gin.webp"
     },
     "name": "Bathtub Gin",
     "category": "alcohol",
@@ -1775,7 +1775,7 @@
     "id": "rye-whiskey",
     "image": {
       "alt": "Rye Whiskey",
-      "src": "/images/items/rye-whiskey.svg"
+      "src": "/images/items/rye-whiskey.webp"
     },
     "name": "Rye Whiskey",
     "category": "alcohol",
@@ -1794,7 +1794,7 @@
     "id": "smuggled-bourbon",
     "image": {
       "alt": "Smuggled Bourbon",
-      "src": "/images/items/smuggled-bourbon.svg"
+      "src": "/images/items/smuggled-bourbon.webp"
     },
     "name": "Smuggled Bourbon",
     "category": "alcohol",
@@ -1813,7 +1813,7 @@
     "id": "french-champagne",
     "image": {
       "alt": "French Champagne",
-      "src": "/images/items/french-champagne.svg"
+      "src": "/images/items/french-champagne.webp"
     },
     "name": "French Champagne",
     "category": "alcohol",
@@ -1832,7 +1832,7 @@
     "id": "single-malt-scotch",
     "image": {
       "alt": "Single Malt Scotch",
-      "src": "/images/items/single-malt-scotch.svg"
+      "src": "/images/items/single-malt-scotch.webp"
     },
     "name": "Single Malt Scotch",
     "category": "alcohol",
@@ -1851,7 +1851,7 @@
     "id": "prewar-cognac",
     "image": {
       "alt": "Prewar Cognac",
-      "src": "/images/items/prewar-cognac.svg"
+      "src": "/images/items/prewar-cognac.webp"
     },
     "name": "Prewar Cognac",
     "category": "alcohol",

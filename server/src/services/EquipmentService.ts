@@ -1,5 +1,6 @@
 import { CollectionReference, Firestore } from "firebase-admin/firestore";
 import { Equipment, equipmentSchema } from "../../../shared/equipment";
+import { normalizeEquipmentImage } from "../../../shared/normalizeEquipmentImage";
 import { FirebaseService } from "./FirebaseService";
 
 /** The catalog changes only on reseed, so cache reads briefly. */
@@ -56,7 +57,10 @@ export class EquipmentService {
       );
       return null;
     }
-    return result.data;
+    return {
+      ...result.data,
+      image: normalizeEquipmentImage(result.data.image),
+    };
   }
 
   private get equipments(): CollectionReference {

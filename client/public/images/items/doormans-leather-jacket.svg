@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Doorman's Leather Jacket">
-    <path d="M28 22 L40 18 Q48 28 56 18 L68 22 L76 42 L68 46 L66 78 L30 78 L28 46 L20 42 Z" fill="#f7f2e8"/>
-    <path d="M40 18 L46 40 L48 78" stroke="#0a0a0a" stroke-opacity="0.25" fill="none" stroke-width="2.5"/>
-    <path d="M56 18 L50 40" stroke="#0a0a0a" stroke-opacity="0.25" fill="none" stroke-width="2.5"/>
-    <circle cx="52" cy="50" r="2.2" fill="#b68a2d"/>
-    <circle cx="52" cy="62" r="2.2" fill="#b68a2d"/>
-</svg>

@@ -1,5 +1,6 @@
 import type { EquipmentSlotId, PlayerItem, PlayerRank } from "./player";
 import type { PlayerLanguage } from "./language";
+import { normalizeEquipmentImage } from "./normalizeEquipmentImage";
 import type { SkillId } from "./skills";
 
 /**
@@ -426,8 +427,28 @@ export function normalizeCrewMember(member: CrewMember): CrewMember {
     assignment: member.assignment ?? null,
     busyUntil: member.busyUntil ?? null,
     bioLanguage: member.bioLanguage ?? "en",
-    confiscatedLoadout: member.confiscatedLoadout ?? null,
-    loadout: member.loadout ?? {},
+    confiscatedLoadout: member.confiscatedLoadout
+      ? Object.fromEntries(
+          Object.entries(member.confiscatedLoadout).map(([slot, item]) => [
+            slot,
+            {
+              ...item,
+              ...(item.image && {
+                image: normalizeEquipmentImage(item.image),
+              }),
+            },
+          ]),
+        )
+      : null,
+    loadout: Object.fromEntries(
+      Object.entries(member.loadout ?? {}).map(([slot, item]) => [
+        slot,
+        {
+          ...item,
+          ...(item.image && { image: normalizeEquipmentImage(item.image) }),
+        },
+      ]),
+    ),
     loyalty: Math.min(
       MAX_CREW_LOYALTY,
       Math.max(0, member.loyalty ?? STARTING_CREW_LOYALTY),

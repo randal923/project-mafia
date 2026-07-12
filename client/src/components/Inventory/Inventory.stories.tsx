@@ -6,7 +6,7 @@ const stilettoKnife = {
   id: "stiletto-knife",
   image: {
     alt: "Stiletto knife",
-    src: "/images/items/stiletto-knife.png"
+    src: "/images/items/stiletto-knife.webp"
   },
   name: "Stiletto Knife",
   power: 2,

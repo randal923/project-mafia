@@ -62,6 +62,7 @@ export function StoreItemCard({
             isLocked && "opacity-30 grayscale"
           )}
           height={200}
+          sizes="104px"
           src={item.image.src}
           width={200}
         />

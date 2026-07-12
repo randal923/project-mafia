@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="French Champagne">
-  <path d="M28 26 L68 26 Q66 46 48 48 Q30 46 28 26 Z" fill="#f7f2e8"/>
-  <path d="M32 28 L64 28 Q62 40 48 42 Q34 40 32 28 Z" fill="#edc553" opacity="0.85"/>
-  <rect x="46" y="48" width="4" height="20" fill="#f7f2e8"/>
-  <rect x="36" y="68" width="24" height="5" rx="2" fill="#f7f2e8"/>
-</svg>
