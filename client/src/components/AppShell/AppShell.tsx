@@ -56,21 +56,21 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <main className="flex min-h-screen flex-col bg-page px-6 pb-6 text-ink lg:h-screen">
       <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col">
-        <div className="flex justify-end pt-2">
+        <div className="flex items-center justify-end gap-3 pt-2">
           <LanguageSwitcher />
+          <GameClock />
+          <Button
+            onClick={() => setIsSignOutModalOpen(true)}
+            size="small"
+            variant="danger"
+          >
+            {t("shell.signOut")}
+          </Button>
         </div>
         <NavigationBar
           actions={
             <div className="ml-8 flex items-center gap-3">
-              <GameClock />
               <NotificationsBell />
-              <Button
-                onClick={() => setIsSignOutModalOpen(true)}
-                size="small"
-                variant="danger"
-              >
-                {t("shell.signOut")}
-              </Button>
             </div>
           }
           activeItemId={activeItemId}

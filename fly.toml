@@ -1,4 +1,4 @@
-app = "project-mafia-server"
+app = "project-mafia"
 primary_region = "iad"
 
 # Required secrets: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL,
@@ -6,7 +6,7 @@ primary_region = "iad"
 # Set CORS_ORIGIN to the deployed client URL and CRON_SECRET to enable ticks.
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "server/Dockerfile"
 
 [env]
   NODE_ENV = "production"
