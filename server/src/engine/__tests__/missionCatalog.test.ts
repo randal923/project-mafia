@@ -163,8 +163,9 @@ describe("production mission and equipment contract", () => {
     join(process.cwd(), "missions", "_engine.yml"),
   ).config;
 
-  it("ships the complete 29-mission roster", () => {
-    expect(templates).toHaveLength(29);
+  it("ships the complete 30-mission roster", () => {
+    // 29 board missions plus the map-generated turf takeover.
+    expect(templates).toHaveLength(30);
     expect(templates.map((template) => template.id)).toEqual(
       expect.arrayContaining(addedMissions.map(({ id }) => id)),
     );
@@ -348,6 +349,30 @@ describe("production mission and equipment contract", () => {
     }
   });
 
+  function takeoverOffer(
+    template: (typeof templates)[number],
+    context: ReturnType<typeof PlayerContextService.fromPlayer>,
+    level: number,
+  ) {
+    const calculations = JobCalculatorService.calculate(context, template, engine);
+    const difficulty = Math.min(100, Math.max(1, 20 + level));
+    return {
+      difficulty,
+      district: template.district,
+      heatIncrease: Math.min(
+        template.heat.max,
+        template.heat.base + Math.floor(difficulty * template.heat.perDifficulty),
+      ),
+      id: `${template.id}-${level}-takeover`,
+      rewardMax: calculations.rewardMax,
+      rewardMin: calculations.rewardMin,
+      staminaCost: JobCalculatorService.staminaCost(template, difficulty, engine),
+      storySeed: template.storySeeds[0]!,
+      templateId: template.id,
+      type: template.type,
+    };
+  }
+
   it.each(
     templates.flatMap((template) =>
       [template.levels.min, template.levels.max].flatMap((level) => [
@@ -382,12 +407,17 @@ describe("production mission and equipment contract", () => {
           );
       }
       const context = PlayerContextService.fromPlayer(player);
-      const offer = JobOfferBuilder.buildOffers(
-        context,
-        `${template.id}-${level}-board`,
-        [template],
-        engine,
-      )[0]!;
+      // Takeovers never appear on boards — build their offer the way the
+      // territory service does, difficulty standing in for turf defense.
+      const offer =
+        template.type === "turf_takeover"
+          ? takeoverOffer(template, context, level)
+          : JobOfferBuilder.buildOffers(
+              context,
+              `${template.id}-${level}-board`,
+              [template],
+              engine,
+            )[0]!;
       const nodes = new SkeletonBuilder({
         context,
         depth: template.depth,

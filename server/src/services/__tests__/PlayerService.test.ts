@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createNewPlayer } from "../../../../shared/player";
 import { TEST_ENGINE } from "../../engine/__tests__/fixtures";
+import type { EffectsService } from "../EffectsService";
 import type { EngineConfigService } from "../EngineConfigService";
 import type { EquipmentService } from "../EquipmentService";
 import type { FirebaseService } from "../FirebaseService";
@@ -36,6 +37,7 @@ describe("PlayerService idle recovery", () => {
       firebase,
       {} as EquipmentService,
       { config: TEST_ENGINE } as EngineConfigService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
     let requestFinished = false;
     const request = service.getPlayer(player.id).then((result) => {

@@ -55,7 +55,11 @@ export class JobsController {
     }
 
     const player = await this.requirePlayer(req);
-    const mission = await this.missions.acceptJob(player, parsed.data.offerId);
+    const mission = await this.missions.acceptJob(
+      player,
+      parsed.data.offerId,
+      parsed.data.crewIds ?? [],
+    );
     res.status(201).json({ mission: MissionViewService.toView(mission) });
   };
 

@@ -3,17 +3,36 @@ import {
   CollectionReference,
   DocumentReference,
   FieldPath,
+  FieldValue,
   Firestore,
 } from "firebase-admin/firestore";
+import { RESPECT_WEIGHTS } from "../../../shared/season";
+import {
+  CREW_ARCHETYPES,
+  CREW_INJURY_RECOVERY_HOURS,
+  CREW_PRISON_HOURS,
+  CrewMember,
+  MAX_CREW_LOYALTY,
+  crewCheckBonus,
+  crewJobCapacity,
+  crewTraitModifiers,
+  normalizeCrewMember,
+} from "../../../shared/crew";
+import { DISTRICTS } from "../../../shared/district";
 import {
   ChoiceEdge,
   JobBoard,
+  JobOffer,
   Mission,
+  MissionCrewOutcome,
+  MissionCrewSnapshot,
   MissionNode,
 } from "../../../shared/job";
+import { CAPTURE_SHIELD_HOURS, TurfState } from "../../../shared/territory";
 import { MissionTemplate } from "../../../shared/missionTemplate";
 import { NarrativeEvent, appendStorySummary } from "../../../shared/narrative";
 import { MAX_HEAT, Player, normalizePlayer } from "../../../shared/player";
+import { MissionRng } from "../engine/MissionRng";
 import { JobCalculatorService } from "../engine/JobCalculatorService";
 import { HealthService } from "../engine/HealthService";
 import { MomentumService } from "../engine/MomentumService";
@@ -24,11 +43,15 @@ import { ROOT_NODE_ID, SkeletonBuilder } from "../engine/SkeletonBuilder";
 import { consumeMissionGear } from "../engine/consumeMissionGear";
 import { HttpError } from "../middleware/errorHandler";
 import { MissionNarrator } from "./ai/MissionNarrator";
+import { EffectsService } from "./EffectsService";
 import { EngineConfigService } from "./EngineConfigService";
 import { FirebaseService } from "./FirebaseService";
 import { JobBoardService } from "./JobBoardService";
 import { MissionTemplateService } from "./MissionTemplateService";
+import { NotificationService } from "./NotificationService";
 import { PrisonService } from "./PrisonService";
+import { SeasonService } from "./SeasonService";
+import { WorldEventService } from "./WorldEventService";
 
 /** A generation older than this with pending nodes is considered crashed. */
 const STALE_GENERATION_MS = 60_000;
@@ -47,25 +70,204 @@ export class MissionService {
     private readonly templates: MissionTemplateService,
     private readonly engine: EngineConfigService,
     private readonly prison: PrisonService,
+    private readonly notifications: NotificationService,
+    private readonly worldEvents: WorldEventService,
+    private readonly seasons: SeasonService,
+    private readonly effects: EffectsService,
   ) {
     this.db = firebase.firestore;
   }
 
-  async acceptJob(player: Player, offerId: string): Promise<Mission> {
+  /**
+   * Accepts a map-generated turf takeover: same engine, same stamina
+   * economy, no board involved. The mission carries its claim so ending
+   * it well plants the flag inside the resolve transaction.
+   */
+  async acceptTakeover(
+    player: Player,
+    offer: JobOffer,
+    template: MissionTemplate,
+    claim: { seasonId: string; turfId: string; turfName: string },
+    crewIds: string[] = [],
+  ): Promise<Mission> {
     const missionId = randomUUID();
     const seed = randomBytes(16).toString("hex");
     const nowIso = new Date().toISOString();
+    const perks = await this.effects.forPlayer(player.id);
+    const missionRef = this.missions(player.id).doc(missionId);
+    const playerRef = this.db.collection("players").doc(player.id);
+    const turfRef = this.db
+      .collection("seasons")
+      .doc(claim.seasonId)
+      .collection("turfs")
+      .doc(claim.turfId);
+
+    const mission = await this.db.runTransaction(async (tx) => {
+      const crewRefs = crewIds.map((id) =>
+        playerRef.collection("crew").doc(id),
+      );
+      const [activeSnap, playerSnap, turfSnap, ...crewSnaps] =
+        await Promise.all([
+          tx.get(this.activeMissionQuery(player.id)),
+          tx.get(playerRef),
+          tx.get(turfRef),
+          ...crewRefs.map((ref) => tx.get(ref)),
+        ]);
+
+      if (!activeSnap.empty) {
+        throw new HttpError(409, "You already have a job in progress.");
+      }
+      if (!playerSnap.exists) {
+        throw new HttpError(404, "Player not found.");
+      }
+      if (!turfSnap.exists) {
+        throw new HttpError(404, "That turf doesn't exist.");
+      }
+      const turf = turfSnap.data() as TurfState;
+      if (turf.ownerUid !== null) {
+        throw new HttpError(409, "Someone planted a flag there first.");
+      }
+
+      const current = normalizePlayer(playerSnap.data() as Player);
+      if (current.prison) {
+        throw new HttpError(403, "You're in prison. The map can wait.");
+      }
+
+      const capacity = crewJobCapacity(current.progression.skills.leadership);
+      if (crewIds.length > capacity) {
+        throw new HttpError(
+          400,
+          `Your leadership carries ${capacity} on a job — no more.`,
+        );
+      }
+      const crewMembers = crewSnaps.map((snap, i) => {
+        if (!snap.exists) {
+          throw new HttpError(404, `No such crew member: ${crewIds[i]}.`);
+        }
+        const member = normalizeCrewMember(snap.data() as CrewMember);
+        if (member.status !== "idle") {
+          throw new HttpError(409, `${member.name} isn't free for a job.`);
+        }
+        return member;
+      });
+      const crewSnapshots: MissionCrewSnapshot[] = crewMembers.map(
+        (member) => ({
+          archetype: member.archetype,
+          bonus: crewCheckBonus(member),
+          id: member.id,
+          name: member.name,
+          skill: CREW_ARCHETYPES[member.archetype].skill,
+          tier: member.tier,
+        }),
+      );
+
+      const staminaCost = Math.round(
+        JobCalculatorService.staminaCost(
+          template,
+          offer.difficulty,
+          this.engine.config,
+        ) * perks.staminaCostFactor,
+      );
+      if (current.resources.stamina < staminaCost) {
+        throw new HttpError(
+          400,
+          "You're running on empty. Rest up before you move on a block.",
+        );
+      }
+
+      const context = PlayerContextService.withCrew(
+        PlayerContextService.fromPlayer(current),
+        crewSnapshots,
+      );
+      const nodes = new SkeletonBuilder({
+        context,
+        depth: template.depth,
+        engine: this.engine.config,
+        missionId,
+        offer,
+        seed,
+        template,
+      }).build();
+
+      const created: Mission = {
+        acceptedState: PlayerContextService.acceptedState(current, template),
+        choicePath: [],
+        claim,
+        createdAt: nowIso,
+        ...(crewSnapshots.length > 0 && { crew: crewSnapshots }),
+        currentNodeId: ROOT_NODE_ID,
+        depth: template.depth,
+        generationStartedAt: null,
+        id: missionId,
+        momentumBands: MomentumService.bands(template.depth, this.engine.config),
+        nodes,
+        offer,
+        promptVersion: MISSION_PROMPT_VERSION,
+        resolution: null,
+        seed,
+        status: "generating",
+        template,
+        uid: player.id,
+        updatedAt: nowIso,
+      };
+
+      tx.set(playerRef, {
+        ...current,
+        reservedEquipment: {
+          items: SkeletonBuilder.reservationsForSubtree(nodes),
+          missionId,
+        },
+        resources: {
+          ...current.resources,
+          stamina: current.resources.stamina - staminaCost,
+        },
+        updatedAt: nowIso,
+      });
+      for (const member of crewMembers) {
+        tx.set(crewRefs[crewIds.indexOf(member.id)]!, {
+          ...member,
+          assignment: missionId,
+          status: "on_job",
+          updatedAt: nowIso,
+        });
+      }
+      tx.create(missionRef, created);
+      return created;
+    });
+
+    this.startNarration(mission, player);
+    return mission;
+  }
+
+  async acceptJob(
+    player: Player,
+    offerId: string,
+    crewIds: string[] = [],
+  ): Promise<Mission> {
+    const missionId = randomUUID();
+    const seed = randomBytes(16).toString("hex");
+    const nowIso = new Date().toISOString();
+    const perks = await this.effects.forPlayer(player.id);
     const boardRef = this.board.boardRef(player.id);
     const missionRef = this.missions(player.id).doc(missionId);
     const playerRef = this.db.collection("players").doc(player.id);
     const activeQuery = this.activeMissionQuery(player.id);
 
     const mission = await this.db.runTransaction(async (tx) => {
-      const [boardSnap, activeSnap, playerSnap] = await Promise.all([
-        tx.get(boardRef),
-        tx.get(activeQuery),
-        tx.get(playerRef),
-      ]);
+      const crewRefs = crewIds.map((id) =>
+        this.db
+          .collection("players")
+          .doc(player.id)
+          .collection("crew")
+          .doc(id),
+      );
+      const [boardSnap, activeSnap, playerSnap, ...crewSnaps] =
+        await Promise.all([
+          tx.get(boardRef),
+          tx.get(activeQuery),
+          tx.get(playerRef),
+          ...crewRefs.map((ref) => tx.get(ref)),
+        ]);
 
       if (!activeSnap.empty) {
         throw new HttpError(409, "You already have a job in progress.");
@@ -79,6 +281,34 @@ export class MissionService {
         throw new HttpError(403, "You're in prison. Jobs can wait.");
       }
 
+      const capacity = crewJobCapacity(current.progression.skills.leadership);
+      if (crewIds.length > capacity) {
+        throw new HttpError(
+          400,
+          `Your leadership carries ${capacity} on a job — no more.`,
+        );
+      }
+      const crewMembers = crewSnaps.map((snap, i) => {
+        if (!snap.exists) {
+          throw new HttpError(404, `No such crew member: ${crewIds[i]}.`);
+        }
+        const member = normalizeCrewMember(snap.data() as CrewMember);
+        if (member.status !== "idle") {
+          throw new HttpError(409, `${member.name} isn't free for a job.`);
+        }
+        return member;
+      });
+      const crewSnapshots: MissionCrewSnapshot[] = crewMembers.map(
+        (member) => ({
+          archetype: member.archetype,
+          bonus: crewCheckBonus(member),
+          id: member.id,
+          name: member.name,
+          skill: CREW_ARCHETYPES[member.archetype].skill,
+          tier: member.tier,
+        }),
+      );
+
       const boardData = boardSnap.exists ? (boardSnap.data() as JobBoard) : null;
       if (!boardData || !this.board.isCurrent(boardData)) {
         throw new HttpError(409, "The job board changed. Refresh and choose again.");
@@ -91,11 +321,14 @@ export class MissionService {
       const template =
         this.templates.find(offer.templateId) ?? this.templates.first();
 
-      // Every job costs energy; drugs or idle time buy it back.
-      const staminaCost = JobCalculatorService.staminaCost(
-        template,
-        offer.difficulty,
-        this.engine.config,
+      // Every job costs energy; drugs or idle time buy it back. Freight
+      // yard holders move light.
+      const staminaCost = Math.round(
+        JobCalculatorService.staminaCost(
+          template,
+          offer.difficulty,
+          this.engine.config,
+        ) * perks.staminaCostFactor,
       );
       if (current.resources.stamina < staminaCost) {
         throw new HttpError(
@@ -104,7 +337,10 @@ export class MissionService {
         );
       }
 
-      const context = PlayerContextService.fromPlayer(current);
+      const context = PlayerContextService.withCrew(
+        PlayerContextService.fromPlayer(current),
+        crewSnapshots,
+      );
       const nodes = new SkeletonBuilder({
         context,
         depth: template.depth,
@@ -119,6 +355,7 @@ export class MissionService {
         acceptedState: PlayerContextService.acceptedState(current, template),
         choicePath: [],
         createdAt: nowIso,
+        ...(crewSnapshots.length > 0 && { crew: crewSnapshots }),
         currentNodeId: ROOT_NODE_ID,
         depth: template.depth,
         generationStartedAt: null,
@@ -154,6 +391,14 @@ export class MissionService {
         },
         updatedAt: nowIso,
       });
+      for (const member of crewMembers) {
+        tx.set(crewRefs[crewIds.indexOf(member.id)]!, {
+          ...member,
+          assignment: missionId,
+          status: "on_job",
+          updatedAt: nowIso,
+        });
+      }
       tx.create(missionRef, created);
       return created;
     });
@@ -196,6 +441,7 @@ export class MissionService {
     choiceId: string,
   ): Promise<{ mission: Mission; player: Player }> {
     const nowIso = new Date().toISOString();
+    const perks = await this.effects.forPlayer(player.id);
     const missionRef = this.missions(player.id).doc(missionId);
     const playerRef = this.db.collection("players").doc(player.id);
     const eventId = randomUUID();
@@ -239,6 +485,28 @@ export class MissionService {
       if (target.narrativeStatus === "pending") {
         throw new HttpError(409, "still_generating");
       }
+
+      // Heading into an outcome with crew aboard: read their docs now —
+      // every transaction read must precede the first write.
+      const crewOnJob = mission.crew ?? [];
+      const crewRefs = crewOnJob.map((member) =>
+        playerRef.collection("crew").doc(member.id),
+      );
+      const crewSnaps =
+        target.kind === "outcome" && crewRefs.length > 0
+          ? await Promise.all(crewRefs.map((ref) => tx.get(ref)))
+          : [];
+      // A takeover heading into its outcome also needs the contested turf.
+      const claimTurfSnap =
+        target.kind === "outcome" && mission.claim
+          ? await tx.get(
+              this.db
+                .collection("seasons")
+                .doc(mission.claim.seasonId)
+                .collection("turfs")
+                .doc(mission.claim.turfId),
+            )
+          : null;
 
       mission.choicePath = [...mission.choicePath, edge.id];
       mission.currentNodeId = edge.id;
@@ -308,7 +576,11 @@ export class MissionService {
         updatedAt: nowIso,
       };
 
+      let claimedTurf: TurfState | null = null;
       if (target.kind === "outcome") {
+        const crewMembers = crewSnaps
+          .filter((snap) => snap.exists)
+          .map((snap) => normalizeCrewMember(snap.data() as CrewMember));
         updatedPlayer = this.resolve(
           tx,
           mission,
@@ -318,16 +590,119 @@ export class MissionService {
           playerRef,
           eventId,
           nowIso,
+          crewMembers,
+          perks.crewHealFactor,
         );
+
+        // A takeover that ended on its feet plants the flag — atomically
+        // with the rewards, and only if the block is still unclaimed.
+        const tier = mission.resolution?.tier;
+        const won =
+          tier === "jackpot" ||
+          tier === "successful" ||
+          tier === "partially_successful";
+        if (mission.claim && claimTurfSnap?.exists && won) {
+          const turf = claimTurfSnap.data() as TurfState;
+          if (turf.ownerUid === null) {
+            claimedTurf = {
+              ...turf,
+              claimedAt: nowIso,
+              incomeAccruedAt: nowIso,
+              ownerColor: updatedPlayer.family?.color ?? "#888888",
+              ownerName: updatedPlayer.family?.name ?? updatedPlayer.name,
+              ownerUid: updatedPlayer.id,
+              shieldUntil: new Date(
+                Date.parse(nowIso) + CAPTURE_SHIELD_HOURS * 3_600_000,
+              ).toISOString(),
+              updatedAt: nowIso,
+            };
+            tx.set(claimTurfSnap.ref, claimedTurf);
+          }
+        }
       } else {
         tx.set(playerRef, updatedPlayer);
       }
 
       tx.set(missionRef, mission);
-      return { mission, player: updatedPlayer };
+      return { claimedTurf, mission, player: updatedPlayer };
     });
 
-    return result;
+    await this.notifyCrewFates(player.id, result.mission);
+    // Jackpot jobs make a name — a family in the map game scores respect.
+    if (
+      result.mission.resolution?.tier === "jackpot" &&
+      result.player.family
+    ) {
+      const season = await this.seasons.getActiveSeason();
+      await this.db
+        .collection("seasons")
+        .doc(season.id)
+        .collection("respect")
+        .doc(result.player.id)
+        .set(
+          {
+            familyColor: result.player.family.color,
+            familyName: result.player.family.name,
+            respect: FieldValue.increment(RESPECT_WEIGHTS.jackpotMission),
+            uid: result.player.id,
+            updatedAt: new Date().toISOString(),
+          },
+          { merge: true },
+        );
+    }
+    if (result.claimedTurf && result.mission.claim) {
+      const familyName = result.player.family?.name ?? result.player.name;
+      await this.worldEvents.emit(
+        result.mission.claim.seasonId,
+        "turf_claimed",
+        `The ${familyName} family claimed ${result.claimedTurf.name} in ${DISTRICTS[result.claimedTurf.district].label}.`,
+        {
+          actorName: familyName,
+          actorUid: result.player.id,
+          district: result.claimedTurf.district,
+        },
+      );
+    }
+    return { mission: result.mission, player: result.player };
+  }
+
+  /** Post-transaction: tell the player what the job cost the roster. */
+  private async notifyCrewFates(uid: string, mission: Mission): Promise<void> {
+    const outcomes = mission.resolution?.crewOutcomes ?? [];
+    const location = mission.offer.storySeed.location;
+
+    await Promise.all(
+      outcomes.map((outcome) => {
+        switch (outcome.fate) {
+          case "killed":
+            return this.notifications.push(
+              uid,
+              "crew_died",
+              `${outcome.name} didn't make it`,
+              `${outcome.name} went down on the ${location} job. His gear went with him.`,
+              mission.id,
+            );
+          case "imprisoned":
+            return this.notifications.push(
+              uid,
+              "crew_released",
+              `${outcome.name} got pinched`,
+              `The police took ${outcome.name} on the ${location} job — and everything he was carrying. A bribe could bring both back.`,
+              mission.id,
+            );
+          case "injured":
+            return this.notifications.push(
+              uid,
+              "crew_recovered",
+              `${outcome.name} got hurt`,
+              `${outcome.name} took a beating on the ${location} job. He needs time off his feet.`,
+              mission.id,
+            );
+          default:
+            return Promise.resolve();
+        }
+      }),
+    );
   }
 
   /** Applies rewards and emits the world-story event. Transactional. */
@@ -340,8 +715,29 @@ export class MissionService {
     playerRef: DocumentReference,
     eventId: string,
     nowIso: string,
+    crewMembers: CrewMember[] = [],
+    crewHealFactor = 1,
   ): Player {
     const tier = outcome.outcomeTier ?? "partial_failure";
+    const crewOutcomes = this.settleCrewFates(
+      tx,
+      mission,
+      tier === "disaster",
+      tier === "jackpot" || tier === "successful",
+      crewMembers,
+      playerRef,
+      nowIso,
+      crewHealFactor,
+    );
+    // Hotheads make a bust louder; discreet hands muffle it.
+    const crewHeatShift =
+      tier === "disaster"
+        ? crewMembers.reduce(
+            (sum, member) =>
+              sum + (crewTraitModifiers(member.traits).heatOnDisaster ?? 0),
+            0,
+          )
+        : 0;
     const rewards = RewardService.mitigateHeat(
       RewardService.rewardsForTier(tier, mission.offer, template),
       mission.acceptedState?.loadout ?? player.loadout,
@@ -351,6 +747,12 @@ export class MissionService {
       `The ${mission.offer.storySeed.location} job ended in ${tier.replace(/_/g, " ")}.`;
 
     const applied = RewardService.applyToPlayer(player, rewards, nowIso);
+    if (crewHeatShift !== 0) {
+      applied.player.resources.heat = Math.min(
+        MAX_HEAT,
+        Math.max(0, applied.player.resources.heat + crewHeatShift),
+      );
+    }
     const updatedPlayer: Player = {
       ...applied.player,
       narrative: {
@@ -385,6 +787,7 @@ export class MissionService {
 
     mission.resolution = {
       cashChange: rewards.cashChange,
+      ...(crewOutcomes.length > 0 && { crewOutcomes }),
       heatChange: rewards.heatChange,
       levelsGained: applied.levelsGained,
       narrativeEventId: eventId,
@@ -405,6 +808,86 @@ export class MissionService {
     );
 
     return updatedPlayer;
+  }
+
+  /**
+   * Sends the crew home — or to the hospital, the county lockup, or the
+   * ground. Fates are seeded off the mission so retries can't reroll
+   * them. A disaster means the police closed in: some get hurt, some get
+   * taken (gear confiscated with them), most scatter, and the unlucky
+   * don't come back at all — cowards always run fast enough to live.
+   */
+  private settleCrewFates(
+    tx: FirebaseFirestore.Transaction,
+    mission: Mission,
+    disaster: boolean,
+    triumph: boolean,
+    crewMembers: CrewMember[],
+    playerRef: DocumentReference,
+    nowIso: string,
+    crewHealFactor = 1,
+  ): MissionCrewOutcome[] {
+    if (crewMembers.length === 0) {
+      return [];
+    }
+
+    const rng = new MissionRng(mission.seed, mission.id);
+    const outcomes: MissionCrewOutcome[] = [];
+
+    for (const member of crewMembers) {
+      const ref = playerRef.collection("crew").doc(member.id);
+      const home: CrewMember = {
+        ...member,
+        assignment: null,
+        busyUntil: null,
+        loyalty: triumph
+          ? Math.min(MAX_CREW_LOYALTY, member.loyalty + 2)
+          : member.loyalty,
+        status: "idle",
+        updatedAt: nowIso,
+      };
+
+      if (!disaster) {
+        tx.set(ref, home);
+        outcomes.push({ fate: "returned", id: member.id, name: member.name });
+        continue;
+      }
+
+      const roll = rng.rollD100(`crew-fate:${member.id}`);
+      if (roll <= 35) {
+        tx.set(ref, {
+          ...home,
+          busyUntil: new Date(
+            Date.parse(nowIso) +
+              CREW_INJURY_RECOVERY_HOURS * crewHealFactor * 3_600_000,
+          ).toISOString(),
+          status: "injured",
+        });
+        outcomes.push({ fate: "injured", id: member.id, name: member.name });
+      } else if (roll <= 60) {
+        tx.set(ref, {
+          ...home,
+          busyUntil: new Date(
+            Date.parse(nowIso) + CREW_PRISON_HOURS * 3_600_000,
+          ).toISOString(),
+          confiscatedLoadout: member.loadout,
+          loadout: {},
+          status: "imprisoned",
+        });
+        outcomes.push({ fate: "imprisoned", id: member.id, name: member.name });
+      } else if (
+        roll <= 90 ||
+        crewTraitModifiers(member.traits).fleesDeath === true
+      ) {
+        tx.set(ref, home);
+        outcomes.push({ fate: "escaped", id: member.id, name: member.name });
+      } else {
+        tx.delete(ref);
+        outcomes.push({ fate: "killed", id: member.id, name: member.name });
+      }
+    }
+
+    return outcomes;
   }
 
   /**

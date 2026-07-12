@@ -1,6 +1,7 @@
 import { createEmptyNarrative, type PlayerNarrative } from "./narrative";
 import { MAX_HEALTH, MIN_HEALTH } from "./health";
 import { playerNameKey } from "./playerSchemas";
+import type { PlayerFamily } from "./territory";
 import {
   SKILL_IDS,
   STARTING_SKILL_LEVEL,
@@ -93,6 +94,23 @@ export function createEmptySkillExperience(): PlayerSkillExperience {
   return createSkillRecord(0);
 }
 
+/** The family's standing in the street war. Kept on the player doc so
+ * attack cooldowns and revenge rights never need cross-collection queries. */
+export type PlayerWar = {
+  /** Last assault launched; the next one waits out the cooldown. */
+  lastAttackAt: string | null;
+  /** Losing a defense grants this: hit that family back within the
+   * window, adjacency waived and their defenses caught leaning. */
+  revenge: {
+    againstUid: string;
+    expiresAt: string;
+  } | null;
+};
+
+export function createEmptyWar(): PlayerWar {
+  return { lastAttackAt: null, revenge: null };
+}
+
 /** Set while the player is locked up; null when free. */
 export type PlayerPrison = {
   /** Next bribe/escape attempt allowed at (throttles retries). */
@@ -114,6 +132,8 @@ export type PlayerProgression = {
 export type Player = {
   avatar: string | null;
   createdAt: string;
+  /** Family identity for the city map; null until founded at map unlock. */
+  family: PlayerFamily | null;
   id: string;
   loadout: PlayerLoadout;
   name: string;
@@ -131,6 +151,7 @@ export type Player = {
   } | null;
   stash: PlayerItem[];
   updatedAt: string;
+  war: PlayerWar;
 };
 
 export function createNewPlayer(
@@ -142,6 +163,7 @@ export function createNewPlayer(
   return {
     avatar: null,
     createdAt: nowIso,
+    family: null,
     id,
     loadout,
     name,
@@ -168,6 +190,7 @@ export function createNewPlayer(
     },
     stash: [],
     updatedAt: nowIso,
+    war: createEmptyWar(),
   };
 }
 
@@ -219,6 +242,16 @@ const WAIST_ARMOR_BY_ITEM_ID: Readonly<Record<string, number>> = {
 export function normalizePlayer(player: Player): Player {
   return {
     ...player,
+    // Families founded before names existed inherit the player's name.
+    family: player.family
+      ? {
+          ...player.family,
+          name: player.family.name ?? player.name,
+          nameKey:
+            player.family.nameKey ??
+            playerNameKey(player.family.name ?? player.name),
+        }
+      : null,
     narrative: player.narrative ?? createEmptyNarrative(),
     prison: player.prison ?? null,
     progression: {
@@ -252,6 +285,7 @@ export function normalizePlayer(player: Player): Player {
     ),
     reservedEquipment: player.reservedEquipment ?? null,
     stash: normalizeStash(player.stash ?? []),
+    war: player.war ?? createEmptyWar(),
   };
 }
 

@@ -102,7 +102,9 @@ export class JobOfferBuilder {
     templates: MissionTemplate[],
     engine: EngineConfig,
   ): MissionTemplate[] {
-    const eligible = templates.filter(
+    // Takeover missions are generated from the map, never drawn on boards.
+    const boardable = templates.filter((t) => t.type !== "turf_takeover");
+    const eligible = boardable.filter(
       (t) =>
         context.level >= t.levels.min &&
         context.level <= t.levels.max + engine.board.levelGrace,
@@ -116,6 +118,6 @@ export class JobOfferBuilder {
         Math.abs(context.level - t.levels.min),
         Math.abs(context.level - t.levels.max),
       );
-    return [...templates].sort((a, b) => distance(a) - distance(b)).slice(0, 3);
+    return [...boardable].sort((a, b) => distance(a) - distance(b)).slice(0, 3);
   }
 }

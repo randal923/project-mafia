@@ -61,14 +61,17 @@ export function useJobBoard() {
   }, [isBusy, user]);
 
   const accept = useCallback(
-    async (offerId: string): Promise<MissionView | null> => {
+    async (
+      offerId: string,
+      crewIds: string[] = []
+    ): Promise<MissionView | null> => {
       if (!user || isBusy) {
         return null;
       }
 
       setIsBusy(true);
       try {
-        const { mission } = await acceptJob(user, offerId);
+        const { mission } = await acceptJob(user, offerId, crewIds);
         return mission;
       } catch (error) {
         console.error("Failed to accept the job:", error);

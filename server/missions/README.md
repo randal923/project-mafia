@@ -331,6 +331,16 @@ YAML note: a seed line containing `: ` (colon-space) must be a block scalar
 
 ---
 
+## Special templates
+
+Templates with `type: turf_takeover` never appear on job boards — the
+city map generates offers from them when a family moves on an unclaimed
+block. The offer's `difficulty` is the turf's defense (not the level
+formula), the story-seed `location` is replaced with the turf's name, and
+the mission carries a `claim` that plants the family flag when the run
+ends at `partially_successful` or better. One such template ships:
+`turf-takeover` (levels 1–100, depth 3).
+
 ## Current template lineup
 
 | id | levels | depth | district | gear tags |

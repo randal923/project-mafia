@@ -26,6 +26,8 @@ const player: Player = {
     llmMemory: { importantFacts: [], unresolvedConflicts: [] },
     storySummary: ""
   },
+  war: { lastAttackAt: null, revenge: null },
+  family: null,
   prison: null,
   progression: {
     experience: 0,

@@ -53,6 +53,32 @@ export type EnginePlayerContext = {
 };
 
 export class PlayerContextService {
+  /**
+   * Folds crew check bonuses into the context the engine rolls from.
+   * Each member boosts exactly his archetype's skill; the merged context
+   * flows through the skeleton builder so every pre-rolled check on the
+   * mission bakes the crew in — mid-mission roster changes affect the
+   * NEXT job, mirroring how the loadout snapshot works.
+   */
+  static withCrew(
+    context: EnginePlayerContext,
+    crew: Array<{ bonus: number; skill: keyof PlayerSkills }>,
+  ): EnginePlayerContext {
+    if (crew.length === 0) {
+      return context;
+    }
+
+    const skillBonus = { ...context.bonuses.skillBonus };
+    for (const member of crew) {
+      skillBonus[member.skill] = (skillBonus[member.skill] ?? 0) + member.bonus;
+    }
+
+    return {
+      ...context,
+      bonuses: { ...context.bonuses, skillBonus },
+    };
+  }
+
   static fromPlayer(player: Player): EnginePlayerContext {
     return {
       armor: calculateLoadoutArmor(player.loadout),

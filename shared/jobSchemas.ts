@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const acceptJobRequestSchema = z
   .object({
+    /** Crew member ids to bring along; capacity is leadership-gated. */
+    crewIds: z.array(z.string().min(1)).max(8).optional(),
     offerId: z.string().min(1, { error: "offerId is required." }),
   })
   .strict();

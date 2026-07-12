@@ -18,7 +18,6 @@ export function GameClock() {
 
   useEffect(() => {
     if (!createdAt) {
-      setLabel(null);
       return;
     }
 
@@ -37,7 +36,7 @@ export function GameClock() {
       suppressHydrationWarning
       title="City time — one day passes every real hour"
     >
-      {label ?? "—"}
+      {createdAt ? (label ?? "—") : "—"}
     </span>
   );
 }

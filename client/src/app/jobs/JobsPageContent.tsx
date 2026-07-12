@@ -1,10 +1,12 @@
 "use client";
 
+import { crewJobCapacity, type CrewMember } from "@shared/crew";
 import type { PrisonAttemptResult, PrisonStatus } from "@shared/prison";
 import type { PlayerItem } from "@shared/player";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Button } from "../../components/Button/Button";
+import { CrewPicker } from "../../components/Crew/CrewPicker";
 import { JobCard } from "../../components/JobCard/JobCard";
 import { MissionRunner } from "../../components/MissionRunner/MissionRunner";
 import { PrisonPanel } from "../../components/PrisonPanel/PrisonPanel";
@@ -16,6 +18,7 @@ import {
   bribeHeat,
   bribePrisonGuard,
   escapePrison,
+  fetchCrewRoster,
   fetchMyPlayer,
   fetchPrecinctQuote,
   fetchPrisonStatus
@@ -35,6 +38,8 @@ export function JobsPageContent() {
   } | null>(null);
   const [isActing, setIsActing] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [idleCrew, setIdleCrew] = useState<CrewMember[]>([]);
+  const [pendingOfferId, setPendingOfferId] = useState<string | null>(null);
 
   const imprisoned = Boolean(player?.prison);
   const activePrisonStatus =
@@ -71,6 +76,25 @@ export function JobsPageContent() {
       isCancelled = true;
     };
   }, [user, imprisoned, player?.prison?.releaseAt]);
+
+  // Idle soldiers can ride along on jobs for check bonuses.
+  useEffect(() => {
+    if (!user || imprisoned) {
+      return;
+    }
+
+    let isCancelled = false;
+    fetchCrewRoster(user)
+      .then((result) => {
+        if (!isCancelled) {
+          setIdleCrew(result.crew.filter((member) => member.status === "idle"));
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      isCancelled = true;
+    };
+  }, [user, imprisoned, mission.mission]);
 
   useEffect(() => {
     if (!user || imprisoned) {
@@ -195,14 +219,24 @@ export function JobsPageContent() {
     );
   }
 
-  const handleAccept = async (offerId: string) => {
-    const view = await board.accept(offerId);
+  const acceptWithCrew = async (offerId: string, crewIds: string[]) => {
+    setPendingOfferId(null);
+    const view = await board.accept(offerId, crewIds);
     if (view) {
       mission.startMission(view);
       if (user) {
         void fetchMyPlayer(user).then(setPlayer).catch(() => undefined);
       }
     }
+  };
+
+  const handleAccept = async (offerId: string) => {
+    // With idle soldiers available, offer to bring some along first.
+    if (idleCrew.length > 0) {
+      setPendingOfferId(offerId);
+      return;
+    }
+    await acceptWithCrew(offerId, []);
   };
 
   const handleBribeHeat = async () => {
@@ -241,6 +275,18 @@ export function JobsPageContent() {
         player={player}
         precinctQuote={precinctQuote}
       />
+      {pendingOfferId ? (
+        <CrewPicker
+          capacity={crewJobCapacity(player.progression.skills.leadership)}
+          confirmLabel="Take the job"
+          crew={idleCrew}
+          intro="Each soldier boosts checks that lean on his specialty. On a disaster, they share the consequences — and their gear is on the line."
+          isBusy={board.isBusy}
+          onCancel={() => setPendingOfferId(null)}
+          onConfirm={(crewIds) => void acceptWithCrew(pendingOfferId, crewIds)}
+          title="Who rides along?"
+        />
+      ) : null}
       {board.status === "loading" ? (
         <p className={typography.metadata}>Listening for rumors…</p>
       ) : board.status === "error" || !board.board ? (

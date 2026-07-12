@@ -62,7 +62,7 @@ export function PrisonPanel({
         County lockup
       </p>
       <h1 className={`mt-2 mb-0 ${displayText} text-5xl text-title`}>
-        You're doing time
+        You’re doing time
       </h1>
       <p className={`mt-3 mb-0 ${typography.narrativeBody}`}>
         {status.prison.reason} The cell is cold, the coffee is worse, and the

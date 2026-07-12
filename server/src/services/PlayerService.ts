@@ -15,6 +15,7 @@ import {
   normalizePlayer,
 } from "../../../shared/player";
 import { HttpError } from "../middleware/errorHandler";
+import { EffectsService } from "./EffectsService";
 import { EngineConfigService } from "./EngineConfigService";
 import { EquipmentService } from "./EquipmentService";
 import { FirebaseService } from "./FirebaseService";
@@ -26,6 +27,7 @@ export class PlayerService {
     firebase: FirebaseService,
     private readonly equipment: EquipmentService,
     private readonly engine: EngineConfigService,
+    private readonly effects: EffectsService,
   ) {
     this.db = firebase.firestore;
   }
@@ -137,9 +139,10 @@ export class PlayerService {
 
   /**
    * What the precinct charges to make `chunk` heat disappear. Corruption
-   * skill talks the price down (capped discount).
+   * skill talks the price down (capped discount); the family holding the
+   * Precinct HQ pays wholesale.
    */
-  precinctQuote(player: Player): { chunk: number; cost: number } {
+  precinctQuote(player: Player, costFactor = 1): { chunk: number; cost: number } {
     const { precinct } = this.engine.config;
     const discount = Math.min(
       precinct.maxDiscount,
@@ -148,15 +151,25 @@ export class PlayerService {
     const cost = roundToFive(
       (precinct.baseCost +
         precinct.costPerLevel * player.progression.level) *
-        (1 - discount),
+        (1 - discount) *
+        costFactor,
     );
 
     return { chunk: precinct.chunk, cost };
   }
 
+  /** The quote with every empire perk applied. */
+  async precinctQuoteWithPerks(
+    player: Player,
+  ): Promise<{ chunk: number; cost: number }> {
+    const { precinctCostFactor } = await this.effects.forPlayer(player.id);
+    return this.precinctQuote(player, precinctCostFactor);
+  }
+
   /** Pays off the precinct: cash down, heat down. */
   async bribeHeat(uid: string): Promise<Player> {
     const playerRef = this.players.doc(uid);
+    const { precinctCostFactor } = await this.effects.forPlayer(uid);
 
     return this.db.runTransaction(async (tx) => {
       const snapshot = await tx.get(playerRef);
@@ -172,7 +185,7 @@ export class PlayerService {
         throw new HttpError(400, "You're already cold — nothing to pay for.");
       }
 
-      const quote = this.precinctQuote(player);
+      const quote = this.precinctQuote(player, precinctCostFactor);
       if (player.resources.cash < quote.cost) {
         throw new HttpError(402, "You can't afford the envelope.");
       }

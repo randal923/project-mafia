@@ -7,6 +7,10 @@ import type { FirebaseService } from "../FirebaseService";
 import type { JobBoardService } from "../JobBoardService";
 import { MissionService } from "../MissionService";
 import type { MissionTemplateService } from "../MissionTemplateService";
+import type { NotificationService } from "../NotificationService";
+import type { EffectsService } from "../EffectsService";
+import type { SeasonService } from "../SeasonService";
+import type { WorldEventService } from "../WorldEventService";
 import type { PrisonService } from "../PrisonService";
 import type { MissionNarrator } from "../ai/MissionNarrator";
 import type { EngineConfigService } from "../EngineConfigService";
@@ -257,6 +261,10 @@ describe("MissionService choice application", () => {
       {} as MissionTemplateService,
       { config: TEST_ENGINE } as EngineConfigService,
       {} as PrisonService,
+      { push: async () => undefined } as unknown as NotificationService,
+      { emit: async () => undefined } as unknown as WorldEventService,
+      { getActiveSeason: async () => ({ id: "season-test" }) } as unknown as SeasonService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     const playerPath = `players/${player.id}`;
@@ -311,6 +319,10 @@ describe("MissionService choice application", () => {
       {} as MissionTemplateService,
       { config: TEST_ENGINE } as EngineConfigService,
       {} as PrisonService,
+      { push: async () => undefined } as unknown as NotificationService,
+      { emit: async () => undefined } as unknown as WorldEventService,
+      { getActiveSeason: async () => ({ id: "season-test" }) } as unknown as SeasonService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     const result = await service.choose(player, mission.id, "0");
@@ -387,6 +399,10 @@ describe("MissionService choice application", () => {
       {} as MissionTemplateService,
       { config: TEST_ENGINE } as EngineConfigService,
       {} as PrisonService,
+      { push: async () => undefined } as unknown as NotificationService,
+      { emit: async () => undefined } as unknown as WorldEventService,
+      { getActiveSeason: async () => ({ id: "season-test" }) } as unknown as SeasonService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     await expect(
@@ -416,6 +432,10 @@ describe("MissionService choice application", () => {
       {} as MissionTemplateService,
       { config: TEST_ENGINE } as EngineConfigService,
       {} as PrisonService,
+      { push: async () => undefined } as unknown as NotificationService,
+      { emit: async () => undefined } as unknown as WorldEventService,
+      { getActiveSeason: async () => ({ id: "season-test" }) } as unknown as SeasonService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     const result = await service.choose(player, mission.id, "0");
@@ -446,6 +466,10 @@ describe("MissionService choice application", () => {
       {} as MissionTemplateService,
       { config: TEST_ENGINE } as EngineConfigService,
       {} as PrisonService,
+      { push: async () => undefined } as unknown as NotificationService,
+      { emit: async () => undefined } as unknown as WorldEventService,
+      { getActiveSeason: async () => ({ id: "season-test" }) } as unknown as SeasonService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     const result = await service.choose(player, mission.id, "0");

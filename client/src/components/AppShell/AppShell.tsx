@@ -7,12 +7,16 @@ import { Button } from "../Button/Button";
 import { GameClock } from "../GameClock/GameClock";
 import { Modal } from "../Modal/Modal";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
+import { NotificationsBell } from "../NotificationsBell/NotificationsBell";
 import { PlayerNameDialog } from "../PlayerNameDialog/PlayerNameDialog";
 import { usePlayer } from "../PlayerProvider/PlayerProvider";
 
 const navigationItems = [
   { href: "/", id: "news", label: "News" },
   { href: "/jobs", id: "jobs", label: "Jobs" },
+  { href: "/crew", id: "crew", label: "Crew" },
+  { href: "/empire", id: "empire", label: "Empire" },
+  { href: "/map", id: "map", label: "Map" },
   { href: "/store", id: "store", label: "Store" },
   { href: "/character", id: "character", label: "Character" },
   { href: "/loadout", id: "loadout", label: "Loadout" }
@@ -48,6 +52,7 @@ export function AppShell({ children }: AppShellProps) {
           actions={
             <div className="ml-8 flex items-center gap-3">
               <GameClock />
+              <NotificationsBell />
               <Button
                 onClick={() => setIsSignOutModalOpen(true)}
                 size="small"

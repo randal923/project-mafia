@@ -78,7 +78,9 @@ export class MissionViewService {
     return {
       ...(mission.acceptedState && { acceptedState: mission.acceptedState }),
       choices,
+      ...(mission.claim && { claim: mission.claim }),
       createdAt: mission.createdAt,
+      ...(mission.crew?.length && { crew: mission.crew }),
       depth: mission.depth,
       id: mission.id,
       ...(mission.momentumBands &&

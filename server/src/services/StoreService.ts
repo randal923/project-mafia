@@ -8,12 +8,15 @@ import {
 import { recoveredHealth } from "../../../shared/health";
 import { Player, normalizePlayer } from "../../../shared/player";
 import { HttpError } from "../middleware/errorHandler";
+import { EffectsService } from "./EffectsService";
 import { EquipmentService } from "./EquipmentService";
 import { FirebaseService } from "./FirebaseService";
 
 /**
  * The armory: turns mission cash into gear. Buying lands items in the
- * stash (equip from the character screen); selling pays half price back.
+ * stash (equip from the character screen); selling pays half price back —
+ * more if your chop shop's fences are in business, less at the register
+ * if your family holds the Port.
  */
 export class StoreService {
   private readonly db: Firestore;
@@ -21,6 +24,7 @@ export class StoreService {
   constructor(
     firebase: FirebaseService,
     private readonly equipment: EquipmentService,
+    private readonly effects: EffectsService,
   ) {
     this.db = firebase.firestore;
   }
@@ -37,7 +41,8 @@ export class StoreService {
 
     // Only consumables stack; wearables and weapons are one per purchase.
     const amount = item.consumable ? quantity : 1;
-    const cost = item.price * amount;
+    const { storePriceFactor } = await this.effects.forPlayer(uid);
+    const cost = Math.round(item.price * storePriceFactor) * amount;
     const playerRef = this.db.collection("players").doc(uid);
 
     return this.db.runTransaction(async (tx) => {
@@ -85,6 +90,7 @@ export class StoreService {
   }
 
   async sell(uid: string, itemId: string, quantity = 1): Promise<Player> {
+    const { sellPriceFactor } = await this.effects.forPlayer(uid);
     const playerRef = this.db.collection("players").doc(uid);
 
     return this.db.runTransaction(async (tx) => {
@@ -122,7 +128,10 @@ export class StoreService {
         );
       }
       const amount = Math.min(available, quantity);
-      const payout = sellPrice(item.price ?? 0, amount);
+      const payout =
+        sellPriceFactor !== null
+          ? Math.floor((item.price ?? 0) * sellPriceFactor) * amount
+          : sellPrice(item.price ?? 0, amount);
       const remaining = owned - amount;
 
       const updated: Player = {

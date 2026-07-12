@@ -83,7 +83,7 @@ export class PlayerController {
       throw new HttpError(404, "Player not found");
     }
 
-    res.json(this.players.precinctQuote(player));
+    res.json(await this.players.precinctQuoteWithPerks(player));
   };
 
   private bribeHeat = async (req: Request, res: Response): Promise<void> => {

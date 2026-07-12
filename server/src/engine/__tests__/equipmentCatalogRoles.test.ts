@@ -10,6 +10,7 @@ import {
 import { APPROACH_SKILLS, JOB_APPROACHES } from "../../../../shared/job";
 import { MissionTemplate } from "../../../../shared/missionTemplate";
 import { Player, createNewPlayer } from "../../../../shared/player";
+import { EffectsService } from "../../services/EffectsService";
 import { EquipmentService } from "../../services/EquipmentService";
 import { FirebaseService } from "../../services/FirebaseService";
 import { LoadoutService } from "../../services/LoadoutService";
@@ -424,7 +425,7 @@ describe("every catalog item's mechanical role", () => {
     };
     const firebase = createFirebaseHarness(reserved);
     const loadout = new LoadoutService(firebase);
-    const store = new StoreService(firebase, {} as EquipmentService);
+    const store = new StoreService(firebase, {} as EquipmentService, { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService);
 
     await expect(loadout.useItem(reserved.id, item.id)).rejects.toMatchObject({
       statusCode: 409,
@@ -446,6 +447,7 @@ describe("every catalog item's mechanical role", () => {
     const service = new StoreService(
       createFirebaseHarness(player),
       {} as EquipmentService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
     const updated = await service.sell(player.id, item.id, 99);
 
@@ -467,6 +469,7 @@ describe("every catalog item's mechanical role", () => {
     const service = new StoreService(
       createFirebaseHarness(player),
       equipment,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     const updated = await service.buy(player.id, item.id, 5);
@@ -486,6 +489,7 @@ describe("every catalog item's mechanical role", () => {
     const service = new StoreService(
       createFirebaseHarness(player),
       {} as EquipmentService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     const updated = await service.sell(player.id, item.id);
@@ -504,6 +508,7 @@ describe("every catalog item's mechanical role", () => {
     const service = new StoreService(
       createFirebaseHarness(player),
       {} as EquipmentService,
+      { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
     await expect(service.sell(player.id, item.id)).rejects.toMatchObject({

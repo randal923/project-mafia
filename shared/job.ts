@@ -1,3 +1,4 @@
+import type { CrewArchetypeId, CrewTier } from "./crew";
 import type { MissionTemplate } from "./missionTemplate";
 import type {
   PlayerItem,
@@ -250,8 +251,30 @@ export type MissionNode = {
 
 export type MissionStatus = "active" | "generating" | "resolved";
 
+/** A crew member brought along, snapshotted at accept time. */
+export type MissionCrewSnapshot = {
+  archetype: CrewArchetypeId;
+  /** Flat check-chance bonus granted to the member's skill. */
+  bonus: number;
+  id: string;
+  name: string;
+  skill: keyof PlayerSkills;
+  tier: CrewTier;
+};
+
+/** What happened to one crew member when the job resolved. */
+export type MissionCrewFate = "escaped" | "imprisoned" | "injured" | "killed" | "returned";
+
+export type MissionCrewOutcome = {
+  fate: MissionCrewFate;
+  id: string;
+  name: string;
+};
+
 export type MissionResolution = {
   cashChange: number;
+  /** How the crew came out of it; absent on solo jobs and older docs. */
+  crewOutcomes?: MissionCrewOutcome[];
   heatChange: number;
   /** Player levels gained when the job resolved; absent on older docs. */
   levelsGained?: number;
@@ -290,7 +313,16 @@ export type Mission = {
   /** Snapshot used by every precomputed edge; absent on legacy missions. */
   acceptedState?: MissionAcceptedState;
   choicePath: string[];
+  /** Set on turf-takeover runs: the ground this job is fought over.
+   * Ending at partially_successful or better plants the flag. */
+  claim?: {
+    seasonId: string;
+    turfId: string;
+    turfName: string;
+  };
   createdAt: string;
+  /** Crew brought on the job; absent on solo runs and legacy missions. */
+  crew?: MissionCrewSnapshot[];
   currentNodeId: string;
   depth: number;
   generationStartedAt: string | null;
@@ -371,7 +403,15 @@ export type MissionView = {
   acceptedState?: MissionAcceptedState;
   /** Outgoing choices of the current node; null on outcome nodes. */
   choices: MissionViewChoice[] | null;
+  /** Present on turf-takeover runs. */
+  claim?: {
+    seasonId: string;
+    turfId: string;
+    turfName: string;
+  };
   createdAt: string;
+  /** Crew brought on the job; absent on solo runs and legacy missions. */
+  crew?: MissionCrewSnapshot[];
   depth: number;
   id: string;
   /** Where the run stands; absent on pre-stakes missions. */

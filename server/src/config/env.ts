@@ -12,6 +12,8 @@ export class EnvConfig {
   readonly openAiApiKey: string;
   readonly openAiModel: string;
   readonly openAiApiUrl: string;
+  /** Shared secret for the scheduled /internal/tick endpoint. */
+  readonly cronSecret: string | null;
 
   constructor(env: NodeJS.ProcessEnv = process.env) {
     this.nodeEnv = env.NODE_ENV ?? 'development';
@@ -24,6 +26,7 @@ export class EnvConfig {
     this.openAiApiKey = this.requireVar(env, 'OPENAI_API_KEY');
     this.openAiModel = env.OPENAI_MODEL ?? 'gpt-5.4-mini';
     this.openAiApiUrl = env.OPENAI_API_URL ?? 'https://api.openai.com/v1/chat/completions';
+    this.cronSecret = env.CRON_SECRET ?? null;
 
     if (!Number.isInteger(this.port) || this.port <= 0) {
       throw new Error(`Invalid PORT value: ${env.PORT}`);
