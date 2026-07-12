@@ -13,6 +13,7 @@ import {
   type CrewSlotId,
 } from "@shared/crew";
 import { PLAYER_RANKS, type PlayerItem } from "@shared/player";
+import { SKILLS } from "@shared/skills";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../components/AuthProvider/AuthProvider";
 import { Button } from "../../components/Button/Button";
@@ -96,9 +97,19 @@ export function CrewPageContent() {
     if (!player) {
       return [];
     }
-    return player.stash.filter(
-      (item) => item.slot && isCrewSlot(item.slot) && !item.consumable,
-    );
+    // Duplicate copies of the same gear are interchangeable — the equip
+    // call targets by id — so the picker lists each id once.
+    const seen = new Set<string>();
+    return player.stash.filter((item) => {
+      if (!item.slot || !isCrewSlot(item.slot) || item.consumable) {
+        return false;
+      }
+      if (seen.has(item.id)) {
+        return false;
+      }
+      seen.add(item.id);
+      return true;
+    });
   }, [player]);
 
   const runAction = useCallback(
@@ -294,16 +305,24 @@ export function CrewPageContent() {
                 className="flex flex-col gap-3 rounded-panel border border-line bg-surface p-5 shadow-panel"
                 key={candidate.id}
               >
-                <header>
-                  <p className={`m-0 ${displayText} text-2xl text-title`}>
-                    {candidate.name}
-                  </p>
-                  <p className={`m-0 ${typography.metadata}`}>
-                    {CREW_TIER_LABELS[candidate.tier]} ·{" "}
-                    {CREW_ARCHETYPES[candidate.archetype].label} ·{" "}
-                    {CREW_ARCHETYPES[candidate.archetype].skill}{" "}
-                    {candidate.skillLevel}
-                  </p>
+                <header className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className={`m-0 ${displayText} text-2xl text-title`}>
+                      {candidate.name}
+                    </p>
+                    <p className={`m-0 ${typography.metadata}`}>
+                      {CREW_TIER_LABELS[candidate.tier]} ·{" "}
+                      {CREW_ARCHETYPES[candidate.archetype].label}
+                    </p>
+                  </div>
+                  <div className="rounded-control border border-brass/50 bg-brass/10 px-3 py-1 text-center">
+                    <p className={`m-0 ${typography.metadata}`}>
+                      {SKILLS[CREW_ARCHETYPES[candidate.archetype].skill].label}
+                    </p>
+                    <p className={`m-0 ${displayText} text-lg text-brass-bright`}>
+                      {candidate.skillLevel}
+                    </p>
+                  </div>
                 </header>
                 <p className={`m-0 ${typography.narrativeCaption}`}>
                   {candidate.bio}

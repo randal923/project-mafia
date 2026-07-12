@@ -8,7 +8,7 @@ type StoreItemCardProps = {
   isBusy: boolean;
   isLocked: boolean;
   item: Equipment;
-  onBuy: (equipmentId: string, quantity: number) => void;
+  onBuy: (equipmentId: string) => void;
   ownedQuantity: number;
   playerCash: number;
 };
@@ -170,27 +170,14 @@ export function StoreItemCard({
           >
             {moneyFormatter.format(item.price)}
           </p>
-          <div className="flex gap-2">
-            {item.consumable ? (
-              <Button
-                aria-label={`Buy five ${item.name}`}
-                disabled={!purchasable || playerCash < item.price * 5}
-                onClick={() => onBuy(item.id, 5)}
-                size="small"
-                variant="secondary"
-              >
-                ×5
-              </Button>
-            ) : null}
-            <Button
-              disabled={!purchasable}
-              onClick={() => onBuy(item.id, 1)}
-              size="small"
-              variant={isLocked ? "quiet" : "primary"}
-            >
-              {isLocked ? "Locked" : "Buy"}
-            </Button>
-          </div>
+          <Button
+            disabled={!purchasable}
+            onClick={() => onBuy(item.id)}
+            size="small"
+            variant={isLocked ? "quiet" : "primary"}
+          >
+            {isLocked ? "Locked" : "Buy"}
+          </Button>
         </div>
       </div>
     </article>

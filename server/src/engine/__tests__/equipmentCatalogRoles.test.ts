@@ -454,7 +454,7 @@ describe("every catalog item's mechanical role", () => {
     expect(updated.stash).toMatchObject([{ id: item.id, quantity: 1 }]);
   });
 
-  it("stacks a bulk stash-tool purchase onto normalized legacy copies", async () => {
+  it("stacks a stash-tool purchase onto normalized legacy copies", async () => {
     const item = catalog.find(({ id }) => id === "lockpick-set")!;
     const player = createNewPlayer(item.id, item.name, NOW);
     player.progression.level = item.levelRequirement;
@@ -472,11 +472,11 @@ describe("every catalog item's mechanical role", () => {
       { forPlayer: async () => ({ crewHealFactor: 1, healFactor: 1, incomeStorageBonusHours: 0, precinctCostFactor: 1, sellPriceFactor: null, staminaCostFactor: 1, storePriceFactor: 1, upkeepFactor: 1, wageFactor: 1 }) } as unknown as EffectsService,
     );
 
-    const updated = await service.buy(player.id, item.id, 5);
+    const updated = await service.buy(player.id, item.id);
 
-    expect(updated.resources.cash).toBe(player.resources.cash - item.price * 5);
+    expect(updated.resources.cash).toBe(player.resources.cash - item.price);
     expect(updated.stash).toMatchObject([
-      { consumable: true, id: item.id, quantity: 7 },
+      { consumable: true, id: item.id, quantity: 3 },
     ]);
   });
 

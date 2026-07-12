@@ -32,7 +32,6 @@ export class StoreController {
     const player = await this.store.buy(
       this.requireUid(req),
       parsed.data.equipmentId,
-      parsed.data.quantity ?? 1,
     );
     res.json({ player });
   };

@@ -104,11 +104,10 @@ export function fetchStoreCatalog(
 
 export function buyEquipment(
   user: User,
-  equipmentId: string,
-  quantity = 1
+  equipmentId: string
 ): Promise<{ player: Player }> {
   return apiFetch<{ player: Player }>(user, "/store/buy", {
-    body: JSON.stringify({ equipmentId, quantity }),
+    body: JSON.stringify({ equipmentId }),
     method: "POST"
   });
 }

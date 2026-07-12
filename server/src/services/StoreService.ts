@@ -33,14 +33,14 @@ export class StoreService {
     return this.equipment.listEquipments();
   }
 
-  async buy(uid: string, equipmentId: string, quantity = 1): Promise<Player> {
+  async buy(uid: string, equipmentId: string): Promise<Player> {
     const item = await this.equipment.getEquipment(equipmentId);
     if (!item) {
       throw new HttpError(404, "The store doesn't carry that.");
     }
 
-    // Only consumables stack; wearables and weapons are one per purchase.
-    const amount = item.consumable ? quantity : 1;
+    // Every purchase is a single piece; consumables stack in the stash.
+    const amount = 1;
     const { storePriceFactor } = await this.effects.forPlayer(uid);
     const cost = Math.round(item.price * storePriceFactor) * amount;
     const playerRef = this.db.collection("players").doc(uid);

@@ -142,7 +142,7 @@ export function StorePageContent() {
     );
   }
 
-  const handleBuy = async (equipmentId: string, quantity: number) => {
+  const handleBuy = async (equipmentId: string) => {
     if (!user || busyItemId) {
       return;
     }
@@ -150,10 +150,10 @@ export function StorePageContent() {
     const item = catalog?.find((entry) => entry.id === equipmentId);
     setBusyItemId(equipmentId);
     try {
-      const result = await buyEquipment(user, equipmentId, quantity);
+      const result = await buyEquipment(user, equipmentId);
       setPlayer(result.player);
       setToast({
-        message: `${quantity > 1 ? `${quantity}× ` : ""}${item?.name ?? "Gear"} moved to your stash.`,
+        message: `${item?.name ?? "Gear"} moved to your stash.`,
         title: "Deal done",
         tone: "success",
       });

@@ -14,6 +14,7 @@ import {
   type CrewSlotId,
 } from "@shared/crew";
 import type { PlayerItem } from "@shared/player";
+import { SKILLS } from "@shared/skills";
 import { useState } from "react";
 import { displayText, typography } from "../../design-system/typography";
 import { cx } from "../../lib/cx";
@@ -82,8 +83,7 @@ export function CrewMemberCard({
             {member.name}
           </p>
           <p className={`m-0 ${typography.metadata}`}>
-            {CREW_TIER_LABELS[member.tier]} · {archetype.label} ·{" "}
-            {archetype.skill} {member.skillLevel}
+            {CREW_TIER_LABELS[member.tier]} · {archetype.label}
           </p>
         </div>
         <Tag
@@ -98,10 +98,18 @@ export function CrewMemberCard({
 
       <p className={`m-0 ${typography.narrativeCaption}`}>{member.bio}</p>
 
-      <dl className="m-0 grid grid-cols-4 gap-2 text-center">
+      <dl className="m-0 grid grid-cols-3 gap-2 text-center">
+        <div className="rounded-control border border-brass/50 bg-brass/10 px-2 py-2">
+          <dt className={typography.metadata}>
+            {SKILLS[archetype.skill].label}
+          </dt>
+          <dd className={`m-0 ${displayText} text-lg text-brass-bright`}>
+            {member.skillLevel}
+          </dd>
+        </div>
         {[
           ["Power", String(power)],
-          ["Bonus", `+${bonus}%`],
+          ["Job bonus", `+${bonus}%`],
           ["Wage/day", moneyFormatter.format(wage)],
           ["Loyalty", `${member.loyalty}`],
         ].map(([label, value]) => (

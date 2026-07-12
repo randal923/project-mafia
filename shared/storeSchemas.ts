@@ -3,7 +3,6 @@ import { z } from "zod";
 export const buyEquipmentRequestSchema = z
   .object({
     equipmentId: z.string().min(1, { error: "equipmentId is required." }),
-    quantity: z.number().int().min(1).max(99).optional(),
   })
   .strict();
 
