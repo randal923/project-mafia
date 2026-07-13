@@ -65,7 +65,7 @@ describe("crew economy", () => {
     expect(crewWage(5, 90, ["greedy"])).toBeGreaterThan(1000);
   });
 
-  it("check bonuses stay modest relative to the 52-point base chance", () => {
+  it("check bonuses stay modest relative to the 75-point base chance", () => {
     expect(crewCheckBonus({ skillLevel: 100, tier: 5, traits: [] })).toBeLessThanOrEqual(16);
     expect(
       crewCheckBonus({ skillLevel: 1, tier: 1, traits: ["coward"] }),

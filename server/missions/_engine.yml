@@ -21,9 +21,10 @@ checks:
   #                    − floor(heat / heatChanceDivisor),
   #                    minChance, maxChance)
   #
-  # Tuned so an at-level player with at-level gear sits around 55-60%,
-  # climbing toward ~75% at level 100 with top-shelf equipment.
-  baseChance: 52
+  # Tuned so an at-level player at baseline sits near 80% on safer plays
+  # and 70% on bolder ones (saferBolderGap 6 × perDifficulty 0.8 ≈ ±5),
+  # with skill, gear, and heat moving the needle from there up to maxChance.
+  baseChance: 75
   perSkillPoint: 1.0
   perDifficulty: -0.8
   powerDivisor: 25
@@ -40,7 +41,7 @@ checks:
   #                         ± saferBolderGap
   #                         ± gear modifiers,  1, 100)
   perBeatDepth: 2
-  saferBolderGap: 5
+  saferBolderGap: 6
   heatPressureDivisor: 10
 
 gear:
